@@ -37,7 +37,7 @@ def wait_for_no_account(client, rg, acc_name):
     while retry < 60:
         try:
             client.accounts.get(rg, acc_name)
-        except:
+        except Exception:
             # not found is an exception case (status code 200 expected)
             # and is actually what we are waiting for
             break

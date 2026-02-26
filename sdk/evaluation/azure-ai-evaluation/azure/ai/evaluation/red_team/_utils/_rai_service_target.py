@@ -330,7 +330,7 @@ class AzureRAIServiceTarget(PromptChatTarget):
                         self.logger.info("No explicit status in response, assuming operation completed")
                         try:
                             self.logger.debug(f"Operation result: {json.dumps(operation_result, indent=2)}")
-                        except:
+                        except Exception:
                             self.logger.debug(f"Operation result type: {type(operation_result).__name__}")
                         return operation_result
 

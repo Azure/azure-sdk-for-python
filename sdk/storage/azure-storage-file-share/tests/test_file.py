@@ -64,7 +64,7 @@ class TestStorageFile(StorageRecordedTestCase):
         if self.is_live:
             try:
                 self.fsc.create_share(self.share_name)
-            except:
+            except Exception:
                 pass
 
         self.short_byte_data = self.get_random_bytes(1024)
@@ -91,7 +91,7 @@ class TestStorageFile(StorageRecordedTestCase):
     def _create_source_blob(self):
         try:
             self.bsc.create_container(self.source_container_name)
-        except:
+        except Exception:
             pass
         blob_client = self.bsc.get_blob_client(self.source_container_name, self.get_resource_name(TEST_BLOB_PREFIX))
         blob_client.upload_blob(b'abcdefghijklmnop' * 32, overwrite=True)

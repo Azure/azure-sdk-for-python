@@ -10,7 +10,7 @@ from time import sleep
 # let this import fail, this package is used intentionally without the presence of azure-core
 try:
     from azure.core.exceptions import ResourceExistsError
-except:
+except Exception:
     pass
 
 try:

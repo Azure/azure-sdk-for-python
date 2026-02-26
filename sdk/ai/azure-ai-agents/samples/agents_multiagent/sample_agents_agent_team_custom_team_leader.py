@@ -52,7 +52,7 @@ def create_task(team_name: str, recipient: str, request: str, requestor: str) ->
     team: Optional[AgentTeam] = None
     try:
         team = AgentTeam.get_team(team_name)
-    except:
+    except Exception:
         pass
     if team is not None:
         team.add_task(task)

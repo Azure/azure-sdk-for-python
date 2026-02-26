@@ -113,27 +113,27 @@ class TestServiceBusAdministrationClientRule(AzureMgmtRecordedTestCase):
         finally:
             try:
                 mgmt_service.delete_rule(topic_name, subscription_name, rule_name_1)
-            except:
+            except Exception:
                 pass
             try:
                 mgmt_service.delete_rule(topic_name, subscription_name, rule_name_2)
-            except:
+            except Exception:
                 pass
             try:
                 mgmt_service.delete_rule(topic_name, subscription_name, rule_name_3)
-            except:
+            except Exception:
                 pass
             try:
                 mgmt_service.delete_rule(topic_name, subscription_name, rule_name_4)
-            except:
+            except Exception:
                 pass
             try:
                 mgmt_service.delete_subscription(topic_name, subscription_name)
-            except:
+            except Exception:
                 pass
             try:
                 mgmt_service.delete_topic(topic_name)
-            except:
+            except Exception:
                 pass
 
     @ServiceBusPreparer()

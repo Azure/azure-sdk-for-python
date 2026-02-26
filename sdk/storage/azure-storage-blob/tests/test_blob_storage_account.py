@@ -22,7 +22,7 @@ class TestBlobStorageAccount(StorageRecordedTestCase):
         if self.is_live:
             try:
                 bsc.create_container(self.container_name)
-            except:
+            except Exception:
                 pass
 
     # --Helpers-----------------------------------------------------------------

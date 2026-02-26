@@ -45,7 +45,7 @@ class TestStorageBlobEncryptionV2(StorageRecordedTestCase):
             container = self.bsc.get_container_client(self.container_name)
             try:
                 container.create_container()
-            except:
+            except Exception:
                 pass
 
     def _get_container_reference(self):

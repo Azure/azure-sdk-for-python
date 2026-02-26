@@ -55,7 +55,7 @@ def find_invalid_versions_main():
         try:
             try:
                 version_py_path = get_version_py(package.setup_filename)
-            except:
+            except Exception:
                 invalid_packages.append((package_name, "Could not find _version.py file"))
                 continue
 
@@ -97,7 +97,7 @@ def find_invalid_versions_main():
                         )
                     )
                     continue
-        except:
+        except Exception:
             invalid_packages.append((package_name, "Unknown error {}".format(sys.exc_info())))
 
     if invalid_packages:

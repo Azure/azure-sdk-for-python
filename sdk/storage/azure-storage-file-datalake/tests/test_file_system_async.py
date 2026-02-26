@@ -52,7 +52,7 @@ class TestFileSystemAsync(AsyncStorageRecordedTestCase):
                 for file_system in self.test_file_systems:
                     loop.run_until_complete(self.dsc.delete_file_system(file_system))
                 loop.run_until_complete(self.fsc.__aexit__())
-            except:
+            except Exception:
                 pass
 
     # --Helpers-----------------------------------------------------------------

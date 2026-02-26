@@ -135,7 +135,7 @@ class AccountPreparer(AzureMgmtPreparer):
             deleting = self.client.batch_account.begin_delete(group.name, name)
             try:
                 deleting.wait()
-            except:
+            except Exception:
                 pass
 
 
@@ -263,7 +263,7 @@ class PoolPreparer(AzureMgmtPreparer):
             deleting = self.client.pool.begin_delete(group.name, account.name, name)
             try:
                 deleting.wait()
-            except:
+            except Exception:
                 pass
 
 

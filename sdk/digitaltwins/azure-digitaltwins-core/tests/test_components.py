@@ -37,7 +37,7 @@ class TestDigitalTwinsComponent(AzureRecordedTestCase):
             for model in models:
                 try:
                     client.delete_model(model)
-                except:
+                except Exception:
                     pass
             models = [m.id for m in client.list_models()]
 

@@ -47,14 +47,14 @@ class TestStorageFileNFS(StorageRecordedTestCase):
         if self.is_live:
             try:
                 self.fsc.create_share(self.share_name, protocols='NFS')
-            except:
+            except Exception:
                 pass
 
     def teardown_method(self):
         if self.is_live and self.fsc:
             try:
                 self.fsc.delete_share(self.share_name)
-            except:
+            except Exception:
                 pass
 
     # --Helpers----------------------------------------------------------

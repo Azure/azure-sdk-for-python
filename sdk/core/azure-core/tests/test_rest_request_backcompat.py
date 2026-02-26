@@ -42,7 +42,7 @@ def test_request_set_attrs(old_request, new_request):
             # if we can set it on the old request, we want to
             # be able to set it on the new
             setattr(old_request, attr, "foo")
-        except:
+        except Exception:
             pass
         else:
             setattr(new_request, attr, "foo")

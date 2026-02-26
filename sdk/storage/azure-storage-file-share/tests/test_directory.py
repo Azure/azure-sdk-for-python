@@ -38,14 +38,14 @@ class TestStorageDirectory(StorageRecordedTestCase):
         if not self.is_playback():
             try:
                 self.fsc.create_share(self.share_name)
-            except:
+            except Exception:
                 pass
 
     def _teardown(self, FILE_PATH):
         if os.path.isfile(FILE_PATH):
             try:
                 os.remove(FILE_PATH)
-            except:
+            except Exception:
                 pass
     # --Helpers-----------------------------------------------------------------
 
@@ -884,7 +884,7 @@ class TestStorageDirectory(StorageRecordedTestCase):
         assert list_dir[2].file_id is not None
         try:
             share_client.delete_share()
-        except:
+        except Exception:
             pass
 
     @FileSharePreparer()

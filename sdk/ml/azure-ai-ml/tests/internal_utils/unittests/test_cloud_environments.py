@@ -140,7 +140,7 @@ class TestCloudEnvironments:
         for url in endpoint_urls:
             try:
                 cloud_details[EndpointURLS.__dict__[url]]
-            except:
+            except Exception:
                 assert False, "Url not found: {}".format(EndpointURLS.__dict__[url])
         assert True
 

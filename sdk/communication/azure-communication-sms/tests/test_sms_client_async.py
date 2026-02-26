@@ -66,7 +66,7 @@ class TestSMSClientAsync(aiounittest.AsyncTestCase):
                 tag="custom-tag",
             )
             sms_response = sms_responses[0]
-        except:
+        except Exception:
             raised = True
             raise
 

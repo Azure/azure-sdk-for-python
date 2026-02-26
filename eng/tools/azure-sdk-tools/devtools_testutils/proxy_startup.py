@@ -430,7 +430,7 @@ def stop_test_proxy() -> None:
 
         try:
             os.kill(int(os.getenv(TOOL_ENV_VAR)), signal.SIGTERM)
-        except:
+        except Exception:
             _LOGGER.debug("Unable to kill running test-proxy process.")
 
 

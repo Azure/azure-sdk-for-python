@@ -68,7 +68,7 @@ class TestFileAsync(AsyncStorageRecordedTestCase):
                 loop = asyncio.get_event_loop()
                 loop.run_until_complete(self.dsc.delete_file_system(self.file_system_name))
                 loop.run_until_complete(self.dsc.__aexit__())
-            except:
+            except Exception:
                 pass
 
     # --Helpers-----------------------------------------------------------------
@@ -1402,7 +1402,7 @@ class TestFileAsync(AsyncStorageRecordedTestCase):
         file_system = self.dsc.get_file_system_client(self.file_system_name)
         try:
             await file_system.create_file_system()
-        except:
+        except Exception:
             pass
         file_client = file_system.get_file_client(file_name)
 
@@ -1443,7 +1443,7 @@ class TestFileAsync(AsyncStorageRecordedTestCase):
         file_system = self.dsc.get_file_system_client(self.file_system_name)
         try:
             await file_system.create_file_system()
-        except:
+        except Exception:
             pass
         file_client = file_system.get_file_client(file_name)
 

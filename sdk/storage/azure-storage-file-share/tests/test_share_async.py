@@ -55,14 +55,14 @@ class TestStorageShareAsync(AsyncStorageRecordedTestCase):
         if os.path.isfile(FILE_PATH):
             try:
                 os.remove(FILE_PATH)
-            except:
+            except Exception:
                 pass
 
     async def _delete_shares(self, prefix=TEST_SHARE_PREFIX):
         async for l in self.fsc.list_shares(include_snapshots=True):
             try:
                 await self.fsc.delete_share(l.name, delete_snapshots=True)
-            except:
+            except Exception:
                 pass
     # --Helpers-----------------------------------------------------------------
     def _get_share_reference(self, prefix=TEST_SHARE_PREFIX):
@@ -75,7 +75,7 @@ class TestStorageShareAsync(AsyncStorageRecordedTestCase):
         share_client = self._get_share_reference(prefix)
         try:
             await share_client.create_share(**kwargs)
-        except:
+        except Exception:
             pass
         return share_client
 

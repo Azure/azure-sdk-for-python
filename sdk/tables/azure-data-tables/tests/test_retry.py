@@ -118,14 +118,14 @@ class TestStorageRetry(AzureRecordedTestCase, TableTestCase):
         if self.is_live:
             try:
                 self.ts.delete_table(self.table_name, **kwargs)
-            except:
+            except Exception:
                 pass
 
             try:
                 for table_name in self.query_tables:
                     try:
                         self.ts.delete_table(table_name, **kwargs)
-                    except:
+                    except Exception:
                         pass
             except AttributeError:
                 pass

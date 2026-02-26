@@ -28,7 +28,7 @@ def test_receive_storage_checkpoint(
 
     try:
         checkpoint_store._container_client.create_container()
-    except:
+    except Exception:
         pass
 
     client = EventHubConsumerClient(
@@ -85,7 +85,7 @@ def test_receive_storage_checkpoint(
 
     try:
         checkpoint_store._container_client.delete_container()
-    except:
+    except Exception:
         pass
 
 

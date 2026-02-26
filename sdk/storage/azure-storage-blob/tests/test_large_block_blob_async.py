@@ -41,7 +41,7 @@ class TestStorageLargeBlockBlobAsync(AsyncStorageRecordedTestCase):
         if self.is_live:
             try:
                 await self.bsc.create_container(self.container_name)
-            except:
+            except Exception:
                 pass
 
     # --Helpers-----------------------------------------------------------------

@@ -40,14 +40,14 @@ class TestStorageDirectoryAsync(AsyncStorageRecordedTestCase):
         if not self.is_playback():
             try:
                 await self.fsc.create_share(self.share_name)
-            except:
+            except Exception:
                 pass
 
     def _teardown(self, FILE_PATH):
         if os.path.isfile(FILE_PATH):
             try:
                 os.remove(FILE_PATH)
-            except:
+            except Exception:
                 pass
 
     # --Test cases for directories ----------------------------------------------
@@ -951,7 +951,7 @@ class TestStorageDirectoryAsync(AsyncStorageRecordedTestCase):
 
         try:
             await share_client.delete_share()
-        except:
+        except Exception:
             pass
 
     @FileSharePreparer()

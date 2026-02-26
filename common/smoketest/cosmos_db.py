@@ -76,7 +76,7 @@ class CosmosDB:
         # Ensure that the database does not exist
         try:
             self.delete_database()
-        except:
+        except Exception:
             pass
 
         try:

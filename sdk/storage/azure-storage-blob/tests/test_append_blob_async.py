@@ -46,7 +46,7 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
             try:
                 await bsc.create_container(self.container_name)
                 await bsc.create_container(self.source_container_name)
-            except:
+            except Exception:
                 pass
 
     def _get_blob_reference(self):

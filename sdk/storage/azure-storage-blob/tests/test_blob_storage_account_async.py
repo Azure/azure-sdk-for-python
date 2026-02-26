@@ -24,7 +24,7 @@ class TestBlobStorageAccountAsync(AsyncStorageRecordedTestCase):
         if self.is_live:
             try:
                 await bsc.create_container(self.container_name)
-            except:
+            except Exception:
                 pass
 
     def _get_blob_reference(self, bsc):

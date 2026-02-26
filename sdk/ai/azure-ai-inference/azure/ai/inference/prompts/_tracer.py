@@ -288,7 +288,7 @@ class PromptyTracer:
                     cur[key] = value
                 else:
                     cur[key] += value
-            except:
+            except Exception:
                 continue
 
         return cur

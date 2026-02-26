@@ -34,7 +34,7 @@ def main():
     container_client = blob_service_client.get_container_client(container_name)
     try:
         container_client.create_container()
-    except:
+    except Exception:
         pass
     # [START query]
     errors = []

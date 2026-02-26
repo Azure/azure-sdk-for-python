@@ -419,7 +419,7 @@ class EventData:
         """
         try:
             return self._raw_amqp_message.body
-        except:
+        except Exception:
             raise ValueError("Event content empty.") from None
 
     @property

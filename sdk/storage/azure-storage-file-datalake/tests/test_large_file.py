@@ -50,7 +50,7 @@ class TestLargeFile(StorageRecordedTestCase):
         if not self.is_playback():
             try:
                 self.dsc.delete_file_system(self.file_system_name)
-            except:
+            except Exception:
                 pass
 
         return super(TestLargeFile, self).tearDown()

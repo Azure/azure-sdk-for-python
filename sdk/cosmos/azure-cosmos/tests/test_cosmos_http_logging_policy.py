@@ -172,7 +172,7 @@ class TestCosmosHttpLogger(unittest.TestCase):
         # now test in case of an error
         try:
             self.client_diagnostic.create_database(id=database_id)
-        except:
+        except Exception:
             pass
         assert all(m.levelname == 'INFO' for m in self.mock_handler_diagnostic.messages)
         messages_request = self.mock_handler_diagnostic.messages[0]
@@ -203,7 +203,7 @@ class TestCosmosHttpLogger(unittest.TestCase):
         try:
             container = database.get_container_client(container_id)
             container.read_item(item="nonexistent_item", partition_key="nonexistent_pk")
-        except:
+        except Exception:
             pass
 
         # Assert that the filtered logger only captured the error
@@ -219,7 +219,7 @@ class TestCosmosHttpLogger(unittest.TestCase):
         # Try to create an item with an invalid partition key
         try:
             container.create_item(body={"FakeProperty": "item1", "NotPk": None})
-        except:
+        except Exception:
             pass
 
         # Assert that the filtered logger captured the error
@@ -403,7 +403,7 @@ class TestCosmosHttpLogger(unittest.TestCase):
 
         try:
             container.read_item(item="nonexistent_item", partition_key="nonexistent_pk")
-        except:
+        except Exception:
             pass
 
         # Verify that the error was logged by the root logger's mock handler

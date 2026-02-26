@@ -65,7 +65,7 @@ class RecordingTestCase(ExtendedTestCase):
             with open(path) as testsettings_local_file:
                 test_settings = json.load(testsettings_local_file)
             self.test_mode = test_settings["mode"]
-        except:
+        except Exception:
             pass
 
         if getattr(self, "test_mode", None) is None:

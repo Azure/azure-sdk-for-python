@@ -67,7 +67,7 @@ class TestFile(StorageRecordedTestCase):
         if not self.is_playback():
             try:
                 self.dsc.delete_file_system(self.file_system_name)
-            except:
+            except Exception:
                 pass
 
     # --Helpers-----------------------------------------------------------------
@@ -1507,7 +1507,7 @@ class TestFile(StorageRecordedTestCase):
         file_system = self.dsc.get_file_system_client(self.file_system_name)
         try:
             file_system.create_file_system()
-        except:
+        except Exception:
             pass
         file_client = file_system.get_file_client(file_name)
 
@@ -1545,7 +1545,7 @@ class TestFile(StorageRecordedTestCase):
         file_system = self.dsc.get_file_system_client(self.file_system_name)
         try:
             file_system.create_file_system()
-        except:
+        except Exception:
             pass
         file_client = file_system.get_file_client(file_name)
 

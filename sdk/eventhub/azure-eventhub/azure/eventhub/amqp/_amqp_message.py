@@ -99,27 +99,27 @@ class AmqpAnnotatedMessage:
         message_repr += ", body_type={}".format(self.body_type.value)
         try:
             message_repr += ", header={}".format(self.header)
-        except:
+        except Exception:
             message_repr += ", header=<read-error>"
         try:
             message_repr += ", footer={}".format(self.footer)
-        except:
+        except Exception:
             message_repr += ", footer=<read-error>"
         try:
             message_repr += ", properties={}".format(self.properties)
-        except:
+        except Exception:
             message_repr += ", properties=<read-error>"
         try:
             message_repr += ", application_properties={}".format(self.application_properties)
-        except:
+        except Exception:
             message_repr += ", application_properties=<read-error>"
         try:
             message_repr += ", delivery_annotations={}".format(self.delivery_annotations)
-        except:
+        except Exception:
             message_repr += ", delivery_annotations=<read-error>"
         try:
             message_repr += ", annotations={}".format(self.annotations)
-        except:
+        except Exception:
             message_repr += ", annotations=<read-error>"
         return "AmqpAnnotatedMessage({})".format(message_repr)[:1024]
 

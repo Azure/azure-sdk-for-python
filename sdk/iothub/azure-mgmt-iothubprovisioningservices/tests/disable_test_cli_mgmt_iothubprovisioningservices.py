@@ -135,7 +135,7 @@ class MgmtIotDpsClientTest(AzureMgmtTestCase):
 
         try:
             result = result.result()
-        except:
+        except Exception:
             print("poller failing")
 
 

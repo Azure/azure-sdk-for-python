@@ -53,6 +53,6 @@ class MsalTokenCredential(object):
 
         try:
             return AccessToken(result["access_token"], now + int(result["expires_in"]))
-        except:
+        except Exception:
             print("\nFailed to get a valid access token")
             raise AuthenticationRequiredError(scopes)

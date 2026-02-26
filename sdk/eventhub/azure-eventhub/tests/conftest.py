@@ -358,7 +358,7 @@ def live_eventhub(
             resource_client.event_hubs.delete(
                 resource_group, eventhub_ns_name, eventhub_name
             )
-        except:
+        except Exception:
             warnings.warn(UserWarning("eventhub teardown failed"))
 
 

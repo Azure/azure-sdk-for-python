@@ -59,7 +59,7 @@ class TestChatClient(unittest.TestCase):
         participants = [ChatParticipant(identifier=user, display_name="name", share_history_time=datetime.utcnow())]
         try:
             create_chat_thread_result = chat_client.create_chat_thread(topic, thread_participants=participants)
-        except:
+        except Exception:
             raised = True
             raise
 
@@ -94,7 +94,7 @@ class TestChatClient(unittest.TestCase):
             create_chat_thread_result = chat_client.create_chat_thread(
                 topic=topic, thread_participants=participants, idempotency_token=idempotency_token
             )
-        except:
+        except Exception:
             raised = True
             raise
 
@@ -173,7 +173,7 @@ class TestChatClient(unittest.TestCase):
 
         try:
             chat_client.delete_chat_thread(thread_id)
-        except:
+        except Exception:
             raised = True
 
         self.assertFalse(raised, "Expected is no excpetion raised")
@@ -190,7 +190,7 @@ class TestChatClient(unittest.TestCase):
         chat_threads = None
         try:
             chat_threads = chat_client.list_chat_threads()
-        except:
+        except Exception:
             raised = True
 
         self.assertFalse(raised, "Expected is no excpetion raised")

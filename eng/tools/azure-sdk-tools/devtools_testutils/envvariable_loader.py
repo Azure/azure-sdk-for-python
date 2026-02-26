@@ -172,7 +172,7 @@ class EnvironmentVariableLoader(AzureMgmtPreparer):
                                 value=scrubbed_value,
                                 target=self.real_values[key],
                             )
-                        except:
+                        except Exception:
                             _logger.info(
                                 "A sanitizer could not be registered with the test proxy, so the "
                                 f"EnvironmentVariableLoader will not scrub the value of {key} in recordings."

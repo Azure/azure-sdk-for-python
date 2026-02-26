@@ -48,7 +48,7 @@ def wait_for_no_snapshot(client, rg, account_name, pool_name, volume_name, snaps
         try:
             snapshot = client.snapshots.get(rg, account_name, pool_name, volume_name, snapshot_name)
             print("\tGot snapshot. Still waiting. state = " + snapshot.provisioning_state)
-        except:
+        except Exception:
             # not found is an exception case (status code 200 expected)
             # but is what we are waiting for
             break

@@ -214,7 +214,7 @@ def create_client(args):
         checkpoint_store = BlobCheckpointStore(
             args.storage_account, DefaultAzureCredential(), args.storage_container_name
         )
-    except:
+    except Exception:
         checkpoint_store = None
 
     transport_type = TransportType.Amqp if args.transport_type == 0 else TransportType.AmqpOverWebsocket

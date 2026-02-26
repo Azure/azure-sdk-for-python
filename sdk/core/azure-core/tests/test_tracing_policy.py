@@ -48,7 +48,7 @@ class TestTracingPolicyPluginImplementation:
             policy.on_request(pipeline_request)
             try:
                 raise ValueError("Transport trouble")
-            except:
+            except Exception:
                 policy.on_exception(pipeline_request)
 
         # Check on_response
@@ -171,7 +171,7 @@ class TestTracingPolicyPluginImplementation:
             policy.on_request(pipeline_request)
             try:
                 raise ValueError("Transport trouble")
-            except:
+            except Exception:
                 policy.on_exception(pipeline_request)
 
         assert len(root_span.children) == 0
@@ -206,7 +206,7 @@ class TestTracingPolicyPluginImplementation:
                 policy.on_request(pipeline_request)
                 try:
                     raise ValueError("Transport trouble")
-                except:
+                except Exception:
                     policy.on_exception(pipeline_request)
 
                 user_agent.on_response(pipeline_request, pipeline_response)

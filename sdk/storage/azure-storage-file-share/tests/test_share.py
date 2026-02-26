@@ -58,7 +58,7 @@ class TestStorageShare(StorageRecordedTestCase):
         if os.path.isfile(FILE_PATH):
             try:
                 os.remove(FILE_PATH)
-            except:
+            except Exception:
                 pass
     # --Helpers-----------------------------------------------------------------
     def _get_share_reference(self, prefix=TEST_SHARE_PREFIX):
@@ -71,7 +71,7 @@ class TestStorageShare(StorageRecordedTestCase):
         share_client = self._get_share_reference(prefix)
         try:
             share_client.create_share(**kwargs)
-        except:
+        except Exception:
             pass
         return share_client
 
@@ -83,7 +83,7 @@ class TestStorageShare(StorageRecordedTestCase):
         for l in self.fsc.list_shares(include_snapshots=True):
             try:
                 self.fsc.delete_share(l.name, delete_snapshots=True)
-            except:
+            except Exception:
                 pass
 
     # --Test cases for shares -----------------------------------------

@@ -49,11 +49,11 @@ class TestStoragePageBlob(StorageRecordedTestCase):
         if self.is_live:
             try:
                 bsc.create_container(self.container_name)
-            except:
+            except Exception:
                 pass
             try:
                 bsc.create_container(self.source_container_name)
-            except:
+            except Exception:
                 pass
 
     def _get_blob_reference(self, bsc) -> BlobClient:
@@ -2238,12 +2238,12 @@ class TestStoragePageBlob(StorageRecordedTestCase):
         for byte in content[:start-1]:
             try:
                 assert byte == '\x00'
-            except:
+            except Exception:
                 assert byte == 0
         for byte in content[end+1:]:
             try:
                 assert byte == '\x00'
-            except:
+            except Exception:
                 assert byte == 0
 
     @pytest.mark.live_test_only

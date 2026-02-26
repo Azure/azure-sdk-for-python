@@ -67,7 +67,7 @@ class TestStorageBlobTags(AsyncStorageRecordedTestCase):
         container_name = self.get_resource_name(prefix)
         try:
             await self.bsc.create_container(container_name)
-        except:
+        except Exception:
             pass
         return container_name
 

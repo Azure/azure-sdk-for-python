@@ -17,7 +17,7 @@ from azure.core.pipeline.policies import ContentDecodePolicy
 # the functions we patch
 try:
     from azure.core.pipeline.transport import RequestsTransport
-except:
+except Exception:
     pass
 
 from .helpers import get_test_id, is_live, is_live_and_not_recording

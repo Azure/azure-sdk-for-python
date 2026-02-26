@@ -15,7 +15,7 @@ from azure.core.pipeline.policies import ContentDecodePolicy
 # the functions we patch
 try:
     from azure.core.pipeline.transport import RequestsTransport
-except:
+except Exception:
     pass
 
 try:

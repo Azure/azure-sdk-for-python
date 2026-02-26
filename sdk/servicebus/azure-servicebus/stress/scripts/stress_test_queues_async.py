@@ -416,7 +416,7 @@ class DroppedMessageCheckerStressTestRunner(StressTestRunnerAsync):
         """Called when constructing message body"""
         try:
             body = self._message_id
-        except:
+        except Exception:
             _message_id = 0
             body = 0
         _message_id += 1

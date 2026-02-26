@@ -17,5 +17,5 @@ def temp_file_path():
     yield path
     try:
         os.unlink(path)
-    except:
+    except Exception:
         pass

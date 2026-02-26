@@ -24,7 +24,7 @@ except ImportError:
 
 try:
     from azure.servicebus.aio._transport._pyamqp_transport_async import PyamqpTransportAsync
-except:
+except Exception:
     PyamqpTransportAsync = None
 from azure.servicebus.aio import ServiceBusClient, AutoLockRenewer
 from azure.servicebus import (

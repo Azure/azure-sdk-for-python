@@ -58,14 +58,14 @@ def create_stress_blob(stress_config, blob_name):
     )
     try:
         blob_service_client.delete_container(blob_name)
-    except:
+    except Exception:
         pass
     create_succeed = False
     while not create_succeed:
         try:
             blob_service_client.create_container(blob_name)
             create_succeed = True
-        except:
+        except Exception:
             pass
     return blob_name
 

@@ -1539,7 +1539,7 @@ class Deserializer(object):
         """
         try:
             return self(target_obj, data, content_type=content_type)
-        except:
+        except Exception:
             _LOGGER.debug(
                 "Ran into a deserialization error. Ignoring since this is failsafe deserialization", exc_info=True
             )

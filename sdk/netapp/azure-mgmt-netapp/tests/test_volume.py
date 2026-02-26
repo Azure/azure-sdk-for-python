@@ -176,7 +176,7 @@ def wait_for_no_volume(client, rg, account_name, pool_name, volume_name):
         try:
             vol = get_volume(client, rg, account_name, pool_name, volume_name)
             print("\tgot volume. Still waiting. state = " + vol.provisioning_state)
-        except:
+        except Exception:
             # not found is an exception case (status code 200 expected)
             # but is what we are waiting for
             break
@@ -519,7 +519,7 @@ class TestNetAppVolume(AzureMgmtRecordedTestCase):
                     self.client.volumes.replication_status(
                         setup.TEST_REPL_REMOTE_RG, ACCOUNT2, setup.TEST_POOL_2, dbVolumeName
                     )
-                except:
+                except Exception:
                     # an exception means the replication was not found
                     # i.e. it has been deleted
                     # ok without checking it could have been for another reason
@@ -555,7 +555,7 @@ class TestNetAppVolume(AzureMgmtRecordedTestCase):
                 raise Exception("Timeout when checking if volumes are in succeeded state and have no replication")
 
             # now proceed with the delete of the volumes and tidy up resources
-        except:
+        except Exception:
             if setup.LIVE:
                 time.sleep(10)
             self.client.volumes.begin_break_replication(

@@ -89,14 +89,14 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
         if self.is_live:
             try:
                 await bsc.create_container(self.container_name)
-            except:
+            except Exception:
                 pass
 
     async def _teardown(self, bsc):
         if self.is_live:
             try:
                 await bsc.delete_container(self.container_name)
-            except:
+            except Exception:
                 pass
 
     # --Helpers-----------------------------------------------------------------

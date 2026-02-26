@@ -49,7 +49,7 @@ class TestStorageBlobTags(StorageRecordedTestCase):
         if os.path.isfile(FILE_PATH):
             try:
                 os.remove(FILE_PATH)
-            except:
+            except Exception:
                 pass
 
     #--Helpers-----------------------------------------------------------------
@@ -84,7 +84,7 @@ class TestStorageBlobTags(StorageRecordedTestCase):
         container_name = self.get_resource_name(prefix)
         try:
             self.bsc.create_container(container_name)
-        except:
+        except Exception:
             pass
         return container_name
 

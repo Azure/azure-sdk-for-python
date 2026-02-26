@@ -8,7 +8,7 @@ try:
     # pip < 20
     from pip._internal.req import parse_requirements
     from pip._internal.download import PipSession
-except:
+except Exception:
     # pip >= 20
     from pip._internal.req import parse_requirements
     from pip._internal.network.session import PipSession

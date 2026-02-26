@@ -139,7 +139,7 @@ async def clear_queues(servicebus_management_client):
     for queue in queues:
         try:
             await servicebus_management_client.delete_queue(queue.name)
-        except:
+        except Exception:
             pass
 
 
@@ -148,5 +148,5 @@ async def clear_topics(servicebus_management_client):
     for topic in topics:
         try:
             await servicebus_management_client.delete_topic(topic.name)
-        except:
+        except Exception:
             pass

@@ -190,7 +190,7 @@ def event_loop():
 
     try:
         import asyncio
-    except:
+    except Exception:
         return
 
     if sys.platform.startswith("win"):

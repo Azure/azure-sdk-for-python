@@ -134,5 +134,5 @@ class SimpleBatchPreparer(AzureMgmtPreparer):
             deleting = self.client.batch_account.begin_delete(group.name, name)
             try:
                 deleting.wait()
-            except:
+            except Exception:
                 pass

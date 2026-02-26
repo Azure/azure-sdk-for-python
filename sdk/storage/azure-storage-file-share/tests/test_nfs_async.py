@@ -54,7 +54,7 @@ class TestStorageFileNFSAsync(AsyncStorageRecordedTestCase):
             if self.is_live:
                 try:
                     await fsc.create_share(self.share_name, protocols='NFS')
-                except:
+                except Exception:
                     pass
 
     def teardown_method(self):
@@ -66,7 +66,7 @@ class TestStorageFileNFSAsync(AsyncStorageRecordedTestCase):
                     token_intent=TEST_INTENT
                 )
                 fsc.delete_share(self.share_name)
-            except:
+            except Exception:
                 pass
 
     # --Helpers----------------------------------------------------------

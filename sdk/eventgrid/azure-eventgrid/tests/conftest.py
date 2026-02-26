@@ -85,7 +85,7 @@ def add_sanitizers(test_proxy):
     try:
         eventgrid_hostname = urlparse(eventgrid_topic_endpoint).hostname
         add_general_string_sanitizer(target=eventgrid_hostname.upper(), value="sanitized.eastus-1.eventgrid.azure.net")
-    except:
+    except Exception:
         pass
     add_general_string_sanitizer(target=client_id, value="00000000-0000-0000-0000-000000000000")
     add_general_string_sanitizer(target=client_secret, value="sanitized")

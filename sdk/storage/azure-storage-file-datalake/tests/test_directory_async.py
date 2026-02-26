@@ -66,7 +66,7 @@ class TestDirectoryAsync(AsyncStorageRecordedTestCase):
                 loop = asyncio.get_event_loop()
                 loop.run_until_complete(self.dsc.delete_file_system(self.file_system_name))
                 loop.run_until_complete(self.dsc.__aexit__())
-            except:
+            except Exception:
                 pass
 
     # --Helpers-----------------------------------------------------------------

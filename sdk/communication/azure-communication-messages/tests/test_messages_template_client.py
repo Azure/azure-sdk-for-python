@@ -25,7 +25,7 @@ class TestMessageTemplateClientToGetTemplates(MessagesRecordedTestCase):
         try:
             with message_template_client:
                 message_template_item_list = message_template_client.list_templates(channel_id)
-        except:
+        except Exception:
             raised = True
             raise
 

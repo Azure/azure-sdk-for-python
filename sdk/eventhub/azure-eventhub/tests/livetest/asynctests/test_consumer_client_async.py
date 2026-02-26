@@ -28,7 +28,7 @@ async def test_receive_storage_checkpoint_async(
 
     try:
         await checkpoint_store_aio._container_client.create_container()
-    except:
+    except Exception:
         pass
 
     client = EventHubConsumerClient(
@@ -83,7 +83,7 @@ async def test_receive_storage_checkpoint_async(
 
     try:
         await checkpoint_store_aio._container_client.delete_container()
-    except:
+    except Exception:
         pass
 
 

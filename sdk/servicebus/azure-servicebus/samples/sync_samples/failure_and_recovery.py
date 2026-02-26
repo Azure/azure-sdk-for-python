@@ -107,7 +107,7 @@ def receive_messages(receiver):
         except ServiceBusAuthorizationError:
             # Permission based errors should be bubbled up.
             raise
-        except:
+        except Exception:
             # Although miscellaneous service errors and interruptions can occasionally occur during receiving,
             # In most pragmatic cases one can try to continue receiving unless the failure mode seens persistent.
             # Logging the associated failure and alerting on high volume is often prudent.

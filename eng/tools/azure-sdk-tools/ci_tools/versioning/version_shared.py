@@ -71,7 +71,7 @@ def get_packages(
         try:
             setup_info = ParsedSetup.from_path(setup_path)
             packages.append(setup_info)
-        except:
+        except Exception:
             print("Error parsing {}".format(setup_path))
             raise
 

@@ -1585,7 +1585,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
             await blob_client1.upload_blob(data)
             await container.get_blob_client('blob2').upload_blob(data)
             await container.get_blob_client('blob3').upload_blob(data)
-        except:
+        except Exception:
             pass
 
         # Act
@@ -1657,7 +1657,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
             await blob_client1.upload_blob(data)
             await container.get_blob_client('blob2').upload_blob(data)
             await container.get_blob_client('blob3').upload_blob(data)
-        except:
+        except Exception:
             pass
 
         # Act
@@ -1689,7 +1689,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
             await blob_client1.upload_blob(data, overwrite=True, tags=tags)
             await container.get_blob_client('blob2').upload_blob(data, overwrite=True, tags=tags)
             await container.get_blob_client('blob3').upload_blob(data,  overwrite=True, tags=tags)
-        except:
+        except Exception:
             pass
 
         if self.is_live:
@@ -1792,7 +1792,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
             await container.get_blob_client('blob1').upload_blob(data)
             await container.get_blob_client('blob2').upload_blob(data)
             await container.get_blob_client('blob3').upload_blob(data)
-        except:
+        except Exception:
             pass
 
         # Act
@@ -1823,7 +1823,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
             blob = bsc.get_blob_client(container.container_name, 'blob1')
             await blob.upload_blob(data, length=len(data))
             await container.get_blob_client('blob2').upload_blob(data)
-        except:
+        except Exception:
             pass
 
         # Act
@@ -1902,7 +1902,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
             await blob1_client.create_snapshot()
             await container.get_blob_client('blob2').upload_blob(data)
             await container.get_blob_client('blob3').upload_blob(data)
-        except:
+        except Exception:
             pass
         blobs = await self._to_list(container.list_blobs(include='snapshots'))
         assert len(blobs) == 4  # 3 blobs + 1 snapshot

@@ -7,7 +7,7 @@ import sys
 try:
     # py 311 adds this library natively
     import tomllib as toml
-except:
+except Exception:
     # otherwise fall back to pypi package tomli
     import tomli as toml
 import tomli_w as tomlw
@@ -244,7 +244,7 @@ def judge_tag_preview(path: str, package_name: str) -> bool:
         try:
             with open(file, "r") as file_in:
                 list_in = file_in.readlines()
-        except:
+        except Exception:
             _LOGGER.info(f"can not open {file}")
             continue
 
@@ -450,7 +450,7 @@ def format_samples_and_tests(sdk_code_path) -> None:
     except Exception as e:
         try:
             call("pip install black", shell=True)
-        except:
+        except Exception:
             pass
     for item in ["generated_samples", "generated_tests"]:
         generate_path = Path(sdk_code_path) / item
@@ -529,7 +529,7 @@ def gen_typespec(
             start_idx = [i for i, line in enumerate(output_lines) if "error stack start" in line][0]
             end_idx = [i for i, line in enumerate(output_lines) if "error stack end" in line][0]
             error_position = "python codegen"
-        except:
+        except Exception:
             start_idx = -1
             end_idx = -1
             error_position = "tsp compiler"

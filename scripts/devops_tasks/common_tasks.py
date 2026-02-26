@@ -193,7 +193,7 @@ def is_required_version_on_pypi(package_name: str, spec: str) -> bool:
         if spec:
             specifier = SpecifierSet(spec)
             versions = [str(v) for v in versions if v in specifier]
-    except:
+    except Exception:
         logging.error("Package {} is not found on PyPI".format(package_name))
     return bool(versions)
 

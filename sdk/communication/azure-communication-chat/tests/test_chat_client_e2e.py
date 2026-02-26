@@ -80,7 +80,7 @@ class TestChatClient(AzureRecordedTestCase):
             for chat_threads_info_page in chat_thead_infos.by_page():
                 for chat_thread_info in chat_threads_info_page:
                     print("ChatThreadInfo: ", chat_thread_info)
-        except:
+        except Exception:
             raised = True
 
         assert raised is False

@@ -46,7 +46,7 @@ class TestChatThreadClient(unittest.TestCase):
         topic = "update topic"
         try:
             chat_thread_client.update_topic(topic=topic)
-        except:
+        except Exception:
             raised = True
 
         self.assertFalse(raised, "Expected is no excpetion raised")
@@ -72,7 +72,7 @@ class TestChatThreadClient(unittest.TestCase):
                 content=content, sender_display_name=sender_display_name, metadata=metadata
             )
             create_message_result_id = create_message_result.id
-        except:
+        except Exception:
             raised = True
 
         self.assertFalse(raised, "Expected is no excpetion raised")
@@ -125,7 +125,7 @@ class TestChatThreadClient(unittest.TestCase):
                     content=content, chat_message_type=chat_message_type, sender_display_name=sender_display_name
                 )
                 create_message_result_id = create_message_result.id
-            except:
+            except Exception:
                 raised = True
 
             self.assertFalse(raised, "Expected is no excpetion raised")
@@ -167,7 +167,7 @@ class TestChatThreadClient(unittest.TestCase):
                 create_message_result = chat_thread_client.send_message(
                     content=content, chat_message_type=chat_message_type, sender_display_name=sender_display_name
                 )
-            except:
+            except Exception:
                 raised = True
 
             self.assertTrue(raised, "Expected is excpetion raised")
@@ -244,7 +244,7 @@ class TestChatThreadClient(unittest.TestCase):
         message = None
         try:
             message = chat_thread_client.get_message(message_id)
-        except:
+        except Exception:
             raised = True
 
         self.assertFalse(raised, "Expected is no excpetion raised")
@@ -317,7 +317,7 @@ class TestChatThreadClient(unittest.TestCase):
         chat_messages = None
         try:
             chat_messages = chat_thread_client.list_messages(results_per_page=1)
-        except:
+        except Exception:
             raised = True
 
         self.assertFalse(raised, "Expected is no excpetion raised")
@@ -424,7 +424,7 @@ class TestChatThreadClient(unittest.TestCase):
         chat_messages = None
         try:
             chat_messages = chat_thread_client.list_messages(start_time=datetime(2020, 8, 17, 18, 0, 0))
-        except:
+        except Exception:
             raised = True
 
         self.assertFalse(raised, "Expected is no excpetion raised")
@@ -447,7 +447,7 @@ class TestChatThreadClient(unittest.TestCase):
         try:
             content = "updated message content"
             chat_thread_client.update_message(message_id, content=content)
-        except:
+        except Exception:
             raised = True
 
         self.assertFalse(raised, "Expected is no excpetion raised")
@@ -467,7 +467,7 @@ class TestChatThreadClient(unittest.TestCase):
         try:
             metadata = {"tags": "tag"}
             chat_thread_client.update_message(message_id, metadata=metadata)
-        except:
+        except Exception:
             raised = True
 
         self.assertFalse(raised, "Expected is no excpetion raised")
@@ -486,7 +486,7 @@ class TestChatThreadClient(unittest.TestCase):
 
         try:
             chat_thread_client.delete_message(message_id)
-        except:
+        except Exception:
             raised = True
 
         self.assertFalse(raised, "Expected is no excpetion raised")
@@ -520,7 +520,7 @@ class TestChatThreadClient(unittest.TestCase):
         chat_thread_participants = None
         try:
             chat_thread_participants = chat_thread_client.list_participants()
-        except:
+        except Exception:
             raised = True
 
         self.assertFalse(raised, "Expected is no excpetion raised")
@@ -567,7 +567,7 @@ class TestChatThreadClient(unittest.TestCase):
         chat_thread_participants = None
         try:
             chat_thread_participants = chat_thread_client.list_participants(results_per_page=2)
-        except:
+        except Exception:
             raised = True
 
         self.assertFalse(raised, "Expected is no excpetion raised")
@@ -596,7 +596,7 @@ class TestChatThreadClient(unittest.TestCase):
 
         try:
             result = chat_thread_client.add_participants(participants)
-        except:
+        except Exception:
             raised = True
 
         self.assertFalse(raised, "Expected is no excpetion raised")
@@ -631,7 +631,7 @@ class TestChatThreadClient(unittest.TestCase):
 
         try:
             result = chat_thread_client.add_participants(participants)
-        except:
+        except Exception:
             raised = True
 
         self.assertFalse(raised, "Expected is no excpetion raised")
@@ -659,7 +659,7 @@ class TestChatThreadClient(unittest.TestCase):
 
         try:
             chat_thread_client.remove_participant(identifier=CommunicationUserIdentifier(participant_id))
-        except:
+        except Exception:
             raised = True
 
         self.assertFalse(raised, "Expected is no excpetion raised")
@@ -677,7 +677,7 @@ class TestChatThreadClient(unittest.TestCase):
 
         try:
             chat_thread_client.send_typing_notification()
-        except:
+        except Exception:
             raised = True
 
         self.assertFalse(raised, "Expected is no excpetion raised")
@@ -695,7 +695,7 @@ class TestChatThreadClient(unittest.TestCase):
 
         try:
             chat_thread_client.send_typing_notification(sender_display_name="John")
-        except:
+        except Exception:
             raised = True
 
         self.assertFalse(raised, "Expected is no excpetion raised")
@@ -714,7 +714,7 @@ class TestChatThreadClient(unittest.TestCase):
 
         try:
             chat_thread_client.send_read_receipt(message_id)
-        except:
+        except Exception:
             raised = True
 
         self.assertFalse(raised, "Expected is no excpetion raised")
@@ -744,7 +744,7 @@ class TestChatThreadClient(unittest.TestCase):
         read_receipts = None
         try:
             read_receipts = chat_thread_client.list_read_receipts()
-        except:
+        except Exception:
             raised = True
 
         self.assertFalse(raised, "Expected is no excpetion raised")
@@ -782,7 +782,7 @@ class TestChatThreadClient(unittest.TestCase):
         read_receipts = None
         try:
             read_receipts = chat_thread_client.list_read_receipts(results_per_page=2)
-        except:
+        except Exception:
             raised = True
 
         self.assertFalse(raised, "Expected is no excpetion raised")
@@ -813,7 +813,7 @@ class TestChatThreadClient(unittest.TestCase):
         get_thread_result = None
         try:
             get_thread_result = chat_thread_client.get_properties()
-        except:
+        except Exception:
             raised = True
 
         self.assertFalse(raised, "Expected is no excpetion raised")

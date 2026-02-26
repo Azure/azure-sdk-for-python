@@ -8,7 +8,7 @@ import logging
 try:
     # py 311 adds this library natively
     import tomllib as toml
-except:
+except Exception:
     # otherwise fall back to pypi package tomli
     import tomli as toml
 
@@ -454,7 +454,7 @@ def get_build_config(package_path: str) -> Optional[Dict[str, Any]]:
                     tool_configs = toml_dict["tool"]
                     if "azure-sdk-build" in tool_configs:
                         return tool_configs["azure-sdk-build"]
-        except:
+        except Exception:
             return {}
 
 
@@ -475,7 +475,7 @@ def get_conda_config(package_path: str) -> Optional[Dict[str, Any]]:
                     tool_configs = toml_dict["tool"]
                     if "azure-sdk-conda" in tool_configs:
                         return tool_configs["azure-sdk-conda"]
-        except:
+        except Exception:
             return {}
 
 

@@ -43,7 +43,7 @@ class TestStorageCPK(StorageRecordedTestCase):
         if self.is_live:
             try:
                 bsc.delete_container(self.container_name)
-            except:
+            except Exception:
                 pass
 
     # --Helpers-----------------------------------------------------------------

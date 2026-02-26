@@ -8,7 +8,7 @@ from importlib.util import find_spec
 try:
     # py 311 adds this library natively
     import tomllib as toml
-except:
+except Exception:
     # otherwise fall back to pypi package tomli
     import tomli as toml
 import tomli_w as tomlw

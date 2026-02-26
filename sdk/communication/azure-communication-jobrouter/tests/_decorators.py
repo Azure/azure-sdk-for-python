@@ -45,7 +45,7 @@ class RouterPreparers(object):
                 finally:
                     try:
                         first_method()
-                    except:
+                    except Exception:
                         print("")  # Consume exceptions
 
             return wrapper

@@ -42,7 +42,7 @@ async def test_update_topic():
     topic = "update topic"
     try:
         await chat_thread_client.update_topic(topic=topic)
-    except:
+    except Exception:
         raised = True
 
     assert raised == False
@@ -69,7 +69,7 @@ async def test_send_message():
             content, sender_display_name=sender_display_name, metadata=metadata
         )
         create_message_result_id = create_message_result.id
-    except:
+    except Exception:
         raised = True
 
     assert raised == False
@@ -125,7 +125,7 @@ async def test_send_message_w_type():
                 content, chat_message_type=chat_message_type, sender_display_name=sender_display_name
             )
             create_message_result_id = create_message_result.id
-        except:
+        except Exception:
             raised = True
 
         assert raised == False
@@ -168,7 +168,7 @@ async def test_send_message_w_invalid_type_throws_error():
             create_message_result = await chat_thread_client.send_message(
                 content, chat_message_type=chat_message_type, sender_display_name=sender_display_name
             )
-        except:
+        except Exception:
             raised = True
 
         assert raised == True
@@ -230,7 +230,7 @@ async def test_get_message():
     message = None
     try:
         message = await chat_thread_client.get_message(message_id)
-    except:
+    except Exception:
         raised = True
 
     assert raised == False
@@ -299,7 +299,7 @@ async def test_list_messages():
     chat_messages = None
     try:
         chat_messages = chat_thread_client.list_messages(results_per_page=1)
-    except:
+    except Exception:
         raised = True
 
     assert raised == False
@@ -407,7 +407,7 @@ async def test_list_messages_with_start_time():
     chat_messages = None
     try:
         chat_messages = chat_thread_client.list_messages(start_time=datetime(2020, 8, 17, 18, 0, 0))
-    except:
+    except Exception:
         raised = True
 
     assert raised == False
@@ -433,7 +433,7 @@ async def test_update_message_content():
     try:
         content = "updated message content"
         await chat_thread_client.update_message(message_id, content=content)
-    except:
+    except Exception:
         raised = True
 
     assert raised == False
@@ -453,7 +453,7 @@ async def test_update_message_metadata():
     try:
         metadata = {"tags": "tag"}
         await chat_thread_client.update_message(message_id, metadata=metadata)
-    except:
+    except Exception:
         raised = True
 
     assert raised == False
@@ -472,7 +472,7 @@ async def test_delete_message():
 
     try:
         await chat_thread_client.delete_message(message_id)
-    except:
+    except Exception:
         raised = True
 
     assert raised == False
@@ -506,7 +506,7 @@ async def test_list_participants():
     chat_thread_participants = None
     try:
         chat_thread_participants = chat_thread_client.list_participants()
-    except:
+    except Exception:
         raised = True
 
     assert raised == False
@@ -555,7 +555,7 @@ async def test_list_participants_with_results_per_page():
     chat_thread_participants = None
     try:
         chat_thread_participants = chat_thread_client.list_participants(results_per_page=2)
-    except:
+    except Exception:
         raised = True
 
     assert raised == False
@@ -587,7 +587,7 @@ async def test_add_participants():
 
     try:
         await chat_thread_client.add_participants(participants)
-    except:
+    except Exception:
         raised = True
 
     assert raised == False
@@ -621,7 +621,7 @@ async def test_add_participants_w_failed_participants_returns_nonempty_list():
 
     try:
         result = await chat_thread_client.add_participants(participants)
-    except:
+    except Exception:
         raised = True
 
     assert raised == False
@@ -649,7 +649,7 @@ async def test_remove_participant():
 
     try:
         await chat_thread_client.remove_participant(identifier=CommunicationUserIdentifier(participant_id))
-    except:
+    except Exception:
         raised = True
 
     assert raised == False
@@ -667,7 +667,7 @@ async def test_send_typing_notification():
 
     try:
         await chat_thread_client.send_typing_notification()
-    except:
+    except Exception:
         raised = True
 
     assert raised == False
@@ -685,7 +685,7 @@ async def test_send_typing_notification_with_sender_display_name():
 
     try:
         await chat_thread_client.send_typing_notification(sender_display_name="John")
-    except:
+    except Exception:
         raised = True
 
     assert raised == False
@@ -704,7 +704,7 @@ async def test_send_read_receipt():
 
     try:
         await chat_thread_client.send_read_receipt(message_id)
-    except:
+    except Exception:
         raised = True
 
     assert raised == False
@@ -734,7 +734,7 @@ async def test_list_read_receipts():
     read_receipts = None
     try:
         read_receipts = chat_thread_client.list_read_receipts()
-    except:
+    except Exception:
         raised = True
 
     assert raised == False
@@ -775,7 +775,7 @@ async def test_list_read_receipts_with_results_per_page():
     read_receipts = None
     try:
         read_receipts = chat_thread_client.list_read_receipts(results_per_page=2)
-    except:
+    except Exception:
         raised = True
 
     assert raised == False
@@ -811,7 +811,7 @@ async def test_list_read_receipts_with_results_per_page_and_skip():
     read_receipts = None
     try:
         read_receipts = chat_thread_client.list_read_receipts(results_per_page=1, skip=1)
-    except:
+    except Exception:
         raised = True
 
     assert raised == False
@@ -845,7 +845,7 @@ async def test_get_properties():
     get_thread_result = None
     try:
         get_thread_result = await chat_thread_client.get_properties()
-    except:
+    except Exception:
         raised = True
 
     assert raised == False

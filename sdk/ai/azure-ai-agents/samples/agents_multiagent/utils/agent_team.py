@@ -420,7 +420,7 @@ def _create_task(team_name: str, recipient: str, request: str, requestor: str) -
             _add_create_task_event(
                 span=span, team_name=team_name, requestor=requestor, recipient=recipient, request=request
             )
-    except:
+    except Exception:
         pass
     if team is not None:
         team.add_task(task)

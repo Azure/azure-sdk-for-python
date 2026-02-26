@@ -49,14 +49,14 @@ class TestStorageCPKN(StorageRecordedTestCase):
         if self.is_live:
             try:
                 bsc.create_container(self.container_name)
-            except:
+            except Exception:
                 pass
 
     def _teardown(self, bsc):
         if self.is_live:
             try:
                 bsc.delete_container(self.container_name)
-            except:
+            except Exception:
                 pass
 
     # --Helpers-----------------------------------------------------------------

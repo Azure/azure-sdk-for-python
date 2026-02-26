@@ -75,7 +75,7 @@ def wait_for_no_snapshot_policy(client, rg, account_name, snapshot_policy_name):
         retry += 1
         try:
             client.snapshot_policies.get(rg, account_name, snapshot_policy_name)
-        except:
+        except Exception:
             # not found is an exception case (status code 200 expected)
             # and is actually what we are waiting for
             break

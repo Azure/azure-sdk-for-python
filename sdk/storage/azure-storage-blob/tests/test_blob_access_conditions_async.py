@@ -3048,7 +3048,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         try:
             container_client = await bsc.create_container(self.container_name)
-        except:
+        except Exception:
             container_client = bsc.get_container_client(self.container_name)
         blob_client = container_client.get_blob_client('blob1')
 
@@ -3079,7 +3079,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         try:
             container_client = await bsc.create_container(self.container_name)
-        except:
+        except Exception:
             container_client = bsc.get_container_client(self.container_name)
         blob_client = container_client.get_blob_client('blob1')
 
@@ -3103,7 +3103,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         try:
             container_client = await bsc.create_container(self.container_name)
-        except:
+        except Exception:
             container_client = bsc.get_container_client(self.container_name)
         blob_client = container_client.get_blob_client('blob1')
 
@@ -3127,7 +3127,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         try:
             container_client = await bsc.create_container(self.container_name)
-        except:
+        except Exception:
             container_client = bsc.get_container_client(self.container_name)
         blob_client = container_client.get_blob_client('blob1')
 

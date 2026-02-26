@@ -96,7 +96,7 @@ class CodegenTestPR:
         try:
             if self.target_date:
                 return (datetime.fromisoformat(self.target_date) + timedelta(days=-4)).strftime("%Y-%m-%d")
-        except:
+        except Exception:
             log(f"Invalid target date: {self.target_date}")
         return current_time()
 
@@ -201,7 +201,7 @@ class CodegenTestPR:
         last_version = content["packages"][0]["version"]
         try:
             return str(Version(last_version))
-        except:
+        except Exception:
             return ""
 
     def check_model_flatten(self):
@@ -286,18 +286,18 @@ class CodegenTestPR:
         failed_result = f"{test_mode} fail, detailed info is in pipeline log(search keyword FAILED)!!!"
         try:
             print_check(f"pytest  --collect-only")
-        except:
+        except Exception:
             try:
                 assert "error" not in print_exec_output(f"pytest  --collect-only")[-1]
                 log(f"{test_mode} run done, do not find any test !!!")
                 self.test_result = succeeded_result
-            except:
+            except Exception:
                 log("some test collected failed, please fix it locally")
                 self.test_result = failed_result
             return
         try:
             print_check(f"pytest -s")
-        except:
+        except Exception:
             log("some test failed, please fix it locally")
             self.test_result = failed_result
         else:

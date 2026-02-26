@@ -2090,7 +2090,7 @@ class TestAgentClient(TestAgentClientBase):
                     tools=[],
                     tool_resources=tool_resources,
                 )
-            except:
+            except Exception:
                 print("exception here")
                 # except ValueError as e:
                 #     exception_message = e.args[0]
@@ -2119,7 +2119,7 @@ class TestAgentClient(TestAgentClientBase):
                 client.create_agent(
                     model="gpt-4o", name="my-agent", instructions="You are helpful agent", tools=[], tool_resources=tool_resources
                 )
-            except:
+            except Exception:
                 print("exception here")
                 # except ValueError as e:
                 #     exception_message = e.args[0]

@@ -47,7 +47,7 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
         if self.is_live:
             try:
                 await bsc.create_container(self.container_name)
-            except:
+            except Exception:
                 pass
 
     def _teardown(self, bsc):
@@ -55,7 +55,7 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
             loop = asyncio.get_event_loop()
             try:
                 loop.run_until_complete(bsc.delete_container(self.container_name))
-            except:
+            except Exception:
                 pass
 
     # --Helpers-----------------------------------------------------------------

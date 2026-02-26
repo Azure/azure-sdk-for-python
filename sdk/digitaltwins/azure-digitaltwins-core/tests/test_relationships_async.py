@@ -44,7 +44,7 @@ class TestDigitalTwinsRelationshipAsync(AzureRecordedTestCase):
             for model in models:
                 try:
                     await client.delete_model(model.id)
-                except:
+                except Exception:
                     pass
             models = []
             async for m in client.list_models():
@@ -58,14 +58,14 @@ class TestDigitalTwinsRelationshipAsync(AzureRecordedTestCase):
                         dt_id,
                         relationship['$relationshipId']
                     )
-            except:
+            except Exception:
                 pass
 
     async def _clean_up_twins(self, client):
         for dt_id in [ROOM_DIGITAL_TWIN, FLOOR_DIGITAL_TWIN, BUILDING_DIGITAL_TWIN]:
             try:
                 await client.delete_digital_twin(dt_id)
-            except:
+            except Exception:
                 pass
 
     async def _set_up_models(self, client, *delete_old):

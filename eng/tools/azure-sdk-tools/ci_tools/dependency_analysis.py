@@ -11,7 +11,7 @@ from typing import List, Set, Dict, Tuple, Any
 
 try:
     from collections import Sized
-except:
+except Exception:
     from collections.abc import Sized
 
 from packaging.requirements import Requirement
@@ -25,7 +25,7 @@ from pypi_tools.pypi import PyPIClient
 
 try:
     from jinja2 import Environment, FileSystemLoader
-except:
+except Exception:
     pass  # we only technically require this when outputting the rendered report
 
 
@@ -74,7 +74,7 @@ def get_lib_deps(base_dir: str) -> Tuple[Dict[str, Dict[str, Any]], Dict[str, Di
 
                 packages[lib_name]["deps"].append({"name": req_name, "version": str(spec)})
                 record_dep(dependencies, req_name, str(spec), lib_name)
-        except:
+        except Exception:
             print(f"Failed to parse setup.py or pyproject.toml at {lib_dir}")
     return packages, dependencies
 
@@ -106,7 +106,7 @@ def get_wheel_deps(wheel_dir: str) -> Tuple[Dict[str, Dict[str, Any]], Dict[str,
 
                     packages[lib_name]["deps"].append({"name": req_name, "version": str(spec)})
                     record_dep(dependencies, req_name, str(spec), lib_name)
-        except:
+        except Exception:
             print("Failed to parse METADATA from %s" % (whl_path))
     return packages, dependencies
 
@@ -205,7 +205,7 @@ def analyze_dependencies() -> None:
     if args.out:
         try:
             from jinja2 import Environment, FileSystemLoader
-        except:
+        except Exception:
             print(
                 "Jinja2 is required to render the dependency report. Please install with 'pip install Jinja2' to use this option."
             )

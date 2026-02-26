@@ -1596,7 +1596,7 @@ class TestStorageContainer(StorageRecordedTestCase):
             blob_client1.upload_blob(data)
             container.get_blob_client('blob2').upload_blob(data)
             container.get_blob_client('blob3').upload_blob(data)
-        except:
+        except Exception:
             pass
 
         # Act
@@ -1658,7 +1658,7 @@ class TestStorageContainer(StorageRecordedTestCase):
             blob = bsc.get_blob_client(container.container_name, 'blob1')
             blob.upload_blob(data, length=len(data))
             container.get_blob_client('blob2').upload_blob(data)
-        except:
+        except Exception:
             pass
 
         # Act
@@ -1748,7 +1748,7 @@ class TestStorageContainer(StorageRecordedTestCase):
             blob_client1.upload_blob(data)
             container.get_blob_client('blob2').upload_blob(data)
             container.get_blob_client('blob3').upload_blob(data)
-        except:
+        except Exception:
             pass
 
         # Act
@@ -1781,7 +1781,7 @@ class TestStorageContainer(StorageRecordedTestCase):
             blob_client1.upload_blob(data, overwrite=True, tags=tags)
             container.get_blob_client('blob2').upload_blob(data, overwrite=True, tags=tags)
             container.get_blob_client('blob3').upload_blob(data,  overwrite=True, tags=tags)
-        except:
+        except Exception:
             pass
 
         if self.is_live:
@@ -1878,7 +1878,7 @@ class TestStorageContainer(StorageRecordedTestCase):
             container.get_blob_client('blob1').upload_blob(data)
             container.get_blob_client('blob2').upload_blob(data)
             container.get_blob_client('blob3').upload_blob(data)
-        except:
+        except Exception:
             pass
 
         # Act
@@ -1911,7 +1911,7 @@ class TestStorageContainer(StorageRecordedTestCase):
             blob1_client.create_snapshot()
             container.get_blob_client('blob2').upload_blob(data)
             container.get_blob_client('blob3').upload_blob(data)
-        except:
+        except Exception:
             pass
         blobs = list(container.list_blobs(include='snapshots'))
         assert len(blobs) == 4  # 3 blobs + 1 snapshot

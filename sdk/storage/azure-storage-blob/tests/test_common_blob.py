@@ -100,7 +100,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         if os.path.isfile(file_path):
             try:
                 os.remove(file_path)
-            except:
+            except Exception:
                 pass
 
     # --Helpers-----------------------------------------------------------------

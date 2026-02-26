@@ -355,7 +355,7 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
             while not await self._handler.client_ready_async():
                 await asyncio.sleep(0.05)
             self._running = True
-        except:
+        except Exception:
             await self._close_handler()
             raise
 

@@ -96,7 +96,7 @@ class TestCallConnectionClient(unittest.TestCase):
         transferee = CommunicationUserIdentifier(self.transferee_user_id)
         try:
             response = call_connection.transfer_call_to_participant(user, transferee=transferee)
-        except:
+        except Exception:
             raised = True
             raise
 

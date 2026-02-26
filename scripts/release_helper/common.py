@@ -88,7 +88,7 @@ class IssueProcess:
     def target_date_format(self) -> str:
         try:
             return str(datetime.strptime(self.target_date, "%Y-%m-%d").strftime('%m-%d'))
-        except:
+        except Exception:
             return str(self.target_date)
 
     def get_issue_body(self) -> List[str]:

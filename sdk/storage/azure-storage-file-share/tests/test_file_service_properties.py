@@ -35,7 +35,7 @@ class TestFileServiceProperties(StorageRecordedTestCase):
         if os.path.isfile(FILE_PATH):
             try:
                 os.remove(FILE_PATH)
-            except:
+            except Exception:
                 pass
     # --Helpers-----------------------------------------------------------------
     def _assert_metrics_equal(self, metrics1, metrics2):

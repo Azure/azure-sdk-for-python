@@ -43,7 +43,7 @@ class TestStorageLargeBlockBlob(StorageRecordedTestCase):
         if self.is_live:
             try:
                 self.bsc.create_container(self.container_name)
-            except:
+            except Exception:
                 pass
 
     # --Helpers-----------------------------------------------------------------

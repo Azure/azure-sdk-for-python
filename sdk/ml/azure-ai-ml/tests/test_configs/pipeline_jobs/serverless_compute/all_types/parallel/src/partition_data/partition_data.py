@@ -102,7 +102,7 @@ args, _ = parser.parse_known_args()
 
 try:
     input_df = pd.read_csv(args.data_source)
-except:
+except Exception:
     raise Exception("Can not load input data as csv tabular data.")
 
 partition_cols = args.partition_keys.split(",")

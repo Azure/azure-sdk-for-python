@@ -40,7 +40,7 @@ class TestAsyncStorageClient(AsyncStorageRecordedTestCase):
     async def _delete_share(self, share):
         try:
             await share.delete_share()
-        except:
+        except Exception:
             pass
         return share
 

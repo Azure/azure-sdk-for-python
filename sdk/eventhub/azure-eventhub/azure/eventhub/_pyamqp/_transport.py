@@ -736,7 +736,7 @@ class WebSocketTransport(_AbstractTransport):
                 raise TimeoutError("Websocket receive timed out (%s)" % wte) from wte
             except (WebSocketConnectionClosedException, SSLError) as e:
                 raise ConnectionError("Websocket disconnected: %r" % e) from e
-        except:
+        except Exception:
             self._read_buffer = BytesIO(view[:length])
             raise
 

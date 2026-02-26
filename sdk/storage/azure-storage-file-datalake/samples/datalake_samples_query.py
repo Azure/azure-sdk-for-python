@@ -64,7 +64,7 @@ def main():
     filesystem_client = datalake_service_client.get_file_system_client(filesystem_name)
     try:
         filesystem_client.create_file_system()
-    except:
+    except Exception:
         pass
     # [START query]
     errors = []

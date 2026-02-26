@@ -158,7 +158,7 @@ class RegressionTest:
         test_branch_name = "{0}_tests".format(release_tag)
         try:
             git_checkout_branch(test_branch_name, dep_pkg_path)
-        except:
+        except Exception:
             # If git checkout failed for "tests" branch then checkout branch with release tag
             logging.info("Failed to checkout branch {}. Checking out release tagged git repo".format(test_branch_name))
             git_checkout_tag(release_tag, dep_pkg_path)

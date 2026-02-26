@@ -99,7 +99,7 @@ async def test_create_chat_thread_raises_error():
     raised = False
     try:
         await chat_client.create_chat_thread(topic=topic, thread_participants=participants)
-    except:
+    except Exception:
         raised = True
 
     assert raised == True
@@ -118,7 +118,7 @@ async def test_delete_chat_thread():
     raised = False
     try:
         await chat_client.delete_chat_thread(thread_id)
-    except:
+    except Exception:
         raised = True
 
     assert raised == False
@@ -137,7 +137,7 @@ async def test_list_chat_threads():
     chat_threads = None
     try:
         chat_threads = chat_client.list_chat_threads()
-    except:
+    except Exception:
         raised = True
 
     assert raised == False

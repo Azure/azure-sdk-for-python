@@ -40,7 +40,7 @@ class TestStorageClient(StorageRecordedTestCase):
     def _delete_share(self, share):
         try:
             share.delete_share()
-        except:
+        except Exception:
             pass
         return share
 

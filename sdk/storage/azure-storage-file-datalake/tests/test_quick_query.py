@@ -123,14 +123,14 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
         if not self.is_playback():
             try:
                 self.dsc.create_file_system(self.filesystem_name)
-            except:
+            except Exception:
                 pass
 
     def tearDown(self):
         if not self.is_playback():
             try:
                 self.dsc.delete_file_system(self.filesystem_name)
-            except:
+            except Exception:
                 pass
 
         return super(TestStorageQuickQuery, self).tearDown()

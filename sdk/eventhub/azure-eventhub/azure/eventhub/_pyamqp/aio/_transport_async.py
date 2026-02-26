@@ -517,7 +517,7 @@ class WebSocketTransportAsync(AsyncTransportMixin):  # pylint: disable=too-many-
                 # aiohttp websocket raises TypeError when a websocket disconnects, as it ends up
                 # reading None over the wire and cant convert to bytes.
                 raise ConnectionError("Websocket disconnected: %r" % te) from None
-        except:
+        except Exception:
             self._read_buffer = BytesIO(view[:length])
             raise
 

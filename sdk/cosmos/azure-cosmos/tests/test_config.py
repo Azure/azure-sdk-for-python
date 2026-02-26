@@ -29,7 +29,7 @@ try:
     import urllib3
 
     urllib3.disable_warnings()
-except:
+except Exception:
     print("no urllib3")
 
 SPLIT_TIMEOUT = 60*10  # timeout test at 10 minutes

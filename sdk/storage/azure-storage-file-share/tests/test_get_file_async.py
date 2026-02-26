@@ -51,7 +51,7 @@ class TestStorageGetFileAsync(AsyncStorageRecordedTestCase):
             try:
                 share = await self.fsc.create_share(self.share_name)
                 await share.create_directory(self.directory_name)
-            except:
+            except Exception:
                 pass
             byte_file = self.directory_name + '/' + self.byte_file
             file_client = ShareFileClient(
@@ -62,7 +62,7 @@ class TestStorageGetFileAsync(AsyncStorageRecordedTestCase):
             )
             try:
                 await file_client.upload_file(self.byte_data)
-            except:
+            except Exception:
                 pass
 
     class NonSeekableFile(object):

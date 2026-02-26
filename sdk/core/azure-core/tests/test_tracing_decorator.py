@@ -208,7 +208,7 @@ class TestDecorator(object):
             client = MockClient(http_request)
             try:
                 client.raising_exception()
-            except:
+            except Exception:
                 pass
             client.get_foo()
 

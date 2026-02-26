@@ -28,7 +28,7 @@ def get_live_storage_table_client(conn_str_env_key):
         )
         table_service_client.create_table_if_not_exists(table_name)
         return storage_connection_str, table_name
-    except:
+    except Exception:
         pytest.skip("Storage table client can't be created")
 
 
@@ -38,7 +38,7 @@ def remove_live_storage_table_client(storage_connection_str, table_name):
             storage_connection_str
         )
         table_service_client.delete_table(table_name)
-    except:
+    except Exception:
         warnings.warn(UserWarning("storage table teardown failed"))
 
 

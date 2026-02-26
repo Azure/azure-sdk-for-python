@@ -46,7 +46,7 @@ class TestStorageBlockBlobAsync(AsyncStorageRecordedTestCase):
         if self.is_live:
             try:
                 await self.bsc.create_container(self.container_name)
-            except:
+            except Exception:
                 pass
             await blob.upload_blob(self.source_blob_data, overwrite=True)
 

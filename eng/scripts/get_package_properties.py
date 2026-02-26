@@ -72,6 +72,6 @@ if __name__ == "__main__":
                             dependent_packages
                         )
                     )
-                except:
+                except Exception:
                     # Skip setup.py if the package cannot be parsed
                     pass

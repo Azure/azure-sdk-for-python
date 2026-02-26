@@ -362,7 +362,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin): # pylint: disable=too-many
             while not self._handler.client_ready():
                 time.sleep(0.05)
             self._running = True
-        except:
+        except Exception:
             self._close_handler()
             raise
 

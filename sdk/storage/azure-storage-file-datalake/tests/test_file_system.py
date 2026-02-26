@@ -50,7 +50,7 @@ class TestFileSystem(StorageRecordedTestCase):
             try:
                 for file_system in self.test_file_systems:
                     self.dsc.delete_file_system(file_system)
-            except:
+            except Exception:
                 pass
 
     # --Helpers-----------------------------------------------------------------
@@ -62,7 +62,7 @@ class TestFileSystem(StorageRecordedTestCase):
     def _create_file_system(self, file_system_prefix=TEST_FILE_SYSTEM_PREFIX):
         try:
             return self.dsc.create_file_system(self._get_file_system_reference(prefix=file_system_prefix))
-        except:
+        except Exception:
             pass
 
     def _is_almost_equal(self, first, second, delta):

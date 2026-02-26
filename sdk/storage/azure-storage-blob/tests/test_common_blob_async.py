@@ -111,7 +111,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         if os.path.isfile(file_path):
             try:
                 os.remove(file_path)
-            except:
+            except Exception:
                 pass
 
     def _get_container_reference(self):

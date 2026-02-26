@@ -74,7 +74,7 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
         if os.path.isfile(FILE_PATH):
             try:
                 os.remove(FILE_PATH)
-            except:
+            except Exception:
                 pass
 
     # --Helpers-----------------------------------------------------------------
@@ -84,7 +84,7 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
     async def _create_source_blob(self):
         try:
             await self.bsc.create_container(self.source_container_name)
-        except:
+        except Exception:
             pass
         blob_client = self.bsc.get_blob_client(self.source_container_name, self.get_resource_name(TEST_BLOB_PREFIX))
         await blob_client.upload_blob(b'abcdefghijklmnop' * 32, overwrite=True)
@@ -99,7 +99,7 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
             if not self.is_playback():
                 try:
                     await fsc.create_share(share_name)
-                except:
+                except Exception:
                     pass
 
     async def _create_file(self, storage_account_name, storage_account_key, file_name=None):

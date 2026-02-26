@@ -128,7 +128,7 @@ def clear_queues(servicebus_management_client):
     for queue in queues:
         try:
             servicebus_management_client.delete_queue(queue.name)
-        except:
+        except Exception:
             pass
 
 
@@ -137,5 +137,5 @@ def clear_topics(servicebus_management_client):
     for topic in topics:
         try:
             servicebus_management_client.delete_topic(topic.name)
-        except:
+        except Exception:
             pass

@@ -46,7 +46,7 @@ def get_release_tag(dep_pkg_name, isLatest):
     try:
         versions = [str(v) for v in client.get_ordered_versions(dep_pkg_name)]
         logging.info("Versions available on PyPI for {0} are: {1}".format(dep_pkg_name, versions))
-    except:
+    except Exception:
         logging.error("Package {} is not available on PyPI".format(dep_pkg_name))
         return None
 
@@ -100,7 +100,7 @@ def git_checkout_branch(branch_name, working_dir):
     run_check_call(["git", "fetch", "origin", branch_name], working_dir)
     try:
         run_check_call(["git", "branch", branch_name, "FETCH_HEAD"], working_dir)
-    except:
+    except Exception:
         logging.error("Failed to create branch. But this can happen if a branch already exists so ignoring this error")
     logging.info("checkout git repo with branch {}".format(branch_name))
     commands = ["git", "checkout", branch_name]

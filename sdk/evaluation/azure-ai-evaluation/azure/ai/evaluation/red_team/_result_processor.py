@@ -1029,7 +1029,7 @@ class ResultProcessor:
                 if "attack_success" in results_df.columns
                 else 0.0
             )
-        except:
+        except Exception:
             self.logger.debug("All values in overall attack success array were None or NaN, setting ASR to NaN")
             overall_asr = math.nan
 
@@ -1059,7 +1059,7 @@ class ResultProcessor:
                     if "attack_success" in group.columns
                     else 0.0
                 )
-            except:
+            except Exception:
                 self.logger.debug(f"All values in attack success array for {risk} were None or NaN, setting ASR to NaN")
                 asr = math.nan
 
@@ -1104,7 +1104,7 @@ class ResultProcessor:
                         if "attack_success" in complexity_df.columns
                         else 0.0
                     )
-                except:
+                except Exception:
                     self.logger.debug(
                         f"All values in {complexity} attack success array were None or NaN, setting ASR to NaN"
                     )
@@ -1203,7 +1203,7 @@ class ResultProcessor:
                             if "attack_success" in complexity_risk_df.columns
                             else 0.0
                         )
-                    except:
+                    except Exception:
                         self.logger.debug(
                             f"All values in {complexity} attack success array for {risk_key} were None or NaN, setting ASR to NaN"
                         )
@@ -1243,7 +1243,7 @@ class ResultProcessor:
                             if "attack_success" in converter_group.columns
                             else 0.0
                         )
-                    except:
+                    except Exception:
                         self.logger.debug(
                             f"All values in attack success array for {converter_name} in {complexity}/{risk_key} were None or NaN, setting ASR to NaN"
                         )

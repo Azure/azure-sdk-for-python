@@ -43,7 +43,7 @@ class TestStorageLogging(StorageRecordedTestCase):
         if self.is_live:
             try:
                 bsc.create_container(self.container_name)
-            except:
+            except Exception:
                 pass
             source_blob.upload_blob(self.source_blob_data, overwrite=True)
 

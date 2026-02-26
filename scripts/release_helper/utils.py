@@ -53,7 +53,7 @@ def get_last_released_date(package_name: str) -> (str, datetime):
         if latest_release_date > latest_stable_date:
             return str(latest_release), to_datetime(latest_release_date)
         return str(latest_stable), to_datetime(latest_stable_date)
-    except:
+    except Exception:
         return '', to_datetime('1970-01-01T00:00:00')
 
 # get python release pipeline link from web

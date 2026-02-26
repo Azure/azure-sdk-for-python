@@ -164,7 +164,7 @@ class CommunicationTokenCredential(object):
                     self._token = new_token
                     self._some_thread_refreshing = False
                     self._lock.notify_all()
-            except:
+            except Exception:
                 async with self._lock:
                     self._some_thread_refreshing = False
                     self._lock.notify_all()

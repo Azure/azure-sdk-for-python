@@ -40,7 +40,7 @@ class TestStorageGetBlob(StorageRecordedTestCase):
             container = self.bsc.get_container_client(self.container_name)
             try:
                 container.create_container()
-            except:
+            except Exception:
                 pass
 
         self.byte_blob = self.get_resource_name('byteblob')

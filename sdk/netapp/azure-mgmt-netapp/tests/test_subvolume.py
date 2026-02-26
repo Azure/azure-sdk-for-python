@@ -57,7 +57,7 @@ def wait_for_no_subvolume(client, rg, account_name, pool_name, volume_name, subv
         try:
             vol = client.subvolumes.get(rg, account_name, pool_name, volume_name, subvolume_name)
             print("\tGot subvolume. Still waiting. State = " + vol.provisioning_state)
-        except:
+        except Exception:
             # not found is an exception case (status code 200 expected)
             # but is what we are waiting for
             break

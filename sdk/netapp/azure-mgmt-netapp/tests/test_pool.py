@@ -47,7 +47,7 @@ def wait_for_no_pool(client, rg, acc_name, pool_name):
     while retry < 100:
         try:
             client.pools.get(rg, acc_name, pool_name)
-        except:
+        except Exception:
             # not found is an exception case (status code 200 expected)
             # and is actually what we are waiting for
             break

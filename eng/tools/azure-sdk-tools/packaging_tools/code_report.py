@@ -53,7 +53,7 @@ def create_report(module_name: str) -> Dict[str, Any]:
 
     try:
         report["client"] = client_name
-    except:
+    except Exception:
         report["client"] = []
 
     # Look for models first

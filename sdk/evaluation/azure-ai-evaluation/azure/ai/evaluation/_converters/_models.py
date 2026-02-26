@@ -371,7 +371,7 @@ def break_tool_call_into_messages(tool_call: ToolCall, run_id: str) -> List[Mess
                 "name": tool_call.details.type,
                 "arguments": arguments,
             }
-        except:
+        except Exception:
             return messages
 
     # We format it into an assistant message, where the content is a singleton list of the content object.
@@ -396,7 +396,7 @@ def break_tool_call_into_messages(tool_call: ToolCall, run_id: str) -> List[Mess
                 output = tool_call.details.azure_ai_search["output"]
             elif tool_call.details.type == _FABRIC_DATAAGENT:
                 output = tool_call.details.fabric_dataagent["output"]
-        except:
+        except Exception:
             return messages
 
     # Now, onto the tool result, which only includes the result of the function call.

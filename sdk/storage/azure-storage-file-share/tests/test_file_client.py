@@ -39,7 +39,7 @@ class TestStorageFileClient(StorageRecordedTestCase):
         if os.path.isfile(FILE_PATH):
             try:
                 os.remove(FILE_PATH)
-            except:
+            except Exception:
                 pass
     # --Helpers-----------------------------------------------------------------
     def validate_standard_account_endpoints(self, service, service_type, protocol='https'):

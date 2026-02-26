@@ -23,14 +23,14 @@ try:
         AccountSasPermissions,
         ResourceTypes,
     )
-except:
+except Exception:
     try:
         from azure.storage.queue import (
             generate_account_sas,
             AccountSasPermissions,
             ResourceTypes,
         )
-    except:
+    except Exception:
         from azure.storage.fileshare import (
             generate_account_sas,
             AccountSasPermissions,

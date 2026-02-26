@@ -30,7 +30,7 @@ class TestDigitalTwinsModelsAsync(AzureRecordedTestCase):
             for model in models:
                 try:
                     await client.delete_model(model.id)
-                except:
+                except Exception:
                     pass
             models = []
             async for m in client.list_models():

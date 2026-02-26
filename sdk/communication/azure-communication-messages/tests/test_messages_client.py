@@ -48,7 +48,7 @@ class TestNotificationMessageClientForText(MessagesRecordedTestCase):
             with message_client:
                 message_responses = message_client.send(text_options)
                 message_response = message_responses.receipts[0]
-        except:
+        except Exception:
             raised = True
             raise
         assert raised is False
@@ -74,7 +74,7 @@ class TestNotificationMessageClientForText(MessagesRecordedTestCase):
             with message_client:
                 message_responses = message_client.send(template_options)
                 message_response = message_responses.receipts[0]
-        except:
+        except Exception:
             raised = True
             raise
         assert raised is False
@@ -109,7 +109,7 @@ class TestNotificationMessageClientForText(MessagesRecordedTestCase):
             with message_client:
                 message_responses = message_client.send(template_options)
                 message_response = message_responses.receipts[0]
-        except:
+        except Exception:
             raised = True
             raise
         assert raised is False
@@ -134,7 +134,7 @@ class TestNotificationMessageClientForText(MessagesRecordedTestCase):
             with message_client:
                 message_responses = message_client.send(template_options)
                 message_response = message_responses.receipts[0]
-        except:
+        except Exception:
             raised = True
             raise
         assert raised is False
@@ -151,7 +151,7 @@ class TestNotificationMessageClientForText(MessagesRecordedTestCase):
         try:
             with message_client:
                 media_stream = message_client.download_media(input_media_id)
-        except:
+        except Exception:
             raised = True
             raise
         assert raised is False

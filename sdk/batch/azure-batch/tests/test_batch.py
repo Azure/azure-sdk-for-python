@@ -1497,5 +1497,5 @@ class TestBatch(AzureMgmtRecordedTestCase):
         finally:
             try:
                 await wrap_result(client.delete_job(job_id))
-            except:
+            except Exception:
                 pass

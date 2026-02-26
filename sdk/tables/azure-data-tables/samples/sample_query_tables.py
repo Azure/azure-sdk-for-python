@@ -77,7 +77,7 @@ class QueryTables(object):
             for table in tables:
                 try:
                     ts.delete_table(table_name=table)
-                except:
+                except Exception:
                     pass
 
 

@@ -94,7 +94,7 @@ def _test_response_set_attrs(old_response, new_response):
             # if we can set it on the old request, we want to
             # be able to set it on the new
             setattr(old_response, attr, "foo")
-        except:
+        except Exception:
             pass
         else:
             setattr(new_response, attr, "foo")

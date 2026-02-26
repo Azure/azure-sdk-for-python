@@ -66,7 +66,7 @@ class TestDirectory(StorageRecordedTestCase):
                 self.dsc.delete_file_system(self.file_system_name)
                 for file_system in self.dsc.list_file_systems():
                     self.dsc.delete_file_system(file_system.name)
-            except:
+            except Exception:
                 pass
 
     # --Helpers-----------------------------------------------------------------

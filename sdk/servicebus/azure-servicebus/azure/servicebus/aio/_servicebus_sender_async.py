@@ -219,7 +219,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                 self._max_batch_size_on_link = MAX_BATCH_SIZE_PREMIUM
             else:
                 self._max_batch_size_on_link = MAX_BATCH_SIZE_STANDARD
-        except:
+        except Exception:
             await self._close_handler()
             raise
 
