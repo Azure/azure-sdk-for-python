@@ -179,7 +179,7 @@ class BaseSampleExecutor:
         test_instance,
         sample_path: str,
         *,
-        env_var_mapping: dict[str, str] = {},
+        env_vars: dict[str, str] = {},
         allowed_llm_validation_failures: Optional[set[str]] = None,
         **kwargs,
     ):
@@ -191,13 +191,9 @@ class BaseSampleExecutor:
 
         # Prepare environment variables
         self.env_vars = {}
-        for sample_var, test_var in env_var_mapping.items():
-            if not isinstance(test_var, str):
-                continue
-            value = kwargs.pop(test_var, None)
-            if value is not None and isinstance(value, str):
-                self.env_vars[sample_var] = value
-
+        for key, val in env_vars.items():
+            if isinstance(key, str) and isinstance(val, str):
+                self.env_vars[key] = val
         # Any remaining ALL_CAPS string kwargs are treated as env vars for the sample.
         # This supports decorators/tests passing env-var overrides via **kwargs.
         env_var_overrides: dict[str, str] = {}
@@ -481,14 +477,16 @@ class SyncSampleExecutor(BaseSampleExecutor):
         test_instance,
         sample_path: str,
         *,
-        env_var_mapping: dict[str, str] = {},
+        env_vars: Optional[dict[str, str]] = None,
         allowed_llm_validation_failures: Optional[set[str]] = None,
         **kwargs,
     ):
+        if env_vars is None:
+            env_vars = {}
         super().__init__(
             test_instance,
             sample_path,
-            env_var_mapping=env_var_mapping,
+            env_vars=env_vars,
             allowed_llm_validation_failures=allowed_llm_validation_failures,
             **kwargs,
         )
@@ -604,14 +602,14 @@ class AsyncSampleExecutor(BaseSampleExecutor):
         test_instance,
         sample_path: str,
         *,
-        env_var_mapping: dict[str, str] = {},
+        env_vars: dict[str, str] = {},
         allowed_llm_validation_failures: Optional[set[str]] = None,
         **kwargs,
     ):
         super().__init__(
             test_instance,
             sample_path,
-            env_var_mapping=env_var_mapping,
+            env_vars=env_vars,
             allowed_llm_validation_failures=allowed_llm_validation_failures,
             **kwargs,
         )
