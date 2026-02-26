@@ -73,7 +73,7 @@ with (
     print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
 
     response = openai_client.responses.create(
-        input="Use the OpenAPI tool to print out, what is the weather in Seattle, WA today.",
+        input="Use the OpenAPI tool to print out, what is the weather in Seattle today.",
         extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
     )
     print(f"Agent response: {response.output_text}")

@@ -4,6 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 """Shared base code for sample tests - sync dependencies only."""
+import ast
 import os
 import sys
 import re
@@ -31,6 +32,7 @@ from azure.core.credentials_async import AsyncTokenCredential
 from devtools_testutils.fake_credentials import FakeTokenCredential
 from devtools_testutils.fake_credentials_async import AsyncFakeCredential
 from devtools_testutils import is_live
+from devtools_testutils import add_general_string_sanitizer
 from azure.ai.projects import AIProjectClient
 
 # Fixed timestamp for playback mode (Nov 2023).
@@ -450,6 +452,102 @@ class BaseSampleExecutor:
                 print(f"\nValidation passed! Print statements logged to: {log_file}")
             print(f"Reason: {test_report['reason']}")
 
+    def _resolve_local_module_file(
+        self,
+        *,
+        current_file: str,
+        module_name: str,
+        level: int,
+    ) -> Optional[str]:
+        sample_dir_abs = os.path.abspath(self.sample_dir)
+
+        def _candidate_from_base(base_path: str) -> Optional[str]:
+            candidates = [f"{base_path}.py", os.path.join(base_path, "__init__.py")]
+            for candidate in candidates:
+                candidate_abs = os.path.abspath(candidate)
+                if not os.path.isfile(candidate_abs):
+                    continue
+                try:
+                    if os.path.commonpath([sample_dir_abs, candidate_abs]) != sample_dir_abs:
+                        continue
+                except ValueError:
+                    continue
+                return candidate_abs
+            return None
+
+        if level > 0:
+            base_dir = os.path.dirname(os.path.abspath(current_file))
+            for _ in range(level - 1):
+                base_dir = os.path.dirname(base_dir)
+
+            relative_base = base_dir
+            if module_name:
+                relative_base = os.path.join(base_dir, *module_name.split("."))
+            resolved = _candidate_from_base(relative_base)
+            if resolved:
+                return resolved
+
+        if module_name:
+            absolute_base = os.path.join(sample_dir_abs, *module_name.split("."))
+            resolved = _candidate_from_base(absolute_base)
+            if resolved:
+                return resolved
+
+        return None
+
+    def _collect_sample_code_files_for_code_interpreter(self) -> list[str]:
+        """Collect sample source files to attach for code interpreter validation.
+
+        Starts from ``self.sample_path`` and recursively walks local Python imports
+        (both ``import`` and ``from ... import ...``) that resolve to files under
+        the sample directory. The returned list always includes the entry sample
+        file first, followed by discovered local dependencies, each included once.
+
+        Returns:
+            List of absolute file paths for local sample code files.
+        """
+        visited: set[str] = set()
+        discovered: list[str] = []
+        pending: list[str] = [os.path.abspath(self.sample_path)]
+
+        while pending:
+            current_file = pending.pop()
+            if current_file in visited:
+                continue
+            if not os.path.isfile(current_file):
+                continue
+
+            visited.add(current_file)
+            discovered.append(current_file)
+
+            try:
+                with open(current_file, "r", encoding="utf-8") as source_file:
+                    source_code = source_file.read()
+                parsed = ast.parse(source_code)
+            except Exception:  # pylint: disable=broad-exception-caught
+                continue
+
+            for node in ast.walk(parsed):
+                if isinstance(node, ast.Import):
+                    for alias in node.names:
+                        resolved = self._resolve_local_module_file(
+                            current_file=current_file,
+                            module_name=alias.name,
+                            level=0,
+                        )
+                        if resolved and resolved not in visited:
+                            pending.append(resolved)
+                elif isinstance(node, ast.ImportFrom):
+                    resolved = self._resolve_local_module_file(
+                        current_file=current_file,
+                        module_name=node.module or "",
+                        level=node.level,
+                    )
+                    if resolved and resolved not in visited:
+                        pending.append(resolved)
+
+        return discovered
+
 
 class SamplePathPasser:
     """Decorator for passing sample path to test functions."""
@@ -555,6 +653,7 @@ class SyncSampleExecutor(BaseSampleExecutor):
         instructions: str,
         project_endpoint: str,
         model: str = "gpt-4o",
+        use_code_interpreter: bool = True,
     ):
         """Validate captured print output using synchronous OpenAI client."""
         if not instructions or not instructions.strip():
@@ -573,10 +672,62 @@ class SyncSampleExecutor(BaseSampleExecutor):
             project_client.get_openai_client() as openai_client,
         ):
             response = None
+            uploaded_file_ids: list[str] = []
             try:
-                response = openai_client.responses.create(
-                    **self._get_validation_request_params(instructions, model=model)
-                )
+                request_params = self._get_validation_request_params(instructions, model=model)
+
+                if use_code_interpreter:
+                    sample_code_files = self._collect_sample_code_files_for_code_interpreter()
+                    code_interpreter_file_ids: list[str]
+
+                    if is_live():
+                        # Keep upload/delete out of recordings because multipart payloads contain
+                        # full file bytes and become brittle whenever sample files change.
+                        #
+                        # Since upload calls are skipped from recording, playback cannot discover
+                        # runtime file IDs via `files.create`. To keep `responses.create` replayable,
+                        # sanitize each live file ID to a deterministic placeholder and reuse the
+                        # same placeholders in playback mode below.
+                        for file_path in sample_code_files:
+                            with open(file_path, "rb") as source_file:
+                                uploaded = openai_client.files.create(
+                                    file=source_file,
+                                    purpose="assistants",
+                                    extra_headers={"x-recording-skip": "request-response"},
+                                )
+
+                            uploaded_file_id = getattr(uploaded, "id", None)
+                            if isinstance(uploaded_file_id, str) and uploaded_file_id:
+                                uploaded_file_ids.append(uploaded_file_id)
+                                scrubbed_file_id = f"code_interpreter_file_{len(uploaded_file_ids)}"
+                                add_general_string_sanitizer(
+                                    function_scoped=True,
+                                    target=uploaded_file_id,
+                                    value=scrubbed_file_id,
+                                )
+
+                        code_interpreter_file_ids = uploaded_file_ids
+                    else:
+                        # Playback counterpart of the live sanitization mapping above.
+                        # Must match the same deterministic sequence used during recording.
+                        code_interpreter_file_ids = [
+                            f"code_interpreter_file_{index}" for index, _ in enumerate(sample_code_files, start=1)
+                        ]
+
+                    code_interpreter_container: dict[str, object] = {
+                        "type": "auto",
+                    }
+                    if code_interpreter_file_ids:
+                        code_interpreter_container["file_ids"] = code_interpreter_file_ids
+
+                    request_params["tools"] = [
+                        {
+                            "type": "code_interpreter",
+                            "container": code_interpreter_container,
+                        }
+                    ]
+
+                response = openai_client.responses.create(**request_params)
                 test_report = json.loads(response.output_text)
             except Exception as e:  # pylint: disable=broad-exception-caught
                 response_output_text = None
@@ -590,6 +741,17 @@ class SyncSampleExecutor(BaseSampleExecutor):
                     reason += f". Raw output_text: {response_output_text}"
 
                 test_report = {"correct": False, "reason": reason}
+            finally:
+                if use_code_interpreter and is_live():
+                    # Skip recording delete operations for the same reason as uploads.
+                    for uploaded_file_id in uploaded_file_ids:
+                        try:
+                            openai_client.files.delete(
+                                uploaded_file_id,
+                                extra_headers={"x-recording-skip": "request-response"},
+                            )
+                        except Exception:  # pylint: disable=broad-exception-caught
+                            pass
 
             self._assert_validation_result(test_report)
 
@@ -673,6 +835,7 @@ class AsyncSampleExecutor(BaseSampleExecutor):
         instructions: str,
         project_endpoint: str,
         model: str = "gpt-4o",
+        use_code_interpreter: bool = True,
     ):
         """Validate captured print output using asynchronous OpenAI client."""
         if not instructions or not instructions.strip():
@@ -691,10 +854,62 @@ class AsyncSampleExecutor(BaseSampleExecutor):
             project_client.get_openai_client() as openai_client,
         ):
             response = None
+            uploaded_file_ids: list[str] = []
             try:
-                response = await openai_client.responses.create(
-                    **self._get_validation_request_params(instructions, model=model)
-                )
+                request_params = self._get_validation_request_params(instructions, model=model)
+
+                if use_code_interpreter:
+                    sample_code_files = self._collect_sample_code_files_for_code_interpreter()
+                    code_interpreter_file_ids: list[str]
+
+                    if is_live():
+                        # Keep upload/delete out of recordings because multipart payloads contain
+                        # full file bytes and become brittle whenever sample files change.
+                        #
+                        # Since upload calls are skipped from recording, playback cannot discover
+                        # runtime file IDs via `files.create`. To keep `responses.create` replayable,
+                        # sanitize each live file ID to a deterministic placeholder and reuse the
+                        # same placeholders in playback mode below.
+                        for file_path in sample_code_files:
+                            with open(file_path, "rb") as source_file:
+                                uploaded = await openai_client.files.create(
+                                    file=source_file,
+                                    purpose="assistants",
+                                    extra_headers={"x-recording-skip": "request-response"},
+                                )
+
+                            uploaded_file_id = getattr(uploaded, "id", None)
+                            if isinstance(uploaded_file_id, str) and uploaded_file_id:
+                                uploaded_file_ids.append(uploaded_file_id)
+                                scrubbed_file_id = f"code_interpreter_file_{len(uploaded_file_ids)}"
+                                add_general_string_sanitizer(
+                                    function_scoped=True,
+                                    target=uploaded_file_id,
+                                    value=scrubbed_file_id,
+                                )
+
+                        code_interpreter_file_ids = uploaded_file_ids
+                    else:
+                        # Playback counterpart of the live sanitization mapping above.
+                        # Must match the same deterministic sequence used during recording.
+                        code_interpreter_file_ids = [
+                            f"code_interpreter_file_{index}" for index, _ in enumerate(sample_code_files, start=1)
+                        ]
+
+                    code_interpreter_container: dict[str, object] = {
+                        "type": "auto",
+                    }
+                    if code_interpreter_file_ids:
+                        code_interpreter_container["file_ids"] = code_interpreter_file_ids
+
+                    request_params["tools"] = [
+                        {
+                            "type": "code_interpreter",
+                            "container": code_interpreter_container,
+                        }
+                    ]
+
+                response = await openai_client.responses.create(**request_params)
                 test_report = json.loads(response.output_text)
             except Exception as e:  # pylint: disable=broad-exception-caught
                 response_output_text = None
@@ -708,6 +923,17 @@ class AsyncSampleExecutor(BaseSampleExecutor):
                     reason += f". Raw output_text: {response_output_text}"
 
                 test_report = {"correct": False, "reason": reason}
+            finally:
+                if use_code_interpreter and is_live():
+                    # Skip recording delete operations for the same reason as uploads.
+                    for uploaded_file_id in uploaded_file_ids:
+                        try:
+                            await openai_client.files.delete(
+                                uploaded_file_id,
+                                extra_headers={"x-recording-skip": "request-response"},
+                            )
+                        except Exception:  # pylint: disable=broad-exception-caught
+                            pass
 
             self._assert_validation_result(test_report)
 
@@ -751,8 +977,6 @@ def _register_env_var_sanitizers(
     """Register function-scoped sanitizers to replace live env-var values with playback values."""
     if not _is_live_mode():
         return
-
-    from devtools_testutils import add_general_string_sanitizer
 
     for env_key, live_value in resolved_env_vars.items():
         playback_value = playback_values.get(env_key)

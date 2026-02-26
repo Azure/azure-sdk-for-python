@@ -190,12 +190,10 @@ def get_fine_tuning_sample_env_vars(
                 continue
             if not target_value or not scrubbed_value or target_value == scrubbed_value:
                 continue
-            try:
-                add_general_string_sanitizer(
-                    value=scrubbed_value,
-                    target=target_value,
-                )
-            except Exception:  # pylint: disable=broad-exception-caught
-                pass
+            add_general_string_sanitizer(
+                function_scoped=True,
+                value=scrubbed_value,
+                target=target_value,
+            )
 
     return mapping

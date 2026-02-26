@@ -42,7 +42,7 @@ servicePreparer = functools.partial(
     EnvironmentVariableLoader,
     "",
     azure_ai_project_endpoint="https://sanitized-account-name.services.ai.azure.com/api/projects/sanitized-project-name",
-    azure_ai_model_deployment_name="sanitized-gpt-agent",
+    azure_ai_model_deployment_name="sanitized-model-deployment-name",
     image_generation_model_deployment_name="sanitized-gpt-image",
     container_app_resource_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/00000/providers/Microsoft.App/containerApps/00000",
     container_ingress_subdomain_suffix="00000",
