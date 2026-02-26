@@ -54,6 +54,9 @@ def _should_refresh_token(token: Optional[Union["AccessToken", "AccessTokenInfo"
         return True
 
     now = time.time()
+    if token.expires_on <= now:
+        return True
+
     refresh_on = getattr(token, "refresh_on", None)
 
     if refresh_on:
