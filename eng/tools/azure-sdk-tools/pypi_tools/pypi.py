@@ -61,8 +61,11 @@ class PyPIClient:
         project = self.project(package_name)
 
         versions: List[Version] = []
-        for package_version in project["releases"].keys():
+        for package_version, files in project["releases"].items():
             try:
+                # Skip yanked versions (no files or all files yanked)
+                if not files or all(f.get("yanked", False) for f in files):
+                    continue
                 versions.append(parse(package_version))
             except InvalidVersion as e:
                 logging.warn(f"Invalid version {package_version} for package {package_name}")
