@@ -19,7 +19,7 @@ evaluationsPreparer = functools.partial(
     EnvironmentVariableLoader,
     "",
     azure_ai_project_endpoint="https://sanitized-account-name.services.ai.azure.com/api/projects/sanitized-project-name",
-    azure_ai_model_deployment_name="gpt-4o",
+    azure_ai_model_deployment_name="sanitized-model-deployment-name",
     azure_ai_agent_name="sanitized-agent-name",
 )
 
@@ -41,9 +41,6 @@ Respond with true if:
 Always respond with `reason` indicating the reason for the response."""
 
 
-@pytest.mark.skip(
-    reason="Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema"
-)
 class TestSamplesEvaluations(AzureRecordedTestCase):
     """
     Tests for evaluation samples.
@@ -112,20 +109,12 @@ class TestSamplesEvaluations(AzureRecordedTestCase):
         "sample_path",
         get_sample_paths(
             "evaluations",
-            samples_to_test=[
-                "sample_agent_evaluation.py",
-                "sample_model_evaluation.py",
-                "sample_agent_response_evaluation.py",
-                "sample_evaluations_builtin_with_inline_data.py",
-                "sample_eval_catalog.py",
-                "sample_eval_catalog_code_based_evaluators.py",
-                "sample_eval_catalog_prompt_based_evaluators.py",
-                "sample_evaluation_compare_insight.py",
-                "sample_agent_response_evaluation_with_function_tool.py",
-                "sample_redteam_evaluations.py",
-                "sample_evaluations_graders.py",
+            samples_to_skip=[
                 "sample_evaluations_ai_assisted.py",
-                "sample_evaluation_cluster_insight.py",
+                "sample_evaluations_builtin_with_inline_data_oai.py",
+                "sample_evaluations_builtin_with_traces.py",
+                "sample_evaluations_score_model_grader_with_image.py",
+                "sample_scheduled_evaluations.py",
             ],
         ),
     )
@@ -148,21 +137,10 @@ class TestSamplesEvaluations(AzureRecordedTestCase):
         "sample_path",
         get_sample_paths(
             "evaluations/agentic_evaluators",
-            samples_to_test=[
-                "sample_coherence.py",
-                "sample_fluency.py",
-                "sample_groundedness.py",
+            samples_to_skip=[
                 "sample_intent_resolution.py",
-                "sample_relevance.py",
-                "sample_response_completeness.py",
-                "sample_task_adherence.py",
-                "sample_task_completion.py",
                 "sample_task_navigation_efficiency.py",
-                "sample_tool_call_accuracy.py",
                 "sample_tool_call_success.py",
-                "sample_tool_input_accuracy.py",
-                "sample_tool_output_utilization.py",
-                "sample_tool_selection.py",
             ],
         ),
     )

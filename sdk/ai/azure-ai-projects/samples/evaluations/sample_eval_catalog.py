@@ -34,6 +34,7 @@ from azure.ai.projects.models import (
     EvaluatorMetric,
     EvaluatorMetricDirection,
     EvaluatorMetricType,
+    FoundryFeaturesOptInKeys,
 )
 
 from pprint import pprint
@@ -47,6 +48,7 @@ with (
     DefaultAzureCredential() as credential,
     AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
 ):
+    preview_headers = {"Foundry-Features": FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW}
 
     print("Creating Prompt based custom evaluator version (object style)")
     evaluator_version = EvaluatorVersion(
@@ -99,6 +101,7 @@ with (
     prompt_evaluator = project_client.beta.evaluators.create_version(
         name="my_custom_evaluator_code_prompt_based",
         evaluator_version=evaluator_version,
+        headers=preview_headers,
     )
     pprint(prompt_evaluator)
 
@@ -136,6 +139,7 @@ with (
     code_evaluator = project_client.beta.evaluators.create_version(
         name="my_custom_evaluator_code_based",
         evaluator_version=evaluator_version,
+        headers=preview_headers,
     )
     pprint(code_evaluator)
 
@@ -143,6 +147,7 @@ with (
     code_evaluator_latest = project_client.beta.evaluators.get_version(
         name=code_evaluator.name,
         version=code_evaluator.version,
+        headers=preview_headers,
     )
     pprint(code_evaluator_latest)
 
@@ -150,6 +155,7 @@ with (
     prompt_evaluator_latest = project_client.beta.evaluators.get_version(
         name=prompt_evaluator.name,
         version=prompt_evaluator.version,
+        headers=preview_headers,
     )
     pprint(prompt_evaluator_latest)
 
@@ -162,6 +168,7 @@ with (
             "display_name": "my_custom_evaluator_updated",
             "description": "Custom evaluator description changed",
         },
+        headers=preview_headers,
     )
     pprint(updated_evaluator)
 
@@ -169,23 +176,25 @@ with (
     project_client.beta.evaluators.delete_version(
         name=code_evaluator_latest.name,
         version=code_evaluator_latest.version,
+        headers=preview_headers,
     )
 
     project_client.beta.evaluators.delete_version(
         name=prompt_evaluator_latest.name,
         version=prompt_evaluator_latest.version,
+        headers=preview_headers,
     )
 
     print("Getting list of builtin evaluator versions")
-    evaluators = project_client.beta.evaluators.list_latest_versions(type="builtin")
+    evaluators = project_client.beta.evaluators.list_latest_versions(type="builtin", headers=preview_headers)
     print("List of builtin evaluator versions")
-    for evaluator in evaluators:
+    for evaluator in next(evaluators.by_page()):
         pprint(evaluator)
 
     print("Getting list of custom evaluator versions")
-    evaluators = project_client.beta.evaluators.list_latest_versions(type="custom")
+    evaluators = project_client.beta.evaluators.list_latest_versions(type="custom", headers=preview_headers)
     print("List of custom evaluator versions")
-    for evaluator in evaluators:
+    for evaluator in next(evaluators.by_page()):
         pprint(evaluator)
 
     print("Sample completed successfully")
