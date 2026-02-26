@@ -196,17 +196,10 @@ class _ContentUnderstandingClientOperationsMixin(
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword model_deployments: Override the resource-level default mapping of supported large
-         language model (LLM) names to model deployment names in Microsoft Foundry. Dictionary of string
-         to string
-         (LLM model name -> model deployment name in Microsoft Foundry). Keys must be supported model
-         names for the analyzer you are calling (get them via Get Analyzer, GET /analyzers/{analyzerId},
-         response.supportedModels).
-         Values are model deployment names in your Microsoft Foundry resource.
-         To get more information for a quickstart for REST API, see
-         `https://aka.ms/cudoc-quickstart-rest <https://aka.ms/cudoc-quickstart-rest>`_.
-         Example: { "gpt-4.1": "myGpt41Deployment", "text-embedding-3-large":
-         "myTextEmbedding3LargeDeployment" }. Default value is None.
+        :keyword model_deployments: Specify the default mapping of model names to LLM/embedding
+         deployments in Microsoft Foundry. For details and current semantics, see
+         `https://aka.ms/cudoc-quickstart-rest <https://aka.ms/cudoc-quickstart-rest>`_. Default value
+         is None.
         :paramtype model_deployments: dict[str, str]
         :return: An instance of AsyncLROPoller that returns AnalysisResult. The AnalysisResult is
          compatible with MutableMapping
@@ -311,17 +304,10 @@ class _ContentUnderstandingClientOperationsMixin(
         :keyword processing_location: The location where the data may be processed.  Defaults to
          global. Known values are: "geography", "dataZone", and "global". Default value is None.
         :paramtype processing_location: str or ~azure.ai.contentunderstanding.models.ProcessingLocation
-        :keyword model_deployments: Override the resource-level default mapping of supported large
-         language model (LLM) names to model deployment names in Microsoft Foundry. Dictionary of string
-         to string
-         (LLM model name -> model deployment name in Microsoft Foundry). Keys must be supported model
-         names for the analyzer you are calling (get them via Get Analyzer, GET /analyzers/{analyzerId},
-         response.supportedModels).
-         Values are model deployment names in your Microsoft Foundry resource.
-         To get more information for a quickstart for REST API, see
-         `https://aka.ms/cudoc-quickstart-rest <https://aka.ms/cudoc-quickstart-rest>`_.
-         Example: { "gpt-4.1": "myGpt41Deployment", "text-embedding-3-large":
-         "myTextEmbedding3LargeDeployment" }. Default value is None.
+        :keyword model_deployments: Specify the default mapping of model names to LLM/embedding
+         deployments in Microsoft Foundry. For details and current semantics, see
+         `https://aka.ms/cudoc-quickstart-rest <https://aka.ms/cudoc-quickstart-rest>`_. Default value
+         is None.
         :paramtype model_deployments: dict[str, str]
         :return: An instance of AsyncLROPoller that returns AnalysisResult. The AnalysisResult is
          compatible with MutableMapping
@@ -2042,21 +2028,10 @@ class _ContentUnderstandingClientOperationsMixin(
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
-        :keyword model_deployments: Dictionary of supported large language model (LLM) name (key) to
-         your model deployment name in Microsoft Foundry (value). Both keys and values are strings.
-         Prebuilt and custom analyzers that use large language models require model deployment names in
-         Microsoft Foundry for their supported models.
-         The mapping applies to all analyzers you intend to use: ensure each supported model for those
-         analyzers is mapped. To get supported model names for a given analyzer, call Get Analyzer (GET
-         /analyzers/{analyzerId}); the response includes supportedModels.
-         Deploy the required models in your Microsoft Foundry resource (portal or API); each deployment
-         has a model name and a model deployment name.
-         Call Update Defaults (PATCH /defaults) with this dictionary to map each supported LLM name to
-         your model deployment name in Microsoft Foundry.
-         To get more information for a quickstart for REST API, see
-         `https://aka.ms/cudoc-quickstart-rest <https://aka.ms/cudoc-quickstart-rest>`_.
-         Example: { "gpt-4.1": "myGpt41Deployment", "gpt-4.1-mini": "myGpt41MiniDeployment",
-         "text-embedding-3-large": "myEmbeddingDeployment" }. Default value is None.
+        :keyword model_deployments: Specify the default mapping of model names to LLM/embedding
+         deployments in Microsoft Foundry. For details and current semantics, see
+         `https://aka.ms/cudoc-quickstart-rest <https://aka.ms/cudoc-quickstart-rest>`_. Default value
+         is None.
         :paramtype model_deployments: ~azure.ai.contentunderstanding.models.RecordMergePatchUpdate
         :return: ContentUnderstandingDefaults. The ContentUnderstandingDefaults is compatible with
          MutableMapping
@@ -2118,21 +2093,10 @@ class _ContentUnderstandingClientOperationsMixin(
 
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
-        :keyword model_deployments: Dictionary of supported large language model (LLM) name (key) to
-         your model deployment name in Microsoft Foundry (value). Both keys and values are strings.
-         Prebuilt and custom analyzers that use large language models require model deployment names in
-         Microsoft Foundry for their supported models.
-         The mapping applies to all analyzers you intend to use: ensure each supported model for those
-         analyzers is mapped. To get supported model names for a given analyzer, call Get Analyzer (GET
-         /analyzers/{analyzerId}); the response includes supportedModels.
-         Deploy the required models in your Microsoft Foundry resource (portal or API); each deployment
-         has a model name and a model deployment name.
-         Call Update Defaults (PATCH /defaults) with this dictionary to map each supported LLM name to
-         your model deployment name in Microsoft Foundry.
-         To get more information for a quickstart for REST API, see
-         `https://aka.ms/cudoc-quickstart-rest <https://aka.ms/cudoc-quickstart-rest>`_.
-         Example: { "gpt-4.1": "myGpt41Deployment", "gpt-4.1-mini": "myGpt41MiniDeployment",
-         "text-embedding-3-large": "myEmbeddingDeployment" }. Default value is None.
+        :keyword model_deployments: Specify the default mapping of model names to LLM/embedding
+         deployments in Microsoft Foundry. For details and current semantics, see
+         `https://aka.ms/cudoc-quickstart-rest <https://aka.ms/cudoc-quickstart-rest>`_. Default value
+         is None.
         :paramtype model_deployments: ~azure.ai.contentunderstanding.models.RecordMergePatchUpdate
         :return: ContentUnderstandingDefaults. The ContentUnderstandingDefaults is compatible with
          MutableMapping
