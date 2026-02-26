@@ -4,6 +4,9 @@
 
 ### Features Added
 
+- Added `refresh_enabled` parameter to the `load` method. When set to `False`, calling `refresh` will be a no-op. Defaults to `True`.
+- Added watch-all support. When `refresh_enabled` is `True` and no `refresh_on` keys are specified, the provider will automatically detect changes to any configuration setting using page etags and refresh all settings.
+
 ### Breaking Changes
 
 ### Bugs Fixed
