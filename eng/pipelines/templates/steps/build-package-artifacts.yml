@@ -32,6 +32,15 @@ steps:
       Paths:
         - '**'
 
+  - script: |
+      echo "RequestedFor=$(Build.RequestedFor)"
+      echo "LINUXPOOL=$(LINUXPOOL)"
+      echo "System.PullRequest.CreatedBy=$(System.PullRequest.CreatedBy)"
+      echo "System.PullRequest.CreatedByEmail=$(System.PullRequest.CreatedByEmail)"
+      echo "SourceVersionAuthor=$(Build.SourceVersionAuthor)"
+      echo "SourceVersionAuthorEmail=$(Build.SourceVersionAuthorEmail)"
+    displayName: 'Debug Info'
+
   # Authenticate to Azure Artifacts feed immediately after checkout to prevent 401 errors
   # Public feeds have upstream sources enabled and require authentication for passthrough to pypi.org
   - template: auth-dev-feed.yml
