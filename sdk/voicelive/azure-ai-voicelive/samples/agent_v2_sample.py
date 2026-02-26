@@ -181,7 +181,7 @@ class AudioProcessor:
                 self.connection.input_audio_buffer.append(audio=audio_base64), self.loop
             )
             future.add_done_callback(
-                lambda f: f.exception() and logger.error("Error in audio buffer append: %s", f.exception())
+                lambda f: logger.error("Error in audio buffer append: %s", f.exception()) if f.exception() else None
             )
             return (None, pyaudio.paContinue)
 
