@@ -1,3 +1,4 @@
+# aggregate-reports pipeline
 trigger: none
 
 pr:
