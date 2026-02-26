@@ -2,12 +2,12 @@
 
 variables:
   - name: LINUXPOOL
-    ${{ if contains(lower(variables['Build.RequestedFor']), 'copilot') }}:
+    ${{ if contains(lower(variables['Build.RequestedFor']), 'scbedd') }}:
       value: azsdk-pool-backup
     ${{ else }}:
       value: azsdk-pool
   - name: WINDOWSPOOL
-    ${{ if contains(lower(variables['Build.RequestedFor']), 'copilot') }}:
+    ${{ if contains(lower(variables['Build.RequestedFor']), 'scbedd') }}:
       value: azsdk-pool-backup
     ${{ else }}:
       value: azsdk-pool
