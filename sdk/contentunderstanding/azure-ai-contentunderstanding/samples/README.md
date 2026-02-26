@@ -269,7 +269,7 @@ invoice_total = content.fields["TotalAmount"].value
 
 **Access document properties:**
 ```python
-if content.kind == MediaContentKind.DOCUMENT:
+if content.kind == AnalysisContentKind.DOCUMENT:
     doc_content: DocumentContent = content  # type: ignore
     print(f"Pages: {doc_content.start_page_number} - {doc_content.end_page_number}")
     for table in doc_content.tables:

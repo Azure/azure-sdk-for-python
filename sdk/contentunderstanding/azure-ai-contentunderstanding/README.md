@@ -283,7 +283,7 @@ You can create custom analyzers with specific field schemas for multi-modal cont
 
 ### Content types
 
-The API returns different content types based on the input. Both `DocumentContent` and `AudioVisualContent` classes derive from `MediaContent` class, which provides basic information and markdown representation. Each derived class provides additional properties to access detailed information:
+The API returns different content types based on the input. Both `DocumentContent` and `AudioVisualContent` classes derive from `AnalysisContent` class, which provides basic information and markdown representation. Each derived class provides additional properties to access detailed information:
 
 * **`DocumentContent`** - For document files (PDF, HTML, images, Office documents such as Word, Excel, PowerPoint, and more). Provides basic information such as page count and MIME type. Retrieve detailed information including pages, tables, figures, paragraphs, and many others.
 * **`AudioVisualContent`** - For audio and video files. Provides basic information such as timing information (start/end times) and frame dimensions (for video). Retrieve detailed information including transcript phrases, timing information, and for video, key frame references and more.
@@ -384,7 +384,7 @@ import asyncio
 import os
 from dotenv import load_dotenv
 from azure.ai.contentunderstanding.aio import ContentUnderstandingClient
-from azure.ai.contentunderstanding.models import AnalysisInput, AnalysisResult, MediaContent, DocumentContent, MediaContentKind
+from azure.ai.contentunderstanding.models import AnalysisInput, AnalysisResult, AnalysisContent, DocumentContent, AnalysisContentKind
 from azure.core.credentials import AzureKeyCredential
 from azure.identity.aio import DefaultAzureCredential
 
@@ -406,12 +406,12 @@ async def analyze_document():
         result: AnalysisResult = await poller.result()
         
         # Extract markdown content
-        content: MediaContent = result.contents[0]
+        content: AnalysisContent = result.contents[0]
         print("Markdown Content:")
         print(content.markdown)
         
         # Access document-specific properties
-        if content.kind == MediaContentKind.DOCUMENT:
+        if content.kind == AnalysisContentKind.DOCUMENT:
             document_content: DocumentContent = content  # type: ignore
             print(f"Pages: {document_content.start_page_number} - {document_content.end_page_number}")
 

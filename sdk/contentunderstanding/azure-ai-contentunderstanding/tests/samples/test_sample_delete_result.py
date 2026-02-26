@@ -56,7 +56,9 @@ class TestSampleDeleteResult(ContentUnderstandingClientTestBase):
         print(f"[PASS] File loaded: {len(file_bytes)} bytes")
 
         # Analyze to get an operation ID
-        analyze_operation = client.begin_analyze(analyzer_id="prebuilt-invoice", inputs=[AnalysisInput(data=file_bytes)])
+        analyze_operation = client.begin_analyze(
+            analyzer_id="prebuilt-invoice", inputs=[AnalysisInput(data=file_bytes)]
+        )
 
         result: AnalysisResult = analyze_operation.result()
 

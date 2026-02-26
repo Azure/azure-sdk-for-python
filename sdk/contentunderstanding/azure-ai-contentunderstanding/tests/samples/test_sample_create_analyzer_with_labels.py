@@ -207,14 +207,14 @@ class TestSampleCreateAnalyzerWithLabels(ContentUnderstandingClientTestBase):
 
         assert custom_analyzer.base_analyzer_id == "prebuilt-document", "Base analyzer should be prebuilt-document"
         assert custom_analyzer.models and len(custom_analyzer.models) >= 2, "Should have at least 2 model mappings"
-        assert custom_analyzer.knowledge_sources and len(custom_analyzer.knowledge_sources) == 1, "Should have 1 knowledge source"
+        assert (
+            custom_analyzer.knowledge_sources and len(custom_analyzer.knowledge_sources) == 1
+        ), "Should have 1 knowledge source"
         print("[PASS] Custom analyzer definition validated")
 
         # Create the analyzer
         try:
-            poller = client.begin_create_analyzer(
-                analyzer_id=analyzer_id, resource=custom_analyzer, allow_replace=True
-            )
+            poller = client.begin_create_analyzer(analyzer_id=analyzer_id, resource=custom_analyzer, allow_replace=True)
             result = poller.result()
 
             # Verify operation completed

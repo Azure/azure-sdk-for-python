@@ -14,9 +14,9 @@ DESCRIPTION:
     ## About analyzing documents from binary data
 
     One of the key values of Content Understanding is taking a content file and extracting the content
-    for you in one call. The service returns an AnalysisResult that contains an array of MediaContent
+    for you in one call. The service returns an AnalysisResult that contains an array of AnalysisContent
     items in AnalysisResult.contents. This sample starts with a document file, so each item is a
-    DocumentContent (a subtype of MediaContent) that exposes markdown plus detailed structure such
+    DocumentContent (a subtype of AnalysisContent) that exposes markdown plus detailed structure such
     as pages, tables, figures, and paragraphs.
 
     This sample focuses on document analysis. For prebuilt RAG analyzers covering images, audio, and

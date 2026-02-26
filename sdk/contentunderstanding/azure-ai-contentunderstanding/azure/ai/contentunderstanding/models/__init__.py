@@ -14,6 +14,7 @@ if TYPE_CHECKING:
 
 
 from ._models import (  # type: ignore
+    AnalysisContent,
     AnalysisInput,
     AnalysisResult,
     ArrayField,
@@ -55,7 +56,6 @@ from ._models import (  # type: ignore
     JsonField,
     KnowledgeSource,
     LabeledDataKnowledgeSource,
-    MediaContent,
     NumberField,
     ObjectField,
     RecordMergePatchUpdate,
@@ -68,6 +68,7 @@ from ._models import (  # type: ignore
 )
 
 from ._enums import (  # type: ignore
+    AnalysisContentKind,
     AnnotationFormat,
     ChartFormat,
     ContentAnalyzerStatus,
@@ -80,7 +81,6 @@ from ._enums import (  # type: ignore
     GenerationMethod,
     KnowledgeSourceKind,
     LengthUnit,
-    MediaContentKind,
     OperationState,
     ProcessingLocation,
     SemanticRole,
@@ -91,6 +91,7 @@ from ._patch import *
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
+    "AnalysisContent",
     "AnalysisInput",
     "AnalysisResult",
     "ArrayField",
@@ -132,7 +133,6 @@ __all__ = [
     "JsonField",
     "KnowledgeSource",
     "LabeledDataKnowledgeSource",
-    "MediaContent",
     "NumberField",
     "ObjectField",
     "RecordMergePatchUpdate",
@@ -142,6 +142,7 @@ __all__ = [
     "TranscriptPhrase",
     "TranscriptWord",
     "UsageDetails",
+    "AnalysisContentKind",
     "AnnotationFormat",
     "ChartFormat",
     "ContentAnalyzerStatus",
@@ -154,7 +155,6 @@ __all__ = [
     "GenerationMethod",
     "KnowledgeSourceKind",
     "LengthUnit",
-    "MediaContentKind",
     "OperationState",
     "ProcessingLocation",
     "SemanticRole",

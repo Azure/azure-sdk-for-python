@@ -84,7 +84,7 @@ async def main() -> None:
             return
 
         # For video analysis, keyframes would be found in AudioVisualContent.key_frame_times_ms
-        # Cast MediaContent to AudioVisualContent to access video-specific properties
+        # Cast AnalysisContent to AudioVisualContent to access video-specific properties
         video_content: AudioVisualContent = result.contents[0]  # type: ignore
 
         # Print keyframe information

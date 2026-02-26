@@ -15,14 +15,91 @@ from azure.core.exceptions import ODataV4Format
 
 from .._utils.model_base import Model as _Model, rest_discriminator, rest_field
 from ._enums import (
+    AnalysisContentKind,
     ContentFieldType,
     DocumentFigureKind,
     KnowledgeSourceKind,
-    MediaContentKind,
 )
 
 if TYPE_CHECKING:
     from .. import models as _models
+
+
+class AnalysisContent(_Model):
+    """Media content base class.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    AudioVisualContent, DocumentContent
+
+    :ivar kind: Content kind. Required. Known values are: "document" and "audioVisual".
+    :vartype kind: str or ~azure.ai.contentunderstanding.models.AnalysisContentKind
+    :ivar mime_type: Detected MIME type of the content.  Ex. application/pdf, image/jpeg, etc.
+     Required.
+    :vartype mime_type: str
+    :ivar analyzer_id: The analyzer that generated this content.
+    :vartype analyzer_id: str
+    :ivar category: Classified content category.
+    :vartype category: str
+    :ivar path: The path of the content in the input.
+    :vartype path: str
+    :ivar markdown: Markdown representation of the content.
+    :vartype markdown: str
+    :ivar fields: Extracted fields from the content.
+    :vartype fields: dict[str, ~azure.ai.contentunderstanding.models.ContentField]
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    kind: str = rest_discriminator(
+        name="kind", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Content kind. Required. Known values are: \"document\" and \"audioVisual\"."""
+    mime_type: str = rest_field(
+        name="mimeType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Detected MIME type of the content.  Ex. application/pdf, image/jpeg, etc. Required."""
+    analyzer_id: Optional[str] = rest_field(
+        name="analyzerId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The analyzer that generated this content."""
+    category: Optional[str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Classified content category."""
+    path: Optional[str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The path of the content in the input."""
+    markdown: Optional[str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Markdown representation of the content."""
+    fields: Optional[dict[str, "_models.ContentField"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Extracted fields from the content."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        kind: str,
+        mime_type: str,
+        analyzer_id: Optional[str] = None,
+        category: Optional[str] = None,
+        path: Optional[str] = None,
+        markdown: Optional[str] = None,
+        fields: Optional[dict[str, "_models.ContentField"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class AnalysisInput(_Model):
@@ -102,7 +179,7 @@ class AnalysisResult(_Model):
      values are 'codePoint', 'utf16', and ``utf8``.  Default is ``codePoint``.").
     :vartype string_encoding: str
     :ivar contents: The extracted content. Required.
-    :vartype contents: list[~azure.ai.contentunderstanding.models.MediaContent]
+    :vartype contents: list[~azure.ai.contentunderstanding.models.AnalysisContent]
     """
 
     analyzer_id: Optional[str] = rest_field(
@@ -129,7 +206,7 @@ class AnalysisResult(_Model):
     )
     """The string encoding format for content spans in the response. Possible values are 'codePoint',
      'utf16', and ``utf8``.  Default is ``codePoint``.\")."""
-    contents: list["_models.MediaContent"] = rest_field(
+    contents: list["_models.AnalysisContent"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The extracted content. Required."""
@@ -138,7 +215,7 @@ class AnalysisResult(_Model):
     def __init__(
         self,
         *,
-        contents: list["_models.MediaContent"],
+        contents: list["_models.AnalysisContent"],
         analyzer_id: Optional[str] = None,
         api_version: Optional[str] = None,
         created_at: Optional[datetime.datetime] = None,
@@ -270,84 +347,7 @@ class ArrayField(ContentField, discriminator="array"):
         self.field_type = ContentFieldType.ARRAY  # type: ignore
 
 
-class MediaContent(_Model):
-    """Media content base class.
-
-    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    AudioVisualContent, DocumentContent
-
-    :ivar kind: Content kind. Required. Known values are: "document" and "audioVisual".
-    :vartype kind: str or ~azure.ai.contentunderstanding.models.MediaContentKind
-    :ivar mime_type: Detected MIME type of the content.  Ex. application/pdf, image/jpeg, etc.
-     Required.
-    :vartype mime_type: str
-    :ivar analyzer_id: The analyzer that generated this content.
-    :vartype analyzer_id: str
-    :ivar category: Classified content category.
-    :vartype category: str
-    :ivar path: The path of the content in the input.
-    :vartype path: str
-    :ivar markdown: Markdown representation of the content.
-    :vartype markdown: str
-    :ivar fields: Extracted fields from the content.
-    :vartype fields: dict[str, ~azure.ai.contentunderstanding.models.ContentField]
-    """
-
-    __mapping__: dict[str, _Model] = {}
-    kind: str = rest_discriminator(
-        name="kind", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Content kind. Required. Known values are: \"document\" and \"audioVisual\"."""
-    mime_type: str = rest_field(
-        name="mimeType", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Detected MIME type of the content.  Ex. application/pdf, image/jpeg, etc. Required."""
-    analyzer_id: Optional[str] = rest_field(
-        name="analyzerId", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The analyzer that generated this content."""
-    category: Optional[str] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Classified content category."""
-    path: Optional[str] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The path of the content in the input."""
-    markdown: Optional[str] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Markdown representation of the content."""
-    fields: Optional[dict[str, "_models.ContentField"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Extracted fields from the content."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        kind: str,
-        mime_type: str,
-        analyzer_id: Optional[str] = None,
-        category: Optional[str] = None,
-        path: Optional[str] = None,
-        markdown: Optional[str] = None,
-        fields: Optional[dict[str, "_models.ContentField"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class AudioVisualContent(MediaContent, discriminator="audioVisual"):
+class AudioVisualContent(AnalysisContent, discriminator="audioVisual"):
     """Audio visual content.  Ex. audio/wav, video/mp4.
 
     :ivar mime_type: Detected MIME type of the content.  Ex. application/pdf, image/jpeg, etc.
@@ -385,7 +385,7 @@ class AudioVisualContent(MediaContent, discriminator="audioVisual"):
     :vartype segments: list[~azure.ai.contentunderstanding.models.AudioVisualContentSegment]
     """
 
-    kind: Literal[MediaContentKind.AUDIO_VISUAL] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    kind: Literal[AnalysisContentKind.AUDIO_VISUAL] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Content kind. Required. Audio visual content, such as mp3, mp4, etc."""
     start_time_ms: int = rest_field(
         name="startTimeMs", visibility=["read", "create", "update", "delete", "query"]
@@ -454,7 +454,7 @@ class AudioVisualContent(MediaContent, discriminator="audioVisual"):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.kind = MediaContentKind.AUDIO_VISUAL  # type: ignore
+        self.kind = AnalysisContentKind.AUDIO_VISUAL  # type: ignore
 
 
 class AudioVisualContentSegment(_Model):
@@ -1760,7 +1760,7 @@ class DocumentChartFigure(DocumentFigure, discriminator="chart"):
         self.kind = DocumentFigureKind.CHART  # type: ignore
 
 
-class DocumentContent(MediaContent, discriminator="document"):
+class DocumentContent(AnalysisContent, discriminator="document"):
     """Document content.  Ex. text/plain, application/pdf, image/jpeg.
 
     :ivar mime_type: Detected MIME type of the content.  Ex. application/pdf, image/jpeg, etc.
@@ -1808,7 +1808,7 @@ class DocumentContent(MediaContent, discriminator="document"):
     :vartype segments: list[~azure.ai.contentunderstanding.models.DocumentContentSegment]
     """
 
-    kind: Literal[MediaContentKind.DOCUMENT] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    kind: Literal[AnalysisContentKind.DOCUMENT] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Content kind. Required. Document content, such as pdf, image, txt, etc."""
     start_page_number: int = rest_field(
         name="startPageNumber",
@@ -1889,7 +1889,7 @@ class DocumentContent(MediaContent, discriminator="document"):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.kind = MediaContentKind.DOCUMENT  # type: ignore
+        self.kind = AnalysisContentKind.DOCUMENT  # type: ignore
 
 
 class DocumentContentSegment(_Model):

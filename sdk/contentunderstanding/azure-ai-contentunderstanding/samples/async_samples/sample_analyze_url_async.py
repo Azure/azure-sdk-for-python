@@ -24,8 +24,8 @@ DESCRIPTION:
     For binary data (local files), use begin_analyze_binary() instead. This sample demonstrates
     begin_analyze() with URL inputs.
 
-    Documents, HTML, and images with text are returned as DocumentContent (derived from MediaContent),
-    while audio and video are returned as AudioVisualContent (also derived from MediaContent). These
+    Documents, HTML, and images with text are returned as DocumentContent (derived from AnalysisContent),
+    while audio and video are returned as AudioVisualContent (also derived from AnalysisContent). These
     prebuilt RAG analyzers return markdown and a one-paragraph Summary for each content item;
     prebuilt-videoSearch can return multiple segments, so iterate over all contents rather than just
     the first.
@@ -50,7 +50,7 @@ from azure.ai.contentunderstanding.models import (
     AnalysisResult,
     AudioVisualContent,
     DocumentContent,
-    MediaContent,
+    AnalysisContent,
 )
 from azure.core.credentials import AzureKeyCredential
 from azure.identity.aio import DefaultAzureCredential
@@ -85,8 +85,8 @@ async def main() -> None:
         content = result.contents[0]
         print(content.markdown)
 
-        # Cast MediaContent to DocumentContent to access document-specific properties
-        # DocumentContent derives from MediaContent and provides additional properties
+        # Cast AnalysisContent to DocumentContent to access document-specific properties
+        # DocumentContent derives from AnalysisContent and provides additional properties
         # to access full information about document, including Pages, Tables and many others
         document_content: DocumentContent = content  # type: ignore
         print(f"\nPages: {document_content.start_page_number} - {document_content.end_page_number}")
@@ -117,8 +117,8 @@ async def main() -> None:
         # prebuilt-videoSearch can detect video segments, so we should iterate through all segments
         segment_index = 1
         for media in result.contents:
-            # Cast MediaContent to AudioVisualContent to access audio/visual-specific properties
-            # AudioVisualContent derives from MediaContent and provides additional properties
+            # Cast AnalysisContent to AudioVisualContent to access audio/visual-specific properties
+            # AudioVisualContent derives from AnalysisContent and provides additional properties
             # to access full information about audio/video, including timing, transcript phrases, and many others
             video_content: AudioVisualContent = media  # type: ignore
             print(f"\n--- Segment {segment_index} ---")
@@ -151,8 +151,8 @@ async def main() -> None:
         )
         result = await poller.result()
 
-        # Cast MediaContent to AudioVisualContent to access audio/visual-specific properties
-        # AudioVisualContent derives from MediaContent and provides additional properties
+        # Cast AnalysisContent to AudioVisualContent to access audio/visual-specific properties
+        # AudioVisualContent derives from AnalysisContent and provides additional properties
         # to access full information about audio/video, including timing, transcript phrases, and many others
         audio_content: AudioVisualContent = result.contents[0]  # type: ignore
         print("Markdown:")

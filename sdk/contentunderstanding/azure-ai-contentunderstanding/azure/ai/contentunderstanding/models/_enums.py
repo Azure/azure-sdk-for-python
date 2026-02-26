@@ -11,6 +11,15 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
+class AnalysisContentKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Kind of media content."""
+
+    DOCUMENT = "document"
+    """Document content, such as pdf, image, txt, etc."""
+    AUDIO_VISUAL = "audioVisual"
+    """Audio visual content, such as mp3, mp4, etc."""
+
+
 class AnnotationFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Representation format of annotations in analyze result markdown."""
 
@@ -183,15 +192,6 @@ class LengthUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Pixel unit."""
     INCH = "inch"
     """Inch unit."""
-
-
-class MediaContentKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Kind of media content."""
-
-    DOCUMENT = "document"
-    """Document content, such as pdf, image, txt, etc."""
-    AUDIO_VISUAL = "audioVisual"
-    """Audio visual content, such as mp3, mp4, etc."""
 
 
 class OperationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):

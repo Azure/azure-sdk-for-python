@@ -55,9 +55,7 @@ class ContentUnderstandingClient(GeneratedClient):
         model_deployments: Optional[dict[str, str]] = None,
         processing_location: Optional[Union[str, _models.ProcessingLocation]] = None,
         **kwargs: Any,
-    ) -> (
-        "AnalyzeLROPoller[_models.AnalysisResult]"  # pyright: ignore[reportInvalidTypeArguments]
-    ):
+    ) -> "AnalyzeLROPoller[_models.AnalysisResult]":  # pyright: ignore[reportInvalidTypeArguments]  # fmt: skip
         """Extract content and fields from input.
 
         :param analyzer_id: The unique identifier of the analyzer. Required.
@@ -92,9 +90,7 @@ class ContentUnderstandingClient(GeneratedClient):
         processing_location: Optional[Union[str, _models.ProcessingLocation]] = None,
         content_type: str = "application/json",
         **kwargs: Any,
-    ) -> (
-        "AnalyzeLROPoller[_models.AnalysisResult]"  # pyright: ignore[reportInvalidTypeArguments]
-    ):
+    ) -> "AnalyzeLROPoller[_models.AnalysisResult]":  # pyright: ignore[reportInvalidTypeArguments]  # fmt: skip
         """Extract content and fields from input.
 
         :param analyzer_id: The unique identifier of the analyzer. Required.
@@ -127,9 +123,7 @@ class ContentUnderstandingClient(GeneratedClient):
         processing_location: Optional[Union[str, _models.ProcessingLocation]] = None,
         content_type: str = "application/json",
         **kwargs: Any,
-    ) -> (
-        "AnalyzeLROPoller[_models.AnalysisResult]"  # pyright: ignore[reportInvalidTypeArguments]
-    ):
+    ) -> "AnalyzeLROPoller[_models.AnalysisResult]":  # pyright: ignore[reportInvalidTypeArguments]  # fmt: skip
         """Extract content and fields from input.
 
         :param analyzer_id: The unique identifier of the analyzer. Required.
@@ -164,9 +158,7 @@ class ContentUnderstandingClient(GeneratedClient):
         processing_location: Optional[Union[str, _models.ProcessingLocation]] = None,
         content_type: Optional[str] = None,
         **kwargs: Any,
-    ) -> (
-        "AnalyzeLROPoller[_models.AnalysisResult]"  # pyright: ignore[reportInvalidTypeArguments]
-    ):
+    ) -> "AnalyzeLROPoller[_models.AnalysisResult]":  # pyright: ignore[reportInvalidTypeArguments]  # fmt: skip
         """Extract content and fields from input.
 
         :param analyzer_id: The unique identifier of the analyzer. Required.
@@ -237,9 +229,7 @@ class ContentUnderstandingClient(GeneratedClient):
         content_type: str = "application/octet-stream",
         processing_location: Optional[Union[str, _models.ProcessingLocation]] = None,
         **kwargs: Any,
-    ) -> (
-        "AnalyzeLROPoller[_models.AnalysisResult]"  # pyright: ignore[reportInvalidTypeArguments]
-    ):
+    ) -> "AnalyzeLROPoller[_models.AnalysisResult]":  # pyright: ignore[reportInvalidTypeArguments]  # fmt: skip
         """Extract content and fields from input.
 
         :param analyzer_id: The unique identifier of the analyzer. Required.

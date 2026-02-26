@@ -65,9 +65,7 @@ class AnalyzeAsyncLROPoller(AsyncLROPoller[PollingReturnType_co]):
     @classmethod
     def from_poller(
         cls, poller: AsyncLROPoller[PollingReturnType_co]
-    ) -> (
-        "AnalyzeAsyncLROPoller[PollingReturnType_co]"  # pyright: ignore[reportInvalidTypeArguments]
-    ):
+    ) -> "AnalyzeAsyncLROPoller[PollingReturnType_co]":  # pyright: ignore[reportInvalidTypeArguments]  # fmt: skip
         """Wrap an existing AsyncLROPoller without re-initializing the polling method.
 
         This avoids duplicate HTTP requests that would occur if we created a new
@@ -79,9 +77,7 @@ class AnalyzeAsyncLROPoller(AsyncLROPoller[PollingReturnType_co]):
         :rtype: AnalyzeAsyncLROPoller
         """
         # Create instance without calling __init__ to avoid re-initialization
-        instance: "AnalyzeAsyncLROPoller[PollingReturnType_co]" = object.__new__(  # pyright: ignore[reportInvalidTypeArguments]
-            cls
-        )
+        instance: "AnalyzeAsyncLROPoller[PollingReturnType_co]" = object.__new__(cls)  # pyright: ignore[reportInvalidTypeArguments]  # fmt: skip
         # Copy all attributes from the original poller
         instance.__dict__.update(poller.__dict__)
         return instance

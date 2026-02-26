@@ -94,7 +94,9 @@ class TestSampleCreateAnalyzerWithLabelsAsync(ContentUnderstandingClientTestBase
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
-    async def test_sample_create_analyzer_with_labels_async(self, contentunderstanding_endpoint: str, **kwargs) -> Dict[str, str]:
+    async def test_sample_create_analyzer_with_labels_async(
+        self, contentunderstanding_endpoint: str, **kwargs
+    ) -> Dict[str, str]:
         """Test creating a custom analyzer with labeled training data (async version).
 
         This test validates:
@@ -206,7 +208,9 @@ class TestSampleCreateAnalyzerWithLabelsAsync(ContentUnderstandingClientTestBase
 
         assert custom_analyzer.base_analyzer_id == "prebuilt-document", "Base analyzer should be prebuilt-document"
         assert custom_analyzer.models and len(custom_analyzer.models) >= 2, "Should have at least 2 model mappings"
-        assert custom_analyzer.knowledge_sources and len(custom_analyzer.knowledge_sources) == 1, "Should have 1 knowledge source"
+        assert (
+            custom_analyzer.knowledge_sources and len(custom_analyzer.knowledge_sources) == 1
+        ), "Should have 1 knowledge source"
         print("[PASS] Custom analyzer definition validated")
 
         # Create the analyzer

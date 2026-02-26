@@ -794,9 +794,7 @@ class Model(_MyMutableMapping):
                 discriminator_value = data.find(xml_name).text  # pyright: ignore
         else:
             discriminator_value = data.get(discriminator._rest_name)
-        mapped_cls = cls.__mapping__.get(
-            discriminator_value, cls
-        )  # pyright: ignore # pylint: disable=no-member
+        mapped_cls = cls.__mapping__.get(discriminator_value, cls)  # pyright: ignore # pylint: disable=no-member  # fmt: skip
         return mapped_cls._deserialize(data, exist_discriminators)
 
     def as_dict(self, *, exclude_readonly: bool = False) -> dict[str, typing.Any]:
@@ -993,9 +991,7 @@ def _get_deserialize_callable_from_annotation(  # pylint: disable=too-many-retur
                 )
             # the type is Optional[Union[...]], we need to remove the None type from the Union
             annotation_copy = copy.copy(annotation)
-            annotation_copy.__args__ = [
-                a for a in annotation_copy.__args__ if a is not _NONE_TYPE
-            ]  # pyright: ignore
+            annotation_copy.__args__ = [a for a in annotation_copy.__args__ if a is not _NONE_TYPE]  # pyright: ignore  # fmt: skip
             return _get_deserialize_callable_from_annotation(
                 annotation_copy, module, rf
             )
