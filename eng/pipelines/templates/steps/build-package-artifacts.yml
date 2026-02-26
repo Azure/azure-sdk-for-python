@@ -32,13 +32,14 @@ steps:
       Paths:
         - '**'
 
-  - script: |
-      echo "RequestedFor=$(Build.RequestedFor)"
-      echo "LINUXPOOL=$(LINUXPOOL)"
-      echo "System.PullRequest.CreatedBy=$(System.PullRequest.CreatedBy)"
-      echo "System.PullRequest.CreatedByEmail=$(System.PullRequest.CreatedByEmail)"
-      echo "SourceVersionAuthor=$(Build.SourceVersionAuthor)"
-      echo "SourceVersionAuthorEmail=$(Build.SourceVersionAuthorEmail)"
+  - pwsh: |
+      Write-Host "RequestedFor=$(Build.RequestedFor)"
+      Write-Host "RequestedForId=$(Build.RequestedForId)"
+      Write-Host "LINUXPOOL=$($env:LINUXPOOL)"
+      Write-Host "System.PullRequest.CreatedBy=$($env:SYSTEM_PULLREQUEST_CREATEDBY)"
+      Write-Host "System.PullRequest.CreatedByEmail=$($env:SYSTEM_PULLREQUEST_CREATEDBYEMAIL)"
+      Write-Host "SourceVersionAuthor=$($env:BUILD_SOURCEVERSIONAUTHOR)"
+      Write-Host "SourceVersionAuthorEmail=$($env:BUILD_SOURCEVERSIONAUTHOREMAIL)"
     displayName: 'Debug Info'
 
   # Authenticate to Azure Artifacts feed immediately after checkout to prevent 401 errors
