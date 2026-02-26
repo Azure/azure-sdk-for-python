@@ -27,7 +27,11 @@ from azure.core.pipeline.policies import (
     AzureSasCredentialPolicy,
     SensitiveHeaderCleanupPolicy,
 )
-from azure.core.pipeline.policies._authentication import DEFAULT_REFRESH_WINDOW_SECONDS, MAX_REFRESH_JITTER_SECONDS
+from azure.core.pipeline.policies._authentication import (
+    DEFAULT_REFRESH_WINDOW_SECONDS,
+    MAX_REFRESH_JITTER_SECONDS,
+    _should_refresh_token,
+)
 from utils import HTTP_REQUESTS
 
 import pytest
@@ -420,33 +424,30 @@ def test_key_vault_regression(http_request):
 
 
 def test_need_new_token():
-    expected_scope = "scope"
     now = int(time.time())
-
-    policy = BearerTokenCredentialPolicy(Mock(), expected_scope)
 
     # Token is expired.
     token = AccessToken("", now - 1200)
-    assert policy._need_new_token_impl(token, 0)
+    assert _should_refresh_token(token, 0)
 
     # Token is about to expire within 300 seconds.
     token = AccessToken("", now + 299)
-    assert policy._need_new_token_impl(token, 0)
+    assert _should_refresh_token(token, 0)
 
     # Token still has more than 300 seconds to live.
     token = AccessToken("", now + 305)
-    assert not policy._need_new_token_impl(token, 0)
+    assert not _should_refresh_token(token, 0)
 
     # Token has both expires_on and refresh_on set well into the future.
     token = AccessTokenInfo("", now + 1200, refresh_on=now + 1200)
-    assert not policy._need_new_token_impl(token, 0)
+    assert not _should_refresh_token(token, 0)
 
     # Token is not close to expiring, but refresh_on is in the past.
     token = AccessTokenInfo("", now + 1200, refresh_on=now - 1)
-    assert policy._need_new_token_impl(token, 0)
+    assert _should_refresh_token(token, 0)
 
     # No token
-    assert policy._need_new_token_impl(None, 0)
+    assert _should_refresh_token(None, 0)
 
 
 def test_need_new_token_with_jitter():
@@ -460,28 +461,28 @@ def test_need_new_token_with_jitter():
         token = AccessToken("", 1290)  # 1000 + 290
 
         # Set jitter to 0 - should need new token (290 < DEFAULT_REFRESH_WINDOW_SECONDS)
-        assert BearerTokenCredentialPolicy._need_new_token_impl(token, 0)
+        assert _should_refresh_token(token, 0)
 
         # Set jitter to 10 - should NOT need new token (290 < 290 is False)
-        assert not BearerTokenCredentialPolicy._need_new_token_impl(token, 10)
+        assert not _should_refresh_token(token, 10)
 
         # Test with a token that expires in 250 seconds
         token = AccessToken("", 1250)  # 1000 + 250
 
         # With jitter of 0 - should need new token (250 < DEFAULT_REFRESH_WINDOW_SECONDS)
-        assert BearerTokenCredentialPolicy._need_new_token_impl(token, 0)
+        assert _should_refresh_token(token, 0)
 
         # With jitter of 10 - should need new token (250 < 290)
-        assert BearerTokenCredentialPolicy._need_new_token_impl(token, 10)
+        assert _should_refresh_token(token, 10)
 
         # With max jitter (60) - should NOT need new token (250 < 240 is False)
-        assert not BearerTokenCredentialPolicy._need_new_token_impl(token, MAX_REFRESH_JITTER_SECONDS)
+        assert not _should_refresh_token(token, MAX_REFRESH_JITTER_SECONDS)
 
         # Test with a token that expires in 200 seconds
         token = AccessToken("", 1200)  # 1000 + 200
 
         # Even with max jitter, should need new token (200 < 240)
-        assert BearerTokenCredentialPolicy._need_new_token_impl(token, MAX_REFRESH_JITTER_SECONDS)
+        assert _should_refresh_token(token, MAX_REFRESH_JITTER_SECONDS)
 
 
 def test_need_new_token_with_refresh_on_and_jitter():
@@ -496,19 +497,19 @@ def test_need_new_token_with_refresh_on_and_jitter():
         token = AccessTokenInfo("", expiry_time, refresh_on=refresh_time)
 
         # Set jitter to 0 - effective refresh time is 1300, now=1000, so no refresh needed
-        assert not BearerTokenCredentialPolicy._need_new_token_impl(token, 0)
+        assert not _should_refresh_token(token, 0)
 
         # Set jitter to 30 - effective refresh time is 1330, now=1000, so no refresh needed
-        assert not BearerTokenCredentialPolicy._need_new_token_impl(token, 30)
+        assert not _should_refresh_token(token, 30)
 
         # Test with refresh_on in the past
         token = AccessTokenInfo("", expiry_time, refresh_on=990)  # refresh_on = 1000 - 10
 
         # With jitter of 5, effective refresh time is min(990 + 5, 4600) = 995, still < 1000
-        assert BearerTokenCredentialPolicy._need_new_token_impl(token, 5)
+        assert _should_refresh_token(token, 5)
 
         # With jitter of 15, effective refresh time is min(990 + 15, 4600) = 1005, now < 1005 so no refresh
-        assert not BearerTokenCredentialPolicy._need_new_token_impl(token, 15)
+        assert not _should_refresh_token(token, 15)
 
         # Test jitter capping at expires_on
         # Token expires soon but refresh_on is very close to expires_on
@@ -518,12 +519,12 @@ def test_need_new_token_with_refresh_on_and_jitter():
         # Large jitter that would normally push refresh time past expiry
         # Effective refresh time should be capped at expires_on
         # min(1025 + 60, 1030) = 1030, now=1000 < 1030, so no refresh
-        assert not BearerTokenCredentialPolicy._need_new_token_impl(token, MAX_REFRESH_JITTER_SECONDS)
+        assert not _should_refresh_token(token, MAX_REFRESH_JITTER_SECONDS)
 
         # But if we're right at the expiry time, we should need a new token
         token = AccessTokenInfo("", 1000, refresh_on=995)  # expires_on == now
         # Effective refresh time: min(995 + 60, 1000) = 1000, now=1000 >= 1000
-        assert BearerTokenCredentialPolicy._need_new_token_impl(token, MAX_REFRESH_JITTER_SECONDS)
+        assert _should_refresh_token(token, MAX_REFRESH_JITTER_SECONDS)
 
 
 def test_need_new_token_jitter_boundary_conditions():
@@ -536,39 +537,39 @@ def test_need_new_token_jitter_boundary_conditions():
         token = AccessToken("", 1000 + DEFAULT_REFRESH_WINDOW_SECONDS)
 
         # Zero jitter - exactly at refresh window boundary, not less than, so no refresh
-        assert not BearerTokenCredentialPolicy._need_new_token_impl(token, 0)
+        assert not _should_refresh_token(token, 0)
 
         # Test at 1 second under the refresh window
         token = AccessToken("", 1000 + DEFAULT_REFRESH_WINDOW_SECONDS - 1)
 
         # Zero jitter - 299 seconds remaining, 299 < DEFAULT_REFRESH_WINDOW_SECONDS = True (refresh)
-        assert BearerTokenCredentialPolicy._need_new_token_impl(token, 0)
+        assert _should_refresh_token(token, 0)
 
         # Small jitter - 299 seconds remaining, 299 < 295 = False (no refresh)
-        assert not BearerTokenCredentialPolicy._need_new_token_impl(token, 5)
+        assert not _should_refresh_token(token, 5)
 
         # Test at 250 seconds
         token = AccessToken("", 1250)  # 1000 + 250
 
         # Zero jitter - 250 seconds remaining, 250 < DEFAULT_REFRESH_WINDOW_SECONDS = True (refresh)
-        assert BearerTokenCredentialPolicy._need_new_token_impl(token, 0)
+        assert _should_refresh_token(token, 0)
 
         # Small jitter - 250 seconds remaining, 250 < 290 = True (refresh)
-        assert BearerTokenCredentialPolicy._need_new_token_impl(token, 10)
+        assert _should_refresh_token(token, 10)
 
         # Max jitter - 250 seconds remaining, 250 < 240 = False (no refresh)
-        assert not BearerTokenCredentialPolicy._need_new_token_impl(token, MAX_REFRESH_JITTER_SECONDS)
+        assert not _should_refresh_token(token, MAX_REFRESH_JITTER_SECONDS)
 
         # Test refresh_on scenarios with jitter
         # Test refresh_on exactly at current time
         token = AccessTokenInfo("", 4600, refresh_on=1000)  # expires at 1000 + 3600, refresh at 1000
         # Effective refresh time is 1000 + 0 = 1000, so 1000 >= 1000 is True
-        assert BearerTokenCredentialPolicy._need_new_token_impl(token, 0)
+        assert _should_refresh_token(token, 0)
 
         # Test refresh_on with positive jitter (delays refresh)
         token = AccessTokenInfo("", 4600, refresh_on=995)  # expires at 1000 + 3600, refresh at 995
         # Effective refresh time is min(995 + 10, 4600) = 1005, so 1000 < 1005 (no refresh)
-        assert not BearerTokenCredentialPolicy._need_new_token_impl(token, 10)
+        assert not _should_refresh_token(token, 10)
 
 
 def test_jitter_set_on_token_request():

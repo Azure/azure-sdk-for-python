@@ -41,6 +41,32 @@ DEFAULT_REFRESH_WINDOW_SECONDS = 300  # 5 minutes
 MAX_REFRESH_JITTER_SECONDS = 60  # 1 minute
 
 
+def _should_refresh_token(token: Optional[Union["AccessToken", "AccessTokenInfo"]], refresh_jitter: int) -> bool:
+    """Check if a new token is needed based on expiry and refresh logic.
+
+    :param token: The current token or None if no token exists
+    :type token: Optional[Union[~azure.core.credentials.AccessToken, ~azure.core.credentials.AccessTokenInfo]]
+    :param int refresh_jitter: The jitter to apply to refresh timing
+    :return: True if a new token is needed, False otherwise
+    :rtype: bool
+    """
+    if not token:
+        return True
+
+    now = time.time()
+    refresh_on = getattr(token, "refresh_on", None)
+
+    if refresh_on:
+        # Apply jitter, but ensure that adding it doesn't push the refresh time past the actual expiration.
+        # This is a safeguard, as refresh_on is typically well before expires_on.
+        effective_refresh_time = min(refresh_on + refresh_jitter, token.expires_on)
+        return effective_refresh_time <= now
+
+    time_until_expiry = token.expires_on - now
+    # Reduce refresh window by jitter to delay refresh and distribute load
+    return time_until_expiry < (DEFAULT_REFRESH_WINDOW_SECONDS - refresh_jitter)
+
+
 # pylint:disable=too-few-public-methods
 class _BearerTokenCredentialPolicyBase:
     """Base class for a Bearer Token Credential Policy.
@@ -87,33 +113,7 @@ class _BearerTokenCredentialPolicyBase:
 
     @property
     def _need_new_token(self) -> bool:
-        return self._need_new_token_impl(self._token, self._refresh_jitter)
-
-    @staticmethod
-    def _need_new_token_impl(token: Optional[Union["AccessToken", "AccessTokenInfo"]], refresh_jitter: int) -> bool:
-        """Check if a new token is needed based on expiry and refresh logic.
-
-        :param token: The current token or None if no token exists
-        :type token: Optional[Union[~azure.core.credentials.AccessToken, ~azure.core.credentials.AccessTokenInfo]]
-        :param int refresh_jitter: The jitter to apply to refresh timing
-        :return: True if a new token is needed, False otherwise
-        :rtype: bool
-        """
-        if not token:
-            return True
-
-        now = time.time()
-        refresh_on = getattr(token, "refresh_on", None)
-
-        if refresh_on:
-            # Apply jitter, but ensure that adding it doesn't push the refresh time past the actual expiration.
-            # This is a safeguard, as refresh_on is typically well before expires_on.
-            effective_refresh_time = min(refresh_on + refresh_jitter, token.expires_on)
-            return effective_refresh_time <= now
-
-        time_until_expiry = token.expires_on - now
-        # Reduce refresh window by jitter to delay refresh and distribute load
-        return time_until_expiry < (DEFAULT_REFRESH_WINDOW_SECONDS - refresh_jitter)
+        return _should_refresh_token(self._token, self._refresh_jitter)
 
     def _get_token(self, *scopes: str, **kwargs: Any) -> Union["AccessToken", "AccessTokenInfo"]:
         if self._enable_cae:

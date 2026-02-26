@@ -16,7 +16,11 @@ from azure.core.credentials_async import (
 from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.pipeline.policies import AsyncHTTPPolicy
-from azure.core.pipeline.policies._authentication import _BearerTokenCredentialPolicyBase, MAX_REFRESH_JITTER_SECONDS
+from azure.core.pipeline.policies._authentication import (
+    _BearerTokenCredentialPolicyBase,
+    _should_refresh_token,
+    MAX_REFRESH_JITTER_SECONDS,
+)
 from azure.core.pipeline.transport import (
     AsyncHttpResponse as LegacyAsyncHttpResponse,
     HttpRequest as LegacyHttpRequest,
@@ -191,9 +195,7 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy[HTTPRequestType, AsyncHTT
         return
 
     def _need_new_token(self) -> bool:
-        return _BearerTokenCredentialPolicyBase._need_new_token_impl(  # pylint:disable=protected-access
-            self._token, self._refresh_jitter
-        )
+        return _should_refresh_token(self._token, self._refresh_jitter)
 
     async def _get_token(self, *scopes: str, **kwargs: Any) -> Union["AccessToken", "AccessTokenInfo"]:
         if self._enable_cae:
