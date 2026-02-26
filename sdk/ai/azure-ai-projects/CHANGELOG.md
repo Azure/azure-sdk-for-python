@@ -11,8 +11,10 @@ can still pass in `List[dict[str, Any]`.
 
 ### Breaking Changes
 
+* Rename method ".beta.evaluators.list_latest_versions()` to `.beta.evaluators.list()`.
 * Class `CodeInterpreterContainerAuto` was renamed to `AutoCodeInterpreterToolParam`, and has a new
 optional property `network_policy` of type `ContainerNetworkPolicyParam`.
+* Rename `ToolChoiceParamType.WEB_SEARCH_PREVIEW2025_03_11` to `ToolChoiceParamType.WEB_SEARCH_PREVIEW_2025_03_11`.
 
 ### Bugs Fixed
 
