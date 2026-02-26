@@ -301,7 +301,17 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
         updated_watched_settings: Mapping[Tuple[str, str], Optional[str]] = {}
         existing_feature_flag_usage = self._tracing_context.feature_filter_usage.copy()
         try:
-            if self._watched_settings and self._refresh_timer.needs_refresh():
+            if self._refresh_enabled and not self._watched_settings and self._refresh_timer.needs_refresh():
+                configuration_refresh_attempted = True
+
+                if await client.check_page_etags(self._selects, self._page_etags, headers=headers, **kwargs):
+                    configuration_settings, page_etags = await client.load_configuration_settings(
+                        self._selects, headers=headers, **kwargs
+                    )
+                    self._page_etags = page_etags
+                    settings_refreshed = True
+
+            elif self._watched_settings and self._refresh_timer.needs_refresh():
                 configuration_refresh_attempted = True
 
                 updated_watched_settings = await client.get_updated_watched_settings(
@@ -309,7 +319,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                 )
 
                 if len(updated_watched_settings) > 0:
-                    configuration_settings = await client.load_configuration_settings(
+                    configuration_settings, _ = await client.load_configuration_settings(
                         self._selects, headers=headers, **kwargs
                     )
                     settings_refreshed = True
@@ -356,9 +366,6 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
     async def refresh(self, **kwargs) -> None:
         if not self._refresh_enabled:
             logger.debug("Refresh called but refresh is not enabled.")
-            return
-        if not self._watched_settings and not self._feature_flag_refresh_enabled:
-            logger.debug("Refresh called but no refresh enabled.")
             return
         if not self._refresh_lock.acquire(blocking=False):  # pylint: disable= consider-using-with
             logger.debug("Refresh called but refresh already in progress.")
@@ -448,7 +455,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                 is_failover_request,
             )
             try:
-                configuration_settings = await client.load_configuration_settings(
+                configuration_settings, page_etags = await client.load_configuration_settings(
                     self._selects, headers=headers, **kwargs
                 )
                 watched_settings = self._update_watched_settings(configuration_settings)
@@ -485,6 +492,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                 with self._update_lock:
                     self._watched_settings = watched_settings
                     self._dict = processed_settings
+                    self._page_etags = page_etags
                 return True
             except AzureError as e:
                 logger.warning("Failed to load configurations from endpoint %s.\n %s", client.endpoint, e.message)

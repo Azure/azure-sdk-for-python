@@ -136,28 +136,72 @@ class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
         return False, None
 
     @distributed_trace
-    def load_configuration_settings(self, selects: List[SettingSelector], **kwargs) -> List[ConfigurationSetting]:
+    def load_configuration_settings(
+        self, selects: List[SettingSelector], **kwargs
+    ) -> Tuple[List[ConfigurationSetting], List[List[str]]]:
+        """
+        Loads configuration settings using page-based iteration, collecting page etags for each selector.
+
+        :param selects: List of setting selectors to filter configuration settings
+        :type selects: List[SettingSelector]
+        :return: A tuple of (configuration_settings, page_etags_per_selector)
+        :rtype: Tuple[List[ConfigurationSetting], List[List[str]]]
+        """
         configuration_settings: List[ConfigurationSetting] = []
+        page_etags: List[List[str]] = []
         for select in selects:
-            configurations: List[ConfigurationSetting] = []
+            selector_etags: List[str] = []
             if select.snapshot_name is not None:
-                # When loading from a snapshot, ignore key_filter, label_filter, and tag_filters
                 if not self._validate_snapshot(select.snapshot_name):
-                    return []
+                    return [], []
                 configurations = self._client.list_configuration_settings(snapshot_name=select.snapshot_name, **kwargs)
+                for config in configurations:
+                    if not isinstance(config, FeatureFlagConfigurationSetting):
+                        configuration_settings.append(config)
             else:
-                # Use traditional filtering when not loading from a snapshot
                 configurations = self._client.list_configuration_settings(
                     key_filter=select.key_filter,
                     label_filter=select.label_filter,
                     tags_filter=select.tag_filters,
                     **kwargs,
                 )
-            # Feature flags are ignored when loaded by Selects, as they are selected from `feature_flag_selectors`
-            configuration_settings.extend(
-                config for config in configurations if not isinstance(config, FeatureFlagConfigurationSetting)
-            )
-        return configuration_settings
+                iterator = configurations.by_page()
+                for page in iterator:
+                    for config in page:
+                        if not isinstance(config, FeatureFlagConfigurationSetting):
+                            configuration_settings.append(config)
+                    selector_etags.append(iterator.etag)
+            page_etags.append(selector_etags)
+        return configuration_settings, page_etags
+
+    @distributed_trace
+    def check_page_etags(self, selects: List[SettingSelector], page_etags: List[List[str]], **kwargs) -> bool:
+        """
+        Checks if any configuration settings page has changed using page etags.
+
+        :param selects: List of setting selectors to check
+        :type selects: List[SettingSelector]
+        :param page_etags: The page etags from the last load, one list per selector
+        :type page_etags: List[List[str]]
+        :return: True if any page has changed, False otherwise
+        :rtype: bool
+        """
+        for i, select in enumerate(selects):
+            if i >= len(page_etags):
+                return True
+            selector_etags = page_etags[i]
+            if select.snapshot_name is None:
+                # Snapshots never change, so we can skip checking etags if loading from a snapshot
+                configurations = self._client.list_configuration_settings(
+                    key_filter=select.key_filter,
+                    label_filter=select.label_filter,
+                    tags_filter=select.tag_filters,
+                    **kwargs,
+                )
+            for _ in configurations.by_page(match_conditions=selector_etags):
+                # If any page is returned, it means that page has changed
+                return True
+        return False
 
     @distributed_trace
     def load_feature_flags(
@@ -314,7 +358,7 @@ class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
         snapshot_selector = SettingSelector(snapshot_name=snapshot_name)
 
         # Use existing load_configuration_settings to load from snapshot
-        configurations = self.load_configuration_settings([snapshot_selector], **kwargs)
+        configurations, _ = self.load_configuration_settings([snapshot_selector], **kwargs)
 
         return configurations
 
