@@ -2,12 +2,12 @@
 
 variables:
   - name: LINUXPOOL
-    value: $[ iif(contains(lower(variables['Build.RequestedFor']), 'scbedd'),
+    value: $[ iif(contains(lower(variables['System.PullRequest.CreatedBy']), 'scbedd'),
                   'azsdk-pool-backup',
                   'azsdk-pool') ]
 
   - name: WINDOWSPOOL
-    value: $[ iif(contains(lower(variables['Build.RequestedFor']), 'scbedd'),
+    value: $[ iif(contains(lower(variables['System.PullRequest.CreatedBy']), 'scbedd'),
                   'azsdk-pool-backup',
                   'azsdk-pool') ]
   - name: MACPOOL
@@ -29,5 +29,3 @@ variables:
     value: windows
   - name: MACOS
     value: macOS
-
-
