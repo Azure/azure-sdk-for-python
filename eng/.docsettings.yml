@@ -1,3 +1,4 @@
+# Documentation settings for the Azure SDK for Python repository.
 omitted_paths:
   - eng/*
   - tools/*
