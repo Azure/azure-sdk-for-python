@@ -227,7 +227,7 @@ def test_format_url_query_strings():
 
 def test_format_url_trailing_slash_preserved_with_query_only():
     # Test that trailing slash in base URL is preserved when url_template is query-string only
-    # https://github.com/Azure/azure-sdk-for-python/issues/XXXXX
+    # https://github.com/Azure/azure-sdk-for-python/issues/45365
     client = PipelineClientBase("{url}")
     formatted = client.format_url("?versionid=2026-02-25", url="https://storage.blob.core.windows.net/sample//a/a/")
     assert formatted == "https://storage.blob.core.windows.net/sample//a/a/?versionid=2026-02-25"

@@ -8,7 +8,7 @@
 
 ### Bugs Fixed
 
-- Fixed `PipelineClient.format_url` to preserve trailing slash in the base URL when the URL template is a query-string only (e.g. `?key=value`). #40426
+- Fixed `PipelineClient.format_url` to preserve trailing slash in the base URL when the URL template is query-string-only (e.g., `?key=value`). #45365
 
 ### Other Changes
 
