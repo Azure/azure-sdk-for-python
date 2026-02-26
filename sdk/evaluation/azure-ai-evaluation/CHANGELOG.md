@@ -1,10 +1,38 @@
 # Release History
 
+## 1.15.3 (Unreleased)
+
+### Bugs Fixed
+
+- Fixed Foundry red team double-evaluation that caused ~3x scan latency by removing redundant evaluation_processor.evaluate() call.
+- Fixed lost red team attack details where baseline overwrites wiped evaluation results.
+- Fixed incorrect per_testing_criteria that showed attack strategies alongside risk categories.
+- Fixed metadata leak of internal scorer fields (attack_success, attack_strategy, score) into results.json.
+- Improved error logging with run_id, display_name, and full stack traces for red team scan failures.
+
+## 1.15.2 (2026-02-23)
+
+### Bugs Fixed
+
+- Fixed batch evaluation to report per-line errors only on the rows that failed.
+
+## 1.15.1 (2026-02-19)
+
+### Bugs Fixed
+
+- Red Team Agent Scenario Integration: integrated PyRIT's FoundryScenario for attack orchestration with Azure-specific scoring and result processing.
+- Fixed total tokens calculation errors in evaluation results.
+- Fixed red team SDK run status updates not firing consistently, preventing runs from being stuck as "Running" in the UI.
+
 ## 1.15.0 (2026-02-03)
 
 ### Bugs Fixed
 
 - Prevent recursive stdout/stderr forwarding when NodeLogManager is nested, avoiding RecursionError in concurrent evaluation runs.
+
+### Other Changes
+
+- The `[redteam]` extra now requires `pyrit==0.11.0`, which depends on `pillow>=12.1.0`. This conflicts with `promptflow-devkit` (`pillow<=11.3.0`). Use separate virtual environments if you need both packages.
 
 ## 1.14.0 (2026-01-05)
 

@@ -14,7 +14,10 @@ from ._models import SearchIndexerDataSourceConnection as _SearchIndexerDataSour
 from ._models import KnowledgeBase as _KnowledgeBase
 from ._enums import (
     LexicalAnalyzerName,
+    OcrSkillLanguage,
     SearchFieldDataType as _SearchFieldDataType,
+    SplitSkillLanguage,
+    TextTranslationSkillLanguage,
 )
 from ...knowledgebases.models import (
     KnowledgeRetrievalReasoningEffort,
@@ -158,6 +161,22 @@ def _collection_helper(typ: Any) -> str:
 # The Collection method is added at runtime via monkey-patching
 SearchFieldDataType = _SearchFieldDataType
 SearchFieldDataType.Collection = staticmethod(_collection_helper)  # type: ignore[attr-defined]
+
+# Backward-compatible aliases (old camelCase names -> new UPPER_CASE names)
+SearchFieldDataType.String = SearchFieldDataType.STRING  # type: ignore[attr-defined]
+SearchFieldDataType.Int32 = SearchFieldDataType.INT32  # type: ignore[attr-defined]
+SearchFieldDataType.Int64 = SearchFieldDataType.INT64  # type: ignore[attr-defined]
+SearchFieldDataType.Single = SearchFieldDataType.SINGLE  # type: ignore[attr-defined]
+SearchFieldDataType.Double = SearchFieldDataType.DOUBLE  # type: ignore[attr-defined]
+SearchFieldDataType.Boolean = SearchFieldDataType.BOOLEAN  # type: ignore[attr-defined]
+SearchFieldDataType.DateTimeOffset = SearchFieldDataType.DATE_TIME_OFFSET  # type: ignore[attr-defined]
+SearchFieldDataType.GeographyPoint = SearchFieldDataType.GEOGRAPHY_POINT  # type: ignore[attr-defined]
+SearchFieldDataType.ComplexType = SearchFieldDataType.COMPLEX  # type: ignore[attr-defined]
+
+# Backward-compatible alias: IS was renamed to IS_ENUM to avoid conflict with Python keyword
+OcrSkillLanguage.IS = OcrSkillLanguage.IS_ENUM  # type: ignore[attr-defined]
+SplitSkillLanguage.IS = SplitSkillLanguage.IS_ENUM  # type: ignore[attr-defined]
+TextTranslationSkillLanguage.IS = TextTranslationSkillLanguage.IS_ENUM  # type: ignore[attr-defined]
 
 
 def Collection(typ: Any) -> str:
@@ -426,12 +445,15 @@ def ComplexField(
 
 __all__: list[str] = [
     "KnowledgeBase",
+    "OcrSkillLanguage",
     "SearchField",
     "SearchFieldDataType",
     "SearchIndexerDataSourceConnection",
     "SimpleField",
     "SearchableField",
     "ComplexField",
+    "SplitSkillLanguage",
+    "TextTranslationSkillLanguage",
 ]  # Add all objects you want publicly available to users at this package level
 
 

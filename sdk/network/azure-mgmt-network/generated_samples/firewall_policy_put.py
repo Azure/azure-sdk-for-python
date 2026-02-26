@@ -84,7 +84,7 @@ def main():
                         "signatureOverrides": [{"id": "2525004", "mode": "Deny"}],
                     },
                     "mode": "Alert",
-                    "profile": "Balanced",
+                    "profile": "Core",
                 },
                 "sku": {"tier": "Premium"},
                 "snat": {"privateRanges": ["IANAPrivateRanges"]},
@@ -101,6 +101,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2025-03-01/examples/FirewallPolicyPut.json
+# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2025-05-01/examples/FirewallPolicyPut.json
 if __name__ == "__main__":
     main()

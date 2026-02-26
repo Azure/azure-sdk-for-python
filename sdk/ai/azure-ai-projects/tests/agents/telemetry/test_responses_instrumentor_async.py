@@ -37,6 +37,9 @@ settings.tracing_implementation = "OpenTelemetry"
 _utils._span_impl_type = settings.tracing_implementation()
 
 
+@pytest.mark.skip(
+    reason="Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema"
+)
 class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     """Tests for ResponsesInstrumentor with real endpoints (async)."""
 
@@ -454,7 +457,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             stream = await client.responses.create(
                 conversation=conversation.id,
                 input="What's the weather in Seattle?",
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
                 stream=True,
             )
             # Consume the stream and collect function calls
@@ -492,7 +495,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             stream2 = await client.responses.create(
                 conversation=conversation.id,
                 input=input_list,
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
                 stream=True,
             )
             # Consume the second stream
@@ -715,7 +718,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             stream = await client.responses.create(
                 conversation=conversation.id,
                 input="What\\'s the weather in Seattle?",
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
                 stream=True,
             )
             # Consume the stream and collect function calls
@@ -754,7 +757,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             stream2 = await client.responses.create(
                 conversation=conversation.id,
                 input=input_list,
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
                 stream=True,
             )
             # Consume the second stream
@@ -2948,7 +2951,9 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
     @recorded_by_proxy_async(RecordedTransport.HTTPX)
-    async def test_async_responses_stream_method_with_tools_with_content_recording_simple_format_attributes(self, **kwargs):
+    async def test_async_responses_stream_method_with_tools_with_content_recording_simple_format_attributes(
+        self, **kwargs
+    ):
         """Test async responses.stream() with tools, content recording, simple OTEL format (attribute mode)."""
         await self._test_async_responses_stream_method_with_tools_with_content_recording_impl(
             False, use_simple_tool_call_format=True, **kwargs
@@ -3170,7 +3175,9 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
     @recorded_by_proxy_async(RecordedTransport.HTTPX)
-    async def test_async_responses_stream_method_with_tools_without_content_recording_simple_format_events(self, **kwargs):
+    async def test_async_responses_stream_method_with_tools_without_content_recording_simple_format_events(
+        self, **kwargs
+    ):
         """Test async responses.stream() with tools, without content recording, simple OTEL format (event mode)."""
         await self._test_async_responses_stream_method_with_tools_without_content_recording_impl(
             True, use_simple_tool_call_format=True, **kwargs
@@ -3179,7 +3186,9 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
     @recorded_by_proxy_async(RecordedTransport.HTTPX)
-    async def test_async_responses_stream_method_with_tools_without_content_recording_simple_format_attributes(self, **kwargs):
+    async def test_async_responses_stream_method_with_tools_without_content_recording_simple_format_attributes(
+        self, **kwargs
+    ):
         """Test async responses.stream() with tools, without content recording, simple OTEL format (attribute mode)."""
         await self._test_async_responses_stream_method_with_tools_without_content_recording_impl(
             False, use_simple_tool_call_format=True, **kwargs
@@ -3194,7 +3203,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     async def test_async_workflow_agent_non_streaming_with_content_recording(self, **kwargs):
         """Test async workflow agent with non-streaming and content recording enabled."""
-        from azure.ai.projects.models import WorkflowAgentDefinition, AgentReference
+        from azure.ai.projects.models import WorkflowAgentDefinition
 
         self.cleanup()
         os.environ.update(
@@ -3232,7 +3241,7 @@ trigger:
 
             response = await openai_client.responses.create(
                 conversation=conversation.id,
-                extra_body={"agent": AgentReference(name=workflow_agent.name).as_dict()},
+                extra_body={"agent_reference": {"name": workflow_agent.name, "type": "agent_reference"}},
                 input="Test workflow",
                 stream=False,
             )
@@ -3311,7 +3320,7 @@ trigger:
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     async def test_async_workflow_agent_non_streaming_without_content_recording(self, **kwargs):
         """Test async workflow agent with non-streaming and content recording disabled."""
-        from azure.ai.projects.models import WorkflowAgentDefinition, AgentReference
+        from azure.ai.projects.models import WorkflowAgentDefinition
 
         self.cleanup()
         os.environ.update(
@@ -3348,7 +3357,7 @@ trigger:
 
             response = await openai_client.responses.create(
                 conversation=conversation.id,
-                extra_body={"agent": AgentReference(name=workflow_agent.name).as_dict()},
+                extra_body={"agent_reference": {"name": workflow_agent.name, "type": "agent_reference"}},
                 input="Test workflow",
                 stream=False,
             )
@@ -3434,7 +3443,7 @@ trigger:
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     async def test_async_workflow_agent_streaming_with_content_recording(self, **kwargs):
         """Test async workflow agent with streaming and content recording enabled."""
-        from azure.ai.projects.models import WorkflowAgentDefinition, AgentReference
+        from azure.ai.projects.models import WorkflowAgentDefinition
 
         self.cleanup()
         os.environ.update(
@@ -3471,7 +3480,7 @@ trigger:
 
             stream = await openai_client.responses.create(
                 conversation=conversation.id,
-                extra_body={"agent": AgentReference(name=workflow_agent.name).as_dict()},
+                extra_body={"agent_reference": {"name": workflow_agent.name, "type": "agent_reference"}},
                 input="Test workflow",
                 stream=True,
             )
@@ -3555,7 +3564,7 @@ trigger:
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     async def test_async_workflow_agent_streaming_without_content_recording(self, **kwargs):
         """Test async workflow agent with streaming and content recording disabled."""
-        from azure.ai.projects.models import WorkflowAgentDefinition, AgentReference
+        from azure.ai.projects.models import WorkflowAgentDefinition
 
         self.cleanup()
         os.environ.update(
@@ -3592,7 +3601,7 @@ trigger:
 
             stream = await openai_client.responses.create(
                 conversation=conversation.id,
-                extra_body={"agent": AgentReference(name=workflow_agent.name).as_dict()},
+                extra_body={"agent_reference": {"name": workflow_agent.name, "type": "agent_reference"}},
                 input="Test workflow",
                 stream=True,
             )
@@ -3682,7 +3691,7 @@ trigger:
         self, use_events, use_simple_tool_call_format=False, **kwargs
     ):
         """Implementation for testing async prompt agent with responses API (non-streaming).
-        
+
         Args:
             use_events: If True, use event-based message tracing. If False, use attribute-based.
             use_simple_tool_call_format: If True, use simple OTEL-compliant tool call format.
@@ -3721,7 +3730,7 @@ trigger:
             # Create response with agent name and id
             response = await client.responses.create(
                 conversation=conversation.id,
-                extra_body={"agent": {"name": agent.name, "id": agent.id, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "id": agent.id, "type": "agent_reference"}},
                 input="What is the capital of France?",
             )
 
@@ -3820,7 +3829,7 @@ trigger:
         self, use_events, use_simple_tool_call_format=False, **kwargs
     ):
         """Implementation for testing async prompt agent with responses API (streaming).
-        
+
         Args:
             use_events: If True, use event-based message tracing. If False, use attribute-based.
             use_simple_tool_call_format: If True, use simple OTEL-compliant tool call format.
@@ -3859,7 +3868,7 @@ trigger:
             # Create streaming response with agent name and id
             stream = await client.responses.create(
                 conversation=conversation.id,
-                extra_body={"agent": {"name": agent.name, "id": agent.id, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "id": agent.id, "type": "agent_reference"}},
                 input="What is the capital of France?",
                 stream=True,
             )

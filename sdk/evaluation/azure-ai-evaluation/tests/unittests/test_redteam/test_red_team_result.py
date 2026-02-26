@@ -64,7 +64,10 @@ def mock_parameters():
             "policy_document": "",
         },
         "attack_complexity": ["Easy", "Difficult"],
-        "techniques_used": {"easy": ["Base64Converter", "FlipConverter"], "difficult": ["CharSwapGenerator"]},
+        "techniques_used": {
+            "easy": ["Base64Converter", "FlipConverter"],
+            "difficult": ["CharSwapGenerator"],
+        },
     }
 
 
@@ -81,7 +84,10 @@ def mock_conversation():
             {"role": "assistant", "content": "Test harmful response"},
         ],
         "risk_assessment": {
-            "violence": {"severity_label": "high", "reason": "Contains explicit violence"},
+            "violence": {
+                "severity_label": "high",
+                "reason": "Contains explicit violence",
+            },
             "attack_success_threshold": None,
         },
     }

@@ -1843,7 +1843,7 @@ class ChatCompletionSkill(SearchIndexerSkill, discriminator="#Microsoft.Skills.C
      appended to the chat completions call. Follows Azure AI Foundry's extensibility pattern.
     :vartype extra_parameters: dict[str, any]
     :ivar extra_parameters_behavior: How extra parameters are handled by Azure AI Foundry. Default
-     is 'error'. Known values are: "pass-through", "drop", and "error".
+     is 'error'. Known values are: "passThrough", "drop", and "error".
     :vartype extra_parameters_behavior: str or
      ~azure.search.documents.indexes.models.ChatCompletionExtraParametersBehavior
     :ivar response_format: Determines how the LLM should format its response. Defaults to 'text'
@@ -1905,7 +1905,7 @@ class ChatCompletionSkill(SearchIndexerSkill, discriminator="#Microsoft.Skills.C
         name="extraParametersBehavior", visibility=["read", "create", "update", "delete", "query"]
     )
     """How extra parameters are handled by Azure AI Foundry. Default is 'error'. Known values are:
-     \"pass-through\", \"drop\", and \"error\"."""
+     \"passThrough\", \"drop\", and \"error\"."""
     response_format: Optional["_models.ChatCompletionResponseFormat"] = rest_field(
         name="responseFormat", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -9604,6 +9604,182 @@ class SearchIndexKnowledgeSourceParameters(_Model):
         source_data_fields: Optional[list["_models.SearchIndexFieldReference"]] = None,
         search_fields: Optional[list["_models.SearchIndexFieldReference"]] = None,
         semantic_configuration_name: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SearchIndexResponse(_Model):
+    """Represents a search index definition, which describes the fields and search behavior of an
+    index.
+
+    :ivar name: The name of the index. Required.
+    :vartype name: str
+    :ivar description: The description of the index.
+    :vartype description: str
+    :ivar fields: The fields of the index.
+    :vartype fields: list[~azure.search.documents.indexes.models.SearchField]
+    :ivar scoring_profiles: The scoring profiles for the index.
+    :vartype scoring_profiles: list[~azure.search.documents.indexes.models.ScoringProfile]
+    :ivar default_scoring_profile: The name of the scoring profile to use if none is specified in
+     the query. If this property is not set and no scoring profile is specified in the query, then
+     default scoring (tf-idf) will be used.
+    :vartype default_scoring_profile: str
+    :ivar cors_options: Options to control Cross-Origin Resource Sharing (CORS) for the index.
+    :vartype cors_options: ~azure.search.documents.indexes.models.CorsOptions
+    :ivar suggesters: The suggesters for the index.
+    :vartype suggesters: list[~azure.search.documents.indexes.models.SearchSuggester]
+    :ivar analyzers: The analyzers for the index.
+    :vartype analyzers: list[~azure.search.documents.indexes.models.LexicalAnalyzer]
+    :ivar tokenizers: The tokenizers for the index.
+    :vartype tokenizers: list[~azure.search.documents.indexes.models.LexicalTokenizer]
+    :ivar token_filters: The token filters for the index.
+    :vartype token_filters: list[~azure.search.documents.indexes.models.TokenFilter]
+    :ivar char_filters: The character filters for the index.
+    :vartype char_filters: list[~azure.search.documents.indexes.models.CharFilter]
+    :ivar normalizers: The normalizers for the index.
+    :vartype normalizers: list[~azure.search.documents.indexes.models.LexicalNormalizer]
+    :ivar encryption_key: A description of an encryption key that you create in Azure Key Vault.
+     This key is used to provide an additional level of encryption-at-rest for your data when you
+     want full assurance that no one, not even Microsoft, can decrypt your data. Once you have
+     encrypted your data, it will always remain encrypted. The search service will ignore attempts
+     to set this property to null. You can change this property as needed if you want to rotate your
+     encryption key; Your data will be unaffected. Encryption with customer-managed keys is not
+     available for free search services, and is only available for paid services created on or after
+     January 1, 2019.
+    :vartype encryption_key: ~azure.search.documents.indexes.models.SearchResourceEncryptionKey
+    :ivar similarity: The type of similarity algorithm to be used when scoring and ranking the
+     documents matching a search query. The similarity algorithm can only be defined at index
+     creation time and cannot be modified on existing indexes. If null, the ClassicSimilarity
+     algorithm is used.
+    :vartype similarity: ~azure.search.documents.indexes.models.SimilarityAlgorithm
+    :ivar semantic: Defines parameters for a search index that influence semantic capabilities.
+    :vartype semantic: ~azure.search.documents.indexes.models.SemanticSearch
+    :ivar vector_search: Contains configuration options related to vector search.
+    :vartype vector_search: ~azure.search.documents.indexes.models.VectorSearch
+    :ivar permission_filter_option: A value indicating whether permission filtering is enabled for
+     the index. Known values are: "enabled" and "disabled".
+    :vartype permission_filter_option: str or
+     ~azure.search.documents.indexes.models.SearchIndexPermissionFilterOption
+    :ivar purview_enabled: A value indicating whether Purview is enabled for the index.
+    :vartype purview_enabled: bool
+    :ivar e_tag: The ETag of the index.
+    :vartype e_tag: str
+    """
+
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of the index. Required."""
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The description of the index."""
+    fields: Optional[list["_models.SearchField"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The fields of the index."""
+    scoring_profiles: Optional[list["_models.ScoringProfile"]] = rest_field(
+        name="scoringProfiles", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The scoring profiles for the index."""
+    default_scoring_profile: Optional[str] = rest_field(
+        name="defaultScoringProfile", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The name of the scoring profile to use if none is specified in the query. If this property is
+     not set and no scoring profile is specified in the query, then default scoring (tf-idf) will be
+     used."""
+    cors_options: Optional["_models.CorsOptions"] = rest_field(
+        name="corsOptions", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Options to control Cross-Origin Resource Sharing (CORS) for the index."""
+    suggesters: Optional[list["_models.SearchSuggester"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The suggesters for the index."""
+    analyzers: Optional[list["_models.LexicalAnalyzer"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The analyzers for the index."""
+    tokenizers: Optional[list["_models.LexicalTokenizer"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The tokenizers for the index."""
+    token_filters: Optional[list["_models.TokenFilter"]] = rest_field(
+        name="tokenFilters", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The token filters for the index."""
+    char_filters: Optional[list["_models.CharFilter"]] = rest_field(
+        name="charFilters", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The character filters for the index."""
+    normalizers: Optional[list["_models.LexicalNormalizer"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The normalizers for the index."""
+    encryption_key: Optional["_models.SearchResourceEncryptionKey"] = rest_field(
+        name="encryptionKey", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """A description of an encryption key that you create in Azure Key Vault. This key is used to
+     provide an additional level of encryption-at-rest for your data when you want full assurance
+     that no one, not even Microsoft, can decrypt your data. Once you have encrypted your data, it
+     will always remain encrypted. The search service will ignore attempts to set this property to
+     null. You can change this property as needed if you want to rotate your encryption key; Your
+     data will be unaffected. Encryption with customer-managed keys is not available for free search
+     services, and is only available for paid services created on or after January 1, 2019."""
+    similarity: Optional["_models.SimilarityAlgorithm"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The type of similarity algorithm to be used when scoring and ranking the documents matching a
+     search query. The similarity algorithm can only be defined at index creation time and cannot be
+     modified on existing indexes. If null, the ClassicSimilarity algorithm is used."""
+    semantic: Optional["_models.SemanticSearch"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Defines parameters for a search index that influence semantic capabilities."""
+    vector_search: Optional["_models.VectorSearch"] = rest_field(
+        name="vectorSearch", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Contains configuration options related to vector search."""
+    permission_filter_option: Optional[Union[str, "_models.SearchIndexPermissionFilterOption"]] = rest_field(
+        name="permissionFilterOption", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """A value indicating whether permission filtering is enabled for the index. Known values are:
+     \"enabled\" and \"disabled\"."""
+    purview_enabled: Optional[bool] = rest_field(
+        name="purviewEnabled", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """A value indicating whether Purview is enabled for the index."""
+    e_tag: Optional[str] = rest_field(name="@odata.etag", visibility=["read", "create", "update", "delete", "query"])
+    """The ETag of the index."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        description: Optional[str] = None,
+        fields: Optional[list["_models.SearchField"]] = None,
+        scoring_profiles: Optional[list["_models.ScoringProfile"]] = None,
+        default_scoring_profile: Optional[str] = None,
+        cors_options: Optional["_models.CorsOptions"] = None,
+        suggesters: Optional[list["_models.SearchSuggester"]] = None,
+        analyzers: Optional[list["_models.LexicalAnalyzer"]] = None,
+        tokenizers: Optional[list["_models.LexicalTokenizer"]] = None,
+        token_filters: Optional[list["_models.TokenFilter"]] = None,
+        char_filters: Optional[list["_models.CharFilter"]] = None,
+        normalizers: Optional[list["_models.LexicalNormalizer"]] = None,
+        encryption_key: Optional["_models.SearchResourceEncryptionKey"] = None,
+        similarity: Optional["_models.SimilarityAlgorithm"] = None,
+        semantic: Optional["_models.SemanticSearch"] = None,
+        vector_search: Optional["_models.VectorSearch"] = None,
+        permission_filter_option: Optional[Union[str, "_models.SearchIndexPermissionFilterOption"]] = None,
+        purview_enabled: Optional[bool] = None,
+        e_tag: Optional[str] = None,
     ) -> None: ...
 
     @overload

@@ -104,6 +104,27 @@ def main():
                         "priority": 4,
                         "ruleType": "MatchRule",
                     },
+                    {
+                        "action": "CAPTCHA",
+                        "matchConditions": [
+                            {
+                                "matchValues": ["192.168.2.0/24"],
+                                "matchVariables": [{"selector": None, "variableName": "RemoteAddr"}],
+                                "negationConditon": False,
+                                "operator": "IPMatch",
+                            },
+                            {
+                                "matchValues": ["Bot"],
+                                "matchVariables": [{"selector": "UserAgent", "variableName": "RequestHeaders"}],
+                                "negationConditon": False,
+                                "operator": "Contains",
+                            },
+                        ],
+                        "name": "Rule5",
+                        "priority": 5,
+                        "ruleType": "MatchRule",
+                        "state": "Enabled",
+                    },
                 ],
                 "managedRules": {
                     "exceptions": [
@@ -192,7 +213,10 @@ def main():
                             "ruleGroupOverrides": [
                                 {
                                     "ruleGroupName": "UnknownBots",
-                                    "rules": [{"action": "JSChallenge", "ruleId": "300700", "state": "Enabled"}],
+                                    "rules": [
+                                        {"action": "JSChallenge", "ruleId": "300700", "state": "Enabled"},
+                                        {"action": "CAPTCHA", "ruleId": "300600", "state": "Enabled"},
+                                    ],
                                 }
                             ],
                             "ruleSetType": "Microsoft_BotManagerRuleSet",
@@ -218,6 +242,7 @@ def main():
                     ],
                 },
                 "policySettings": {
+                    "captchaCookieExpirationInMins": 100,
                     "jsChallengeCookieExpirationInMins": 100,
                     "logScrubbing": {
                         "scrubbingRules": [
@@ -242,6 +267,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2025-03-01/examples/WafPolicyCreateOrUpdate.json
+# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2025-05-01/examples/WafPolicyCreateOrUpdate.json
 if __name__ == "__main__":
     main()
