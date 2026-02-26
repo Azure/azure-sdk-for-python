@@ -135,6 +135,7 @@ class ResponseStreamEventGenerator(ResponseEventGenerator):
         if isinstance(content, list):
             for c in content:
                 self.aggregate_content(c)
+            return
         if isinstance(content, project_models.ItemResource):
             self.aggregated_contents.append(content)
         else:

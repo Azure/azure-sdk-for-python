@@ -179,7 +179,7 @@ class ResponseAPIMessageRequestConverter(ResponseAPIRequestConverter):
         if isinstance(content, str):
             return role_mapping[role](content=content)
         if isinstance(content, list):
-            return role_mapping[role](content=self.convert_OpenAIItemContentList(content))
+            return role_mapping[role](content=self.convert_openai_item_content_list(content))
         raise ValueError(f"Unsupported ResponseMessagesItemParam content type: {type(content)}, {content}")
 
     def convert_function_call(self, item: dict) -> AnyMessage:
@@ -203,10 +203,10 @@ class ResponseAPIMessageRequestConverter(ResponseAPIRequestConverter):
         if isinstance(output, str):
             return ToolMessage(content=output, tool_call_id=item.get("call_id"))
         if isinstance(output, list):
-            return ToolMessage(content=self.convert_OpenAIItemContentList(output), tool_call_id=item.get("call_id"))
+            return ToolMessage(content=self.convert_openai_item_content_list(output), tool_call_id=item.get("call_id"))
         raise ValueError(f"Unsupported function call output type: {type(output)}, {output}")
 
-    def convert_OpenAIItemContentList(self, content: List[Dict]) -> List[Dict]:
+    def convert_openai_item_content_list(self, content: List[Dict]) -> List[Dict]:
         """
         Convert ItemContent to a list format
 
@@ -218,10 +218,10 @@ class ResponseAPIMessageRequestConverter(ResponseAPIRequestConverter):
         """
         result = []
         for item in content:
-            result.append(self.convert_OpenAIItemContent(item))
+            result.append(self.convert_openai_item_content(item))
         return result
 
-    def convert_OpenAIItemContent(self, content: Dict) -> Dict:
+    def convert_openai_item_content(self, content: Dict) -> Dict:
         """
         Convert ItemContent to a dict format
 

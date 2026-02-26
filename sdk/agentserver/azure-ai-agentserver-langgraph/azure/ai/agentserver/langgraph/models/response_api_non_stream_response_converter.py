@@ -85,7 +85,7 @@ class ResponseAPIMessagesNonStreamResponseConverter(ResponseAPINonStreamResponse
         # Implement the conversion logic for inner inputs
         if isinstance(output_message, messages.HumanMessage):
             return project_models.ResponsesUserMessageItemResource(
-                content=self.convert_MessageContent(
+                content=self.convert_message_content(
                     output_message.content, role=project_models.ResponsesMessageRole.USER
                 ),
                 id=self.context.agent_run.id_generator.generate_message_id(),
@@ -93,7 +93,7 @@ class ResponseAPIMessagesNonStreamResponseConverter(ResponseAPINonStreamResponse
             )
         if isinstance(output_message, messages.SystemMessage):
             return project_models.ResponsesSystemMessageItemResource(
-                content=self.convert_MessageContent(
+                content=self.convert_message_content(
                     output_message.content, role=project_models.ResponsesMessageRole.SYSTEM
                 ),
                 id=self.context.agent_run.id_generator.generate_message_id(),
@@ -117,7 +117,7 @@ class ResponseAPIMessagesNonStreamResponseConverter(ResponseAPINonStreamResponse
                     status="completed",
                 )
             return project_models.ResponsesAssistantMessageItemResource(
-                content=self.convert_MessageContent(
+                content=self.convert_message_content(
                     output_message.content, role=project_models.ResponsesMessageRole.ASSISTANT
                 ),
                 id=self.context.agent_run.id_generator.generate_message_id(),
@@ -131,14 +131,14 @@ class ResponseAPIMessagesNonStreamResponseConverter(ResponseAPINonStreamResponse
             )
         logger.warning(f"Unsupported message type: {type(output_message)}, {output_message}")
 
-    def convert_MessageContent(
+    def convert_message_content(
         self, content, role: project_models.ResponsesMessageRole
     ) -> List[project_models.ItemContent]:
         if isinstance(content, str):
-            return [self.convert_MessageContentItem(content, role)]
-        return [self.convert_MessageContentItem(item, role) for item in content]
+            return [self.convert_message_content_item(content, role)]
+        return [self.convert_message_content_item(item, role) for item in content]
 
-    def convert_MessageContentItem(
+    def convert_message_content_item(
         self, content, role: project_models.ResponsesMessageRole
     ) -> project_models.ItemContent:
         content_dict = copy.deepcopy(content) if isinstance(content, dict) else {"text": content}
