@@ -32,6 +32,11 @@ steps:
       Paths:
         - '**'
 
+  - script: |
+      echo "RequestedFor=$(Build.RequestedFor)"
+      echo "LINUXPOOL=$(LINUXPOOL)"
+    displayName: 'Debug Info'
+
   # Authenticate to Azure Artifacts feed immediately after checkout to prevent 401 errors
   # Public feeds have upstream sources enabled and require authentication for passthrough to pypi.org
   - template: auth-dev-feed.yml
