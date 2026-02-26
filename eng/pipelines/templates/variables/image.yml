@@ -2,9 +2,15 @@
 
 variables:
   - name: LINUXPOOL
-    value: azsdk-pool
+    ${{ if contains(lower(variables['Build.RequestedFor']), 'copilot') }}:
+      value: azsdk-pool-backup
+    ${{ else }}:
+      value: azsdk-pool
   - name: WINDOWSPOOL
-    value: azsdk-pool
+    ${{ if contains(lower(variables['Build.RequestedFor']), 'copilot') }}:
+      value: azsdk-pool-backup
+    ${{ else }}:
+      value: azsdk-pool
   - name: MACPOOL
     value: Azure Pipelines
 
