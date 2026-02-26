@@ -146,6 +146,45 @@ try:
         @recorded_by_proxy_async
         @pytest.mark.skipif(sys.version_info < (3, 8), reason="Python 3.7 does not support AsyncMock")
         @pytest.mark.asyncio
+        async def test_refresh_disabled(self, appconfiguration_endpoint_string, appconfiguration_keyvault_secret_url):
+            mock_callback = AsyncMock()
+            async with await self.create_client(
+                endpoint=appconfiguration_endpoint_string,
+                keyvault_secret_url=appconfiguration_keyvault_secret_url,
+                refresh_on=[WatchKey("refresh_message")],
+                refresh_interval=1,
+                on_refresh_success=mock_callback,
+                feature_flag_enabled=True,
+                feature_flag_refresh_enabled=True,
+                refresh_enabled=False,
+            ) as client:
+                assert client["refresh_message"] == "original value"
+                assert client["my_json"]["key"] == "value"
+                assert FEATURE_MANAGEMENT_KEY in client
+                assert has_feature_flag(client, "Alpha")
+
+                appconfig_client = self.create_aad_sdk_client(appconfiguration_endpoint_string)
+
+                setting = await appconfig_client.get_configuration_setting(key="refresh_message")
+                setting.value = "updated value"
+                await appconfig_client.set_configuration_setting(setting)
+
+                # Waiting for the refresh interval to pass
+                time.sleep(2)
+
+                await client.refresh()
+                # Refresh is disabled, so the value should not change
+                assert client["refresh_message"] == "original value"
+                assert mock_callback.call_count == 0
+
+                setting.value = "original value"
+                await appconfig_client.set_configuration_setting(setting)
+
+        # method: refresh
+        @app_config_decorator_async
+        @recorded_by_proxy_async
+        @pytest.mark.skipif(sys.version_info < (3, 8), reason="Python 3.7 does not support AsyncMock")
+        @pytest.mark.asyncio
         async def test_empty_refresh(self, appconfiguration_endpoint_string, appconfiguration_keyvault_secret_url):
             mock_callback = AsyncMock()
             async with await self.create_client(

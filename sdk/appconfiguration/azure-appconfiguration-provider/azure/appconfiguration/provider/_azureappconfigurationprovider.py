@@ -58,6 +58,7 @@ def load(  # pylint: disable=docstring-keyword-should-match-keyword-only
     key_vault_options: Optional[AzureAppConfigurationKeyVaultOptions] = None,
     refresh_on: Optional[List[Tuple[str, str]]] = None,
     refresh_interval: int = 30,
+    refresh_enabled: bool = True,
     on_refresh_success: Optional[Callable] = None,
     on_refresh_error: Optional[Callable[[Exception], None]] = None,
     feature_flag_enabled: bool = False,
@@ -85,6 +86,8 @@ def load(  # pylint: disable=docstring-keyword-should-match-keyword-only
     not supported).
     :keyword int refresh_interval: The minimum time in seconds between when a call to `refresh` will actually trigger a
      service call to update the settings. Default value is 30 seconds.
+    :keyword refresh_enabled: Optional flag to enable or disable refreshing of configuration settings. Default is True.
+    :paramtype refresh_enabled: bool
     :keyword on_refresh_success: Optional callback to be invoked when a change is found and a successful refresh has
     happened.
     :paramtype on_refresh_success: Optional[Callable]
@@ -126,6 +129,7 @@ def load(  # pylint: disable=docstring-keyword-should-match-keyword-only
     key_vault_options: Optional[AzureAppConfigurationKeyVaultOptions] = None,
     refresh_on: Optional[List[Tuple[str, str]]] = None,
     refresh_interval: int = 30,
+    refresh_enabled: bool = True,
     on_refresh_success: Optional[Callable] = None,
     on_refresh_error: Optional[Callable[[Exception], None]] = None,
     feature_flag_enabled: bool = False,
@@ -155,6 +159,8 @@ def load(  # pylint: disable=docstring-keyword-should-match-keyword-only
     :paramtype refresh_on: List[Tuple[str, str]]
     :keyword int refresh_interval: The minimum time in seconds between when a call to `refresh` will actually trigger a
      service call to update the settings. Default value is 30 seconds.
+    :keyword refresh_enabled: Optional flag to enable or disable refreshing of configuration settings. Default is True.
+    :paramtype refresh_enabled: bool
     :keyword on_refresh_success: Optional callback to be invoked when a change is found and a successful refresh has
      happened.
     :paramtype on_refresh_success: Optional[Callable]
@@ -336,6 +342,9 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
             raise e
 
     def refresh(self, **kwargs) -> None:
+        if not self._refresh_enabled:
+            logger.debug("Refresh called but refresh is not enabled.")
+            return
         if not self._watched_settings and not self._feature_flag_refresh_enabled:
             logger.debug("Refresh called but no refresh enabled.")
             return
