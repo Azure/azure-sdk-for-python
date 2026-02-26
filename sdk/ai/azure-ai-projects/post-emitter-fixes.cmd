@@ -24,6 +24,9 @@ REM Rename WEB_SEARCH_PREVIEW2025_03_11 enum member to WEB_SEARCH_PREVIEW_2025_0
 powershell -Command "(Get-Content azure\ai\projects\models\_enums.py) -replace 'WEB_SEARCH_PREVIEW2025_03_11', 'WEB_SEARCH_PREVIEW_2025_03_11' | Set-Content azure\ai\projects\models\_enums.py"
 powershell -Command "(Get-Content azure\ai\projects\models\_models.py) -replace 'WEB_SEARCH_PREVIEW2025_03_11', 'WEB_SEARCH_PREVIEW_2025_03_11' | Set-Content azure\ai\projects\models\_models.py"
 
+REM Rename DEFAULT2024_11_15 to DEFAULT_2024_11_15
+powershell -Command "(Get-Content azure\ai\projects\models\_enums.py) -replace 'DEFAULT2024_11_15', 'DEFAULT_2024_11_15' | Set-Content azure\ai\projects\models\_enums.py"
+
 REM Fix Sphinx issue in class ToolChoiceAllowed, in "tools" property doc string. Everything should be aligned including JSON example, like this:
 REM """A list of tool definitions that the model should be allowed to call. For the Responses API, the
 REM  list of tool definitions might look like:

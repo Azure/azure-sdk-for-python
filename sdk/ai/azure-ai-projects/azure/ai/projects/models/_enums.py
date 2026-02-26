@@ -552,8 +552,8 @@ class RankerVersionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     AUTO = "auto"
     """AUTO."""
-    DEFAULT2024_11_15 = "default-2024-11-15"
-    """DEFAULT2024_11_15."""
+    DEFAULT_2024_11_15 = "default-2024-11-15"
+    """DEFAULT_2024_11_15."""
 
 
 class RecurrenceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

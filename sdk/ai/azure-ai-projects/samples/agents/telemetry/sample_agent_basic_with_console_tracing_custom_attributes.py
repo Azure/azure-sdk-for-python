@@ -51,7 +51,7 @@ endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
 # attributes to spans when they are started.
 # [START custom_attribute_span_processor]
 class CustomAttributeSpanProcessor(SpanProcessor):
-    def __init__(self):
+    def __init__(self) -> None:
         pass
 
     def on_start(self, span: Span, parent_context=None):

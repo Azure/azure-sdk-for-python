@@ -108,7 +108,7 @@ class ResponsesInstrumentor:
     and provides functionality to check whether instrumentation is active.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         if not _tracing_library_available:
             logger.warning(
                 "OpenTelemetry is not available. "

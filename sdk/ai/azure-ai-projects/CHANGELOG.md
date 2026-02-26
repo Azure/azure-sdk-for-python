@@ -11,10 +11,14 @@ can still pass in `List[dict[str, Any]`.
 
 ### Breaking Changes
 
+* Class `TextResponseFormatConfiguration` renamed to `TextResponseFormat`.
+* Class `TextResponseFormatConfigurationResponseFormatText` renamed to `TextResponseFormatTest`.
+* Class `TextResponseFormatConfigurationResponseFormatJsonObject` renamed to `TextResponseFormatJsonObject`.
 * Rename method ".beta.evaluators.list_latest_versions()` to `.beta.evaluators.list()`.
 * Class `CodeInterpreterContainerAuto` was renamed to `AutoCodeInterpreterToolParam`, and has a new
 optional property `network_policy` of type `ContainerNetworkPolicyParam`.
 * Rename `ToolChoiceParamType.WEB_SEARCH_PREVIEW2025_03_11` to `ToolChoiceParamType.WEB_SEARCH_PREVIEW_2025_03_11`.
+* Rename `RankerVersionType.DEFAULT2024_11_15` to `RankerVersionType.DEFAULT_2024_11_15`.
 
 ### Bugs Fixed
 
