@@ -446,7 +446,7 @@ class TestRealtimeService(AzureRecordedTestCase):
         voicelive_openai_endpoint = kwargs.pop("voicelive_openai_endpoint")
         voicelive_openai_api_key = kwargs.pop("voicelive_openai_api_key")
         async with connect(
-            endpoint=voicelive_openai_endpoint, credential=AzureKeyCredential(voicelive_openai_api_key), model=model
+            endpoint=voicelive_openai_endpoint, credential=AzureKeyCredential(voicelive_openai_api_key), model=model, api_version="2025-10-01"
         ) as conn:
             tools = [
                 FunctionTool(
@@ -557,7 +557,7 @@ class TestRealtimeService(AzureRecordedTestCase):
         if model != "phi4-mm-realtime":
             instructions += " If you are asked about the weather, please respond with `I will get the weather for you. Please wait a moment.` and then call the get_weather function with the location parameter."
         async with connect(
-            endpoint=voicelive_openai_endpoint, credential=AzureKeyCredential(voicelive_openai_api_key), model=model
+            endpoint=voicelive_openai_endpoint, credential=AzureKeyCredential(voicelive_openai_api_key), model=model, api_version="2025-10-01"
         ) as conn:
             session = RequestSession(
                 instructions=instructions,
@@ -612,7 +612,7 @@ class TestRealtimeService(AzureRecordedTestCase):
         voicelive_openai_endpoint = kwargs.pop("voicelive_openai_endpoint")
         voicelive_openai_api_key = kwargs.pop("voicelive_openai_api_key")
         async with connect(
-            endpoint=voicelive_openai_endpoint, credential=AzureKeyCredential(voicelive_openai_api_key), model=model
+            endpoint=voicelive_openai_endpoint, credential=AzureKeyCredential(voicelive_openai_api_key), model=model, api_version="2025-10-01"
         ) as conn:
             session = RequestSession(
                 instructions="You are a helpful assistant that can answer questions.",
@@ -738,7 +738,7 @@ class TestRealtimeService(AzureRecordedTestCase):
         voicelive_openai_endpoint = kwargs.pop("voicelive_openai_endpoint")
         voicelive_openai_api_key = kwargs.pop("voicelive_openai_api_key")
         async with connect(
-            endpoint=voicelive_openai_endpoint, credential=AzureKeyCredential(voicelive_openai_api_key), model=model
+            endpoint=voicelive_openai_endpoint, credential=AzureKeyCredential(voicelive_openai_api_key), model=model, api_version="2025-10-01"
         ) as conn:
             input_audio_transcription = AudioInputTranscriptionOptions(model=transcription_model)
             session = RequestSession(input_audio_transcription=input_audio_transcription)
@@ -956,7 +956,7 @@ class TestRealtimeService(AzureRecordedTestCase):
         voicelive_openai_endpoint = kwargs.pop("voicelive_openai_endpoint")
         voicelive_openai_api_key = kwargs.pop("voicelive_openai_api_key")
         async with connect(
-            endpoint=voicelive_openai_endpoint, credential=AzureKeyCredential(voicelive_openai_api_key), model=model
+            endpoint=voicelive_openai_endpoint, credential=AzureKeyCredential(voicelive_openai_api_key), model=model, api_version="2025-10-01"
         ) as conn:
             session = RequestSession(
                 instructions="You are a helpful assistant.",
