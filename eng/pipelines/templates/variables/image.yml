@@ -2,14 +2,16 @@
 
 variables:
   - name: LINUXPOOL
-    value: $[ iif(contains(lower(variables['SourceVersionAuthor']), 'scbedd'),
-                  'azsdk-pool-backup',
-                  'azsdk-pool') ]
+    ${{ if contains(lower(variables['SourceVersionAuthor']), 'scbedd') }}:
+      value: azsdk-pool-backup
+    ${{ else }}:
+      value: azsdk-pool
 
   - name: WINDOWSPOOL
-    value: $[ iif(contains(lower(variables['SourceVersionAuthor']), 'scbedd'),
-                  'azsdk-pool-backup',
-                  'azsdk-pool') ]
+    ${{ if contains(lower(variables['SourceVersionAuthor']), 'scbedd') }}:
+      value: azsdk-pool-backup
+    ${{ else }}:
+      value: azsdk-pool
   - name: MACPOOL
     value: Azure Pipelines
 
