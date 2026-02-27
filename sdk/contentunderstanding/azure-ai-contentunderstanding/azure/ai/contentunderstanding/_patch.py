@@ -17,7 +17,7 @@ from . import models as _models
 from .models import AnalyzeLROPoller
 
 if TYPE_CHECKING:
-    from azure.core.credentials import TokenCredential
+    from azure.core.credentials import AzureKeyCredential, TokenCredential
 
 JSON = dict[str, Any]
 _Unset: Any = object()
@@ -32,6 +32,7 @@ class ContentUnderstandingClient(GeneratedClient):
     - Hides the string_encoding parameter (always uses "codePoint" for Python)
     - Returns AnalyzeLROPoller with .operation_id property
     - Fixes content_type default for begin_analyze_binary
+    - Defaults polling_interval to 3 seconds (instead of generated 30s)
 
     :param endpoint: Content Understanding service endpoint. Required.
     :type endpoint: str
@@ -43,8 +44,18 @@ class ContentUnderstandingClient(GeneratedClient):
      Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-     Retry-After header is present.
+     Retry-After header is present. Default value is 3 seconds.
     """
+
+    def __init__(
+        self,
+        endpoint: str,
+        credential: Union["AzureKeyCredential", "TokenCredential"],
+        **kwargs: Any,
+    ) -> None:
+        # Default polling_interval to 3 seconds (generated code defaults to 30s)
+        kwargs.setdefault("polling_interval", 3)
+        super().__init__(endpoint=endpoint, credential=credential, **kwargs)
 
     @overload  # type: ignore[override]
     def begin_analyze(
