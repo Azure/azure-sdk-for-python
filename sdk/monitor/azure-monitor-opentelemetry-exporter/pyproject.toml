@@ -1,4 +1,76 @@
+[build-system]
+requires = [
+    "setuptools>=77.0.3",
+    "wheel",
+]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "azure-monitor-opentelemetry-exporter"
+authors = [
+    { name = "Microsoft Corporation", email = "ascl@microsoft.com" },
+]
+description = "Microsoft Azure Monitor Opentelemetry Exporter Client Library for Python"
+license = "MIT"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+]
+requires-python = ">=3.8"
+keywords = [
+    "azure",
+    "azure sdk",
+]
+dependencies = [
+    "azure-core<2.0.0,>=1.28.0",
+    "azure-identity~=1.17",
+    "msrest>=0.6.10",
+    "opentelemetry-api==1.39",
+    "opentelemetry-sdk==1.39",
+    "psutil>=5.9,<8",
+]
+dynamic = [
+    "version",
+    "readme",
+]
+
+[project.urls]
+repository = "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/monitor/azure-monitor-opentelemetry-exporter"
+
 [tool.azure-sdk-build]
 mypy = true
 pyright = false
 black = true
+
+[tool.setuptools.dynamic.version]
+attr = "azure.monitor.opentelemetry.exporter._version.VERSION"
+
+[tool.setuptools.dynamic.readme]
+file = [
+    "README.md",
+]
+content-type = "text/markdown"
+
+[tool.setuptools.packages.find]
+exclude = [
+    "tests",
+    "samples",
+    "azure",
+    "azure.monitor",
+    "azure.monitor.opentelemetry",
+]
+
+[tool.setuptools.package-data]
+pytyped = [
+    "py.typed",
+]
+
+[packaging]
+auto_update = false

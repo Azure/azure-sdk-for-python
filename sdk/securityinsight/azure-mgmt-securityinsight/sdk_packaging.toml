@@ -1,8 +1,0 @@
-[packaging]
-package_name = "azure-mgmt-securityinsight"
-package_nspkg = "azure-mgmt-nspkg"
-package_pprint_name = "Security Insight Management"
-package_doc_id = ""
-is_stable = false
-is_arm = true
-title = "SecurityInsights"

@@ -1,3 +1,46 @@
+[build-system]
+requires = [
+    "setuptools>=77.0.3",
+    "wheel",
+]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "azure-messaging-webpubsubservice"
+authors = [
+    { name = "Microsoft Corporation", email = "azpysdkhelp@microsoft.com" },
+]
+description = "Microsoft Corporation Azure WebPubSub Service Client Library for Python"
+license = "MIT"
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+]
+requires-python = ">=3.9"
+keywords = [
+    "azure",
+    "azure sdk",
+]
+dependencies = [
+    "isodate>=0.6.1",
+    "azure-core>=1.35.0",
+    "typing-extensions>=4.6.0",
+]
+dynamic = [
+    "version",
+    "readme",
+]
+
+[project.urls]
+repository = "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk"
+
 [tool.azure-sdk-build]
 pylint = false
 pyright = false
@@ -5,3 +48,34 @@ mypy = false
 
 [tool.azure-sdk-conda]
 in_bundle = false
+
+[tool.setuptools.dynamic.version]
+attr = "azure.messaging.webpubsubservice._version.VERSION"
+
+[tool.setuptools.dynamic.readme]
+file = [
+    "README.md",
+]
+content-type = "text/markdown"
+
+[tool.setuptools.packages.find]
+exclude = [
+    "tests",
+    "azure",
+    "azure.messaging",
+]
+
+[tool.setuptools.package-data]
+"azure.messaging.webpubsubservice" = [
+    "py.typed",
+]
+
+[packaging]
+package_name = "azure-messaging-webpubsubservice"
+package_nspkg = "azure-messaging-nspkg"
+package_pprint_name = "Azure Web PubSub Service"
+package_doc_id = ""
+is_stable = false
+is_arm = false
+need_msrestazure = false
+auto_update = false

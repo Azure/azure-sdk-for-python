@@ -1,0 +1,70 @@
+[build-system]
+requires = [
+    "setuptools>=77.0.3",
+    "wheel",
+]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "{{package_name}}"
+authors = [
+    { name = "Microsoft Corporation", email = "azpysdkhelp@microsoft.com" },
+]
+description = "Microsoft Azure {{package_pprint_name}} Client Library for Python"
+license = "MIT"
+classifiers = [
+    "{{classifier}}",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+]
+requires-python = ">=3.9"
+keywords = ["azure", "azure sdk"]
+dependencies = [
+    "isodate>=0.6.1",
+    "typing-extensions>=4.6.0",
+    {%- if need_msrestazure %}
+    "msrestazure>=0.4.32",
+    {%- endif %}
+    "azure-common>=1.1",
+    {%- if need_azurecore %}
+    "azure-core>=1.35.0",
+    {%- endif %}
+    {%- if need_azuremgmtcore %}
+    "azure-mgmt-core>=1.6.0",
+    {%- endif %}
+]
+dynamic = ["version", "readme"]
+
+[project.urls]
+repository = "https://github.com/Azure/azure-sdk-for-python"
+
+[tool.setuptools.dynamic.version]
+attr = "{{package_name | replace('-', '.')}}._version.VERSION"
+
+[tool.setuptools.dynamic.readme]
+file = ["README.md", "CHANGELOG.md"]
+content-type = "text/markdown"
+
+[tool.setuptools.packages.find]
+exclude = [
+    "tests*",
+    "generated_tests*",
+    "samples*",
+    "generated_samples*",
+    "doc*",
+    {%- for nspkg_name in nspkg_names %}
+    "{{ nspkg_name }}",
+    {%- endfor %}
+    {%- for folder in exclude_folders %}
+    "{{ folder }}",
+    {%- endfor %}
+]
+
+[tool.setuptools.package-data]
+pytyped = ["py.typed"]

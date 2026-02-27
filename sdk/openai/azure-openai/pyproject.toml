@@ -1,3 +1,44 @@
+[build-system]
+requires = [
+    "setuptools>=77.0.3",
+    "wheel",
+]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "azure-openai"
+authors = [
+    { name = "Microsoft Corporation", email = "azuresdkengsysadmins@microsoft.com" },
+]
+description = "Microsoft Azure Azure OpenAI Client Library for Python"
+license = "MIT"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+]
+requires-python = ">=3.7"
+keywords = [
+    "azure",
+    "azure sdk",
+]
+dependencies = [
+    "azure-identity<2.0.0,>=1.15.0",
+]
+dynamic = [
+    "version",
+    "readme",
+]
+
+[project.urls]
+repository = "https://github.com/Azure/azure-sdk-for-python"
+
 [tool.azure-sdk-build]
 pylint = false
 mypy = false
@@ -8,3 +49,26 @@ sphinx = false
 sdist = false
 mindependency = false
 verifysdist = false
+
+[tool.setuptools.dynamic.version]
+attr = "azure.openai._version.VERSION"
+
+[tool.setuptools.dynamic.readme]
+file = [
+    "README.md",
+]
+content-type = "text/markdown"
+
+[tool.setuptools.packages.find]
+exclude = [
+    "tests",
+    "azure",
+]
+
+[tool.setuptools.package-data]
+"azure.openai" = [
+    "py.typed",
+]
+
+[packaging]
+auto_update = false

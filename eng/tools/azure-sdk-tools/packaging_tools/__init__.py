@@ -99,6 +99,12 @@ def build_packaging_by_package_name(
         if template_name not in template_names:
             _LOGGER.info("Skipping template %s", template_name)
             continue
+
+        # Skip setup.py since packages now use pyproject.toml
+        if template_name == "setup.py":
+            _LOGGER.info("Skipping setup.py template (packages use pyproject.toml)")
+            continue
+
         future_filepath = Path(output_folder) / package_name / template_name
 
         # Might decide to make it more generic one day
@@ -120,10 +126,56 @@ def build_packaging_by_package_name(
 
             continue
 
+        # pyproject.toml requires merge strategy to preserve existing tool settings
+        if template_name == "pyproject.toml" and future_filepath.exists():
+            _merge_pyproject_toml(future_filepath, result)
+            continue
+
         with open(future_filepath, "w") as fd:
             fd.write(result)
     # azure_bdist_wheel had been removed, but need to delete it manually
     with suppress(FileNotFoundError):
         (Path(output_folder) / package_name / "azure_bdist_wheel.py").unlink()
+    # setup.py is no longer used, remove it if present
+    with suppress(FileNotFoundError):
+        (Path(output_folder) / package_name / "setup.py").unlink()
 
     _LOGGER.info("Template done %s", package_name)
+
+
+def _merge_pyproject_toml(existing_path: Path, new_content: str) -> None:
+    """Merge new pyproject.toml template content with existing file, preserving tool settings."""
+    try:
+        import tomllib as toml
+    except ImportError:
+        import tomli as toml  # type: ignore
+    import tomli_w as tomlw
+
+    # Parse existing file
+    with open(existing_path, "rb") as f:
+        existing = toml.load(f)
+
+    # Parse new template content
+    import io
+
+    new = toml.load(io.BytesIO(new_content.encode("utf-8")))
+
+    # Merge: new content takes precedence for project/build-system/setuptools,
+    # but preserve existing tool.* sections (other than setuptools)
+    merged = dict(new)
+    existing_tool = existing.get("tool", {})
+    new_tool = new.get("tool", {})
+    merged_tool = dict(new_tool)
+    for key, val in existing_tool.items():
+        if key not in merged_tool:
+            merged_tool[key] = val
+    merged["tool"] = merged_tool
+
+    # Preserve top-level non-tool sections from existing (like [packaging])
+    for key, val in existing.items():
+        if key not in merged:
+            merged[key] = val
+
+    with open(existing_path, "wb") as f:
+        tomlw.dump(merged, f)
+    _LOGGER.info("Merged pyproject.toml for %s", existing_path)

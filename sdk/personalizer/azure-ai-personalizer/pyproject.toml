@@ -1,3 +1,50 @@
+[build-system]
+requires = [
+    "setuptools>=77.0.3",
+    "wheel",
+]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "azure-ai-personalizer"
+authors = [
+    { name = "Microsoft Corporation", email = "azuresdkengsysadmins@microsoft.com" },
+]
+description = "Microsoft Azure Personalizer Client Library for Python"
+license = "MIT"
+classifiers = [
+    "Development Status :: 7 - Inactive",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+]
+requires-python = ">=3.7"
+keywords = [
+    "azure",
+    "personalizer",
+    "cognitive services",
+    "reinforcement learning",
+    "contextual bandit",
+    "azure sdk",
+]
+dependencies = [
+    "azure-core<2.0.0,>=1.24.0",
+    "isodate<1.0.0,>=0.6.1",
+    "typing-extensions>=4.0.1",
+]
+dynamic = [
+    "version",
+    "readme",
+]
+
+[project.urls]
+repository = "https://github.com/Azure/azure-sdk-for-python"
+
 [tool.azure-sdk-build]
 pylint = false
 pyright = false
@@ -5,3 +52,27 @@ type_check_samples = false
 verifytypes = false
 ci_enabled = false
 black = true
+
+[tool.setuptools.dynamic.version]
+attr = "azure.ai.personalizer._version.VERSION"
+
+[tool.setuptools.dynamic.readme]
+file = [
+    "README.md",
+]
+content-type = "text/markdown"
+
+[tool.setuptools.packages.find]
+exclude = [
+    "tests",
+    "azure",
+    "azure.ai",
+]
+
+[tool.setuptools.package-data]
+pytyped = [
+    "py.typed",
+]
+
+[packaging]
+auto_update = false

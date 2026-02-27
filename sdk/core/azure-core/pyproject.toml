@@ -1,26 +1,112 @@
+[build-system]
+requires = [
+    "setuptools>=77.0.3",
+    "wheel",
+]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "azure-core"
+authors = [
+    { name = "Microsoft Corporation", email = "azpysdkhelp@microsoft.com" },
+]
+description = "Microsoft Azure Core Library for Python"
+license = "MIT"
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+]
+requires-python = ">=3.9"
+keywords = [
+    "azure",
+    "azure sdk",
+]
+dependencies = [
+    "requests>=2.21.0",
+    "typing-extensions>=4.6.0",
+]
+dynamic = [
+    "version",
+    "readme",
+]
+
+[project.optional-dependencies]
+aio = [
+    "aiohttp>=3.0",
+]
+tracing = [
+    "opentelemetry-api~=1.26",
+]
+
+[project.urls]
+repository = "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/core/azure-core"
+
 [tool.azure-sdk-build]
 mypy = true
 type_check_samples = true
 verifytypes = true
 pyright = false
 black = true
-# For test environments or static checks where a check should be run by default, not explicitly disabling will enable the check.
-# pylint is enabled by default, so there is no reason for a pylint = true in every pyproject.toml.
-#
-# For newly added checks that are not enabled by default, packages should opt IN by "<check> = true".
 
 [[tool.azure-sdk-build.optional]]
 name = "no_requests"
 install = []
-uninstall = ["requests"]
-additional_pytest_args = ["--ignore-glob='*_async.py'"]
+uninstall = [
+    "requests",
+]
+additional_pytest_args = [
+    "--ignore-glob='*_async.py'",
+]
 
 [[tool.azure-sdk-build.optional]]
 name = "no_aiohttp"
 install = []
-uninstall = ["aiohttp"]
-additional_pytest_args = ["-k", "_async.py"]
+uninstall = [
+    "aiohttp",
+]
+additional_pytest_args = [
+    "-k",
+    "_async.py",
+]
 
 [tool.azure-sdk-conda]
 in_bundle = true
 bundle_name = "azure-core"
+
+[tool.setuptools.dynamic.version]
+attr = "azure.core._version.VERSION"
+
+[tool.setuptools.dynamic.readme]
+file = [
+    "README.md",
+    "CHANGELOG.md",
+]
+content-type = "text/markdown"
+
+[tool.setuptools.packages.find]
+exclude = [
+    "tests",
+    "azure",
+]
+
+[tool.setuptools.package-data]
+pytyped = [
+    "py.typed",
+]
+
+[packaging]
+package_name = "azure-core"
+package_nspkg = "azure-nspkg"
+package_pprint_name = "Core"
+package_doc_id = ""
+is_stable = false
+is_arm = false
+need_msrestazure = false
+auto_update = false
