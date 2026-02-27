@@ -14,11 +14,15 @@ can still pass in `List[dict[str, Any]`.
 * Class `TextResponseFormatConfiguration` renamed to `TextResponseFormat`.
 * Class `TextResponseFormatConfigurationResponseFormatText` renamed to `TextResponseFormatTest`.
 * Class `TextResponseFormatConfigurationResponseFormatJsonObject` renamed to `TextResponseFormatJsonObject`.
-* Rename method ".beta.evaluators.list_latest_versions()` to `.beta.evaluators.list()`.
-* Class `CodeInterpreterContainerAuto` was renamed to `AutoCodeInterpreterToolParam`, and has a new
-optional property `network_policy` of type `ContainerNetworkPolicyParam`.
+* Class `CodeInterpreterContainerAuto` was renamed to `AutoCodeInterpreterToolParam`,
+  and has a new optional property `network_policy` of type `ContainerNetworkPolicyParam`.
 * Rename `ToolChoiceParamType.WEB_SEARCH_PREVIEW2025_03_11` to `ToolChoiceParamType.WEB_SEARCH_PREVIEW_2025_03_11`.
 * Rename `RankerVersionType.DEFAULT2024_11_15` to `RankerVersionType.DEFAULT_2024_11_15`.
+* Rename method ".beta.evaluators.list_latest_versions()` to `.beta.evaluators.list()`.
+* Rename property `id` on class `Insight` to `insight_id`.
+* Rename property `id` on class `Schedule` to `schedule_id`.
+* Rename input argument `id` to `insight_id` in `.beta.insights.get()` method.
+* Rename input argument `id` to `schedule_id` in `.beta.schedules` methods.
 
 ### Bugs Fixed
 
