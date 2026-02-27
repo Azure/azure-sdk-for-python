@@ -473,6 +473,13 @@ class EntityRecognitionSkill(_RemovedModel):
     _replacement_name = "EntityRecognitionSkillV3"
 
 
+class EntityRecognitionSkillLanguage(_RemovedModel):
+    """EntityRecognitionSkillLanguage has been removed. Use EntityRecognitionSkillV3 instead."""
+
+    _removed_name = "EntityRecognitionSkillLanguage"
+    _replacement_name = "EntityRecognitionSkillV3"
+
+
 class SentimentSkill(_RemovedModel):
     """SentimentSkill has been removed. Use SentimentSkillV3 instead."""
 
@@ -482,6 +489,7 @@ class SentimentSkill(_RemovedModel):
 
 __all__: list[str] = [
     "EntityRecognitionSkill",
+    "EntityRecognitionSkillLanguage",
     "KnowledgeBase",
     "OcrSkillLanguage",
     "SearchField",
