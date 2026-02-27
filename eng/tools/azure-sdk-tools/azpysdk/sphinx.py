@@ -11,7 +11,7 @@ from subprocess import CalledProcessError, check_call
 from pathlib import Path
 
 from .Check import Check
-from ci_tools.functions import install_into_venv, unzip_file_to_directory, get_pip_command
+from ci_tools.functions import install_into_venv, unzip_file_to_directory
 from ci_tools.scenario.generation import create_package_and_install
 from ci_tools.variables import in_ci, set_envvar_defaults, discover_repo_root, in_analyze_weekly
 
@@ -22,7 +22,6 @@ SPHINX_VERSION = "8.2.0"
 SPHINX_RTD_THEME_VERSION = "3.0.2"
 MYST_PARSER_VERSION = "4.0.1"
 SPHINX_CONTRIB_JQUERY_VERSION = "4.1"
-PYGITHUB_VERSION = "1.59.0"
 
 RST_EXTENSION_FOR_INDEX = """
 
@@ -210,11 +209,6 @@ class sphinx(Check):
 
         set_envvar_defaults()
 
-        if args.next:
-            ghtools_path = os.path.join(REPO_ROOT, "eng/tools/azure-sdk-tools[ghtools]")
-            pip_cmd = get_pip_command(sys.executable)
-            check_call(pip_cmd + ["install", "-q", ghtools_path])
-
         targeted = self.get_targeted_directories(args)
 
         results: List[int] = []
@@ -261,7 +255,6 @@ class sphinx(Check):
                             "sphinx_rtd_theme",
                             "myst_parser",
                             "sphinxcontrib-jquery",
-                            f"PyGithub=={PYGITHUB_VERSION}",
                         ],
                         package_dir,
                     )

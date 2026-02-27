@@ -7,7 +7,7 @@ import subprocess
 from subprocess import CalledProcessError, check_call
 
 from .Check import Check
-from ci_tools.functions import install_into_venv, get_pip_command
+from ci_tools.functions import install_into_venv
 from ci_tools.scenario.generation import create_package_and_install
 from ci_tools.variables import discover_repo_root, in_ci, set_envvar_defaults
 from ci_tools.environment_exclusions import is_check_enabled
@@ -15,7 +15,6 @@ from ci_tools.logging import logger, run_logged
 
 REPO_ROOT = discover_repo_root()
 PYLINT_VERSION = "3.2.7"
-PYGITHUB_VERSION = "1.59.0"
 
 
 class pylint(Check):
@@ -42,11 +41,6 @@ class pylint(Check):
         logger.info("Running pylint check...")
 
         set_envvar_defaults()
-
-        if args.next:
-            ghtools_path = os.path.join(REPO_ROOT, "eng/tools/azure-sdk-tools[ghtools]")
-            pip_cmd = get_pip_command(sys.executable)
-            check_call(pip_cmd + ["install", "-q", ghtools_path])
 
         targeted = self.get_targeted_directories(args)
 
@@ -91,8 +85,8 @@ class pylint(Check):
             # install pylint
             try:
                 if args.next:
-                    # use latest version of pylint; PyGithub is needed for vnext issue management
-                    install_into_venv(executable, ["pylint", f"PyGithub=={PYGITHUB_VERSION}"], package_dir)
+                    # use latest version of pylint
+                    install_into_venv(executable, ["pylint"], package_dir)
                 else:
                     install_into_venv(executable, [f"pylint=={PYLINT_VERSION}"], package_dir)
             except CalledProcessError as e:

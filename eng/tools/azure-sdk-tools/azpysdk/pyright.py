@@ -4,10 +4,10 @@ import os
 import sys
 
 from typing import Optional, List
-from subprocess import CalledProcessError, check_call
+from subprocess import CalledProcessError
 
 from .Check import Check
-from ci_tools.functions import install_into_venv, get_pip_command
+from ci_tools.functions import install_into_venv
 from ci_tools.variables import in_ci, set_envvar_defaults, discover_repo_root
 from ci_tools.environment_exclusions import is_check_enabled, is_typing_ignored
 from ci_tools.scenario.generation import create_package_and_install
@@ -15,7 +15,6 @@ from ci_tools.scenario.generation import create_package_and_install
 from ci_tools.logging import logger
 
 PYRIGHT_VERSION = "1.1.405"
-PYGITHUB_VERSION = "1.59.0"
 REPO_ROOT = discover_repo_root()
 
 
@@ -69,11 +68,6 @@ class pyright(Check):
 
         set_envvar_defaults()
 
-        if args.next:
-            ghtools_path = os.path.join(REPO_ROOT, "eng/tools/azure-sdk-tools[ghtools]")
-            pip_cmd = get_pip_command(sys.executable)
-            check_call(pip_cmd + ["install", "-q", ghtools_path])
-
         targeted = self.get_targeted_directories(args)
 
         results: List[int] = []
@@ -89,8 +83,8 @@ class pyright(Check):
 
             try:
                 if args.next:
-                    # use latest version of pyright; PyGithub is needed for vnext issue management
-                    install_into_venv(executable, ["pyright", f"PyGithub=={PYGITHUB_VERSION}"], package_dir)
+                    # use latest version of pyright
+                    install_into_venv(executable, ["pyright"], package_dir)
                 else:
                     install_into_venv(executable, [f"pyright=={PYRIGHT_VERSION}"], package_dir)
             except CalledProcessError as e:
