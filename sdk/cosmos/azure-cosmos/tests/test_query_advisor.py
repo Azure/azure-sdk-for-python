@@ -70,6 +70,48 @@ class TestQueryAdvisor(unittest.TestCase):
         self.assertIsNotNone(result)
         self.assertIn("QA1000:", result)
 
+    def test_query_advice_entry_unknown_rule_returns_fallback_link(self):
+        """Test that an unknown rule ID returns a fallback doc link and logs a warning."""
+        directory = RuleDirectory()
+        entry = QueryAdviceEntry("QA9999")
+
+        with self.assertLogs("azure.cosmos._query_advisor._query_advice", level="WARNING") as cm:
+            result = entry.to_string(directory)
+
+        directory = RuleDirectory()
+        self.assertIsNotNone(result)
+        self.assertIn("QA9999", result)
+        self.assertIn(directory.url_prefix + "QA9999", result)
+        self.assertTrue(any("QA9999" in msg for msg in cm.output))
+
+    def test_query_advice_to_string_unknown_rule_included(self):
+        """Test that QueryAdvice.to_string includes entries with unknown rule IDs."""
+        data = [{"Id": "QA9999", "Params": []}]
+        encoded = quote(json.dumps(data))
+
+        advice = QueryAdvice.try_create_from_string(encoded)
+        with self.assertLogs("azure.cosmos._query_advisor._query_advice", level="WARNING"):
+            result = advice.to_string()
+
+        directory = RuleDirectory()
+        self.assertIsInstance(result, str)
+        self.assertIn("QA9999", result)
+        self.assertIn(directory.url_prefix + "QA9999", result)
+
+    def test_get_query_advice_info_unknown_rule(self):
+        """Test end-to-end get_query_advice_info with an unknown rule ID returns fallback link."""
+        data = [{"Id": "QA9999", "Params": []}]
+        encoded = quote(json.dumps(data))
+
+        with self.assertLogs("azure.cosmos._query_advisor._query_advice", level="WARNING"):
+            result = get_query_advice_info(encoded)
+
+        directory = RuleDirectory()
+        self.assertIsInstance(result, str)
+        self.assertNotEqual(result, "")
+        self.assertIn("QA9999", result)
+        self.assertIn(directory.url_prefix + "QA9999", result)
+
     def test_query_advice_try_create_from_string_single_entry(self):
         """Test parsing query advice with single entry."""
         # Create URL-encoded JSON

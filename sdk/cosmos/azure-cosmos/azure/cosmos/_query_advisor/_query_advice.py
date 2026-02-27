@@ -7,10 +7,13 @@
 """Query advice classes for parsing and formatting query optimization recommendations."""
 
 import json
+import logging
 from typing import Any, Dict, List, Optional
 from urllib.parse import unquote
 
 from ._rule_directory import RuleDirectory
+
+_LOGGER = logging.getLogger(__name__)
 
 
 class QueryAdviceEntry:
@@ -22,10 +25,10 @@ class QueryAdviceEntry:
 
     def __init__(self, rule_id: str, parameters: Optional[List[str]] = None) -> None:
         """Initialize a query advice entry.
-        
-        Args:
-            rule_id: The rule identifier (e.g., "QA1000")
-            parameters: Optional list of parameters for the rule message
+
+        :param str rule_id: The rule identifier (e.g., ``QA1000``).
+        :param parameters: Optional list of parameters for the rule message.
+        :type parameters: list[str] or None
         """
         self.id = rule_id
         self.parameters = parameters or []
@@ -44,9 +47,16 @@ class QueryAdviceEntry:
 
         message = rule_directory.get_rule_message(self.id)
         if message is None:
-            return None
+            # Unknown rule — log it and return the public doc link as the fallback.
+            fallback_url = f"{rule_directory.url_prefix}{self.id}"
+            _LOGGER.warning(
+                "Unknown Query Advisor rule '%s'. For more information, please visit %s",
+                self.id,
+                fallback_url,
+            )
+            return f"{self.id}: For more information, please visit {fallback_url}"
 
-        # Format: {id}: {message}. For more information, please visit {url_prefix}{id}
+        # Format: {id}: {message} For more information, please visit {url_prefix}{id}
         result = f"{self.id}: "
 
         # Format message with parameters if available
@@ -87,9 +97,9 @@ class QueryAdvice:
 
     def __init__(self, entries: Optional[List[QueryAdviceEntry]] = None) -> None:
         """Initialize query advice with a list of entries.
-        
-        Args:
-            entries: List of QueryAdviceEntry objects
+
+        :param entries: List of QueryAdviceEntry objects.
+        :type entries: list[~azure.cosmos._query_advisor._query_advice.QueryAdviceEntry] or None
         """
         self.entries = [e for e in (entries or []) if e is not None]
 
