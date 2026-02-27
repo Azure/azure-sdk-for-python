@@ -485,7 +485,7 @@ class TestRealtimeService(AzureRecordedTestCase):
     @pytest.mark.live_test_only
     @VoiceLivePreparer()
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
-    @pytest.mark.parametrize("model", ["gpt-4o-realtime-preview-2025-06-03", "gpt-4o", "gpt-5-chat"])
+    @pytest.mark.parametrize("model", ["gpt-realtime", "gpt-4o", "gpt-5-chat"])
     @pytest.mark.parametrize("api_version", ["2025-10-01", "2026-01-01-preview"])
     async def test_realtime_service_tool_choice(self, test_data_dir: Path, model: str, api_version: str, **kwargs):
         if "realtime" in model:
@@ -534,7 +534,7 @@ class TestRealtimeService(AzureRecordedTestCase):
                 instructions="You are a helpful assistant with tools.",
                 tools=tools,
                 tool_choice=tool_choice,
-                input_audio_transcription=AudioInputTranscriptionOptions(model="whisper-1"),
+                input_audio_transcription=AudioInputTranscriptionOptions(model="azure-speech"),
                 turn_detection=ServerVad(threshold=0.5, prefix_padding_ms=300, silence_duration_ms=200),
             )
             await conn.session.update(session=session)
@@ -571,13 +571,16 @@ class TestRealtimeService(AzureRecordedTestCase):
 
             function_done = await _wait_for_event(conn, {ServerEventType.RESPONSE_FUNCTION_CALL_ARGUMENTS_DONE})
             assert isinstance(function_done, ServerEventResponseFunctionCallArgumentsDone)
-            assert function_done.arguments in ['{"location":"北京"}', '{"location":"Beijing"}']
+            assert function_done.arguments.replace(" ", "").replace("\n", "") in [
+                '{"location":"北京"}',
+                '{"location":"Beijing"}',
+            ]
             assert function_done.name == "get_time"
 
     @pytest.mark.live_test_only
     @VoiceLivePreparer()
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
-    @pytest.mark.parametrize("model", ["gpt-4o-realtime", "gpt-4.1", "gpt-5", "phi4-mm-realtime"])
+    @pytest.mark.parametrize("model", ["gpt-realtime", "gpt-4.1", "gpt-5", "gpt-5.1", "gpt-5.2", "phi4-mm-realtime"])
     @pytest.mark.parametrize("api_version", ["2025-10-01", "2026-01-01-preview"])
     async def test_realtime_service_tool_call_parameter(
         self,
@@ -624,7 +627,7 @@ class TestRealtimeService(AzureRecordedTestCase):
                 instructions=instructions,
                 tools=tools,
                 tool_choice=ToolChoiceLiteral.AUTO,
-                input_audio_transcription=AudioInputTranscriptionOptions(model="whisper-1"),
+                input_audio_transcription=AudioInputTranscriptionOptions(model="azure-speech"),
                 turn_detection=ServerVad(threshold=0.5, prefix_padding_ms=300, silence_duration_ms=200),
             )
             await conn.session.update(session=session)
@@ -667,8 +670,8 @@ class TestRealtimeService(AzureRecordedTestCase):
     @pytest.mark.live_test_only
     @VoiceLivePreparer()
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
-    @pytest.mark.parametrize("model", ["gpt-4o", "gpt-4o-realtime"])
-    @pytest.mark.parametrize("api_version", ["2025-10-01", "2026-01-01-preview"])
+    @pytest.mark.parametrize("model", ["gpt-4.1", "gpt-realtime"])
+    @pytest.mark.parametrize("api_version", ["2025-05-01-preview", "2026-01-01-preview"])
     async def test_realtime_service_live_session_update(
         self,
         test_data_dir: Path,
@@ -688,7 +691,7 @@ class TestRealtimeService(AzureRecordedTestCase):
             session = RequestSession(
                 instructions="You are a helpful assistant that can answer questions.",
                 voice=AzureStandardVoice(name="en-US-AvaMultilingualNeural"),
-                input_audio_transcription=AudioInputTranscriptionOptions(model="whisper-1"),
+                input_audio_transcription=AudioInputTranscriptionOptions(model="azure-speech"),
                 turn_detection=ServerVad(threshold=0.5, prefix_padding_ms=300, silence_duration_ms=200),
             )
             await conn.session.update(session=session)
@@ -719,7 +722,6 @@ class TestRealtimeService(AzureRecordedTestCase):
             new_session = RequestSession(
                 instructions="You are a helpful assistant with tools.",
                 voice=AzureStandardVoice(name="en-US-AvaMultilingualNeural"),
-                input_audio_transcription=AudioInputTranscriptionOptions(model="whisper-1"),
                 tools=tools,
                 tool_choice=ToolChoiceLiteral.AUTO,
                 turn_detection=ServerVad(threshold=0.5, prefix_padding_ms=300, silence_duration_ms=200),
@@ -731,7 +733,7 @@ class TestRealtimeService(AzureRecordedTestCase):
             function_call_output = await _wait_for_event(conn, {ServerEventType.RESPONSE_FUNCTION_CALL_ARGUMENTS_DONE})
             assert isinstance(function_call_output, ServerEventResponseFunctionCallArgumentsDone)
             assert function_call_output.name == "get_weather"
-            assert function_call_output.arguments in ['{"location":"北京"}', '{"location":"Beijing"}']
+            assert function_call_output.arguments.replace(" ", "").replace("\n", "") in ['{"location":"北京"}', '{"location":"Beijing"}']
 
             await conn.response.create()
             transcripts, audio_bytes = await _collect_event(
