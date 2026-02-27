@@ -32,11 +32,10 @@ Logs are written to the system's temp directory with the specified filename form
 
 ```python
 import pytest
-import os
 from devtools_testutils import recorded_by_proxy, AzureRecordedTestCase, RecordedTransport
 from test_base import servicePreparer
 from sample_executor import SyncSampleExecutor, get_sample_paths, SamplePathPasser
-from test_samples_helpers import agent_tools_instructions, get_sample_environment_variables_map
+from test_samples_helpers import agent_tools_instructions, get_sample_env_vars
 
 class TestSamples(AzureRecordedTestCase):
     @servicePreparer()
@@ -58,9 +57,11 @@ class TestSamples(AzureRecordedTestCase):
     @SamplePathPasser()
     @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_agent_tools_samples(self, sample_path: str, **kwargs) -> None:
+        env_vars = get_sample_env_vars(kwargs)
         executor = SyncSampleExecutor(
             self,
             sample_path,
+            env_vars=env_vars,
             **kwargs,
         )
         executor.execute()
@@ -75,11 +76,10 @@ class TestSamples(AzureRecordedTestCase):
 ```python
 import pytest
 from devtools_testutils.aio import recorded_by_proxy_async
-import os
 from devtools_testutils import AzureRecordedTestCase, RecordedTransport
 from test_base import servicePreparer
 from sample_executor import AsyncSampleExecutor, get_async_sample_paths, SamplePathPasser
-from test_samples_helpers import agent_tools_instructions, get_sample_environment_variables_map
+from test_samples_helpers import agent_tools_instructions, get_sample_env_vars
 
 class TestSamplesAsync(AzureRecordedTestCase):
 
@@ -96,9 +96,11 @@ class TestSamplesAsync(AzureRecordedTestCase):
     @SamplePathPasser()
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     async def test_agent_tools_samples_async(self, sample_path: str, **kwargs) -> None:
+        env_vars = get_sample_env_vars(kwargs)
         executor = AsyncSampleExecutor(
             self,
             sample_path,
+            env_vars=env_vars,
             **kwargs,
         )
         await executor.execute_async()
@@ -148,14 +150,14 @@ servicePreparer = functools.partial(
 
 ## Optional test environment variables mapping
 
-If you need to remap the environment variable names provided by your fixtures to the names the sample expects, pass a dictionary via the `env_var_mapping` kwarg on the sample executors. When your fixtures already supply the sample-ready names, you can omit `env_var_mapping`.
+If you need to remap the values provided by your fixtures to the environment-variable names the sample expects, build an `env_vars` dictionary and pass it to the sample executors. When your fixtures already supply sample-ready names/values, you can omit `env_vars`.
 
 ```python
-env_var_mapping = {
-    "AZURE_AI_PROJECT_ENDPOINT": "TEST_AZURE_AI_PROJECT_ENDPOINT",
-    "AZURE_AI_MODEL_DEPLOYMENT_NAME": "TEST_AZURE_AI_MODEL_DEPLOYMENT_NAME",
+env_vars = {
+    "AZURE_AI_PROJECT_ENDPOINT": kwargs["TEST_AZURE_AI_PROJECT_ENDPOINT"],
+    "AZURE_AI_MODEL_DEPLOYMENT_NAME": kwargs["TEST_AZURE_AI_MODEL_DEPLOYMENT_NAME"],
 }
-executor = SyncSampleExecutor(self, sample_path, env_var_mapping=env_var_mapping, **kwargs)
+executor = SyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
 ```
 
 ## Optional environment variables
