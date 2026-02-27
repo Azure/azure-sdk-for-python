@@ -191,7 +191,7 @@ class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
                 return True
             selector_etags = page_etags[i]
             if select.snapshot_name is None:
-                # Snapshots never change, so we can skip checking etags if loading from a snapshot
+                # We only process non-snapshot selectors here, because snapshot never change
                 configurations = self._client.list_configuration_settings(
                     key_filter=select.key_filter,
                     label_filter=select.label_filter,
