@@ -165,7 +165,7 @@ class ContentUnderstandingClient(GeneratedClient):
         analyzer_id: str,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
-        inputs: Optional[list[_models.AnalysisInput]] = None,
+        inputs: list[_models.AnalysisInput] = _Unset,
         model_deployments: Optional[dict[str, str]] = None,
         processing_location: Optional[Union[str, _models.ProcessingLocation]] = None,
         content_type: Optional[str] = None,
@@ -178,7 +178,7 @@ class ContentUnderstandingClient(GeneratedClient):
         :param body: Is either a JSON type or a IO[bytes] type. Default value is None.
         :type body: JSON or IO[bytes]
         :keyword inputs: Inputs to analyze. Currently, only pro mode supports multiple inputs.
-         Default value is None.
+         Required.
         :paramtype inputs: list[~azure.ai.contentunderstanding.models.AnalysisInput]
         :keyword model_deployments: Override default mapping of model names to deployments.
          Ex. { "gpt-4.1": "myGpt41Deployment", "text-embedding-3-large":
