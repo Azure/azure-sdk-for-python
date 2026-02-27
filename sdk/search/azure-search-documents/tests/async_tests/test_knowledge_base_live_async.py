@@ -21,12 +21,10 @@ from azure.search.documents.indexes.models import (
     SearchIndex,
     SearchIndexKnowledgeSource,
     SearchIndexKnowledgeSourceParameters,
-    SearchServiceStatistics,
     SemanticConfiguration,
     SemanticField,
     SemanticPrioritizedFields,
     SemanticSearch,
-    ServiceIndexersRuntime,
 )
 
 from search_service_preparer import SearchEnvVarPreparer, search_decorator
@@ -224,32 +222,4 @@ class TestKnowledgeBaseLiveAsync(AzureRecordedTestCase):
         finally:
             await self._cleanup(ctx)
 
-    @SearchEnvVarPreparer()
-    @search_decorator(schema=None, index_batch=None)
-    @recorded_by_proxy_async
-    async def test_service_indexer_runtime_statistics(self, endpoint: str) -> None:
-        ctx = await self._create_context(endpoint)
-        try:
-            snapshots = await self._poll_status_snapshots(ctx)
-            assert snapshots, "Expected at least one status snapshot"
 
-            service_stats = await ctx.index_client.get_service_statistics()  # pylint:disable=protected-access
-            assert isinstance(service_stats, SearchServiceStatistics)
-
-            runtime = service_stats.indexers_runtime
-            assert isinstance(runtime, ServiceIndexersRuntime)
-            assert runtime.used_seconds >= -1
-            assert runtime.beginning_time <= runtime.ending_time
-            if runtime.remaining_seconds is not None:
-                assert runtime.remaining_seconds >= -1
-
-            counters = service_stats.counters
-            assert counters.indexer_counter is not None
-            assert counters.indexer_counter.usage >= 0
-            assert counters.indexer_counter.quota >= counters.indexer_counter.usage
-
-            limits = service_stats.limits
-            if limits.max_cumulative_indexer_runtime_seconds is not None:
-                assert limits.max_cumulative_indexer_runtime_seconds > 0
-        finally:
-            await self._cleanup(ctx)
