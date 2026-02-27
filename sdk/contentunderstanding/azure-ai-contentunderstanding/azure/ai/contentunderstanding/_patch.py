@@ -32,7 +32,7 @@ class ContentUnderstandingClient(GeneratedClient):
     - Hides the string_encoding parameter (always uses "codePoint" for Python)
     - Returns AnalyzeLROPoller with .operation_id property
     - Fixes content_type default for begin_analyze_binary
-    - Defaults polling_interval to 3 seconds (instead of generated 30s)
+    - Defaults polling_interval to 3 seconds
 
     :param endpoint: Content Understanding service endpoint. Required.
     :type endpoint: str
