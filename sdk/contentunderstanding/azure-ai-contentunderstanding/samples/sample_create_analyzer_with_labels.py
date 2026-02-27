@@ -45,13 +45,13 @@ DESCRIPTION:
 
     1. Create an Azure Blob Storage container (or use an existing one).
     2. Upload the contents of samples/sample_files/training_samples/ into the container.
-       You may upload into the container root or a subfolder (e.g., training_samples/).
+       You may upload into the container root or use a virtual directory (prefix) (e.g., training_samples/).
     3. Generate a SAS (Shared Access Signature) URL for the container with at least List and
        Read permissions. In Azure Portal: Storage account -> Containers -> your container ->
        Shared access token; set expiry and permissions, then generate the SAS URL.
     4. Set CONTENTUNDERSTANDING_TRAINING_DATA_SAS_URL to the full SAS URL
        (e.g., https://<account>.blob.core.windows.net/<container>?sv=...&se=...).
-    5. If you uploaded into a subfolder, set CONTENTUNDERSTANDING_TRAINING_DATA_PREFIX to that
+    5. If you uploaded using a virtual directory (prefix), set CONTENTUNDERSTANDING_TRAINING_DATA_PREFIX to that
        path (e.g., training_samples/). If files are at the container root, omit the prefix or
        leave it unset.
 
@@ -64,7 +64,7 @@ DESCRIPTION:
     Set these environment variables:
     - CONTENTUNDERSTANDING_TRAINING_DATA_STORAGE_ACCOUNT - Storage account name
     - CONTENTUNDERSTANDING_TRAINING_DATA_CONTAINER - Container name
-    - CONTENTUNDERSTANDING_TRAINING_DATA_PREFIX - (Optional) Path prefix within the container
+    - CONTENTUNDERSTANDING_TRAINING_DATA_PREFIX - (Optional) Virtual directory (prefix) within the container
 
 USAGE:
     python sample_create_analyzer_with_labels.py
@@ -80,7 +80,7 @@ USAGE:
     3) CONTENTUNDERSTANDING_TRAINING_DATA_STORAGE_ACCOUNT - Storage account name for auto-upload.
     4) CONTENTUNDERSTANDING_TRAINING_DATA_CONTAINER - Container name for auto-upload.
     Optional:
-    5) CONTENTUNDERSTANDING_TRAINING_DATA_PREFIX - Path prefix within the container (e.g., "training_samples/").
+    5) CONTENTUNDERSTANDING_TRAINING_DATA_PREFIX - Virtual directory (prefix) within the container (e.g., "training_samples/").
 
     Before using custom analyzers, you MUST configure model deployments for your Microsoft Foundry
     resource. See sample_update_defaults.py for setup instructions.
