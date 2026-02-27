@@ -254,7 +254,7 @@
         "azure.ai.projects.models.AgentProtocol": "Azure.AI.Projects.AgentProtocol",
         "azure.ai.projects.models.ToolChoiceParamType": "OpenAI.ToolChoiceParamType",
         "azure.ai.projects.models.TextResponseFormatConfigurationType": "OpenAI.TextResponseFormatConfigurationType",
-        "azure.ai.projects.models.AgentDefinitionFeatureKeys": "Azure.AI.Projects.AgentDefinitionFeatureKeys",
+        "azure.ai.projects.models.AgentDefintionOptInKeys": "Azure.AI.Projects.AgentDefintionOptInKeys",
         "azure.ai.projects.models.EvaluationRuleActionType": "Azure.AI.Projects.EvaluationRuleActionType",
         "azure.ai.projects.models.EvaluationRuleEventType": "Azure.AI.Projects.EvaluationRuleEventType",
         "azure.ai.projects.models.ConnectionType": "Azure.AI.Projects.ConnectionType",

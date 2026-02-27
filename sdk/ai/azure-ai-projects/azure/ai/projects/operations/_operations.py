@@ -74,7 +74,7 @@ def build_agents_get_request(agent_name: str, **kwargs: Any) -> HttpRequest:
 
 
 def build_agents_create_agent_request(
-    *, foundry_features: Optional[Union[str, _models.AgentDefinitionFeatureKeys]] = None, **kwargs: Any
+    *, foundry_features: Optional[Union[str, _models.AgentDefintionOptInKeys]] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -100,7 +100,7 @@ def build_agents_create_agent_request(
 
 
 def build_agents_update_agent_request(
-    agent_name: str, *, foundry_features: Optional[Union[str, _models.AgentDefinitionFeatureKeys]] = None, **kwargs: Any
+    agent_name: str, *, foundry_features: Optional[Union[str, _models.AgentDefintionOptInKeys]] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -243,7 +243,7 @@ def build_agents_list_request(
 
 
 def build_agents_create_version_request(
-    agent_name: str, *, foundry_features: Optional[Union[str, _models.AgentDefinitionFeatureKeys]] = None, **kwargs: Any
+    agent_name: str, *, foundry_features: Optional[Union[str, _models.AgentDefintionOptInKeys]] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -1953,7 +1953,7 @@ class AgentsOperations:
         *,
         name: str,
         definition: _models.AgentDefinition,
-        foundry_features: Optional[Union[str, _models.AgentDefinitionFeatureKeys]] = None,
+        foundry_features: Optional[Union[str, _models.AgentDefintionOptInKeys]] = None,
         content_type: str = "application/json",
         metadata: Optional[dict[str, str]] = None,
         description: Optional[str] = None,
@@ -1964,7 +1964,7 @@ class AgentsOperations:
         self,
         body: JSON,
         *,
-        foundry_features: Optional[Union[str, _models.AgentDefinitionFeatureKeys]] = None,
+        foundry_features: Optional[Union[str, _models.AgentDefintionOptInKeys]] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.AgentDetails: ...
@@ -1973,7 +1973,7 @@ class AgentsOperations:
         self,
         body: IO[bytes],
         *,
-        foundry_features: Optional[Union[str, _models.AgentDefinitionFeatureKeys]] = None,
+        foundry_features: Optional[Union[str, _models.AgentDefintionOptInKeys]] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.AgentDetails: ...
@@ -1985,7 +1985,7 @@ class AgentsOperations:
         *,
         name: str = _Unset,
         definition: _models.AgentDefinition = _Unset,
-        foundry_features: Optional[Union[str, _models.AgentDefinitionFeatureKeys]] = None,
+        foundry_features: Optional[Union[str, _models.AgentDefintionOptInKeys]] = None,
         metadata: Optional[dict[str, str]] = None,
         description: Optional[str] = None,
         **kwargs: Any
@@ -2007,7 +2007,7 @@ class AgentsOperations:
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
          modifying persisted preview resources. Known values are: "HostedAgents=V1Preview" and
          "WorkflowAgents=V1Preview". Default value is None.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.AgentDefinitionFeatureKeys
+        :paramtype foundry_features: str or ~azure.ai.projects.models.AgentDefintionOptInKeys
         :keyword metadata: Set of 16 key-value pairs that can be attached to an object. This can be
          useful for storing additional information about the object in a structured
          format, and querying for objects via API or the dashboard.
@@ -2098,7 +2098,7 @@ class AgentsOperations:
         agent_name: str,
         *,
         definition: _models.AgentDefinition,
-        foundry_features: Optional[Union[str, _models.AgentDefinitionFeatureKeys]] = None,
+        foundry_features: Optional[Union[str, _models.AgentDefintionOptInKeys]] = None,
         content_type: str = "application/json",
         metadata: Optional[dict[str, str]] = None,
         description: Optional[str] = None,
@@ -2110,7 +2110,7 @@ class AgentsOperations:
         agent_name: str,
         body: JSON,
         *,
-        foundry_features: Optional[Union[str, _models.AgentDefinitionFeatureKeys]] = None,
+        foundry_features: Optional[Union[str, _models.AgentDefintionOptInKeys]] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.AgentDetails: ...
@@ -2120,7 +2120,7 @@ class AgentsOperations:
         agent_name: str,
         body: IO[bytes],
         *,
-        foundry_features: Optional[Union[str, _models.AgentDefinitionFeatureKeys]] = None,
+        foundry_features: Optional[Union[str, _models.AgentDefintionOptInKeys]] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.AgentDetails: ...
@@ -2132,7 +2132,7 @@ class AgentsOperations:
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
         definition: _models.AgentDefinition = _Unset,
-        foundry_features: Optional[Union[str, _models.AgentDefinitionFeatureKeys]] = None,
+        foundry_features: Optional[Union[str, _models.AgentDefintionOptInKeys]] = None,
         metadata: Optional[dict[str, str]] = None,
         description: Optional[str] = None,
         **kwargs: Any
@@ -2150,7 +2150,7 @@ class AgentsOperations:
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
          modifying persisted preview resources. Known values are: "HostedAgents=V1Preview" and
          "WorkflowAgents=V1Preview". Default value is None.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.AgentDefinitionFeatureKeys
+        :paramtype foundry_features: str or ~azure.ai.projects.models.AgentDefintionOptInKeys
         :keyword metadata: Set of 16 key-value pairs that can be attached to an object. This can be
          useful for storing additional information about the object in a structured
          format, and querying for objects via API or the dashboard.
@@ -2670,7 +2670,7 @@ class AgentsOperations:
         agent_name: str,
         *,
         definition: _models.AgentDefinition,
-        foundry_features: Optional[Union[str, _models.AgentDefinitionFeatureKeys]] = None,
+        foundry_features: Optional[Union[str, _models.AgentDefintionOptInKeys]] = None,
         content_type: str = "application/json",
         metadata: Optional[dict[str, str]] = None,
         description: Optional[str] = None,
@@ -2691,7 +2691,7 @@ class AgentsOperations:
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
          modifying persisted preview resources. Known values are: "HostedAgents=V1Preview" and
          "WorkflowAgents=V1Preview". Default value is None.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.AgentDefinitionFeatureKeys
+        :paramtype foundry_features: str or ~azure.ai.projects.models.AgentDefintionOptInKeys
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2715,7 +2715,7 @@ class AgentsOperations:
         agent_name: str,
         body: JSON,
         *,
-        foundry_features: Optional[Union[str, _models.AgentDefinitionFeatureKeys]] = None,
+        foundry_features: Optional[Union[str, _models.AgentDefintionOptInKeys]] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.AgentVersionDetails:
@@ -2733,7 +2733,7 @@ class AgentsOperations:
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
          modifying persisted preview resources. Known values are: "HostedAgents=V1Preview" and
          "WorkflowAgents=V1Preview". Default value is None.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.AgentDefinitionFeatureKeys
+        :paramtype foundry_features: str or ~azure.ai.projects.models.AgentDefintionOptInKeys
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2748,7 +2748,7 @@ class AgentsOperations:
         agent_name: str,
         body: IO[bytes],
         *,
-        foundry_features: Optional[Union[str, _models.AgentDefinitionFeatureKeys]] = None,
+        foundry_features: Optional[Union[str, _models.AgentDefintionOptInKeys]] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.AgentVersionDetails:
@@ -2766,7 +2766,7 @@ class AgentsOperations:
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
          modifying persisted preview resources. Known values are: "HostedAgents=V1Preview" and
          "WorkflowAgents=V1Preview". Default value is None.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.AgentDefinitionFeatureKeys
+        :paramtype foundry_features: str or ~azure.ai.projects.models.AgentDefintionOptInKeys
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2782,7 +2782,7 @@ class AgentsOperations:
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
         definition: _models.AgentDefinition = _Unset,
-        foundry_features: Optional[Union[str, _models.AgentDefinitionFeatureKeys]] = None,
+        foundry_features: Optional[Union[str, _models.AgentDefintionOptInKeys]] = None,
         metadata: Optional[dict[str, str]] = None,
         description: Optional[str] = None,
         **kwargs: Any
@@ -2804,7 +2804,7 @@ class AgentsOperations:
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
          modifying persisted preview resources. Known values are: "HostedAgents=V1Preview" and
          "WorkflowAgents=V1Preview". Default value is None.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.AgentDefinitionFeatureKeys
+        :paramtype foundry_features: str or ~azure.ai.projects.models.AgentDefintionOptInKeys
         :keyword metadata: Set of 16 key-value pairs that can be attached to an object. This can be
          useful for storing additional information about the object in a structured
          format, and querying for objects via API or the dashboard.

@@ -228,7 +228,7 @@ from ._models import (  # type: ignore
 )
 
 from ._enums import (  # type: ignore
-    AgentDefinitionFeatureKeys,
+    AgentDefintionOptInKeys,
     AgentKind,
     AgentObjectType,
     AgentProtocol,
@@ -497,7 +497,7 @@ __all__ = [
     "WebSearchToolFilters",
     "WeeklyRecurrenceSchedule",
     "WorkflowAgentDefinition",
-    "AgentDefinitionFeatureKeys",
+    "AgentDefintionOptInKeys",
     "AgentKind",
     "AgentObjectType",
     "AgentProtocol",
