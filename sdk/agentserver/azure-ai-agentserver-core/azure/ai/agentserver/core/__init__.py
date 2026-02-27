@@ -6,10 +6,11 @@ __path__ = __import__("pkgutil").extend_path(__path__, __name__)
 from ._version import VERSION
 from .logger import configure as config_logging
 from .server.base import FoundryCBAgent
+from .server.common.agent_invoke_context import AgentInvokeContext
 from .server.common.agent_run_context import AgentRunContext
 from .server._context import AgentServerContext
 
 config_logging()
 
-__all__ = ["FoundryCBAgent", "AgentRunContext", "AgentServerContext"]
+__all__ = ["FoundryCBAgent", "AgentInvokeContext", "AgentRunContext", "AgentServerContext"]
 __version__ = VERSION
