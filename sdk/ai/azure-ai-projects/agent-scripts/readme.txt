@@ -40,3 +40,15 @@ tox run -e mypy -c ../../../eng/tox/tox.ini --root
 there will be no errors from files under the folder \azure-sdk-for-python\sdk\ai\azure-ai-projects\azure folder.
 
 
+This is the GitHub Copilot instruction to introduce agent-scripts\patch_prepare_request_foundry_headers.py:
+
+Mody post-emitter-fixes.cmd to change
+from
+_request = HttpRequest(
+    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+)
+to
+_request = HttpRequest(
+    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params, headers={"Foundry-Features": _SERIALIZER.header("foundry_features", foundry_features, "str")}
+)
+But only for the function that has foundry_features exist.
