@@ -20,7 +20,7 @@ class DatasetDataplaneOperations(_ScopeDependentOperations):
         service_client: ServiceClientDatasetDataplane,
     ):
         super().__init__(operation_scope, operation_config)
-        self._operation = service_client.data_version
+        self._operation = service_client.data_version_ops
 
     def get_batch_dataset_uris(self, dataset_ids: List[str]) -> BatchDataUriResponse:
         batch_uri_request = BatchGetResolvedURIs(values=dataset_ids)
