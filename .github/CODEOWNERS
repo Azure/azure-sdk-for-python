@@ -237,6 +237,10 @@
 # PRLabel: %Digital Twins
 /sdk/digitaltwins/    @Aashish93-stack @johngallardo @Satya-Kolluri @sjiherzig
 
+# ServiceLabel: %Discovery
+# PRLabel: %Discovery
+/sdk/discovery/                                                      @olawal @alchocro @anmaga
+
 # PRLabel: %Document Intelligence
 /sdk/documentintelligence/    @bojunehsu @yungshinlintw
 
