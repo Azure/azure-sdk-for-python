@@ -4,13 +4,14 @@
 
 ### Features Added
 
-* The input `items` argument in the methods `.beta.memory_stores.begin_update_memories()` and `.beta.memory_stores.search_memories`
-was change from type `Optional[List[dict[str, Any]]]` to `Optional[Union[str, ResponseInputParam]]`. The class `ResponseInputParam`
-can be imported using `from openai.types.responses import EasyInputMessageParam`. This is not a breaking change, since the caller
-can still pass in `List[dict[str, Any]`.
-
 ### Breaking Changes
 
+* To use Workflow Agents, which are still in preview, you now need to set an additional input
+argument `foundry_features=AgentDefintionOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW` when calling
+`.agents.create_version()`.
+* To use Hosted Agents, which are still in preview, you now need to set an additional input
+argument `foundry_features=AgentDefintionOptInKeys.HOSTED_AGENTS_V1_PREVIEW` when calling
+`.agents.create_version()`.
 * Class `TextResponseFormatConfiguration` renamed to `TextResponseFormat`.
 * Class `TextResponseFormatConfigurationResponseFormatText` renamed to `TextResponseFormatTest`.
 * Class `TextResponseFormatConfigurationResponseFormatJsonObject` renamed to `TextResponseFormatJsonObject`.
@@ -27,6 +28,11 @@ can still pass in `List[dict[str, Any]`.
 ### Bugs Fixed
 
 ### Other Changes
+
+* The input `items` argument in the methods `.beta.memory_stores.begin_update_memories()` and `.beta.memory_stores.search_memories`
+was change from type `Optional[List[dict[str, Any]]]` to `Optional[Union[str, ResponseInputParam]]`. The class `ResponseInputParam`
+can be imported using `from openai.types.responses import EasyInputMessageParam`. This is not a breaking change, since the caller
+can still pass in `List[dict[str, Any]`.
 
 ## 2.0.0b4 (2026-02-24)
 
