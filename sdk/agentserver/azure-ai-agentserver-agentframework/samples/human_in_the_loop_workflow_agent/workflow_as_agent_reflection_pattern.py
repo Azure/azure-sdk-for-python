@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft. All rights reserved.
 
-from dataclasses import dataclass
 import json
+from dataclasses import dataclass
 from uuid import uuid4
 
 from agent_framework import (
@@ -15,6 +15,7 @@ from agent_framework import (
     WorkflowContext,
     handler,
 )
+
 
 @dataclass
 class ReviewRequest:

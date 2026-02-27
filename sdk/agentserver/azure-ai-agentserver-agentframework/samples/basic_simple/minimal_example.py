@@ -3,13 +3,14 @@
 from random import randint
 from typing import Annotated
 
-from agent_framework.azure import AzureOpenAIChatClient
-from azure.identity import DefaultAzureCredential
+from agent_framework import Agent
+from agent_framework.azure import AzureOpenAIResponsesClient
+from azure.identity import AzureCliCredential
 from dotenv import load_dotenv
+
 load_dotenv()
 
 from azure.ai.agentserver.agentframework import from_agent_framework
-
 
 
 def get_weather(
@@ -21,7 +22,8 @@ def get_weather(
 
 
 def main() -> None:
-    agent = AzureOpenAIChatClient(credential=DefaultAzureCredential()).create_agent(
+    agent = Agent(
+        client=AzureOpenAIResponsesClient(credential=AzureCliCredential()),
         instructions="You are a helpful weather agent.",
         tools=get_weather,
     )

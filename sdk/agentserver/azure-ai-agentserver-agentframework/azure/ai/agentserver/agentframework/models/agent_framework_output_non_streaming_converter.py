@@ -5,33 +5,29 @@ from __future__ import annotations
 
 import datetime
 import json
-from typing import Any, List
+from typing import Any, Optional
 
-from agent_framework import (
-    AgentRunResponse,
-    FunctionCallContent,
-    FunctionResultContent,
-    ErrorContent,
-    TextContent,
-)
-from agent_framework._types import UserInputRequestContents
+from agent_framework import AgentResponse, Content
 
 from azure.ai.agentserver.core import AgentRunContext
 from azure.ai.agentserver.core.logger import get_logger
 from azure.ai.agentserver.core.models import Response as OpenAIResponse
-from azure.ai.agentserver.core.models.projects import ItemContentOutputText
+from azure.ai.agentserver.core.models.projects import (
+    ItemContentOutputText,
+    ResponsesAssistantMessageItemResource,
+)
 
-from .agent_id_generator import AgentIdGenerator
-from .constants import Constants
+from . import constants
+from .agent_id_generator import generate_agent_id
 from .human_in_the_loop_helper import HumanInTheLoopHelper
 
 logger = get_logger()
 
 
 class AgentFrameworkOutputNonStreamingConverter:  # pylint: disable=name-too-long
-    """Non-streaming converter: AgentRunResponse -> OpenAIResponse."""
+    """Non-streaming converter: AgentResponse -> OpenAIResponse."""
 
-    def __init__(self, context: AgentRunContext, *, hitl_helper: HumanInTheLoopHelper=None):
+    def __init__(self, context: AgentRunContext, *, hitl_helper: Optional[HumanInTheLoopHelper] = None):
         self._context = context
         self._response_id = None
         self._response_created_at = None
@@ -46,31 +42,23 @@ class AgentFrameworkOutputNonStreamingConverter:  # pylint: disable=name-too-lon
     def _build_item_content_output_text(self, text: str) -> ItemContentOutputText:
         return ItemContentOutputText(text=text, annotations=[])
 
-    def _build_created_by(self, author_name: str) -> dict:
-        self._ensure_response_started()
+    def _new_assistant_message_item(self, message_text: str) -> ResponsesAssistantMessageItemResource:
+        item_content = self._build_item_content_output_text(message_text)
+        return ResponsesAssistantMessageItemResource(
+            id=self._context.id_generator.generate_message_id(), status="completed", content=[item_content]
+        )
 
-        agent_dict = {
-            "type": "agent_id",
-            "name": author_name or "",
-            "version": "",  # Default to empty string
-        }
-
-        return {
-            "agent": agent_dict,
-            "response_id": self._response_id,
-        }
-
-    def transform_output_for_response(self, response: AgentRunResponse) -> OpenAIResponse:
+    def transform_output_for_response(self, response: AgentResponse) -> OpenAIResponse:
         """Build an OpenAIResponse capturing all supported content types.
 
         Previously this method only emitted text message items. We now also capture:
-          - FunctionCallContent  -> function_call output item
-          - FunctionResultContent -> function_call_output item
+          - function_call content -> function_call output item
+          - function_result content -> function_call_output item
 
         to stay aligned with the streaming converter so no output is lost.
 
-        :param response: The AgentRunResponse from the agent framework.
-        :type response: AgentRunResponse
+        :param response: The AgentResponse from the agent framework.
+        :type response: AgentResponse
 
         :return: The constructed OpenAIResponse.
         :rtype: OpenAIResponse
@@ -78,18 +66,15 @@ class AgentFrameworkOutputNonStreamingConverter:  # pylint: disable=name-too-lon
         logger.debug("Transforming non-streaming response (messages=%d)", len(response.messages))
         self._ensure_response_started()
 
-        completed_items: List[dict] = []
+        completed_items: list[dict] = []
 
         for i, message in enumerate(response.messages):
             logger.debug("Non-streaming: processing message index=%d type=%s", i, type(message).__name__)
-            contents = getattr(message, "contents", None)
-            if not contents:
+            if not message.contents:
                 continue
-            # Extract author_name from this message
-            msg_author_name = getattr(message, "author_name", None) or ""
-            for j, content in enumerate(contents):
+            for j, content in enumerate(message.contents):
                 logger.debug("  content index=%d in message=%d type=%s", j, i, type(content).__name__)
-                self._append_content_item(content, completed_items, msg_author_name)
+                self._append_content_item(content, completed_items)
 
         response_data = self._construct_response_data(completed_items)
         openai_response = OpenAIResponse(response_data)
@@ -102,37 +87,30 @@ class AgentFrameworkOutputNonStreamingConverter:  # pylint: disable=name-too-lon
 
     # ------------------------- helper append methods -------------------------
 
-    def _append_content_item(self, content: Any, sink: List[dict], author_name: str) -> None:
+    def _append_content_item(self, content: Any, sink: list[dict]) -> None:
         """Dispatch a content object to the appropriate append helper.
 
-        Adding this indirection keeps the main transform method compact and makes it
-        simpler to extend with new content types later.
-
-        :param content: The content object to append.
+        :param content: The content object to dispatch.
         :type content: Any
-        :param sink: The list to append the converted content dict to.
-        :type sink: List[dict]
-        :param author_name: The author name for the created_by field.
-        :type author_name: str
-
-        :return: None
-        :rtype: None
+        :param sink: The list to append items to.
+        :type sink: list[dict]
         """
-        if isinstance(content, TextContent):
-            self._append_text_content(content, sink, author_name)
-        elif isinstance(content, FunctionCallContent):
-            self._append_function_call_content(content, sink, author_name)
-        elif isinstance(content, FunctionResultContent):
-            self._append_function_result_content(content, sink, author_name)
-        elif isinstance(content, UserInputRequestContents):
-            self._append_user_input_request_contents(content, sink, author_name)
-        elif isinstance(content, ErrorContent):
-            raise ValueError(f"ErrorContent received: code={content.error_code}, message={content.message}")
-        else:
-            logger.debug("unsupported content type skipped: %s", type(content).__name__)
+        match content.type:
+            case "text" | "text_reasoning":
+                self._append_text_content(content, sink)
+            case "function_call":
+                self._append_function_call_content(content, sink)
+            case "function_result":
+                self._append_function_result_content(content, sink)
+            case "function_approval_request":
+                self._append_user_input_request_content(content, sink)
+            case "usage":
+                logger.debug("Skipping usage content (input/output token counts)")
+            case _:
+                logger.warning("Unhandled content type in non-streaming: %s", content.type)
 
-    def _append_text_content(self, content: TextContent, sink: List[dict], author_name: str) -> None:
-        text_value = getattr(content, "text", None)
+    def _append_text_content(self, content: Content, sink: list[dict]) -> None:
+        text_value = content.text
         if not text_value:
             return
         item_id = self._context.id_generator.generate_message_id()
@@ -150,20 +128,19 @@ class AgentFrameworkOutputNonStreamingConverter:  # pylint: disable=name-too-lon
                         "logprobs": [],
                     }
                 ],
-                "created_by": self._build_created_by(author_name),
             }
         )
         logger.debug("    added message item id=%s text_len=%d", item_id, len(text_value))
 
-    def _append_function_call_content(self, content: FunctionCallContent, sink: List[dict], author_name: str) -> None:
-        name = getattr(content, "name", "") or ""
-        arguments = getattr(content, "arguments", "")
+    def _append_function_call_content(self, content: Content, sink: list[dict]) -> None:
+        name = content.name or ""
+        arguments = content.arguments or ""
         if not isinstance(arguments, str):
             try:
                 arguments = json.dumps(arguments)
             except Exception:  # pragma: no cover - fallback # pylint: disable=broad-exception-caught
                 arguments = str(arguments)
-        call_id = getattr(content, "call_id", None) or self._context.id_generator.generate_function_call_id()
+        call_id = content.call_id or self._context.id_generator.generate_function_call_id()
         func_item_id = self._context.id_generator.generate_function_call_id()
         sink.append(
             {
@@ -173,7 +150,6 @@ class AgentFrameworkOutputNonStreamingConverter:  # pylint: disable=name-too-lon
                 "call_id": call_id,
                 "name": name,
                 "arguments": arguments or "",
-                "created_by": self._build_created_by(author_name),
             }
         )
         logger.debug(
@@ -184,21 +160,16 @@ class AgentFrameworkOutputNonStreamingConverter:  # pylint: disable=name-too-lon
             len(arguments or ""),
         )
 
-    def _append_function_result_content(
-        self,
-        content: FunctionResultContent,
-        sink: List[dict],
-        author_name: str,
-    ) -> None:
+    def _append_function_result_content(self, content: Content, sink: list[dict]) -> None:
         # Coerce the function result into a simple display string.
-        result = []
-        raw = getattr(content, "result", None)
-        if isinstance(raw, str):
-            result = [raw]
-        elif isinstance(raw, list):
-            for item in raw:
-                result.append(self._coerce_result_text(item))  # type: ignore
-        call_id = getattr(content, "call_id", None) or ""
+        raw = content.result
+        result: list[str | dict[str, Any]] = []
+        match raw:
+            case str():
+                result = [raw]
+            case list():
+                result = [self._coerce_result_text(item) for item in raw]
+        call_id = content.call_id
         func_out_id = self._context.id_generator.generate_function_output_id()
         sink.append(
             {
@@ -207,76 +178,75 @@ class AgentFrameworkOutputNonStreamingConverter:  # pylint: disable=name-too-lon
                 "status": "completed",
                 "call_id": call_id,
                 "output": json.dumps(result) if len(result) > 0 else "",
-                "created_by": self._build_created_by(author_name),
             }
         )
         logger.debug(
-            "added function_call_output item id=%s call_id=%s "
-            "output_len=%d",
+            "added function_call_output item id=%s call_id=%s output_len=%d",
             func_out_id,
             call_id,
             len(result),
         )
 
-    def _append_user_input_request_contents(
-        self,
-        content: UserInputRequestContents,
-        sink: List[dict],
-        author_name: str,
-    ) -> None:
-        item_id = self._context.id_generator.generate_function_call_id()
-        content = self._hitl_helper.convert_user_input_request_content(content)
+    def _append_user_input_request_content(self, content: Content, sink: list[dict]) -> None:
+        converted_content = None
+        if self._hitl_helper:
+            converted_content = self._hitl_helper.convert_user_input_request_content(content)
+
+        if converted_content:
+            call_id = converted_content.get("call_id", "")
+            name = converted_content.get("name", "")
+            arguments = converted_content.get("arguments", "")
+        else:
+            function_call = content.function_call
+            call_id = function_call.call_id or ""
+            name = function_call.name or ""
+            arguments = function_call.arguments or ""
+        if not isinstance(arguments, str):
+            arguments = json.dumps(arguments)
+
         sink.append(
             {
-                "id": item_id,
+                "id": self._context.id_generator.generate_function_call_id(),
                 "type": "function_call",
                 "status": "in_progress",
-                "call_id": content["call_id"],
-                "name": content["name"],
-                "arguments": content["arguments"],
-                "created_by": self._build_created_by(author_name),
+                "call_id": call_id,
+                "name": name,
+                "arguments": arguments,
             }
         )
-        logger.debug(
-            "    added user_input_request item id=%s call_id=%s",
-            item_id,
-            content["call_id"],
-        )
+        logger.debug("added user_input_request content call_id=%s", call_id)
 
     # ------------- simple normalization helper -------------------------
     def _coerce_result_text(self, value: Any) -> str | dict:
-        """
-        Return a string if value is already str or a TextContent-like object; else str(value).
+        """Return a string or dict representation of a result value.
 
-        :param value: The value to coerce.
+        :param value: The result value to coerce.
         :type value: Any
-
-        :return: The coerced string or dict.
-        :rtype: str | dict
+        :return: A string or dict representation.
+        :rtype: str or dict
         """
-        if value is None:
-            return ""
-        if isinstance(value, str):
-            return value
-        # Direct TextContent instance
-        if isinstance(value, TextContent):
-            content_payload = {"type": "text", "text": getattr(value, "text", "")}
-            return content_payload
+        match value:
+            case None:
+                return ""
+            case str():
+                return value
+            case _ if hasattr(value, "type") and value.type == "text":
+                return {"type": "text", "text": value.text or ""}
+            case _:
+                return ""
 
-        return ""
+    def _construct_response_data(self, output_items: list[dict]) -> dict:
+        agent_id = generate_agent_id(self._context)
 
-    def _construct_response_data(self, output_items: List[dict]) -> dict:
-        agent_id = AgentIdGenerator.generate(self._context)
-
-        response_data = {
+        response_data: dict[str, Any] = {
             "object": "response",
             "metadata": {},
             "agent": agent_id,
             "conversation": self._context.get_conversation_object(),
             "type": "message",
             "role": "assistant",
-            "temperature": Constants.DEFAULT_TEMPERATURE,
-            "top_p": Constants.DEFAULT_TOP_P,
+            "temperature": constants.DEFAULT_TEMPERATURE,
+            "top_p": constants.DEFAULT_TOP_P,
             "user": "",
             "id": self._context.response_id,
             "created_at": self._response_created_at,

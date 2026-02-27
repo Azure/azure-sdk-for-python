@@ -5,11 +5,11 @@ This sample mirrors the simpler `mcp_simple` Agent Framework sample but adds an 
 
 ### Script
 
-- `mcp_apikey.py` – Creates a `ChatAgent` configured with an `AzureOpenAIChatClient` and a GitHub MCP tool, then serves it via the agents hosting adapter (`from_agent_framework(...).run_async()`).
+- `mcp_apikey.py` – Creates an `Agent` configured with an `AzureOpenAIChatClient` and a GitHub MCP tool, then serves it via the agents hosting adapter (`from_agent_framework(...).run_async()`).
 
 ## Prerequisites
 
-> **Azure sign-in:** Run `az login` before starting the sample so `DefaultAzureCredential` can acquire a CLI token.
+> **Azure sign-in:** Run `az login` before starting the sample so `AzureCliCredential` can acquire a CLI token.
 
 ### Environment Variables
 

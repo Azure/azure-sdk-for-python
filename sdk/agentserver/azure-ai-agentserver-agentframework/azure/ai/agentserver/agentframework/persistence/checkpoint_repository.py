@@ -1,15 +1,16 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from abc import ABC, abstractmethod
 import os
+from abc import ABC, abstractmethod
 from typing import Optional
 
 from agent_framework import (
     CheckpointStorage,
-    InMemoryCheckpointStorage,
     FileCheckpointStorage,
+    InMemoryCheckpointStorage,
 )
+
 
 class CheckpointRepository(ABC):
     """

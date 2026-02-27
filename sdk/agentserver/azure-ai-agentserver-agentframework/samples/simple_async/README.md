@@ -4,7 +4,7 @@ This sample demonstrates how to use the agents hosting adapter in an async imple
 
 ## Prerequisites
 
-> **Azure sign-in:** Run `az login` before starting the sample so `DefaultAzureCredential` can acquire a CLI token.
+> **Azure sign-in:** Run `az login` before starting the sample so `AzureCliCredential` can acquire a CLI token.
 
 ### Environment Variables
 

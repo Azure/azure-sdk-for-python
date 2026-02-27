@@ -4,12 +4,11 @@ Pytest configuration and shared fixtures for unit tests.
 
 # Workaround: importing agent_framework (via mcp) can fail with
 # KeyError: 'pydantic.root_model' unless this module is imported first.
-import pydantic.root_model  # noqa: F401
-
 import site
 import sys
 from pathlib import Path
 
+import pydantic.root_model  # noqa: F401
 
 # Ensure we don't import user-site packages that can conflict with the active
 # environment (e.g., a user-installed cryptography wheel causing PyO3 errors).
