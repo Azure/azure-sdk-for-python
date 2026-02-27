@@ -460,9 +460,10 @@ class _RemovedModel:
         # Allow direct tombstone class definitions (direct subclasses of _RemovedModel),
         # but prevent further subclassing of tombstone classes.
         if _RemovedModel not in cls.__bases__:
+            parent = cls.__bases__[0]
             raise TypeError(
-                f"{cls.__bases__[0]._removed_name} has been removed and cannot be subclassed. "
-                f"Use {cls.__bases__[0]._replacement_name} instead."
+                f"{getattr(parent, '_removed_name', parent.__name__)} has been removed and cannot be subclassed. "
+                f"Use {getattr(parent, '_replacement_name', '')} instead."
             )
 
 
