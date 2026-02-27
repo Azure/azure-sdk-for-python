@@ -132,11 +132,11 @@ with (
                 ),
             ),
         )
-        print(f"Started insight generation (id: {clusterInsight.id})")
+        print(f"Started insight generation (id: {clusterInsight.insight_id})")
 
         while clusterInsight.state not in [OperationState.SUCCEEDED, OperationState.FAILED]:
             print(f"Waiting for insight to be generated...")
-            clusterInsight = project_client.beta.insights.get(id=clusterInsight.id)
+            clusterInsight = project_client.beta.insights.get(insight_id=clusterInsight.insight_id)
             print(f"Insight status: {clusterInsight.state}")
             time.sleep(5)
 
