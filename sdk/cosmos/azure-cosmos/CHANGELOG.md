@@ -3,7 +3,7 @@
 ### 4.15.1 (Unreleased)
 
 #### Features Added
-* Added Query Advisor support for Python SDK. See [PR 45331](https://github.com/Azure/azure-sdk-for-python/pull/45331)
+* Added support for Query Advisor feature - See [PR 45331](https://github.com/Azure/azure-sdk-for-python/pull/45331)
 
 #### Breaking Changes
 
