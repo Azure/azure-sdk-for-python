@@ -21,23 +21,12 @@ from ._configuration import NetAppManagementClientConfiguration
 from ._utils.serialization import Deserializer, Serializer
 from .operations import (
     AccountsOperations,
-    ActiveDirectoryConfigsOperations,
     BackupPoliciesOperations,
     BackupVaultsOperations,
     BackupsOperations,
     BackupsUnderAccountOperations,
     BackupsUnderBackupVaultOperations,
     BackupsUnderVolumeOperations,
-    BucketsOperations,
-    CachesOperations,
-    ElasticAccountsOperations,
-    ElasticBackupPoliciesOperations,
-    ElasticBackupVaultsOperations,
-    ElasticBackupsOperations,
-    ElasticCapacityPoolsOperations,
-    ElasticSnapshotPoliciesOperations,
-    ElasticSnapshotsOperations,
-    ElasticVolumesOperations,
     NetAppResourceOperations,
     NetAppResourceQuotaLimitsAccountOperations,
     NetAppResourceQuotaLimitsOperations,
@@ -86,30 +75,6 @@ class NetAppManagementClient:  # pylint: disable=too-many-instance-attributes
     :vartype ransomware_reports: azure.mgmt.netapp.operations.RansomwareReportsOperations
     :ivar backup_vaults: BackupVaultsOperations operations
     :vartype backup_vaults: azure.mgmt.netapp.operations.BackupVaultsOperations
-    :ivar buckets: BucketsOperations operations
-    :vartype buckets: azure.mgmt.netapp.operations.BucketsOperations
-    :ivar caches: CachesOperations operations
-    :vartype caches: azure.mgmt.netapp.operations.CachesOperations
-    :ivar elastic_accounts: ElasticAccountsOperations operations
-    :vartype elastic_accounts: azure.mgmt.netapp.operations.ElasticAccountsOperations
-    :ivar elastic_capacity_pools: ElasticCapacityPoolsOperations operations
-    :vartype elastic_capacity_pools: azure.mgmt.netapp.operations.ElasticCapacityPoolsOperations
-    :ivar elastic_volumes: ElasticVolumesOperations operations
-    :vartype elastic_volumes: azure.mgmt.netapp.operations.ElasticVolumesOperations
-    :ivar elastic_snapshots: ElasticSnapshotsOperations operations
-    :vartype elastic_snapshots: azure.mgmt.netapp.operations.ElasticSnapshotsOperations
-    :ivar elastic_snapshot_policies: ElasticSnapshotPoliciesOperations operations
-    :vartype elastic_snapshot_policies:
-     azure.mgmt.netapp.operations.ElasticSnapshotPoliciesOperations
-    :ivar elastic_backup_vaults: ElasticBackupVaultsOperations operations
-    :vartype elastic_backup_vaults: azure.mgmt.netapp.operations.ElasticBackupVaultsOperations
-    :ivar elastic_backup_policies: ElasticBackupPoliciesOperations operations
-    :vartype elastic_backup_policies: azure.mgmt.netapp.operations.ElasticBackupPoliciesOperations
-    :ivar elastic_backups: ElasticBackupsOperations operations
-    :vartype elastic_backups: azure.mgmt.netapp.operations.ElasticBackupsOperations
-    :ivar active_directory_configs: ActiveDirectoryConfigsOperations operations
-    :vartype active_directory_configs:
-     azure.mgmt.netapp.operations.ActiveDirectoryConfigsOperations
     :ivar net_app_resource_quota_limits: NetAppResourceQuotaLimitsOperations operations
     :vartype net_app_resource_quota_limits:
      azure.mgmt.netapp.operations.NetAppResourceQuotaLimitsOperations
@@ -142,9 +107,9 @@ class NetAppManagementClient:  # pylint: disable=too-many-instance-attributes
     :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
-    :keyword api_version: The API version to use for this operation. Default value is
-     "2025-09-01-preview". Note that overriding this default value may result in unsupported
-     behavior.
+    :keyword api_version: The API version to use for this operation. Known values are "2025-12-01"
+     and None. Default value is "2025-12-01". Note that overriding this default value may result in
+     unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -216,31 +181,6 @@ class NetAppManagementClient:  # pylint: disable=too-many-instance-attributes
             self._client, self._config, self._serialize, self._deserialize
         )
         self.backup_vaults = BackupVaultsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.buckets = BucketsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.caches = CachesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.elastic_accounts = ElasticAccountsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.elastic_capacity_pools = ElasticCapacityPoolsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.elastic_volumes = ElasticVolumesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.elastic_snapshots = ElasticSnapshotsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.elastic_snapshot_policies = ElasticSnapshotPoliciesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.elastic_backup_vaults = ElasticBackupVaultsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.elastic_backup_policies = ElasticBackupPoliciesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.elastic_backups = ElasticBackupsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.active_directory_configs = ActiveDirectoryConfigsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
         self.net_app_resource_quota_limits = NetAppResourceQuotaLimitsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
