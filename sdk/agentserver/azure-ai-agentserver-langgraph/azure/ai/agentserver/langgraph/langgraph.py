@@ -131,7 +131,7 @@ class LangGraphAdapter(FoundryCBAgent):
             return output
         except Exception as e:
             logger.error(f"Error during agent run: {e}", exc_info=True)
-            raise e
+            raise
 
     async def agent_run_astream(self,
                                 input_arguments: GraphInputArguments):
@@ -153,7 +153,7 @@ class LangGraphAdapter(FoundryCBAgent):
                 yield output_event
         except Exception as e:
             logger.error(f"Error during streaming agent run: {e}", exc_info=True)
-            raise e
+            raise
 
     def ensure_runnable_config(self, input_arguments: GraphInputArguments, context: LanggraphRunContext):
         """

@@ -26,6 +26,7 @@ from .response_api_request_converter import (
     convert_item_resource_to_message,
 )
 from .response_api_stream_response_converter import ResponseAPIMessagesStreamResponseConverter
+from ._history import filter_incomplete_tool_calls, merge_messages_without_duplicates, normalize_content
 from .._context import LanggraphRunContext
 
 logger = get_logger()
@@ -207,13 +208,13 @@ class ResponseAPIDefaultConverter(ResponseAPIConverter):
 
         # Merge historical messages with current input, avoiding duplicates
         current_messages = current_input.get("messages", [])
-        merged_messages = self._merge_messages_without_duplicates(
+        merged_messages = merge_messages_without_duplicates(
             historical_messages, current_messages, conversation_id
         )
 
         # Filter again after merge to catch any incomplete tool call sequences
         # that may result from the deduplication removing ToolMessages
-        merged_messages = self._filter_incomplete_tool_calls(merged_messages)
+        merged_messages = filter_incomplete_tool_calls(merged_messages)
         current_input["messages"] = merged_messages
 
         return current_input
@@ -263,7 +264,7 @@ class ResponseAPIDefaultConverter(ResponseAPIConverter):
                     messages.append(message)
 
             # Filter out incomplete tool call sequences
-            messages = self._filter_incomplete_tool_calls(messages)
+            messages = filter_incomplete_tool_calls(messages)
 
             return messages
 
@@ -280,76 +281,8 @@ class ResponseAPIDefaultConverter(ResponseAPIConverter):
         current_messages: List[AnyMessage],
         conversation_id: str,
     ) -> List[AnyMessage]:
-        """
-        Merge historical messages with current messages, filtering out duplicates.
-        Only considers it a duplicate if the last N historical messages match
-        exactly with the N current messages as a whole sequence.
-
-        :param historical_messages: Messages fetched from historical conversation items.
-        :type historical_messages: List[AnyMessage]
-        :param current_messages: Messages from the current request input.
-        :type current_messages: List[AnyMessage]
-        :param conversation_id: The conversation ID (for logging).
-        :type conversation_id: str
-
-        :return: Merged list with historical messages prepended, duplicates removed.
-        :rtype: List[AnyMessage]
-        """
-        if not current_messages or not historical_messages:
-            merged = list(historical_messages) + list(current_messages)
-            logger.info(
-                f"Merged {len(historical_messages)} historical items with {len(current_messages)} "
-                f"current items for conversation {conversation_id}"
-            )
-            return merged
-
-        n = len(current_messages)
-        filtered_historical = list(historical_messages)
-
-        # Only check for duplicates if we have at least N historical messages
-        if len(filtered_historical) >= n:
-            last_n_historical = filtered_historical[-n:]
-
-            # Check if all N messages match in order
-            all_match = True
-            for i in range(n):
-                hist_msg = last_n_historical[i]
-                curr_msg = current_messages[i]
-
-                hist_type = type(hist_msg).__name__
-                curr_type = type(curr_msg).__name__
-                hist_content = self._normalize_content(hist_msg.content if hasattr(hist_msg, 'content') else "")
-                curr_content = self._normalize_content(curr_msg.content if hasattr(curr_msg, 'content') else "")
-
-                logger.debug(
-                    f"Comparing message {i}: historical({hist_type}, '{hist_content}') "
-                    f"vs current({curr_type}, '{curr_content}')"
-                )
-
-                # Compare type and content
-                if hist_type != curr_type:
-                    logger.debug(f"Message {i} type mismatch: {hist_type} != {curr_type}")
-                    all_match = False
-                    break
-
-                if hist_content != curr_content:
-                    logger.debug(f"Message {i} content mismatch")
-                    all_match = False
-                    break
-
-            if all_match:
-                # Remove the last N historical messages (they're duplicates)
-                filtered_historical = filtered_historical[:-n]
-                logger.info(f"Filtered {n} duplicate items from end of historical items")
-
-        # Prepend historical messages to current messages
-        merged = filtered_historical + list(current_messages)
-        logger.info(
-            f"Merged {len(filtered_historical)} historical items with {len(current_messages)} "
-            f"current items for conversation {conversation_id}"
-        )
-
-        return merged
+        """Delegate to :func:`merge_messages_without_duplicates`."""
+        return merge_messages_without_duplicates(historical_messages, current_messages, conversation_id)
 
     async def _aget_state(self, context: LanggraphRunContext) -> Optional[StateSnapshot]:
         thread_id = context.agent_run.conversation_id
@@ -371,81 +304,9 @@ class ResponseAPIDefaultConverter(ResponseAPIConverter):
         return None
 
     def _filter_incomplete_tool_calls(self, messages: List[AnyMessage]) -> List[AnyMessage]:
-        """
-        Filter out incomplete tool call sequences and reorder messages so that
-        ToolMessages immediately follow their corresponding AIMessage with tool_calls.
-
-        :param messages: List of messages to filter and reorder.
-        :type messages: List[AnyMessage]
-
-        :return: Filtered and reordered list of messages.
-        :rtype: List[AnyMessage]
-        """
-        # Build a map of tool_call_id -> ToolMessage
-        tool_responses: Dict[str, ToolMessage] = {}
-        for msg in messages:
-            if isinstance(msg, ToolMessage) and hasattr(msg, 'tool_call_id'):
-                tool_responses[msg.tool_call_id] = msg
-
-        # Build result list, placing ToolMessages right after their AIMessage
-        result: List[AnyMessage] = []
-        removed_count = 0
-
-        for msg in messages:
-            if isinstance(msg, ToolMessage):
-                # Skip ToolMessages here; they'll be added after their AIMessage
-                continue
-
-            if isinstance(msg, AIMessage) and hasattr(msg, 'tool_calls') and msg.tool_calls:
-                # Check if all tool_calls have responses
-                tool_call_ids = []
-                for tc in msg.tool_calls:
-                    tc_id = tc.get('id') if isinstance(tc, dict) else getattr(tc, 'id', None)
-                    if tc_id:
-                        tool_call_ids.append(tc_id)
-
-                all_responded = all(tc_id in tool_responses for tc_id in tool_call_ids)
-                if not all_responded:
-                    removed_count += 1
-                    continue
-
-                # Add the AIMessage, then immediately add its ToolMessages
-                # Note: We add ToolMessages after EACH AIMessage that needs them,
-                # even if the same tool_call_id appears multiple times (duplicates in history)
-                result.append(msg)
-                for tc_id in tool_call_ids:
-                    if tc_id in tool_responses:
-                        result.append(tool_responses[tc_id])
-            else:
-                result.append(msg)
-
-        if removed_count > 0:
-            logger.info(f"Filtered {removed_count} messages with incomplete tool call sequences")
-
-        return result
+        """Delegate to :func:`filter_incomplete_tool_calls`."""
+        return filter_incomplete_tool_calls(messages)
 
     def _normalize_content(self, content: Any) -> str:
-        """
-        Normalize message content to a string for comparison.
-        Handles both plain strings and structured content lists.
-
-        :param content: The message content (string or list of content items).
-        :type content: Any
-
-        :return: Normalized string content.
-        :rtype: str
-        """
-        if isinstance(content, str):
-            return content
-        if isinstance(content, list):
-            # Extract text from structured content items
-            text_parts = []
-            for item in content:
-                if isinstance(item, dict):
-                    # Handle {'type': 'text', 'text': '...'} format
-                    if item.get("type") in ("text", "input_text", "output_text"):
-                        text_parts.append(item.get("text", ""))
-                elif isinstance(item, str):
-                    text_parts.append(item)
-            return "".join(text_parts)
-        return str(content) if content else ""
+        """Delegate to :func:`normalize_content`."""
+        return normalize_content(content)

@@ -19,9 +19,27 @@ from ..._context import LanggraphRunContext
 
 
 class ResponseOutputItemEventGenerator(ResponseEventGenerator):
+    """Event generator for a single output item in the response stream.
+
+    Handles one LangGraph message (or Interrupt), emitting
+    ``response.output_item.added`` and ``response.output_item.done`` events
+    and delegating content streaming to a child processor.
+    """
+
     def __init__(self, logger, parent: ResponseEventGenerator,
-                 output_index: int, message_id: str = None,
-                 *, hitl_helper: HumanInTheLoopHelper = None):
+                 output_index: int, message_id: str | None = None,
+                 *, hitl_helper: HumanInTheLoopHelper | None = None) -> None:
+        """
+        :param logger: Logger instance for diagnostics.
+        :param parent: Parent :class:`ResponseEventGenerator`.
+        :type parent: ResponseEventGenerator
+        :param output_index: Zero-based index of this output item in the response.
+        :type output_index: int
+        :param message_id: ID of the LangGraph message this generator is bound to.
+        :type message_id: str | None
+        :param hitl_helper: Optional human-in-the-loop helper for interrupt handling.
+        :type hitl_helper: HumanInTheLoopHelper | None
+        """
         super().__init__(logger, parent)
         self.output_index = output_index
         self.message_id = message_id
@@ -31,6 +49,17 @@ class ResponseOutputItemEventGenerator(ResponseEventGenerator):
     def try_process_message(
         self, message: Union[AnyMessage, Interrupt, None], context: LanggraphRunContext, stream_state: StreamEventState
     ) -> tuple[bool, ResponseEventGenerator, List[project_models.ResponseStreamEvent]]:
+        """Route the message to a child content processor or finalize the item.
+
+        :param message: The LangGraph message, Interrupt, or ``None`` for end-of-stream.
+        :type message: AnyMessage | Interrupt | None
+        :param context: The agent run context.
+        :type context: LanggraphRunContext
+        :param stream_state: Mutable stream sequencing state.
+        :type stream_state: StreamEventState
+        :return: Tuple of ``(is_processed, next_processor, events)``.
+        :rtype: tuple[bool, ResponseEventGenerator, list[project_models.ResponseStreamEvent]]
+        """
         is_processed = False
         next_processor = self
         events = []
@@ -71,6 +100,17 @@ class ResponseOutputItemEventGenerator(ResponseEventGenerator):
     def on_start(
         self, event: Union[AnyMessage, Interrupt], context: LanggraphRunContext, stream_state: StreamEventState
     ) -> tuple[bool, List[project_models.ResponseStreamEvent]]:
+        """Emit the ``response.output_item.added`` event.
+
+        :param event: The triggering message or interrupt.
+        :type event: AnyMessage | Interrupt
+        :param context: The agent run context.
+        :type context: LanggraphRunContext
+        :param stream_state: Mutable stream sequencing state.
+        :type stream_state: StreamEventState
+        :return: Tuple of ``(started, events)``.
+        :rtype: tuple[bool, list[project_models.ResponseStreamEvent]]
+        """
         if self.started:
             return True, []
 
@@ -88,6 +128,13 @@ class ResponseOutputItemEventGenerator(ResponseEventGenerator):
         return True, [item_added_event]
 
     def should_end(self, event: Union[AnyMessage, Interrupt]) -> bool:
+        """Return ``True`` when this generator should stop handling events.
+
+        :param event: The message or interrupt to evaluate.
+        :type event: AnyMessage | Interrupt
+        :return: ``True`` if ``event`` is ``None`` or belongs to a different message ID.
+        :rtype: bool
+        """
         if event is None:
             self.logger.info("Received None event, ending processor.")
             return True
@@ -98,6 +145,17 @@ class ResponseOutputItemEventGenerator(ResponseEventGenerator):
     def on_end(
         self, message: Union[AnyMessage, Interrupt], context: LanggraphRunContext, stream_state: StreamEventState
     ) -> tuple[bool, List[project_models.ResponseStreamEvent]]:
+        """Emit the ``response.output_item.done`` event and propagate the item to the parent.
+
+        :param message: The terminating message or interrupt.
+        :type message: AnyMessage | Interrupt
+        :param context: The agent run context.
+        :type context: LanggraphRunContext
+        :param stream_state: Mutable stream sequencing state.
+        :type stream_state: StreamEventState
+        :return: List containing the ``ResponseOutputItemDoneEvent``.
+        :rtype: list[project_models.ResponseStreamEvent]
+        """
         if not self.started:  # should not happen
             return []
 
@@ -112,11 +170,24 @@ class ResponseOutputItemEventGenerator(ResponseEventGenerator):
         self.parent.aggregate_content(item_resource)  # pass aggregated content to parent
         return [done_event]
 
-    def aggregate_content(self, content):
-        # aggregate content from child processor
+    def aggregate_content(self, content) -> None:
+        """Forward a content chunk to the item resource helper.
+
+        :param content: The content chunk from the child processor.
+        :type content: object
+        """
         self.item_resource_helper.add_aggregate_content(content)
 
-    def try_create_item_resource_helper(self, event: Union[AnyMessage, Interrupt], id_generator: IdGenerator):  # pylint: disable=too-many-return-statements
+    def try_create_item_resource_helper(self, event: Union[AnyMessage, Interrupt], id_generator: IdGenerator) -> bool:  # pylint: disable=too-many-return-statements
+        """Detect the event type and instantiate the matching :class:`ItemResourceHelper`.
+
+        :param event: The LangGraph message or interrupt to inspect.
+        :type event: AnyMessage | Interrupt
+        :param id_generator: ID generator for creating stable item IDs.
+        :type id_generator: IdGenerator
+        :return: ``True`` if a helper was successfully created; ``False`` if the type is unsupported.
+        :rtype: bool
+        """
         if isinstance(event, langgraph_messages.AIMessageChunk) and event.tool_call_chunks:
             self.item_resource_helper = item_resource_helpers.FunctionCallItemResourceHelper(
                 item_id=id_generator.generate_function_call_id(), tool_call=event.tool_call_chunks[0]
@@ -156,7 +227,15 @@ class ResponseOutputItemEventGenerator(ResponseEventGenerator):
             return True
         return False
 
-    def create_child_processor(self, message: Union[AnyMessage, Interrupt]):
+    def create_child_processor(self, message: Union[AnyMessage, Interrupt]) -> ResponseEventGenerator | None:
+        """Instantiate the child processor appropriate for the current item resource type.
+
+        :param message: The message that triggered child creation.
+        :type message: AnyMessage | Interrupt
+        :return: A :class:`ResponseFunctionCallArgumentEventGenerator` for function calls,
+            a :class:`ResponseContentPartEventGenerator` for messages, or ``None``.
+        :rtype: ResponseEventGenerator | None
+        """
         if self.item_resource_helper is None:
             return None
         if self.item_resource_helper.item_type == project_models.ItemType.FUNCTION_CALL:
