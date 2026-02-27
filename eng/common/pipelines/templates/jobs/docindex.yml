@@ -68,5 +68,5 @@ jobs:
           arguments: >
             -PRBranchName "gh-pages"
             -CommitMsg "Auto-generated docs from SHA(s) $(Build.SourceVersion)"
-            -GitUrl "https://$(GH_TOKEN)@github.com/$(Build.Repository.Name).git"
+            -GitUrl "https://x-access-token:$(GH_TOKEN)@github.com/$(Build.Repository.Name).git"
             -PushArgs "--force"

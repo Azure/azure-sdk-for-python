@@ -44,6 +44,6 @@ steps:
     arguments: >
       -PRBranchName "${{ parameters.BaseRepoBranch }}"
       -CommitMsg "${{ parameters.CommitMsg }}"
-      -GitUrl "https://${{ parameters.AuthToken }}@github.com/${{ parameters.BaseRepoOwner }}/$(RepoNameWithoutOwner).git"
+      -GitUrl "https://x-access-token:${{ parameters.AuthToken }}@github.com/${{ parameters.BaseRepoOwner }}/$(RepoNameWithoutOwner).git"
       -PushArgs "${{ parameters.PushArgs }}"
       -SkipCommit $${{ parameters.SkipCheckingForChanges }}
