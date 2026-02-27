@@ -42,6 +42,12 @@ class pylint(Check):
         logger.info("Running pylint check...")
 
         set_envvar_defaults()
+
+        if args.next:
+            ghtools_path = os.path.join(REPO_ROOT, "eng/tools/azure-sdk-tools[ghtools]")
+            pip_cmd = get_pip_command(sys.executable)
+            check_call(pip_cmd + ["install", "-q", ghtools_path])
+
         targeted = self.get_targeted_directories(args)
 
         results: List[int] = []
@@ -218,27 +224,11 @@ class pylint(Check):
                         package_failed = True
 
             if args.next and in_ci() and package_failed:
-                try:
-                    check_call(
-                        [
-                            executable,
-                            "-c",
-                            f"from gh_tools.vnext_issue_creator import create_vnext_issue; create_vnext_issue('{package_dir}', 'pylint')",
-                        ]
-                    )
-                except CalledProcessError as e:
-                    logger.warning(f"Failed to create vnext issue for {package_name}: {e}")
+                from gh_tools.vnext_issue_creator import create_vnext_issue
+                create_vnext_issue(package_dir, 'pylint')
 
             if args.next and in_ci() and not package_failed:
-                try:
-                    check_call(
-                        [
-                            executable,
-                            "-c",
-                            f"from gh_tools.vnext_issue_creator import close_vnext_issue; close_vnext_issue('{package_name}', 'pylint')",
-                        ]
-                    )
-                except CalledProcessError as e:
-                    logger.warning(f"Failed to close vnext issue for {package_name}: {e}")
+                from gh_tools.vnext_issue_creator import close_vnext_issue
+                close_vnext_issue(package_name, 'pylint')
 
         return max(results) if results else 0

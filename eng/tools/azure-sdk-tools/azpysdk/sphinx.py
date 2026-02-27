@@ -11,11 +11,9 @@ from subprocess import CalledProcessError, check_call
 from pathlib import Path
 
 from .Check import Check
-from ci_tools.functions import install_into_venv, unzip_file_to_directory
+from ci_tools.functions import install_into_venv, unzip_file_to_directory, get_pip_command
 from ci_tools.scenario.generation import create_package_and_install
-from ci_tools.variables import in_ci, set_envvar_defaults
-from ci_tools.variables import discover_repo_root
-from ci_tools.variables import in_analyze_weekly
+from ci_tools.variables import in_ci, set_envvar_defaults, discover_repo_root, in_analyze_weekly
 
 from ci_tools.logging import logger
 
@@ -212,6 +210,11 @@ class sphinx(Check):
 
         set_envvar_defaults()
 
+        if args.next:
+            ghtools_path = os.path.join(REPO_ROOT, "eng/tools/azure-sdk-tools[ghtools]")
+            pip_cmd = get_pip_command(sys.executable)
+            check_call(pip_cmd + ["install", "-q", ghtools_path])
+
         targeted = self.get_targeted_directories(args)
 
         results: List[int] = []
@@ -305,16 +308,8 @@ class sphinx(Check):
             if in_ci() or args.in_ci:
                 move_output_and_compress(site_folder, package_dir, package_name)
                 if in_analyze_weekly() and apidoc_result == 0 and build_result == 0:
-                    try:
-                        check_call(
-                            [
-                                executable,
-                                "-c",
-                                f"from gh_tools.vnext_issue_creator import close_vnext_issue; close_vnext_issue('{package_name}', 'sphinx')",
-                            ]
-                        )
-                    except CalledProcessError as e:
-                        logger.warning(f"Failed to close vnext issue for {package_name}: {e}")
+                    from gh_tools.vnext_issue_creator import close_vnext_issue
+                    close_vnext_issue(package_name, 'sphinx')
 
         return max(results) if results else 0
 
@@ -345,16 +340,8 @@ class sphinx(Check):
         except CalledProcessError as e:
             logger.error("sphinx-build failed for path {} exited with error {}".format(target_dir, e.returncode))
             if in_analyze_weekly():
-                try:
-                    check_call(
-                        [
-                            executable,
-                            "-c",
-                            f"from gh_tools.vnext_issue_creator import create_vnext_issue; create_vnext_issue('{package_dir}', 'sphinx')",
-                        ]
-                    )
-                except CalledProcessError as issue_error:
-                    logger.warning(f"Failed to create vnext issue: {issue_error}")
+                from gh_tools.vnext_issue_creator import create_vnext_issue
+                create_vnext_issue(package_dir, 'sphinx')
             return 1
         return 0
 

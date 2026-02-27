@@ -8,11 +8,13 @@ from subprocess import CalledProcessError, check_call
 
 from .Check import Check
 from ci_tools.parsing import ParsedSetup
-from ci_tools.functions import install_into_venv
+from ci_tools.functions import install_into_venv, get_pip_command
 from ci_tools.scenario.generation import create_package_and_install
-from ci_tools.variables import in_ci, set_envvar_defaults
+from ci_tools.variables import in_ci, set_envvar_defaults, discover_repo_root
 from ci_tools.environment_exclusions import is_check_enabled, is_typing_ignored
 from ci_tools.logging import logger
+
+REPO_ROOT = discover_repo_root()
 
 PYTHON_VERSION = "3.10"
 MYPY_VERSION = "1.18.1"
@@ -44,6 +46,11 @@ class mypy(Check):
         logger.info("Running mypy check...")
 
         set_envvar_defaults()
+
+        if args.next:
+            ghtools_path = os.path.join(REPO_ROOT, "eng/tools/azure-sdk-tools[ghtools]")
+            pip_cmd = get_pip_command(sys.executable)
+            check_call(pip_cmd + ["install", "-q", ghtools_path])
 
         targeted = self.get_targeted_directories(args)
 
@@ -129,26 +136,10 @@ class mypy(Check):
 
             if args.next and in_ci() and not is_typing_ignored(package_name):
                 if src_code_error or sample_code_error:
-                    try:
-                        check_call(
-                            [
-                                executable,
-                                "-c",
-                                f"from gh_tools.vnext_issue_creator import create_vnext_issue; create_vnext_issue('{package_dir}', 'mypy')",
-                            ]
-                        )
-                    except CalledProcessError as e:
-                        logger.warning(f"Failed to create vnext issue for {package_name}: {e}")
+                    from gh_tools.vnext_issue_creator import create_vnext_issue
+                    create_vnext_issue(package_dir, 'mypy')
                 else:
-                    try:
-                        check_call(
-                            [
-                                executable,
-                                "-c",
-                                f"from gh_tools.vnext_issue_creator import close_vnext_issue; close_vnext_issue('{package_name}', 'mypy')",
-                            ]
-                        )
-                    except CalledProcessError as e:
-                        logger.warning(f"Failed to close vnext issue for {package_name}: {e}")
+                    from gh_tools.vnext_issue_creator import close_vnext_issue
+                    close_vnext_issue(package_name, 'mypy')
 
         return max(results) if results else 0
