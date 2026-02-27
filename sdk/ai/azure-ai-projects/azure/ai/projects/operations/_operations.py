@@ -74,7 +74,7 @@ def build_agents_get_request(agent_name: str, **kwargs: Any) -> HttpRequest:
 
 
 def build_agents_create_agent_request(
-    *, foundry_features: Optional[Union[str, _models.AgentDefinitionFeatureKeys]] = None, **kwargs: Any
+    *, foundry_features: Optional[Union[str, _models.AgentDefintionOptInKeys]] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -100,7 +100,7 @@ def build_agents_create_agent_request(
 
 
 def build_agents_update_agent_request(
-    agent_name: str, *, foundry_features: Optional[Union[str, _models.AgentDefinitionFeatureKeys]] = None, **kwargs: Any
+    agent_name: str, *, foundry_features: Optional[Union[str, _models.AgentDefintionOptInKeys]] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -243,7 +243,7 @@ def build_agents_list_request(
 
 
 def build_agents_create_version_request(
-    agent_name: str, *, foundry_features: Optional[Union[str, _models.AgentDefinitionFeatureKeys]] = None, **kwargs: Any
+    agent_name: str, *, foundry_features: Optional[Union[str, _models.AgentDefintionOptInKeys]] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -1092,7 +1092,7 @@ def build_beta_evaluators_list_versions_request(  # pylint: disable=name-too-lon
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_evaluators_list_latest_versions_request(  # pylint: disable=name-too-long
+def build_beta_evaluators_list_request(
     *,
     foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW],
     type: Optional[Union[Literal["builtin"], Literal["custom"], Literal["all"], str]] = None,
@@ -1280,7 +1280,7 @@ def build_beta_insights_generate_request(
 
 
 def build_beta_insights_get_request(
-    id: str,
+    insight_id: str,
     *,
     foundry_features: Literal[FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW],
     include_coordinates: Optional[bool] = None,
@@ -1295,7 +1295,7 @@ def build_beta_insights_get_request(
     # Construct URL
     _url = "/insights/{id}"
     path_format_arguments = {
-        "id": _SERIALIZER.url("id", id, "str"),
+        "id": _SERIALIZER.url("insight_id", insight_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -1661,7 +1661,7 @@ def build_beta_red_teams_create_request(
 
 
 def build_beta_schedules_delete_request(
-    id: str, *, foundry_features: Literal[FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW], **kwargs: Any
+    schedule_id: str, *, foundry_features: Literal[FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW], **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -1670,7 +1670,7 @@ def build_beta_schedules_delete_request(
     # Construct URL
     _url = "/schedules/{id}"
     path_format_arguments = {
-        "id": _SERIALIZER.url("id", id, "str"),
+        "id": _SERIALIZER.url("schedule_id", schedule_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -1685,7 +1685,7 @@ def build_beta_schedules_delete_request(
 
 
 def build_beta_schedules_get_request(
-    id: str, *, foundry_features: Literal[FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW], **kwargs: Any
+    schedule_id: str, *, foundry_features: Literal[FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW], **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -1696,7 +1696,7 @@ def build_beta_schedules_get_request(
     # Construct URL
     _url = "/schedules/{id}"
     path_format_arguments = {
-        "id": _SERIALIZER.url("id", id, "str"),
+        "id": _SERIALIZER.url("schedule_id", schedule_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -1742,7 +1742,7 @@ def build_beta_schedules_list_request(
 
 
 def build_beta_schedules_create_or_update_request(  # pylint: disable=name-too-long
-    id: str, *, foundry_features: Literal[FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW], **kwargs: Any
+    schedule_id: str, *, foundry_features: Literal[FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW], **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -1754,7 +1754,7 @@ def build_beta_schedules_create_or_update_request(  # pylint: disable=name-too-l
     # Construct URL
     _url = "/schedules/{id}"
     path_format_arguments = {
-        "id": _SERIALIZER.url("id", id, "str"),
+        "id": _SERIALIZER.url("schedule_id", schedule_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -1804,7 +1804,7 @@ def build_beta_schedules_get_run_request(
 
 
 def build_beta_schedules_list_runs_request(
-    id: str,
+    schedule_id: str,
     *,
     foundry_features: Literal[FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW],
     type: Optional[Union[str, _models.ScheduleTaskType]] = None,
@@ -1820,7 +1820,7 @@ def build_beta_schedules_list_runs_request(
     # Construct URL
     _url = "/schedules/{id}/runs"
     path_format_arguments = {
-        "id": _SERIALIZER.url("id", id, "str"),
+        "id": _SERIALIZER.url("schedule_id", schedule_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -1953,7 +1953,7 @@ class AgentsOperations:
         *,
         name: str,
         definition: _models.AgentDefinition,
-        foundry_features: Optional[Union[str, _models.AgentDefinitionFeatureKeys]] = None,
+        foundry_features: Optional[Union[str, _models.AgentDefintionOptInKeys]] = None,
         content_type: str = "application/json",
         metadata: Optional[dict[str, str]] = None,
         description: Optional[str] = None,
@@ -1964,7 +1964,7 @@ class AgentsOperations:
         self,
         body: JSON,
         *,
-        foundry_features: Optional[Union[str, _models.AgentDefinitionFeatureKeys]] = None,
+        foundry_features: Optional[Union[str, _models.AgentDefintionOptInKeys]] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.AgentDetails: ...
@@ -1973,7 +1973,7 @@ class AgentsOperations:
         self,
         body: IO[bytes],
         *,
-        foundry_features: Optional[Union[str, _models.AgentDefinitionFeatureKeys]] = None,
+        foundry_features: Optional[Union[str, _models.AgentDefintionOptInKeys]] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.AgentDetails: ...
@@ -1985,7 +1985,7 @@ class AgentsOperations:
         *,
         name: str = _Unset,
         definition: _models.AgentDefinition = _Unset,
-        foundry_features: Optional[Union[str, _models.AgentDefinitionFeatureKeys]] = None,
+        foundry_features: Optional[Union[str, _models.AgentDefintionOptInKeys]] = None,
         metadata: Optional[dict[str, str]] = None,
         description: Optional[str] = None,
         **kwargs: Any
@@ -2007,7 +2007,7 @@ class AgentsOperations:
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
          modifying persisted preview resources. Known values are: "HostedAgents=V1Preview" and
          "WorkflowAgents=V1Preview". Default value is None.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.AgentDefinitionFeatureKeys
+        :paramtype foundry_features: str or ~azure.ai.projects.models.AgentDefintionOptInKeys
         :keyword metadata: Set of 16 key-value pairs that can be attached to an object. This can be
          useful for storing additional information about the object in a structured
          format, and querying for objects via API or the dashboard.
@@ -2098,7 +2098,7 @@ class AgentsOperations:
         agent_name: str,
         *,
         definition: _models.AgentDefinition,
-        foundry_features: Optional[Union[str, _models.AgentDefinitionFeatureKeys]] = None,
+        foundry_features: Optional[Union[str, _models.AgentDefintionOptInKeys]] = None,
         content_type: str = "application/json",
         metadata: Optional[dict[str, str]] = None,
         description: Optional[str] = None,
@@ -2110,7 +2110,7 @@ class AgentsOperations:
         agent_name: str,
         body: JSON,
         *,
-        foundry_features: Optional[Union[str, _models.AgentDefinitionFeatureKeys]] = None,
+        foundry_features: Optional[Union[str, _models.AgentDefintionOptInKeys]] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.AgentDetails: ...
@@ -2120,7 +2120,7 @@ class AgentsOperations:
         agent_name: str,
         body: IO[bytes],
         *,
-        foundry_features: Optional[Union[str, _models.AgentDefinitionFeatureKeys]] = None,
+        foundry_features: Optional[Union[str, _models.AgentDefintionOptInKeys]] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.AgentDetails: ...
@@ -2132,7 +2132,7 @@ class AgentsOperations:
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
         definition: _models.AgentDefinition = _Unset,
-        foundry_features: Optional[Union[str, _models.AgentDefinitionFeatureKeys]] = None,
+        foundry_features: Optional[Union[str, _models.AgentDefintionOptInKeys]] = None,
         metadata: Optional[dict[str, str]] = None,
         description: Optional[str] = None,
         **kwargs: Any
@@ -2150,7 +2150,7 @@ class AgentsOperations:
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
          modifying persisted preview resources. Known values are: "HostedAgents=V1Preview" and
          "WorkflowAgents=V1Preview". Default value is None.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.AgentDefinitionFeatureKeys
+        :paramtype foundry_features: str or ~azure.ai.projects.models.AgentDefintionOptInKeys
         :keyword metadata: Set of 16 key-value pairs that can be attached to an object. This can be
          useful for storing additional information about the object in a structured
          format, and querying for objects via API or the dashboard.
@@ -2670,7 +2670,7 @@ class AgentsOperations:
         agent_name: str,
         *,
         definition: _models.AgentDefinition,
-        foundry_features: Optional[Union[str, _models.AgentDefinitionFeatureKeys]] = None,
+        foundry_features: Optional[Union[str, _models.AgentDefintionOptInKeys]] = None,
         content_type: str = "application/json",
         metadata: Optional[dict[str, str]] = None,
         description: Optional[str] = None,
@@ -2691,7 +2691,7 @@ class AgentsOperations:
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
          modifying persisted preview resources. Known values are: "HostedAgents=V1Preview" and
          "WorkflowAgents=V1Preview". Default value is None.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.AgentDefinitionFeatureKeys
+        :paramtype foundry_features: str or ~azure.ai.projects.models.AgentDefintionOptInKeys
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2715,7 +2715,7 @@ class AgentsOperations:
         agent_name: str,
         body: JSON,
         *,
-        foundry_features: Optional[Union[str, _models.AgentDefinitionFeatureKeys]] = None,
+        foundry_features: Optional[Union[str, _models.AgentDefintionOptInKeys]] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.AgentVersionDetails:
@@ -2733,7 +2733,7 @@ class AgentsOperations:
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
          modifying persisted preview resources. Known values are: "HostedAgents=V1Preview" and
          "WorkflowAgents=V1Preview". Default value is None.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.AgentDefinitionFeatureKeys
+        :paramtype foundry_features: str or ~azure.ai.projects.models.AgentDefintionOptInKeys
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2748,7 +2748,7 @@ class AgentsOperations:
         agent_name: str,
         body: IO[bytes],
         *,
-        foundry_features: Optional[Union[str, _models.AgentDefinitionFeatureKeys]] = None,
+        foundry_features: Optional[Union[str, _models.AgentDefintionOptInKeys]] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.AgentVersionDetails:
@@ -2766,7 +2766,7 @@ class AgentsOperations:
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
          modifying persisted preview resources. Known values are: "HostedAgents=V1Preview" and
          "WorkflowAgents=V1Preview". Default value is None.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.AgentDefinitionFeatureKeys
+        :paramtype foundry_features: str or ~azure.ai.projects.models.AgentDefintionOptInKeys
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2782,7 +2782,7 @@ class AgentsOperations:
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
         definition: _models.AgentDefinition = _Unset,
-        foundry_features: Optional[Union[str, _models.AgentDefinitionFeatureKeys]] = None,
+        foundry_features: Optional[Union[str, _models.AgentDefintionOptInKeys]] = None,
         metadata: Optional[dict[str, str]] = None,
         description: Optional[str] = None,
         **kwargs: Any
@@ -2804,7 +2804,7 @@ class AgentsOperations:
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
          modifying persisted preview resources. Known values are: "HostedAgents=V1Preview" and
          "WorkflowAgents=V1Preview". Default value is None.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.AgentDefinitionFeatureKeys
+        :paramtype foundry_features: str or ~azure.ai.projects.models.AgentDefintionOptInKeys
         :keyword metadata: Set of 16 key-value pairs that can be attached to an object. This can be
          useful for storing additional information about the object in a structured
          format, and querying for objects via API or the dashboard.
@@ -5894,7 +5894,7 @@ class BetaEvaluatorsOperations:
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list_latest_versions(
+    def list(
         self,
         *,
         type: Optional[Union[Literal["builtin"], Literal["custom"], Literal["all"], str]] = None,
@@ -5933,7 +5933,7 @@ class BetaEvaluatorsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_beta_evaluators_list_latest_versions_request(
+                _request = build_beta_evaluators_list_request(
                     foundry_features=foundry_features,
                     type=type,
                     limit=limit,
@@ -6559,11 +6559,11 @@ class BetaInsightsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get(self, id: str, *, include_coordinates: Optional[bool] = None, **kwargs: Any) -> _models.Insight:
+    def get(self, insight_id: str, *, include_coordinates: Optional[bool] = None, **kwargs: Any) -> _models.Insight:
         """Get a specific insight by Id.
 
-        :param id: The unique identifier for the insights report. Required.
-        :type id: str
+        :param insight_id: The unique identifier for the insights report. Required.
+        :type insight_id: str
         :keyword include_coordinates: Whether to include coordinates for visualization in the response.
          Defaults to false. Default value is None.
         :paramtype include_coordinates: bool
@@ -6588,7 +6588,7 @@ class BetaInsightsOperations:
         cls: ClsType[_models.Insight] = kwargs.pop("cls", None)
 
         _request = build_beta_insights_get_request(
-            id=id,
+            insight_id=insight_id,
             foundry_features=foundry_features,
             include_coordinates=include_coordinates,
             api_version=self._config.api_version,
@@ -8110,11 +8110,11 @@ class BetaSchedulesOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def delete(self, id: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
+    def delete(self, schedule_id: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
         """Delete a schedule.
 
-        :param id: Identifier of the schedule. Required.
-        :type id: str
+        :param schedule_id: Identifier of the schedule. Required.
+        :type schedule_id: str
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -8136,7 +8136,7 @@ class BetaSchedulesOperations:
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_beta_schedules_delete_request(
-            id=id,
+            schedule_id=schedule_id,
             foundry_features=foundry_features,
             api_version=self._config.api_version,
             headers=_headers,
@@ -8162,11 +8162,11 @@ class BetaSchedulesOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
-    def get(self, id: str, **kwargs: Any) -> _models.Schedule:
+    def get(self, schedule_id: str, **kwargs: Any) -> _models.Schedule:
         """Get a schedule by id.
 
-        :param id: Identifier of the schedule. Required.
-        :type id: str
+        :param schedule_id: Identifier of the schedule. Required.
+        :type schedule_id: str
         :return: Schedule. The Schedule is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.Schedule
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -8188,7 +8188,7 @@ class BetaSchedulesOperations:
         cls: ClsType[_models.Schedule] = kwargs.pop("cls", None)
 
         _request = build_beta_schedules_get_request(
-            id=id,
+            schedule_id=schedule_id,
             foundry_features=foundry_features,
             api_version=self._config.api_version,
             headers=_headers,
@@ -8329,12 +8329,12 @@ class BetaSchedulesOperations:
 
     @overload
     def create_or_update(
-        self, id: str, schedule: _models.Schedule, *, content_type: str = "application/json", **kwargs: Any
+        self, schedule_id: str, schedule: _models.Schedule, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Schedule:
         """Create or update operation template.
 
-        :param id: Identifier of the schedule. Required.
-        :type id: str
+        :param schedule_id: Identifier of the schedule. Required.
+        :type schedule_id: str
         :param schedule: The resource instance. Required.
         :type schedule: ~azure.ai.projects.models.Schedule
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -8347,12 +8347,12 @@ class BetaSchedulesOperations:
 
     @overload
     def create_or_update(
-        self, id: str, schedule: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, schedule_id: str, schedule: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Schedule:
         """Create or update operation template.
 
-        :param id: Identifier of the schedule. Required.
-        :type id: str
+        :param schedule_id: Identifier of the schedule. Required.
+        :type schedule_id: str
         :param schedule: The resource instance. Required.
         :type schedule: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -8365,12 +8365,12 @@ class BetaSchedulesOperations:
 
     @overload
     def create_or_update(
-        self, id: str, schedule: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self, schedule_id: str, schedule: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Schedule:
         """Create or update operation template.
 
-        :param id: Identifier of the schedule. Required.
-        :type id: str
+        :param schedule_id: Identifier of the schedule. Required.
+        :type schedule_id: str
         :param schedule: The resource instance. Required.
         :type schedule: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
@@ -8383,12 +8383,12 @@ class BetaSchedulesOperations:
 
     @distributed_trace
     def create_or_update(
-        self, id: str, schedule: Union[_models.Schedule, JSON, IO[bytes]], **kwargs: Any
+        self, schedule_id: str, schedule: Union[_models.Schedule, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.Schedule:
         """Create or update operation template.
 
-        :param id: Identifier of the schedule. Required.
-        :type id: str
+        :param schedule_id: Identifier of the schedule. Required.
+        :type schedule_id: str
         :param schedule: The resource instance. Is one of the following types: Schedule, JSON,
          IO[bytes] Required.
         :type schedule: ~azure.ai.projects.models.Schedule or JSON or IO[bytes]
@@ -8421,7 +8421,7 @@ class BetaSchedulesOperations:
             _content = json.dumps(schedule, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_beta_schedules_create_or_update_request(
-            id=id,
+            schedule_id=schedule_id,
             foundry_features=foundry_features,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -8534,7 +8534,7 @@ class BetaSchedulesOperations:
     @distributed_trace
     def list_runs(
         self,
-        id: str,
+        schedule_id: str,
         *,
         type: Optional[Union[str, _models.ScheduleTaskType]] = None,
         enabled: Optional[bool] = None,
@@ -8542,8 +8542,8 @@ class BetaSchedulesOperations:
     ) -> ItemPaged["_models.ScheduleRun"]:
         """List all schedule runs.
 
-        :param id: Identifier of the schedule. Required.
-        :type id: str
+        :param schedule_id: Identifier of the schedule. Required.
+        :type schedule_id: str
         :keyword type: Filter by the type of schedule. Known values are: "Evaluation" and "Insight".
          Default value is None.
         :paramtype type: str or ~azure.ai.projects.models.ScheduleTaskType
@@ -8573,7 +8573,7 @@ class BetaSchedulesOperations:
             if not next_link:
 
                 _request = build_beta_schedules_list_runs_request(
-                    id=id,
+                    schedule_id=schedule_id,
                     foundry_features=foundry_features,
                     type=type,
                     enabled=enabled,

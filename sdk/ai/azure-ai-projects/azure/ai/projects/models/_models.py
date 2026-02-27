@@ -856,7 +856,7 @@ class ApproximateLocation(_Model):
 
 
 class AutoCodeInterpreterToolParam(_Model):
-    """CodeInterpreterToolAuto.
+    """Automatic Code Interpreter Tool Parameters.
 
     :ivar type: Always ``auto``. Required. Default value is "auto".
     :vartype type: str
@@ -5182,8 +5182,8 @@ class InlineSkillSourceParam(_Model):
 class Insight(_Model):
     """The response body for cluster insights.
 
-    :ivar id: The unique identifier for the insights report. Required.
-    :vartype id: str
+    :ivar insight_id: The unique identifier for the insights report. Required.
+    :vartype insight_id: str
     :ivar metadata: Metadata about the insights report. Required.
     :vartype metadata: ~azure.ai.projects.models.InsightsMetadata
     :ivar state: The current state of the insights. Required. Known values are: "NotStarted",
@@ -5197,7 +5197,7 @@ class Insight(_Model):
     :vartype result: ~azure.ai.projects.models.InsightResult
     """
 
-    id: str = rest_field(visibility=["read"])
+    insight_id: str = rest_field(name="id", visibility=["read"])
     """The unique identifier for the insights report. Required."""
     metadata: "_models.InsightsMetadata" = rest_field(visibility=["read"])
     """Metadata about the insights report. Required."""
@@ -7158,10 +7158,10 @@ class PromptAgentDefinitionTextOptions(_Model):
     data.
 
     :ivar format:
-    :vartype format: ~azure.ai.projects.models.TextResponseFormatConfiguration
+    :vartype format: ~azure.ai.projects.models.TextResponseFormat
     """
 
-    format: Optional["_models.TextResponseFormatConfiguration"] = rest_field(
+    format: Optional["_models.TextResponseFormat"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
 
@@ -7169,7 +7169,7 @@ class PromptAgentDefinitionTextOptions(_Model):
     def __init__(
         self,
         *,
-        format: Optional["_models.TextResponseFormatConfiguration"] = None,
+        format: Optional["_models.TextResponseFormat"] = None,
     ) -> None: ...
 
     @overload
@@ -7230,8 +7230,8 @@ class PromptBasedEvaluatorDefinition(EvaluatorDefinition, discriminator="prompt"
 class ProtocolVersionRecord(_Model):
     """A record mapping for a single protocol and its version.
 
-    :ivar protocol: The protocol type. Required. Known values are: "activity_protocol" and
-     "responses".
+    :ivar protocol: The protocol type. Required. Known values are: "activity_protocol",
+     "responses", and "invocations".
     :vartype protocol: str or ~azure.ai.projects.models.AgentProtocol
     :ivar version: The version string for the protocol, e.g. 'v0.1.1'. Required.
     :vartype version: str
@@ -7240,7 +7240,8 @@ class ProtocolVersionRecord(_Model):
     protocol: Union[str, "_models.AgentProtocol"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """The protocol type. Required. Known values are: \"activity_protocol\" and \"responses\"."""
+    """The protocol type. Required. Known values are: \"activity_protocol\", \"responses\", and
+     \"invocations\"."""
     version: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The version string for the protocol, e.g. 'v0.1.1'. Required."""
 
@@ -7621,8 +7622,8 @@ class SASCredentials(BaseCredentials, discriminator="SAS"):
 class Schedule(_Model):
     """Schedule model.
 
-    :ivar id: Identifier of the schedule. Required.
-    :vartype id: str
+    :ivar schedule_id: Identifier of the schedule. Required.
+    :vartype schedule_id: str
     :ivar display_name: Name of the schedule.
     :vartype display_name: str
     :ivar description: Description of the schedule.
@@ -7645,7 +7646,7 @@ class Schedule(_Model):
     :vartype system_data: dict[str, str]
     """
 
-    id: str = rest_field(visibility=["read"])
+    schedule_id: str = rest_field(name="id", visibility=["read"])
     """Identifier of the schedule. Required."""
     display_name: Optional[str] = rest_field(
         name="displayName", visibility=["read", "create", "update", "delete", "query"]
@@ -8149,7 +8150,7 @@ class TaxonomySubCategory(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TextResponseFormatConfiguration(_Model):
+class TextResponseFormat(_Model):
     """An object specifying the format that the model must output. Configuring ``{ "type":
     "json_schema" }`` enables Structured Outputs, which ensures the model will match your supplied
     JSON schema. Learn more in the `Structured Outputs guide </docs/guides/structured-outputs>`_.
@@ -8159,8 +8160,7 @@ class TextResponseFormatConfiguration(_Model):
     preferred for models that support it.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    TextResponseFormatConfigurationResponseFormatJsonObject, TextResponseFormatJsonSchema,
-    TextResponseFormatConfigurationResponseFormatText
+    TextResponseFormatJsonObject, TextResponseFormatJsonSchema, TextResponseFormatText
 
     :ivar type: Required. Known values are: "text", "json_schema", and "json_object".
     :vartype type: str or ~azure.ai.projects.models.TextResponseFormatConfigurationType
@@ -8188,9 +8188,7 @@ class TextResponseFormatConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TextResponseFormatConfigurationResponseFormatJsonObject(
-    TextResponseFormatConfiguration, discriminator="json_object"
-):  # pylint: disable=name-too-long
+class TextResponseFormatJsonObject(TextResponseFormat, discriminator="json_object"):
     """JSON object.
 
     :ivar type: The type of response format being defined. Always ``json_object``. Required.
@@ -8218,36 +8216,7 @@ class TextResponseFormatConfigurationResponseFormatJsonObject(
         self.type = TextResponseFormatConfigurationType.JSON_OBJECT  # type: ignore
 
 
-class TextResponseFormatConfigurationResponseFormatText(
-    TextResponseFormatConfiguration, discriminator="text"
-):  # pylint: disable=name-too-long
-    """Text.
-
-    :ivar type: The type of response format being defined. Always ``text``. Required. TEXT.
-    :vartype type: str or ~azure.ai.projects.models.TEXT
-    """
-
-    type: Literal[TextResponseFormatConfigurationType.TEXT] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The type of response format being defined. Always ``text``. Required. TEXT."""
-
-    @overload
-    def __init__(
-        self,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.type = TextResponseFormatConfigurationType.TEXT  # type: ignore
-
-
-class TextResponseFormatJsonSchema(TextResponseFormatConfiguration, discriminator="json_schema"):
+class TextResponseFormatJsonSchema(TextResponseFormat, discriminator="json_schema"):
     """JSON schema.
 
     :ivar type: The type of response format being defined. Always ``json_schema``. Required.
@@ -8297,6 +8266,33 @@ class TextResponseFormatJsonSchema(TextResponseFormatConfiguration, discriminato
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.type = TextResponseFormatConfigurationType.JSON_SCHEMA  # type: ignore
+
+
+class TextResponseFormatText(TextResponseFormat, discriminator="text"):
+    """Text.
+
+    :ivar type: The type of response format being defined. Always ``text``. Required. TEXT.
+    :vartype type: str or ~azure.ai.projects.models.TEXT
+    """
+
+    type: Literal[TextResponseFormatConfigurationType.TEXT] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The type of response format being defined. Always ``text``. Required. TEXT."""
+
+    @overload
+    def __init__(
+        self,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = TextResponseFormatConfigurationType.TEXT  # type: ignore
 
 
 class ToolChoiceAllowed(ToolChoiceParam, discriminator="allowed_tools"):
@@ -8604,12 +8600,12 @@ class ToolChoiceWebSearchPreview20250311(ToolChoiceParam, discriminator="web_sea
     """Indicates that the model should use a built-in tool to generate a response. `Learn more about
     built-in tools <https://platform.openai.com/docs/guides/tools>`_.
 
-    :ivar type: Required. WEB_SEARCH_PREVIEW2025_03_11.
-    :vartype type: str or ~azure.ai.projects.models.WEB_SEARCH_PREVIEW2025_03_11
+    :ivar type: Required. WEB_SEARCH_PREVIEW_2025_03_11.
+    :vartype type: str or ~azure.ai.projects.models.WEB_SEARCH_PREVIEW_2025_03_11
     """
 
-    type: Literal[ToolChoiceParamType.WEB_SEARCH_PREVIEW2025_03_11] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required. WEB_SEARCH_PREVIEW2025_03_11."""
+    type: Literal[ToolChoiceParamType.WEB_SEARCH_PREVIEW_2025_03_11] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. WEB_SEARCH_PREVIEW_2025_03_11."""
 
     @overload
     def __init__(
@@ -8625,7 +8621,7 @@ class ToolChoiceWebSearchPreview20250311(ToolChoiceParam, discriminator="web_sea
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.type = ToolChoiceParamType.WEB_SEARCH_PREVIEW2025_03_11  # type: ignore
+        self.type = ToolChoiceParamType.WEB_SEARCH_PREVIEW_2025_03_11  # type: ignore
 
 
 class ToolDescription(_Model):

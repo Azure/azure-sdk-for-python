@@ -1214,7 +1214,7 @@ You can add custom attributes to spans by creating a custom span processor. Here
 
 ```python
 class CustomAttributeSpanProcessor(SpanProcessor):
-    def __init__(self):
+    def __init__(self) -> None:
         pass
 
     def on_start(self, span: Span, parent_context=None):

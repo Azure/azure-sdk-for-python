@@ -9,7 +9,7 @@ from typing import List, Sequence
 
 class MemoryTraceExporter(SpanExporter):
 
-    def __init__(self):
+    def __init__(self) -> None:
         self._trace_list = []
 
     def export(self, spans: Sequence[Span]) -> SpanExportResult:
