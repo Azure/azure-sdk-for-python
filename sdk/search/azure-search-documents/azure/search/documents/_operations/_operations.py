@@ -46,7 +46,7 @@ def build_search_get_document_count_request(index_name: str, **kwargs: Any) -> H
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json;odata.metadata=none")
 
     # Construct URL
@@ -69,8 +69,6 @@ def build_search_get_document_count_request(index_name: str, **kwargs: Any) -> H
 def build_search_search_get_request(  # pylint: disable=too-many-locals,too-many-statements,too-many-branches
     index_name: str,
     *,
-    query_source_authorization: Optional[str] = None,
-    enable_elevated_read: Optional[bool] = None,
     search_text: Optional[str] = None,
     include_total_result_count: Optional[bool] = None,
     facets: Optional[list[str]] = None,
@@ -96,17 +94,13 @@ def build_search_search_get_request(  # pylint: disable=too-many-locals,too-many
     answers: Optional[Union[str, _models1.QueryAnswerType]] = None,
     captions: Optional[Union[str, _models1.QueryCaptionType]] = None,
     semantic_query: Optional[str] = None,
-    query_rewrites: Optional[Union[str, _models1.QueryRewritesType]] = None,
     debug: Optional[Union[str, _models1.QueryDebugMode]] = None,
-    query_language: Optional[Union[str, _models1.QueryLanguage]] = None,
-    speller: Optional[Union[str, _models1.QuerySpellerType]] = None,
-    semantic_fields: Optional[list[str]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json;odata.metadata=none")
 
     # Construct URL
@@ -173,41 +167,21 @@ def build_search_search_get_request(  # pylint: disable=too-many-locals,too-many
         _params["captions"] = _SERIALIZER.query("captions", captions, "str")
     if semantic_query is not None:
         _params["semanticQuery"] = _SERIALIZER.query("semantic_query", semantic_query, "str")
-    if query_rewrites is not None:
-        _params["queryRewrites"] = _SERIALIZER.query("query_rewrites", query_rewrites, "str")
     if debug is not None:
         _params["debug"] = _SERIALIZER.query("debug", debug, "str")
-    if query_language is not None:
-        _params["queryLanguage"] = _SERIALIZER.query("query_language", query_language, "str")
-    if speller is not None:
-        _params["speller"] = _SERIALIZER.query("speller", speller, "str")
-    if semantic_fields is not None:
-        _params["semanticFields"] = _SERIALIZER.query("semantic_fields", semantic_fields, "[str]", div=",")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-    if query_source_authorization is not None:
-        _headers["x-ms-query-source-authorization"] = _SERIALIZER.header(
-            "query_source_authorization", query_source_authorization, "str"
-        )
-    if enable_elevated_read is not None:
-        _headers["x-ms-enable-elevated-read"] = _SERIALIZER.header("enable_elevated_read", enable_elevated_read, "bool")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_search_search_post_request(
-    index_name: str,
-    *,
-    query_source_authorization: Optional[str] = None,
-    enable_elevated_read: Optional[bool] = None,
-    **kwargs: Any
-) -> HttpRequest:
+def build_search_search_post_request(index_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json;odata.metadata=none")
 
     # Construct URL
@@ -223,12 +197,6 @@ def build_search_search_post_request(
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-    if query_source_authorization is not None:
-        _headers["x-ms-query-source-authorization"] = _SERIALIZER.header(
-            "query_source_authorization", query_source_authorization, "str"
-        )
-    if enable_elevated_read is not None:
-        _headers["x-ms-enable-elevated-read"] = _SERIALIZER.header("enable_elevated_read", enable_elevated_read, "bool")
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
 
@@ -236,18 +204,12 @@ def build_search_search_post_request(
 
 
 def build_search_get_document_request(
-    key: str,
-    index_name: str,
-    *,
-    query_source_authorization: Optional[str] = None,
-    enable_elevated_read: Optional[bool] = None,
-    selected_fields: Optional[list[str]] = None,
-    **kwargs: Any
+    key: str, index_name: str, *, selected_fields: Optional[list[str]] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json;odata.metadata=none")
 
     # Construct URL
@@ -266,12 +228,6 @@ def build_search_get_document_request(
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-    if query_source_authorization is not None:
-        _headers["x-ms-query-source-authorization"] = _SERIALIZER.header(
-            "query_source_authorization", query_source_authorization, "str"
-        )
-    if enable_elevated_read is not None:
-        _headers["x-ms-enable-elevated-read"] = _SERIALIZER.header("enable_elevated_read", enable_elevated_read, "bool")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -295,7 +251,7 @@ def build_search_suggest_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json;odata.metadata=none")
 
     # Construct URL
@@ -340,7 +296,7 @@ def build_search_suggest_post_request(index_name: str, **kwargs: Any) -> HttpReq
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json;odata.metadata=none")
 
     # Construct URL
@@ -367,7 +323,7 @@ def build_search_index_request(index_name: str, **kwargs: Any) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json;odata.metadata=none")
 
     # Construct URL
@@ -407,7 +363,7 @@ def build_search_autocomplete_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json;odata.metadata=none")
 
     # Construct URL
@@ -450,7 +406,7 @@ def build_search_autocomplete_post_request(index_name: str, **kwargs: Any) -> Ht
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json;odata.metadata=none")
 
     # Construct URL
@@ -508,6 +464,7 @@ class _SearchClientOperationsMixin(
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -532,7 +489,7 @@ class _SearchClientOperationsMixin(
         response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(int, response.text())
 
@@ -545,8 +502,6 @@ class _SearchClientOperationsMixin(
     def _search_get(  # pylint: disable=too-many-locals
         self,
         *,
-        query_source_authorization: Optional[str] = None,
-        enable_elevated_read: Optional[bool] = None,
         search_text: Optional[str] = None,
         include_total_result_count: Optional[bool] = None,
         facets: Optional[list[str]] = None,
@@ -572,22 +527,11 @@ class _SearchClientOperationsMixin(
         answers: Optional[Union[str, _models1.QueryAnswerType]] = None,
         captions: Optional[Union[str, _models1.QueryCaptionType]] = None,
         semantic_query: Optional[str] = None,
-        query_rewrites: Optional[Union[str, _models1.QueryRewritesType]] = None,
         debug: Optional[Union[str, _models1.QueryDebugMode]] = None,
-        query_language: Optional[Union[str, _models1.QueryLanguage]] = None,
-        speller: Optional[Union[str, _models1.QuerySpellerType]] = None,
-        semantic_fields: Optional[list[str]] = None,
         **kwargs: Any
     ) -> _models1.SearchDocumentsResult:
         """Searches for documents in the index.
 
-        :keyword query_source_authorization: Token identifying the user for which the query is being
-         executed. This token is used to enforce security restrictions on documents. Default value is
-         None.
-        :paramtype query_source_authorization: str
-        :keyword enable_elevated_read: A value that enables elevated read that bypass document level
-         permission checks for the query operation. Default value is None.
-        :paramtype enable_elevated_read: bool
         :keyword search_text: A full-text search query expression; Use "*" or omit this parameter to
          match all documents. Default value is None.
         :paramtype search_text: str
@@ -705,33 +649,10 @@ class _SearchClientOperationsMixin(
          is a need to use different queries between the base retrieval and ranking phase, and the L2
          semantic phase. Default value is None.
         :paramtype semantic_query: str
-        :keyword query_rewrites: When QueryRewrites is set to ``generative``, the query terms are sent
-         to a generate model which will produce 10 (default) rewrites to help increase the recall of the
-         request. The requested count can be configured by appending the pipe character ``|`` followed
-         by the ``count-<number of rewrites>`` option, such as ``generative|count-3``. Defaults to
-         ``None``. This parameter is only valid if the query type is ``semantic``. Known values are:
-         "none" and "generative". Default value is None.
-        :paramtype query_rewrites: str or ~azure.search.documents.models.QueryRewritesType
         :keyword debug: Enables a debugging tool that can be used to further explore your search
          results. Known values are: "disabled", "semantic", "vector", "queryRewrites", "innerHits", and
          "all". Default value is None.
         :paramtype debug: str or ~azure.search.documents.models.QueryDebugMode
-        :keyword query_language: The language of the query. Known values are: "none", "en-us", "en-gb",
-         "en-in", "en-ca", "en-au", "fr-fr", "fr-ca", "de-de", "es-es", "es-mx", "zh-cn", "zh-tw",
-         "pt-br", "pt-pt", "it-it", "ja-jp", "ko-kr", "ru-ru", "cs-cz", "nl-be", "nl-nl", "hu-hu",
-         "pl-pl", "sv-se", "tr-tr", "hi-in", "ar-sa", "ar-eg", "ar-ma", "ar-kw", "ar-jo", "da-dk",
-         "no-no", "bg-bg", "hr-hr", "hr-ba", "ms-my", "ms-bn", "sl-sl", "ta-in", "vi-vn", "el-gr",
-         "ro-ro", "is-is", "id-id", "th-th", "lt-lt", "uk-ua", "lv-lv", "et-ee", "ca-es", "fi-fi",
-         "sr-ba", "sr-me", "sr-rs", "sk-sk", "nb-no", "hy-am", "bn-in", "eu-es", "gl-es", "gu-in",
-         "he-il", "ga-ie", "kn-in", "ml-in", "mr-in", "fa-ae", "pa-in", "te-in", and "ur-pk". Default
-         value is None.
-        :paramtype query_language: str or ~azure.search.documents.models.QueryLanguage
-        :keyword speller: Improve search recall by spell-correcting individual search query terms.
-         Known values are: "none" and "lexicon". Default value is None.
-        :paramtype speller: str or ~azure.search.documents.models.QuerySpellerType
-        :keyword semantic_fields: The list of field names used for semantic ranking. Default value is
-         None.
-        :paramtype semantic_fields: list[str]
         :return: SearchDocumentsResult. The SearchDocumentsResult is compatible with MutableMapping
         :rtype: ~azure.search.documents.models.SearchDocumentsResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -751,8 +672,6 @@ class _SearchClientOperationsMixin(
 
         _request = build_search_search_get_request(
             index_name=self._config.index_name,
-            query_source_authorization=query_source_authorization,
-            enable_elevated_read=enable_elevated_read,
             search_text=search_text,
             include_total_result_count=include_total_result_count,
             facets=facets,
@@ -778,11 +697,7 @@ class _SearchClientOperationsMixin(
             answers=answers,
             captions=captions,
             semantic_query=semantic_query,
-            query_rewrites=query_rewrites,
             debug=debug,
-            query_language=query_language,
-            speller=speller,
-            semantic_fields=semantic_fields,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -792,6 +707,7 @@ class _SearchClientOperationsMixin(
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -813,7 +729,7 @@ class _SearchClientOperationsMixin(
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models1.SearchDocumentsResult, response.json())
 
@@ -826,8 +742,6 @@ class _SearchClientOperationsMixin(
     def _search_post(  # pylint: disable=too-many-locals
         self,
         *,
-        query_source_authorization: Optional[str] = None,
-        enable_elevated_read: Optional[bool] = None,
         content_type: str = "application/json",
         include_total_count: Optional[bool] = None,
         facets: Optional[list[str]] = None,
@@ -846,8 +760,6 @@ class _SearchClientOperationsMixin(
         search_text: Optional[str] = None,
         search_fields: Optional[list[str]] = None,
         search_mode: Optional[Union[str, _models1.SearchMode]] = None,
-        query_language: Optional[Union[str, _models1.QueryLanguage]] = None,
-        query_speller: Optional[Union[str, _models1.QuerySpellerType]] = None,
         select: Optional[list[str]] = None,
         skip: Optional[int] = None,
         top: Optional[int] = None,
@@ -857,32 +769,17 @@ class _SearchClientOperationsMixin(
         semantic_query: Optional[str] = None,
         answers: Optional[Union[str, _models1.QueryAnswerType]] = None,
         captions: Optional[Union[str, _models1.QueryCaptionType]] = None,
-        query_rewrites: Optional[Union[str, _models1.QueryRewritesType]] = None,
-        semantic_fields: Optional[list[str]] = None,
         vector_queries: Optional[list[_models1.VectorQuery]] = None,
         vector_filter_mode: Optional[Union[str, _models1.VectorFilterMode]] = None,
-        hybrid_search: Optional[_models1.HybridSearch] = None,
         **kwargs: Any
     ) -> _models1.SearchDocumentsResult: ...
     @overload
     def _search_post(
-        self,
-        body: JSON,
-        *,
-        query_source_authorization: Optional[str] = None,
-        enable_elevated_read: Optional[bool] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models1.SearchDocumentsResult: ...
     @overload
     def _search_post(
-        self,
-        body: IO[bytes],
-        *,
-        query_source_authorization: Optional[str] = None,
-        enable_elevated_read: Optional[bool] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models1.SearchDocumentsResult: ...
 
     @distributed_trace
@@ -890,8 +787,6 @@ class _SearchClientOperationsMixin(
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
-        query_source_authorization: Optional[str] = None,
-        enable_elevated_read: Optional[bool] = None,
         include_total_count: Optional[bool] = None,
         facets: Optional[list[str]] = None,
         filter: Optional[str] = None,
@@ -909,8 +804,6 @@ class _SearchClientOperationsMixin(
         search_text: Optional[str] = None,
         search_fields: Optional[list[str]] = None,
         search_mode: Optional[Union[str, _models1.SearchMode]] = None,
-        query_language: Optional[Union[str, _models1.QueryLanguage]] = None,
-        query_speller: Optional[Union[str, _models1.QuerySpellerType]] = None,
         select: Optional[list[str]] = None,
         skip: Optional[int] = None,
         top: Optional[int] = None,
@@ -920,24 +813,14 @@ class _SearchClientOperationsMixin(
         semantic_query: Optional[str] = None,
         answers: Optional[Union[str, _models1.QueryAnswerType]] = None,
         captions: Optional[Union[str, _models1.QueryCaptionType]] = None,
-        query_rewrites: Optional[Union[str, _models1.QueryRewritesType]] = None,
-        semantic_fields: Optional[list[str]] = None,
         vector_queries: Optional[list[_models1.VectorQuery]] = None,
         vector_filter_mode: Optional[Union[str, _models1.VectorFilterMode]] = None,
-        hybrid_search: Optional[_models1.HybridSearch] = None,
         **kwargs: Any
     ) -> _models1.SearchDocumentsResult:
         """Searches for documents in the index.
 
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
-        :keyword query_source_authorization: Token identifying the user for which the query is being
-         executed. This token is used to enforce security restrictions on documents. Default value is
-         None.
-        :paramtype query_source_authorization: str
-        :keyword enable_elevated_read: A value that enables elevated read that bypass document level
-         permission checks for the query operation. Default value is None.
-        :paramtype enable_elevated_read: bool
         :keyword include_total_count: A value that specifies whether to fetch the total count of
          results. Default is false. Setting this value to true may have a performance impact. Note that
          the count returned is an approximation. Default value is None.
@@ -1011,19 +894,6 @@ class _SearchClientOperationsMixin(
          matched in order to count the document as a match. Known values are: "any" and "all". Default
          value is None.
         :paramtype search_mode: str or ~azure.search.documents.models.SearchMode
-        :keyword query_language: A value that specifies the language of the search query. Known values
-         are: "none", "en-us", "en-gb", "en-in", "en-ca", "en-au", "fr-fr", "fr-ca", "de-de", "es-es",
-         "es-mx", "zh-cn", "zh-tw", "pt-br", "pt-pt", "it-it", "ja-jp", "ko-kr", "ru-ru", "cs-cz",
-         "nl-be", "nl-nl", "hu-hu", "pl-pl", "sv-se", "tr-tr", "hi-in", "ar-sa", "ar-eg", "ar-ma",
-         "ar-kw", "ar-jo", "da-dk", "no-no", "bg-bg", "hr-hr", "hr-ba", "ms-my", "ms-bn", "sl-sl",
-         "ta-in", "vi-vn", "el-gr", "ro-ro", "is-is", "id-id", "th-th", "lt-lt", "uk-ua", "lv-lv",
-         "et-ee", "ca-es", "fi-fi", "sr-ba", "sr-me", "sr-rs", "sk-sk", "nb-no", "hy-am", "bn-in",
-         "eu-es", "gl-es", "gu-in", "he-il", "ga-ie", "kn-in", "ml-in", "mr-in", "fa-ae", "pa-in",
-         "te-in", and "ur-pk". Default value is None.
-        :paramtype query_language: str or ~azure.search.documents.models.QueryLanguage
-        :keyword query_speller: A value that specifies the type of the speller to use to spell-correct
-         individual search query terms. Known values are: "none" and "lexicon". Default value is None.
-        :paramtype query_speller: str or ~azure.search.documents.models.QuerySpellerType
         :keyword select: The comma-separated list of fields to retrieve. If unspecified, all fields
          marked as retrievable in the schema are included. Default value is None.
         :paramtype select: list[str]
@@ -1059,12 +929,6 @@ class _SearchClientOperationsMixin(
         :keyword captions: A value that specifies whether captions should be returned as part of the
          search response. Known values are: "none" and "extractive". Default value is None.
         :paramtype captions: str or ~azure.search.documents.models.QueryCaptionType
-        :keyword query_rewrites: A value that specifies whether query rewrites should be generated to
-         augment the search query. Known values are: "none" and "generative". Default value is None.
-        :paramtype query_rewrites: str or ~azure.search.documents.models.QueryRewritesType
-        :keyword semantic_fields: The comma-separated list of field names used for semantic ranking.
-         Default value is None.
-        :paramtype semantic_fields: list[str]
         :keyword vector_queries: The query parameters for vector and hybrid search queries. Default
          value is None.
         :paramtype vector_queries: list[~azure.search.documents.models.VectorQuery]
@@ -1072,9 +936,6 @@ class _SearchClientOperationsMixin(
          vector search is performed. Default is 'preFilter' for new indexes. Known values are:
          "postFilter", "preFilter", and "strictPostFilter". Default value is None.
         :paramtype vector_filter_mode: str or ~azure.search.documents.models.VectorFilterMode
-        :keyword hybrid_search: The query parameters to configure hybrid search behaviors. Default
-         value is None.
-        :paramtype hybrid_search: ~azure.search.documents.models.HybridSearch
         :return: SearchDocumentsResult. The SearchDocumentsResult is compatible with MutableMapping
         :rtype: ~azure.search.documents.models.SearchDocumentsResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1104,11 +965,8 @@ class _SearchClientOperationsMixin(
                 "highlight": highlight_fields,
                 "highlightPostTag": highlight_post_tag,
                 "highlightPreTag": highlight_pre_tag,
-                "hybridSearch": hybrid_search,
                 "minimumCoverage": minimum_coverage,
                 "orderby": order_by,
-                "queryLanguage": query_language,
-                "queryRewrites": query_rewrites,
                 "queryType": query_type,
                 "scoringParameters": scoring_parameters,
                 "scoringProfile": scoring_profile,
@@ -1119,12 +977,10 @@ class _SearchClientOperationsMixin(
                 "select": select,
                 "semanticConfiguration": semantic_configuration_name,
                 "semanticErrorHandling": semantic_error_handling,
-                "semanticFields": semantic_fields,
                 "semanticMaxWaitInMilliseconds": semantic_max_wait_in_milliseconds,
                 "semanticQuery": semantic_query,
                 "sessionId": session_id,
                 "skip": skip,
-                "speller": query_speller,
                 "top": top,
                 "vectorFilterMode": vector_filter_mode,
                 "vectorQueries": vector_queries,
@@ -1139,8 +995,6 @@ class _SearchClientOperationsMixin(
 
         _request = build_search_search_post_request(
             index_name=self._config.index_name,
-            query_source_authorization=query_source_authorization,
-            enable_elevated_read=enable_elevated_read,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -1152,6 +1006,7 @@ class _SearchClientOperationsMixin(
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1173,7 +1028,7 @@ class _SearchClientOperationsMixin(
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models1.SearchDocumentsResult, response.json())
 
@@ -1184,25 +1039,12 @@ class _SearchClientOperationsMixin(
 
     @distributed_trace
     def get_document(
-        self,
-        key: str,
-        *,
-        query_source_authorization: Optional[str] = None,
-        enable_elevated_read: Optional[bool] = None,
-        selected_fields: Optional[list[str]] = None,
-        **kwargs: Any
+        self, key: str, *, selected_fields: Optional[list[str]] = None, **kwargs: Any
     ) -> _models1.LookupDocument:
         """Retrieves a document from the index.
 
         :param key: The key of the document to retrieve. Required.
         :type key: str
-        :keyword query_source_authorization: Token identifying the user for which the query is being
-         executed. This token is used to enforce security restrictions on documents. Default value is
-         None.
-        :paramtype query_source_authorization: str
-        :keyword enable_elevated_read: A value that enables elevated read that bypass document level
-         permission checks for the query operation. Default value is None.
-        :paramtype enable_elevated_read: bool
         :keyword selected_fields: List of field names to retrieve for the document; Any field not
          retrieved will be missing from the returned document. Default value is None.
         :paramtype selected_fields: list[str]
@@ -1226,8 +1068,6 @@ class _SearchClientOperationsMixin(
         _request = build_search_get_document_request(
             key=key,
             index_name=self._config.index_name,
-            query_source_authorization=query_source_authorization,
-            enable_elevated_read=enable_elevated_read,
             selected_fields=selected_fields,
             api_version=self._config.api_version,
             headers=_headers,
@@ -1238,6 +1078,7 @@ class _SearchClientOperationsMixin(
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1259,7 +1100,7 @@ class _SearchClientOperationsMixin(
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models1.LookupDocument, response.json())
 
@@ -1370,6 +1211,7 @@ class _SearchClientOperationsMixin(
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1391,7 +1233,7 @@ class _SearchClientOperationsMixin(
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(
                 _models1._models.SuggestDocumentsResult, response.json()  # pylint: disable=protected-access
@@ -1552,6 +1394,7 @@ class _SearchClientOperationsMixin(
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1573,7 +1416,7 @@ class _SearchClientOperationsMixin(
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(
                 _models1._models.SuggestDocumentsResult, response.json()  # pylint: disable=protected-access
@@ -1644,6 +1487,7 @@ class _SearchClientOperationsMixin(
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1665,7 +1509,7 @@ class _SearchClientOperationsMixin(
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(
                 _models1._models.IndexDocumentsResult, response.json()  # pylint: disable=protected-access
@@ -1768,6 +1612,7 @@ class _SearchClientOperationsMixin(
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1789,7 +1634,7 @@ class _SearchClientOperationsMixin(
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(
                 _models1._models.AutocompleteResult, response.json()  # pylint: disable=protected-access
@@ -1940,6 +1785,7 @@ class _SearchClientOperationsMixin(
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1961,7 +1807,7 @@ class _SearchClientOperationsMixin(
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(
                 _models1._models.AutocompleteResult, response.json()  # pylint: disable=protected-access

@@ -50,21 +50,12 @@ class AutocompleteResult(_Model):
 
 
 class DebugInfo(_Model):
-    """Contains debugging information that can be used to further explore your search results.
-
-    :ivar query_rewrites: Contains debugging information specific to query rewrites.
-    :vartype query_rewrites: ~azure.search.documents.models.QueryRewritesDebugInfo
-    """
-
-    query_rewrites: Optional["_models.QueryRewritesDebugInfo"] = rest_field(name="queryRewrites", visibility=["read"])
-    """Contains debugging information specific to query rewrites."""
+    """Contains debugging information that can be used to further explore your search results."""
 
 
 class DocumentDebugInfo(_Model):
     """Contains debugging information that can be used to further explore your search results.
 
-    :ivar semantic: Contains debugging information specific to semantic ranking requests.
-    :vartype semantic: ~azure.search.documents.models.SemanticDebugInfo
     :ivar vectors: Contains debugging information specific to vector and hybrid search.
     :vartype vectors: ~azure.search.documents.models.VectorsDebugInfo
     :ivar inner_hits: Contains debugging information specific to vectors matched within a
@@ -73,8 +64,6 @@ class DocumentDebugInfo(_Model):
      list[~azure.search.documents.models.QueryResultDocumentInnerHit]]
     """
 
-    semantic: Optional["_models.SemanticDebugInfo"] = rest_field(visibility=["read"])
-    """Contains debugging information specific to semantic ranking requests."""
     vectors: Optional["_models.VectorsDebugInfo"] = rest_field(visibility=["read"])
     """Contains debugging information specific to vector and hybrid search."""
     inner_hits: Optional[dict[str, list["_models.QueryResultDocumentInnerHit"]]] = rest_field(
@@ -196,57 +185,6 @@ class FacetResult(_Model):
     facets: Optional[dict[str, list["_models.FacetResult"]]] = rest_field(name="@search.facets", visibility=["read"])
     """The nested facet query results for the search operation, organized as a collection of buckets
      for each faceted field; null if the query did not contain any nested facets."""
-
-
-class HybridSearch(_Model):
-    """TThe query parameters to configure hybrid search behaviors.
-
-    :ivar max_text_recall_size: Determines the maximum number of documents to be retrieved by the
-     text query portion of a hybrid search request. Those documents will be combined with the
-     documents matching the vector queries to produce a single final list of results. Choosing a
-     larger maxTextRecallSize value will allow retrieving and paging through more documents (using
-     the top and skip parameters), at the cost of higher resource utilization and higher latency.
-     The value needs to be between 1 and 10,000. Default is 1000.
-    :vartype max_text_recall_size: int
-    :ivar count_and_facet_mode: Determines whether the count and facets should includes all
-     documents that matched the search query, or only the documents that are retrieved within the
-     'maxTextRecallSize' window. Known values are: "countRetrievableResults" and "countAllResults".
-    :vartype count_and_facet_mode: str or ~azure.search.documents.models.HybridCountAndFacetMode
-    """
-
-    max_text_recall_size: Optional[int] = rest_field(
-        name="maxTextRecallSize", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Determines the maximum number of documents to be retrieved by the text query portion of a
-     hybrid search request. Those documents will be combined with the documents matching the vector
-     queries to produce a single final list of results. Choosing a larger maxTextRecallSize value
-     will allow retrieving and paging through more documents (using the top and skip parameters), at
-     the cost of higher resource utilization and higher latency. The value needs to be between 1 and
-     10,000. Default is 1000."""
-    count_and_facet_mode: Optional[Union[str, "_models.HybridCountAndFacetMode"]] = rest_field(
-        name="countAndFacetMode", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Determines whether the count and facets should includes all documents that matched the search
-     query, or only the documents that are retrieved within the 'maxTextRecallSize' window. Known
-     values are: \"countRetrievableResults\" and \"countAllResults\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        max_text_recall_size: Optional[int] = None,
-        count_and_facet_mode: Optional[Union[str, "_models.HybridCountAndFacetMode"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
 
 
 class IndexAction(_Model):
@@ -427,45 +365,6 @@ class QueryResultDocumentInnerHit(_Model):
      vector query."""
 
 
-class QueryResultDocumentRerankerInput(_Model):
-    """The raw concatenated strings that were sent to the semantic enrichment process.
-
-    :ivar title: The raw string for the title field that was used for semantic enrichment.
-    :vartype title: str
-    :ivar content: The raw concatenated strings for the content fields that were used for semantic
-     enrichment.
-    :vartype content: str
-    :ivar keywords: The raw concatenated strings for the keyword fields that were used for semantic
-     enrichment.
-    :vartype keywords: str
-    """
-
-    title: Optional[str] = rest_field(visibility=["read"])
-    """The raw string for the title field that was used for semantic enrichment."""
-    content: Optional[str] = rest_field(visibility=["read"])
-    """The raw concatenated strings for the content fields that were used for semantic enrichment."""
-    keywords: Optional[str] = rest_field(visibility=["read"])
-    """The raw concatenated strings for the keyword fields that were used for semantic enrichment."""
-
-
-class QueryResultDocumentSemanticField(_Model):
-    """Description of fields that were sent to the semantic enrichment process, as well as how they
-    were used.
-
-    :ivar name: The name of the field that was sent to the semantic enrichment process.
-    :vartype name: str
-    :ivar state: The way the field was used for the semantic enrichment process (fully used,
-     partially used, or unused). Known values are: "used", "unused", and "partial".
-    :vartype state: str or ~azure.search.documents.models.SemanticFieldState
-    """
-
-    name: Optional[str] = rest_field(visibility=["read"])
-    """The name of the field that was sent to the semantic enrichment process."""
-    state: Optional[Union[str, "_models.SemanticFieldState"]] = rest_field(visibility=["read"])
-    """The way the field was used for the semantic enrichment process (fully used, partially used, or
-     unused). Known values are: \"used\", \"unused\", and \"partial\"."""
-
-
 class QueryResultDocumentSubscores(_Model):
     """The breakdown of subscores between the text and vector query components of the search query for
     this document. Each vector query is shown as a separate object in the same order they were
@@ -485,38 +384,6 @@ class QueryResultDocumentSubscores(_Model):
     """The vector similarity and."""
     document_boost: Optional[float] = rest_field(name="documentBoost", visibility=["read"])
     """The BM25 or Classic score for the text portion of the query."""
-
-
-class QueryRewritesDebugInfo(_Model):
-    """Contains debugging information specific to query rewrites.
-
-    :ivar text: List of query rewrites generated for the text query.
-    :vartype text: ~azure.search.documents.models.QueryRewritesValuesDebugInfo
-    :ivar vectors: List of query rewrites generated for the vectorizable text queries.
-    :vartype vectors: list[~azure.search.documents.models.QueryRewritesValuesDebugInfo]
-    """
-
-    text: Optional["_models.QueryRewritesValuesDebugInfo"] = rest_field(visibility=["read"])
-    """List of query rewrites generated for the text query."""
-    vectors: Optional[list["_models.QueryRewritesValuesDebugInfo"]] = rest_field(visibility=["read"])
-    """List of query rewrites generated for the vectorizable text queries."""
-
-
-class QueryRewritesValuesDebugInfo(_Model):
-    """Contains debugging information specific to query rewrites.
-
-    :ivar input_query: The input text to the generative query rewriting model. There may be cases
-     where the user query and the input to the generative model are not identical.
-    :vartype input_query: str
-    :ivar rewrites: List of query rewrites.
-    :vartype rewrites: list[str]
-    """
-
-    input_query: Optional[str] = rest_field(name="inputQuery", visibility=["read"])
-    """The input text to the generative query rewriting model. There may be cases where the user query
-     and the input to the generative model are not identical."""
-    rewrites: Optional[list[str]] = rest_field(visibility=["read"])
-    """List of query rewrites."""
 
 
 class SearchDocumentsResult(_Model):
@@ -557,10 +424,6 @@ class SearchDocumentsResult(_Model):
      ranking request. Known values are: "baseResults" and "rerankedResults".
     :vartype semantic_partial_response_type: str or
      ~azure.search.documents.models.SemanticSearchResultsType
-    :ivar semantic_query_rewrites_result_type: Type of query rewrite that was used to retrieve
-     documents. "originalQueryOnly"
-    :vartype semantic_query_rewrites_result_type: str or
-     ~azure.search.documents.models.SemanticQueryRewritesResultType
     """
 
     count: Optional[int] = rest_field(name="@odata.count", visibility=["read"])
@@ -601,10 +464,6 @@ class SearchDocumentsResult(_Model):
     )
     """Type of partial response that was returned for a semantic ranking request. Known values are:
      \"baseResults\" and \"rerankedResults\"."""
-    semantic_query_rewrites_result_type: Optional[Union[str, "_models.SemanticQueryRewritesResultType"]] = rest_field(
-        name="@search.semanticQueryRewritesResultType", visibility=["read"]
-    )
-    """Type of query rewrite that was used to retrieve documents. \"originalQueryOnly\""""
 
 
 class SearchRequest(_Model):
@@ -680,19 +539,6 @@ class SearchRequest(_Model):
     :ivar search_mode: A value that specifies whether any or all of the search terms must be
      matched in order to count the document as a match. Known values are: "any" and "all".
     :vartype search_mode: str or ~azure.search.documents.models.SearchMode
-    :ivar query_language: A value that specifies the language of the search query. Known values
-     are: "none", "en-us", "en-gb", "en-in", "en-ca", "en-au", "fr-fr", "fr-ca", "de-de", "es-es",
-     "es-mx", "zh-cn", "zh-tw", "pt-br", "pt-pt", "it-it", "ja-jp", "ko-kr", "ru-ru", "cs-cz",
-     "nl-be", "nl-nl", "hu-hu", "pl-pl", "sv-se", "tr-tr", "hi-in", "ar-sa", "ar-eg", "ar-ma",
-     "ar-kw", "ar-jo", "da-dk", "no-no", "bg-bg", "hr-hr", "hr-ba", "ms-my", "ms-bn", "sl-sl",
-     "ta-in", "vi-vn", "el-gr", "ro-ro", "is-is", "id-id", "th-th", "lt-lt", "uk-ua", "lv-lv",
-     "et-ee", "ca-es", "fi-fi", "sr-ba", "sr-me", "sr-rs", "sk-sk", "nb-no", "hy-am", "bn-in",
-     "eu-es", "gl-es", "gu-in", "he-il", "ga-ie", "kn-in", "ml-in", "mr-in", "fa-ae", "pa-in",
-     "te-in", and "ur-pk".
-    :vartype query_language: str or ~azure.search.documents.models.QueryLanguage
-    :ivar query_speller: A value that specifies the type of the speller to use to spell-correct
-     individual search query terms. Known values are: "none" and "lexicon".
-    :vartype query_speller: str or ~azure.search.documents.models.QuerySpellerType
     :ivar select: The comma-separated list of fields to retrieve. If unspecified, all fields marked
      as retrievable in the schema are included.
     :vartype select: list[str]
@@ -726,19 +572,12 @@ class SearchRequest(_Model):
     :ivar captions: A value that specifies whether captions should be returned as part of the
      search response. Known values are: "none" and "extractive".
     :vartype captions: str or ~azure.search.documents.models.QueryCaptionType
-    :ivar query_rewrites: A value that specifies whether query rewrites should be generated to
-     augment the search query. Known values are: "none" and "generative".
-    :vartype query_rewrites: str or ~azure.search.documents.models.QueryRewritesType
-    :ivar semantic_fields: The comma-separated list of field names used for semantic ranking.
-    :vartype semantic_fields: list[str]
     :ivar vector_queries: The query parameters for vector and hybrid search queries.
     :vartype vector_queries: list[~azure.search.documents.models.VectorQuery]
     :ivar vector_filter_mode: Determines whether or not filters are applied before or after the
      vector search is performed. Default is 'preFilter' for new indexes. Known values are:
      "postFilter", "preFilter", and "strictPostFilter".
     :vartype vector_filter_mode: str or ~azure.search.documents.models.VectorFilterMode
-    :ivar hybrid_search: The query parameters to configure hybrid search behaviors.
-    :vartype hybrid_search: ~azure.search.documents.models.HybridSearch
     """
 
     include_total_count: Optional[bool] = rest_field(
@@ -833,24 +672,6 @@ class SearchRequest(_Model):
     )
     """A value that specifies whether any or all of the search terms must be matched in order to count
      the document as a match. Known values are: \"any\" and \"all\"."""
-    query_language: Optional[Union[str, "_models.QueryLanguage"]] = rest_field(
-        name="queryLanguage", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """A value that specifies the language of the search query. Known values are: \"none\", \"en-us\",
-     \"en-gb\", \"en-in\", \"en-ca\", \"en-au\", \"fr-fr\", \"fr-ca\", \"de-de\", \"es-es\",
-     \"es-mx\", \"zh-cn\", \"zh-tw\", \"pt-br\", \"pt-pt\", \"it-it\", \"ja-jp\", \"ko-kr\",
-     \"ru-ru\", \"cs-cz\", \"nl-be\", \"nl-nl\", \"hu-hu\", \"pl-pl\", \"sv-se\", \"tr-tr\",
-     \"hi-in\", \"ar-sa\", \"ar-eg\", \"ar-ma\", \"ar-kw\", \"ar-jo\", \"da-dk\", \"no-no\",
-     \"bg-bg\", \"hr-hr\", \"hr-ba\", \"ms-my\", \"ms-bn\", \"sl-sl\", \"ta-in\", \"vi-vn\",
-     \"el-gr\", \"ro-ro\", \"is-is\", \"id-id\", \"th-th\", \"lt-lt\", \"uk-ua\", \"lv-lv\",
-     \"et-ee\", \"ca-es\", \"fi-fi\", \"sr-ba\", \"sr-me\", \"sr-rs\", \"sk-sk\", \"nb-no\",
-     \"hy-am\", \"bn-in\", \"eu-es\", \"gl-es\", \"gu-in\", \"he-il\", \"ga-ie\", \"kn-in\",
-     \"ml-in\", \"mr-in\", \"fa-ae\", \"pa-in\", \"te-in\", and \"ur-pk\"."""
-    query_speller: Optional[Union[str, "_models.QuerySpellerType"]] = rest_field(
-        name="speller", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """A value that specifies the type of the speller to use to spell-correct individual search query
-     terms. Known values are: \"none\" and \"lexicon\"."""
     select: Optional[list[str]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"], format="commaDelimited"
     )
@@ -896,15 +717,6 @@ class SearchRequest(_Model):
     )
     """A value that specifies whether captions should be returned as part of the search response.
      Known values are: \"none\" and \"extractive\"."""
-    query_rewrites: Optional[Union[str, "_models.QueryRewritesType"]] = rest_field(
-        name="queryRewrites", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """A value that specifies whether query rewrites should be generated to augment the search query.
-     Known values are: \"none\" and \"generative\"."""
-    semantic_fields: Optional[list[str]] = rest_field(
-        name="semanticFields", visibility=["read", "create", "update", "delete", "query"], format="commaDelimited"
-    )
-    """The comma-separated list of field names used for semantic ranking."""
     vector_queries: Optional[list["_models.VectorQuery"]] = rest_field(
         name="vectorQueries", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -915,10 +727,6 @@ class SearchRequest(_Model):
     """Determines whether or not filters are applied before or after the vector search is performed.
      Default is 'preFilter' for new indexes. Known values are: \"postFilter\", \"preFilter\", and
      \"strictPostFilter\"."""
-    hybrid_search: Optional["_models.HybridSearch"] = rest_field(
-        name="hybridSearch", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The query parameters to configure hybrid search behaviors."""
 
     @overload
     def __init__(  # pylint: disable=too-many-locals
@@ -941,8 +749,6 @@ class SearchRequest(_Model):
         search_text: Optional[str] = None,
         search_fields: Optional[list[str]] = None,
         search_mode: Optional[Union[str, "_models.SearchMode"]] = None,
-        query_language: Optional[Union[str, "_models.QueryLanguage"]] = None,
-        query_speller: Optional[Union[str, "_models.QuerySpellerType"]] = None,
         select: Optional[list[str]] = None,
         skip: Optional[int] = None,
         top: Optional[int] = None,
@@ -952,11 +758,8 @@ class SearchRequest(_Model):
         semantic_query: Optional[str] = None,
         answers: Optional[Union[str, "_models.QueryAnswerType"]] = None,
         captions: Optional[Union[str, "_models.QueryCaptionType"]] = None,
-        query_rewrites: Optional[Union[str, "_models.QueryRewritesType"]] = None,
-        semantic_fields: Optional[list[str]] = None,
         vector_queries: Optional[list["_models.VectorQuery"]] = None,
         vector_filter_mode: Optional[Union[str, "_models.VectorFilterMode"]] = None,
-        hybrid_search: Optional["_models.HybridSearch"] = None,
     ) -> None: ...
 
     @overload
@@ -1090,43 +893,6 @@ class SearchScoreThreshold(VectorThreshold, discriminator="searchScore"):
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.kind = VectorThresholdKind.SEARCH_SCORE  # type: ignore
-
-
-class SemanticDebugInfo(_Model):
-    """Contains debugging information specific to semantic ranking requests.
-
-    :ivar title_field: The title field that was sent to the semantic enrichment process, as well as
-     how it was used.
-    :vartype title_field: ~azure.search.documents.models.QueryResultDocumentSemanticField
-    :ivar content_fields: The content fields that were sent to the semantic enrichment process, as
-     well as how they were used.
-    :vartype content_fields: list[~azure.search.documents.models.QueryResultDocumentSemanticField]
-    :ivar keyword_fields: The keyword fields that were sent to the semantic enrichment process, as
-     well as how they were used.
-    :vartype keyword_fields: list[~azure.search.documents.models.QueryResultDocumentSemanticField]
-    :ivar reranker_input: The raw concatenated strings that were sent to the semantic enrichment
-     process.
-    :vartype reranker_input: ~azure.search.documents.models.QueryResultDocumentRerankerInput
-    """
-
-    title_field: Optional["_models.QueryResultDocumentSemanticField"] = rest_field(
-        name="titleField", visibility=["read"]
-    )
-    """The title field that was sent to the semantic enrichment process, as well as how it was used."""
-    content_fields: Optional[list["_models.QueryResultDocumentSemanticField"]] = rest_field(
-        name="contentFields", visibility=["read"]
-    )
-    """The content fields that were sent to the semantic enrichment process, as well as how they were
-     used."""
-    keyword_fields: Optional[list["_models.QueryResultDocumentSemanticField"]] = rest_field(
-        name="keywordFields", visibility=["read"]
-    )
-    """The keyword fields that were sent to the semantic enrichment process, as well as how they were
-     used."""
-    reranker_input: Optional["_models.QueryResultDocumentRerankerInput"] = rest_field(
-        name="rerankerInput", visibility=["read"]
-    )
-    """The raw concatenated strings that were sent to the semantic enrichment process."""
 
 
 class SingleVectorFieldResult(_Model):
@@ -1497,9 +1263,6 @@ class VectorizableTextQuery(VectorQuery, discriminator="text"):
     :vartype per_document_vector_limit: int
     :ivar text: The text to be vectorized to perform a vector search query. Required.
     :vartype text: str
-    :ivar query_rewrites: Can be configured to let a generative model rewrite the query before
-     sending it to be vectorized. Known values are: "none" and "generative".
-    :vartype query_rewrites: str or ~azure.search.documents.models.QueryRewritesType
     :ivar kind: The kind of vector query being performed. Required. Vector query where a text value
      that needs to be vectorized is provided.
     :vartype kind: str or ~azure.search.documents.models.TEXT
@@ -1507,11 +1270,6 @@ class VectorizableTextQuery(VectorQuery, discriminator="text"):
 
     text: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The text to be vectorized to perform a vector search query. Required."""
-    query_rewrites: Optional[Union[str, "_models.QueryRewritesType"]] = rest_field(
-        name="queryRewrites", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Can be configured to let a generative model rewrite the query before sending it to be
-     vectorized. Known values are: \"none\" and \"generative\"."""
     kind: Literal[VectorQueryKind.TEXT] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The kind of vector query being performed. Required. Vector query where a text value that needs
      to be vectorized is provided."""
@@ -1529,7 +1287,6 @@ class VectorizableTextQuery(VectorQuery, discriminator="text"):
         threshold: Optional["_models.VectorThreshold"] = None,
         filter_override: Optional[str] = None,
         per_document_vector_limit: Optional[int] = None,
-        query_rewrites: Optional[Union[str, "_models.QueryRewritesType"]] = None,
     ) -> None: ...
 
     @overload

@@ -797,7 +797,7 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
             name: str = indexer.name  # type: ignore
         except AttributeError:
             name = indexer  # type: ignore
-        return await self._reset_documents(
+        await self._reset_documents(  # type: ignore[attr-defined]
             name=name,
             keys_or_ids=keys_or_ids,
             overwrite=overwrite,
@@ -825,7 +825,7 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
             name: str = skillset.name  # type: ignore
         except AttributeError:
             name = skillset  # type: ignore
-        return await self._reset_skills(
+        await self._reset_skills(  # type: ignore[attr-defined]
             name=name,
             skill_names=_models.SkillNames(skill_names=skill_names),
             **kwargs,
@@ -853,7 +853,7 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
         except AttributeError:
             name = indexer  # type: ignore
         indexer_resync = _models.IndexerResyncBody(options=indexer_resync_options)
-        return await self._resync(
+        await self._resync(  # type: ignore[attr-defined]
             name=name,
             indexer_resync=indexer_resync,
             **kwargs,

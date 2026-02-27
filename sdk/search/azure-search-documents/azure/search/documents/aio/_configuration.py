@@ -31,9 +31,9 @@ class SearchClientConfiguration:  # pylint: disable=too-many-instance-attributes
      ~azure.core.credentials_async.AsyncTokenCredential
     :param index_name: The name of the index. Required.
     :type index_name: str
-    :keyword api_version: The API version to use for this operation. Known values are
-     "2025-11-01-preview" and None. Default value is "2025-11-01-preview". Note that overriding this
-     default value may result in unsupported behavior.
+    :keyword api_version: The API version to use for this operation. Known values are "2026-04-01"
+     and None. Default value is "2026-04-01". Note that overriding this default value may result in
+     unsupported behavior.
     :paramtype api_version: str
     """
 
@@ -44,7 +44,7 @@ class SearchClientConfiguration:  # pylint: disable=too-many-instance-attributes
         index_name: str,
         **kwargs: Any,
     ) -> None:
-        api_version: str = kwargs.pop("api_version", "2025-11-01-preview")
+        api_version: str = kwargs.pop("api_version", "2026-04-01")
 
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")

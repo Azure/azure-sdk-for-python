@@ -399,17 +399,6 @@ class ImageDetail(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Details recognized as landmarks."""
 
 
-class IndexedSharePointContainerName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Specifies which SharePoint libraries to access."""
-
-    DEFAULT_SITE_LIBRARY = "defaultSiteLibrary"
-    """Index content from the site's default document library."""
-    ALL_SITE_LIBRARIES = "allSiteLibraries"
-    """Index content from every document library in the site."""
-    USE_QUERY = "useQuery"
-    """Use a query to filter SharePoint content."""
-
-
 class IndexerExecutionEnvironment(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the environment in which the indexer should execute."""
 
@@ -443,17 +432,6 @@ class IndexerExecutionStatusDetail(str, Enum, metaclass=CaseInsensitiveEnumMeta)
     """Indicates that the reset that occurred was for a call to ResetDocs."""
     RESYNC = "resync"
     """Indicates to selectively resync based on option(s) from data source."""
-
-
-class IndexerPermissionOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Options with various types of permission data to index."""
-
-    USER_IDS = "userIds"
-    """Indexer to ingest ACL userIds from data source to index."""
-    GROUP_IDS = "groupIds"
-    """Indexer to ingest ACL groupIds from data source to index."""
-    RBAC_SCOPE = "rbacScope"
-    """Indexer to ingest Azure RBAC scope from data source to index."""
 
 
 class IndexerResyncOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -568,14 +546,10 @@ class KnowledgeSourceKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """A knowledge source that reads data from a Search Index."""
     AZURE_BLOB = "azureBlob"
     """A knowledge source that read and ingest data from Azure Blob Storage to a Search Index."""
-    INDEXED_SHARE_POINT = "indexedSharePoint"
-    """A knowledge source that reads data from indexed SharePoint."""
     INDEXED_ONE_LAKE = "indexedOneLake"
     """A knowledge source that reads data from indexed OneLake."""
     WEB = "web"
     """A knowledge source that reads data from the web."""
-    REMOTE_SHARE_POINT = "remoteSharePoint"
-    """A knowledge source that reads data from remote SharePoint."""
 
 
 class KnowledgeSourceSynchronizationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1633,9 +1607,9 @@ class SearchIndexPermissionFilterOption(str, Enum, metaclass=CaseInsensitiveEnum
     """A value indicating whether permission filtering is enabled for the index."""
 
     ENABLED = "enabled"
-    """enabled."""
+    """Permission filtering is enabled for the index."""
     DISABLED = "disabled"
-    """disabled."""
+    """Permission filtering is disabled for the index."""
 
 
 class SnowballTokenFilterLanguage(str, Enum, metaclass=CaseInsensitiveEnumMeta):

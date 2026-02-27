@@ -33,7 +33,7 @@ def _convert_index_response(response: _SearchIndexResponse) -> _models.SearchInd
     :return: The converted SearchIndex.
     :rtype: ~azure.search.documents.indexes.models.SearchIndex
     """
-    return _models.SearchIndex(
+    return _models.SearchIndex(  # type: ignore[call-overload]
         name=response.name,
         fields=response.fields or [],
         description=response.description,
@@ -50,8 +50,6 @@ def _convert_index_response(response: _SearchIndexResponse) -> _models.SearchInd
         similarity=response.similarity,
         semantic_search=response.semantic,
         vector_search=response.vector_search,
-        permission_filter_option=response.permission_filter_option,
-        purview_enabled=response.purview_enabled,
         e_tag=response.e_tag,
     )
 
@@ -827,7 +825,7 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
             name: str = indexer.name  # type: ignore
         except AttributeError:
             name = indexer  # type: ignore
-        return self._reset_documents(
+        self._reset_documents(  # type: ignore[attr-defined]
             name=name,
             keys_or_ids=keys_or_ids,
             overwrite=overwrite,
@@ -855,7 +853,7 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
             name: str = skillset.name  # type: ignore
         except AttributeError:
             name = skillset  # type: ignore
-        return self._reset_skills(
+        self._reset_skills(  # type: ignore[attr-defined]
             name=name,
             skill_names=_models.SkillNames(skill_names=skill_names),
             **kwargs,
@@ -883,7 +881,7 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
         except AttributeError:
             name = indexer  # type: ignore
         indexer_resync = _models.IndexerResyncBody(options=indexer_resync_options)
-        return self._resync(
+        self._resync(  # type: ignore[attr-defined]
             name=name,
             indexer_resync=indexer_resync,
             **kwargs,

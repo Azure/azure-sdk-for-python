@@ -49,7 +49,6 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
         knowledge_base_name: str,
         retrieval_request: _models2.KnowledgeBaseRetrievalRequest,
         *,
-        query_source_authorization: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models2.KnowledgeBaseRetrievalResponse:
@@ -60,10 +59,6 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
         :param retrieval_request: The retrieval request to process. Required.
         :type retrieval_request:
          ~azure.search.documents.knowledgebases.models.KnowledgeBaseRetrievalRequest
-        :keyword query_source_authorization: Token identifying the user for which the query is being
-         executed. This token is used to enforce security restrictions on documents. Default value is
-         None.
-        :paramtype query_source_authorization: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -79,7 +74,6 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
         knowledge_base_name: str,
         retrieval_request: JSON,
         *,
-        query_source_authorization: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models2.KnowledgeBaseRetrievalResponse:
@@ -89,10 +83,6 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
         :type knowledge_base_name: str
         :param retrieval_request: The retrieval request to process. Required.
         :type retrieval_request: JSON
-        :keyword query_source_authorization: Token identifying the user for which the query is being
-         executed. This token is used to enforce security restrictions on documents. Default value is
-         None.
-        :paramtype query_source_authorization: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -108,7 +98,6 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
         knowledge_base_name: str,
         retrieval_request: IO[bytes],
         *,
-        query_source_authorization: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models2.KnowledgeBaseRetrievalResponse:
@@ -118,10 +107,6 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
         :type knowledge_base_name: str
         :param retrieval_request: The retrieval request to process. Required.
         :type retrieval_request: IO[bytes]
-        :keyword query_source_authorization: Token identifying the user for which the query is being
-         executed. This token is used to enforce security restrictions on documents. Default value is
-         None.
-        :paramtype query_source_authorization: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -136,8 +121,6 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
         self,
         knowledge_base_name: str,
         retrieval_request: Union[_models2.KnowledgeBaseRetrievalRequest, JSON, IO[bytes]],
-        *,
-        query_source_authorization: Optional[str] = None,
         **kwargs: Any
     ) -> _models2.KnowledgeBaseRetrievalResponse:
         """KnowledgeBase retrieves relevant data from backing stores.
@@ -149,10 +132,6 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
         :type retrieval_request:
          ~azure.search.documents.knowledgebases.models.KnowledgeBaseRetrievalRequest or JSON or
          IO[bytes]
-        :keyword query_source_authorization: Token identifying the user for which the query is being
-         executed. This token is used to enforce security restrictions on documents. Default value is
-         None.
-        :paramtype query_source_authorization: str
         :return: KnowledgeBaseRetrievalResponse. The KnowledgeBaseRetrievalResponse is compatible with
          MutableMapping
         :rtype: ~azure.search.documents.knowledgebases.models.KnowledgeBaseRetrievalResponse
@@ -181,7 +160,6 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
 
         _request = build_knowledge_base_retrieval_retrieve_request(
             knowledge_base_name=knowledge_base_name,
-            query_source_authorization=query_source_authorization,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -193,6 +171,7 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -214,7 +193,7 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models2.KnowledgeBaseRetrievalResponse, response.json())
 

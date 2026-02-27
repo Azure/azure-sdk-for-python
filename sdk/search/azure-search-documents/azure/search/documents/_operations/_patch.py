@@ -8,7 +8,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import Any, Dict, List, Optional, Union, cast
+from typing import Any, Dict, List, Optional, Union, cast  # pylint: disable=unused-import
 import base64
 import itertools
 import json
@@ -104,8 +104,8 @@ def _build_search_request(
     semantic_query: Optional[str] = None,
     search_fields: Optional[List[str]] = None,
     search_mode: Optional[Union[str, _models.SearchMode]] = None,
-    query_language: Optional[Union[str, _models.QueryLanguage]] = None,
-    query_speller: Optional[Union[str, _models.QuerySpellerType]] = None,
+    query_language: Optional[str] = None,
+    query_speller: Optional[str] = None,
     query_answer: Optional[Union[str, _models.QueryAnswerType]] = None,
     query_answer_count: Optional[int] = None,
     query_answer_threshold: Optional[float] = None,
@@ -122,10 +122,10 @@ def _build_search_request(
     vector_filter_mode: Optional[Union[str, _models.VectorFilterMode]] = None,
     semantic_error_mode: Optional[Union[str, _models.SemanticErrorMode]] = None,
     semantic_max_wait_in_milliseconds: Optional[int] = None,
-    query_rewrites: Optional[Union[str, _models.QueryRewritesType]] = None,
+    query_rewrites: Optional[str] = None,
     query_rewrites_count: Optional[int] = None,
     debug: Optional[Union[str, _models.QueryDebugMode]] = None,
-    hybrid_search: Optional[_models.HybridSearch] = None,
+    hybrid_search: Optional[Any] = None,
 ) -> _models.SearchRequest:
     # pylint:disable=too-many-locals
     """Build a SearchRequest from search parameters.
@@ -206,7 +206,7 @@ def _build_search_request(
         highlight_fields_list = [f.strip() for f in highlight_fields.split(",") if f.strip()]
 
     # Build and return the search request
-    return _models.SearchRequest(  # type: ignore[misc]
+    return _models.SearchRequest(  # type: ignore[call-overload, no-any-return, misc]
         search_text=search_text,
         include_total_count=include_total_count,
         facets=facets,
@@ -543,8 +543,8 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
         semantic_query: Optional[str] = None,
         search_fields: Optional[List[str]] = None,
         search_mode: Optional[Union[str, _models.SearchMode]] = None,
-        query_language: Optional[Union[str, _models.QueryLanguage]] = None,
-        query_speller: Optional[Union[str, _models.QuerySpellerType]] = None,
+        query_language: Optional[str] = None,
+        query_speller: Optional[str] = None,
         query_answer: Optional[Union[str, _models.QueryAnswerType]] = None,
         query_answer_count: Optional[int] = None,
         query_answer_threshold: Optional[float] = None,
@@ -561,10 +561,10 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
         vector_filter_mode: Optional[Union[str, _models.VectorFilterMode]] = None,
         semantic_error_mode: Optional[Union[str, _models.SemanticErrorMode]] = None,
         semantic_max_wait_in_milliseconds: Optional[int] = None,
-        query_rewrites: Optional[Union[str, _models.QueryRewritesType]] = None,
+        query_rewrites: Optional[str] = None,
         query_rewrites_count: Optional[int] = None,
         debug: Optional[Union[str, _models.QueryDebugMode]] = None,
-        hybrid_search: Optional[_models.HybridSearch] = None,
+        hybrid_search: Optional[Any] = None,
         query_source_authorization: Optional[str] = None,
         enable_elevated_read: Optional[bool] = None,
         **kwargs: Any,
