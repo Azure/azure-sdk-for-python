@@ -47,9 +47,9 @@ class TestSamples(AzureRecordedTestCase):
         get_sample_paths(
             "agents/tools",
             samples_to_skip=[
-                "sample_agent_azure_function.py",
-                "sample_agent_computer_use.py",
-                "sample_agent_browser_automation.py",
+                "sample_agent_azure_function.py",  # Requires Foundry endpoint supporting new versioning schema (see TODO above)
+                "sample_agent_computer_use.py",  # 400 BadRequestError: Invalid URI (URI string too long)
+                "sample_agent_browser_automation.py",  # APITimeoutError: request timed out
             ],
         ),
     )
@@ -196,8 +196,8 @@ class TestSamples(AzureRecordedTestCase):
         get_sample_paths(
             "finetuning",
             samples_to_skip=[
-                "sample_finetuning_reinforcement_job.py",
-                "sample_finetuning_dpo_job.py",
+                "sample_finetuning_reinforcement_job.py",  # 403 PermissionDeniedError: missing Microsoft.MachineLearningServices/workspaces/agents/action
+                "sample_finetuning_dpo_job.py",  # 401 AuthenticationError: missing AIServices/agents/write data action
             ],
         ),
     )
