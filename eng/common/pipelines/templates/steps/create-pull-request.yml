@@ -1,4 +1,4 @@
-# Expects azuresdk-github-pat is set to the PAT for azure-sdk
+# Expects GH_TOKEN is set via login-to-github.yml or equivalent
 # Expects the buildtools to be cloned
 
 parameters:
@@ -21,6 +21,12 @@ parameters:
   SkipCheckingForChanges: false
   CloseAfterOpenForTesting: false
   OpenAsDraft: false
+  AuthToken: $(GH_TOKEN)
+  # PushAuthToken is used for pushing branches to PROwner's fork.
+  # When PROwner and RepoOwner are in different GitHub orgs, set this
+  # to a token with push access to the PROwner's org.
+  # Defaults to AuthToken when not specified.
+  PushAuthToken: ''
 
 steps:
 - template: /eng/common/pipelines/templates/steps/git-push-changes.yml
@@ -34,6 +40,7 @@ steps:
     WorkingDirectory: ${{ parameters.WorkingDirectory }}
     ScriptDirectory: ${{ parameters.ScriptDirectory }}
     SkipCheckingForChanges: ${{ parameters.SkipCheckingForChanges }}
+    AuthToken: ${{ coalesce(parameters.PushAuthToken, parameters.AuthToken) }}
 
 - task: PowerShell@2
   displayName: Create pull request
@@ -48,7 +55,7 @@ steps:
       -BaseBranch "${{ parameters.BaseBranchName }}"
       -PROwner "${{ parameters.PROwner }}"
       -PRBranch "${{ parameters.PRBranchName }}"
-      -AuthToken "$(azuresdk-github-pat)"
+      -AuthToken "${{ parameters.AuthToken }}"
       -PRTitle "${{ parameters.PRTitle }}"
       -PRBody "${{ coalesce(parameters.PRBody, parameters.CommitMsg, parameters.PRTitle) }}"
       -PRLabels "${{ parameters.PRLabels }}"

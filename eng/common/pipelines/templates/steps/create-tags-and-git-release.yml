@@ -6,6 +6,7 @@ parameters:
   RepoId: $(Build.Repository.Name)
   WorkingDirectory: ''
   ScriptDirectory: eng/common/scripts
+  AuthToken: $(GH_TOKEN)
 
 steps:
 - task: PowerShell@2
@@ -22,4 +23,4 @@ steps:
     pwsh: true
   timeoutInMinutes: 5
   env:
-    GH_TOKEN: $(azuresdk-github-pat)
+    GH_TOKEN: ${{ parameters.AuthToken }}
