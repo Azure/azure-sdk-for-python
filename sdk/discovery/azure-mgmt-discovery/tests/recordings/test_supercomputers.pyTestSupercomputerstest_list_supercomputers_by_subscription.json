@@ -1,0 +1,40 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://Sanitized.management.azure.com/subscriptions/31b0b6a5-2647-47eb-8a38-7d12047ee8ec/providers/Microsoft.Discovery/supercomputers?api-version=2026-02-01-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-mgmt-discovery/1.0.0b1 Python/3.11.9 (Windows-10-10.0.26200-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 400,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "251",
+        "Content-Type": "application/json",
+        "Date": "Tue, 03 Feb 2026 22:04:47 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "03ee6c2f-5f39-4cb7-9a72-386a03161cab",
+        "x-ms-failure-cause": "gateway",
+        "x-ms-providerhub-traffic": "True",
+        "x-ms-ratelimit-remaining-subscription-reads": "1098",
+        "x-ms-routing-request-id": "EASTUS2EUAP:20260203T220447Z:03ee6c2f-5f39-4cb7-9a72-386a03161cab",
+        "x-ms-throttling-version": "v2",
+        "X-MSEdge-Ref": "Ref A: FB195D30729D4DA19239AB93ADA3F208 Ref B: SN4AA2022301021 Ref C: 2026-02-03T22:04:47Z"
+      },
+      "ResponseBody": {
+        "error": {
+          "code": "NoResourceTypeEndpointAvailable",
+          "message": "'Microsoft.Discovery/supercomputers' Resource provider doesn't support api-version 2026-02-01-preview in 'centraluseuap'. Number of endpoints before filtering based on feature flags : 1."
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}

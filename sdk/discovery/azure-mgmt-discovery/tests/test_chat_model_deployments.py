@@ -1,0 +1,83 @@
+# ------------------------------------
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+# ------------------------------------
+"""Tests for ChatModelDeployments operations."""
+import pytest
+from azure.mgmt.discovery import DiscoveryClient
+from devtools_testutils import recorded_by_proxy
+
+from .testcase import DiscoveryMgmtTestCase
+
+
+# Resource group that has a workspace
+WORKSPACE_RESOURCE_GROUP = "newapiversiontest"
+WORKSPACE_NAME = "wrksptest44"
+
+
+class TestChatModelDeployments(DiscoveryMgmtTestCase):
+    """Tests for ChatModelDeployments operations."""
+
+    def setup_method(self, method):
+        self.client = self.create_discovery_client(DiscoveryClient)
+        self.resource_group = WORKSPACE_RESOURCE_GROUP
+        self.workspace_name = WORKSPACE_NAME
+
+    @recorded_by_proxy
+    def test_list_chat_model_deployments_by_workspace(self):
+        """Test listing chat model deployments in a workspace."""
+        deployments = list(
+            self.client.chat_model_deployments.list_by_workspace(self.resource_group, self.workspace_name)
+        )
+        assert isinstance(deployments, list)
+
+    @pytest.mark.skip(reason="Requires existing ChatModelDeployment in the workspace")
+    @recorded_by_proxy
+    def test_get_chat_model_deployment(self):
+        """Test getting a specific chat model deployment by name."""
+        # TODO: Replace with actual deployment name from test environment
+        deployment = self.client.chat_model_deployments.get(self.resource_group, self.workspace_name, "test-deployment")
+        assert deployment is not None
+        assert hasattr(deployment, "name")
+
+    @pytest.mark.skip(reason="Requires ChatModelDeploymentProperties with model configuration")
+    @recorded_by_proxy
+    def test_create_chat_model_deployment(self):
+        """Test creating a chat model deployment."""
+        deployment_data = {"location": "centraluseuap"}
+        operation = self.client.chat_model_deployments.begin_create_or_update(
+            resource_group_name=self.resource_group,
+            workspace_name=self.workspace_name,
+            chat_model_deployment_name="test-deployment",
+            resource=deployment_data,
+        )
+        deployment = operation.result()
+        assert deployment is not None
+
+    @pytest.mark.skip(reason="Requires existing ChatModelDeployment to update")
+    @recorded_by_proxy
+    def test_update_chat_model_deployment(self):
+        """Test updating a chat model deployment."""
+        deployment_data = {
+            "location": "centraluseuap",
+            "tags": {"updated": "true"},
+        }
+        operation = self.client.chat_model_deployments.begin_create_or_update(
+            resource_group_name=self.resource_group,
+            workspace_name=self.workspace_name,
+            chat_model_deployment_name="test-deployment",
+            resource=deployment_data,
+        )
+        updated_deployment = operation.result()
+        assert updated_deployment is not None
+
+    @pytest.mark.skip(reason="Requires existing ChatModelDeployment to delete")
+    @recorded_by_proxy
+    def test_delete_chat_model_deployment(self):
+        """Test deleting a chat model deployment."""
+        operation = self.client.chat_model_deployments.begin_delete(
+            resource_group_name=self.resource_group,
+            workspace_name=self.workspace_name,
+            chat_model_deployment_name="deployment-to-delete",
+        )
+        operation.result()

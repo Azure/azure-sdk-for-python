@@ -1,0 +1,39 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://Sanitized.management.azure.com/providers/Microsoft.Discovery/operations?api-version=2026-02-01-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-mgmt-discovery/1.0.0b1 Python/3.11.9 (Windows-10-10.0.26200-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 404,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "251",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Tue, 03 Feb 2026 18:28:43 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "ddcc5023-3733-4147-8e35-187e9e4df350",
+        "x-ms-failure-cause": "gateway",
+        "x-ms-ratelimit-remaining-tenant-reads": "2199",
+        "x-ms-routing-request-id": "EASTUS2EUAP:20260203T182844Z:ddcc5023-3733-4147-8e35-187e9e4df350",
+        "x-ms-throttling-version": "v2",
+        "X-MSEdge-Ref": "Ref A: 24B0E18052964B9DAE3A7581BDD7DA0B Ref B: SN4AA2022302025 Ref C: 2026-02-03T18:28:43Z"
+      },
+      "ResponseBody": {
+        "error": {
+          "code": "InvalidResourceType",
+          "message": "The resource type 'operations' could not be found in the namespace 'Microsoft.Discovery' for api version '2026-02-01-preview'. The supported api-versions are '2025-07-01-preview,2025-12-01-preview'."
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}

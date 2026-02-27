@@ -1,0 +1,37 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://Sanitized.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Discovery/supercomputers?api-version=2026-02-01-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-mgmt-discovery/1.0.0b1 Python/3.11.9 (Windows-10-10.0.26200-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 404,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "236",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Tue, 03 Feb 2026 18:44:52 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "e80791c5-e797-4fc8-a420-0b0a9cbad434",
+        "x-ms-failure-cause": "gateway",
+        "x-ms-routing-request-id": "SOUTHCENTRALUS:20260203T184453Z:e80791c5-e797-4fc8-a420-0b0a9cbad434",
+        "X-MSEdge-Ref": "Ref A: 5BDCC0AF4E3A48F39067FF9EBE9A9B1F Ref B: SN4AA2022301031 Ref C: 2026-02-03T18:44:53Z"
+      },
+      "ResponseBody": {
+        "error": {
+          "code": "InvalidResourceType",
+          "message": "The resource type 'supercomputers' could not be found in the namespace 'Microsoft.Discovery' for api version '2026-02-01-preview'. The supported api-versions are '2025-07-01-preview'."
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}

@@ -1,0 +1,100 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://Sanitized.management.azure.com/subscriptions/31b0b6a5-2647-47eb-8a38-7d12047ee8ec/resourceGroups/alchocro-test-copilotsandbox/providers/Microsoft.Discovery/tools?api-version=2026-02-01-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-mgmt-discovery/1.0.0b1 Python/3.11.9 (Windows-10-10.0.26200-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "1449",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Wed, 04 Feb 2026 15:48:34 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "e606b237-9ab5-42ad-97e9-54a652d1a5f1",
+        "x-ms-original-request-ids": "6af00658-28bf-48a6-a259-26f251d7a0c2",
+        "x-ms-providerhub-traffic": "True",
+        "x-ms-ratelimit-remaining-subscription-reads": "1098",
+        "x-ms-routing-request-id": "EASTUS2EUAP:20260204T154834Z:e606b237-9ab5-42ad-97e9-54a652d1a5f1",
+        "x-ms-throttling-version": "v2",
+        "X-MSEdge-Ref": "Ref A: 8DF2B299A72242B6A7B12235CE572338 Ref B: SN4AA2022302025 Ref C: 2026-02-04T15:48:33Z"
+      },
+      "ResponseBody": {
+        "value": [
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "microsoft.discovery/tools",
+            "location": "centraluseuap",
+            "tags": {},
+            "systemData": {
+              "createdBy": "Sanitized",
+              "createdByType": "User",
+              "createdAt": "2026-01-30T00:14:21.3990537Z",
+              "lastModifiedBy": "Sanitized",
+              "lastModifiedByType": "User",
+              "lastModifiedAt": "2026-01-30T00:14:21.3990537Z"
+            },
+            "properties": {
+              "version": "1.0.0",
+              "definitionContent": {
+                "name": "Sanitized",
+                "description": "This is the coding tool for CorePython cheminformatics operations.",
+                "version": "1.0.0",
+                "category": "cheminformatics",
+                "license": "MIT",
+                "infra": [
+                  {
+                    "infra_type": "container",
+                    "name": "Sanitized",
+                    "image": {
+                      "acr": "demodiscoveryacr.azurecr.io/corepython:latest"
+                    },
+                    "compute": {
+                      "min_resources": {
+                        "cpu": "1",
+                        "ram": "2Gi",
+                        "gpu": "0",
+                        "storage": "0"
+                      },
+                      "max_resources": {
+                        "cpu": "2",
+                        "ram": "4Gi",
+                        "storage": "0"
+                      },
+                      "recommended_sku": [
+                        "Standard_D4s_v6"
+                      ],
+                      "pool_type": "static",
+                      "pool_size": 1
+                    }
+                  }
+                ],
+                "code_environments": [
+                  {
+                    "language": "python",
+                    "command": "python3 \"/{{ scriptName }}\"",
+                    "description": "Python code environment with RDKit for molecular manipulation, cheminformatics, and property calculations, as well as general Python code execution. Note: All file outputs should be written to directory /app/outputs. DO NOT FORGET THIS. DO NOT WRITE OUTPUTS TO ANY OTHER DIRECTORY. Utilize the outputMounts parameter to make sure this is mounted correctly and captured after script execution.",
+                    "infra_node": "worker"
+                  }
+                ]
+              },
+              "environmentVariables": {},
+              "provisioningState": "Succeeded"
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "Variables": {}
+}

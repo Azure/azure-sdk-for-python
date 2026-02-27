@@ -1,0 +1,37 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://Sanitized.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Discovery/storageContainers?api-version=2026-02-01-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-mgmt-discovery/1.0.0b1 Python/3.11.9 (Windows-10-10.0.26200-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 404,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "166",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Tue, 03 Feb 2026 18:38:21 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "af3d60ab-430a-4455-ab01-5627d4f6a693",
+        "x-ms-failure-cause": "gateway",
+        "x-ms-routing-request-id": "SOUTHCENTRALUS:20260203T183821Z:af3d60ab-430a-4455-ab01-5627d4f6a693",
+        "X-MSEdge-Ref": "Ref A: BB6513F7DBBA4BBA9751F6FDD09AC160 Ref B: SN4AA2022302047 Ref C: 2026-02-03T18:38:21Z"
+      },
+      "ResponseBody": {
+        "error": {
+          "code": "InvalidResourceType",
+          "message": "The resource type could not be found in the namespace 'Microsoft.Discovery' for api version '2026-02-01-preview'."
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}
