@@ -225,10 +225,12 @@ class pylint(Check):
 
             if args.next and in_ci() and package_failed:
                 from gh_tools.vnext_issue_creator import create_vnext_issue
-                create_vnext_issue(package_dir, 'pylint')
+
+                create_vnext_issue(package_dir, "pylint")
 
             if args.next and in_ci() and not package_failed:
                 from gh_tools.vnext_issue_creator import close_vnext_issue
-                close_vnext_issue(package_name, 'pylint')
+
+                close_vnext_issue(package_name, "pylint")
 
         return max(results) if results else 0

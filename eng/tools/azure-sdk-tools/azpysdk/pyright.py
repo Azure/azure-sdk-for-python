@@ -154,13 +154,15 @@ class pyright(Check):
                     and not is_typing_ignored(package_name)
                 ):
                     from gh_tools.vnext_issue_creator import create_vnext_issue
-                    create_vnext_issue(package_dir, 'pyright')
+
+                    create_vnext_issue(package_dir, "pyright")
 
                 print("See https://aka.ms/python/typing-guide for information.\n\n")
                 results.append(1)
             else:
                 if args.next and in_ci() and not is_typing_ignored(package_name):
                     from gh_tools.vnext_issue_creator import close_vnext_issue
-                    close_vnext_issue(package_name, 'pyright')
+
+                    close_vnext_issue(package_name, "pyright")
 
         return max(results) if results else 0

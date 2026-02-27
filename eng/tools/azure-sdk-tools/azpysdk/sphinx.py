@@ -309,7 +309,8 @@ class sphinx(Check):
                 move_output_and_compress(site_folder, package_dir, package_name)
                 if in_analyze_weekly() and apidoc_result == 0 and build_result == 0:
                     from gh_tools.vnext_issue_creator import close_vnext_issue
-                    close_vnext_issue(package_name, 'sphinx')
+
+                    close_vnext_issue(package_name, "sphinx")
 
         return max(results) if results else 0
 
@@ -341,7 +342,8 @@ class sphinx(Check):
             logger.error("sphinx-build failed for path {} exited with error {}".format(target_dir, e.returncode))
             if in_analyze_weekly():
                 from gh_tools.vnext_issue_creator import create_vnext_issue
-                create_vnext_issue(package_dir, 'sphinx')
+
+                create_vnext_issue(package_dir, "sphinx")
             return 1
         return 0
 
