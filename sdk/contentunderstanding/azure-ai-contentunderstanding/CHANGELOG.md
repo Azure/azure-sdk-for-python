@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0 (Unreleased)
+## 1.0.0 (2026-02-28)
 
 ### Features Added
 - GA release of Azure AI Content Understanding client library for Python
