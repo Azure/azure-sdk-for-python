@@ -1,10 +1,14 @@
 # Release History
 
-## 1.1.1 (2024-XX-XX)
+## 1.2.0 (2026-XX-XX)
 
 ### Other Changes
 
 - Clean useless warnings in log
+
+### Features Added
+
+- Add preview API `invoke_event`
 
 ## 1.1.0 (2024-04-24)
 
