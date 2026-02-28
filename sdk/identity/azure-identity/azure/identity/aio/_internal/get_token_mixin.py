@@ -3,12 +3,21 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import abc
+import asyncio  # pylint: disable=do-not-import-asyncio
 import logging
+import random
+import threading
 import time
-from typing import Any, Optional
+import weakref
+from typing import Any, Dict, Optional, Tuple
 
 from azure.core.credentials import AccessToken, AccessTokenInfo, TokenRequestOptions
-from ..._constants import DEFAULT_REFRESH_OFFSET, DEFAULT_TOKEN_REFRESH_RETRY_DELAY
+from ..._constants import (
+    DEFAULT_REFRESH_OFFSET,
+    DEFAULT_TOKEN_REFRESH_RETRY_DELAY,
+    DEFAULT_TOKEN_LOCK_TIMEOUT,
+    DEFAULT_TOKEN_LOCK_TIMEOUT_VARIANCE,
+)
 from ..._internal import within_credential_chain
 
 _LOGGER = logging.getLogger(__name__)
@@ -17,6 +26,13 @@ _LOGGER = logging.getLogger(__name__)
 class GetTokenMixin(abc.ABC):
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         self._last_request_time = 0
+        # Outer WeakKeyDictionary: keyed by event loop, auto-removed when a loop is GC'd.
+        # Inner WeakValueDictionary: locks are removed when no caller holds a strong reference,
+        # preventing unbounded growth from arbitrary scope combinations.
+        self._locks: weakref.WeakKeyDictionary[
+            asyncio.AbstractEventLoop, weakref.WeakValueDictionary[Tuple, asyncio.Lock]
+        ] = weakref.WeakKeyDictionary()
+        self._lock_guard = threading.Lock()
 
         # https://github.com/python/mypy/issues/5887
         super(GetTokenMixin, self).__init__(*args, **kwargs)  # type: ignore
@@ -54,6 +70,30 @@ class GetTokenMixin(abc.ABC):
         if now - self._last_request_time < DEFAULT_TOKEN_REFRESH_RETRY_DELAY:
             return False
         return True
+
+    def _get_request_lock(
+        self,
+        scopes: Tuple[str, ...],
+        claims: Optional[str],
+        tenant_id: Optional[str],
+        enable_cae: bool,
+    ) -> Optional[asyncio.Lock]:
+        # Only use locking in asyncio contexts. If we can't get a running loop
+        # (e.g., trio), fall through to existing behavior without locking.
+        try:
+            loop = asyncio.get_running_loop()
+        except RuntimeError:
+            return None
+        key = (scopes, claims, tenant_id, enable_cae)
+        with self._lock_guard:
+            if loop not in self._locks:
+                self._locks[loop] = weakref.WeakValueDictionary()
+            loop_locks = self._locks[loop]
+            lock = loop_locks.get(key)
+            if lock is None:
+                lock = asyncio.Lock()
+                loop_locks[key] = lock
+            return lock
 
     async def get_token(
         self,
@@ -128,6 +168,23 @@ class GetTokenMixin(abc.ABC):
         tenant_id = options.get("tenant_id")
         enable_cae = options.get("enable_cae", False)
 
+        lock = self._get_request_lock(tuple(sorted(scopes)), claims, tenant_id, enable_cae)
+        lock_acquired = False
+
+        if lock is not None:
+            jitter = DEFAULT_TOKEN_LOCK_TIMEOUT * DEFAULT_TOKEN_LOCK_TIMEOUT_VARIANCE
+            timeout = max(0.0, random.uniform(DEFAULT_TOKEN_LOCK_TIMEOUT - jitter, DEFAULT_TOKEN_LOCK_TIMEOUT + jitter))
+            try:
+                await asyncio.wait_for(lock.acquire(), timeout=timeout)
+                lock_acquired = True
+            except asyncio.TimeoutError:
+                _LOGGER.warning(
+                    "%s.%s lock acquisition timed out after %s seconds; proceeding with token request",
+                    self.__class__.__name__,
+                    base_method_name,
+                    timeout,
+                )
+
         try:
             token = await self._acquire_token_silently(
                 *scopes, claims=claims, tenant_id=tenant_id, enable_cae=enable_cae, **kwargs
@@ -163,3 +220,19 @@ class GetTokenMixin(abc.ABC):
                 exc_info=_LOGGER.isEnabledFor(logging.DEBUG),
             )
             raise
+
+        finally:
+            if lock is not None and lock_acquired:
+                lock.release()
+
+    def __getstate__(self) -> Dict[str, Any]:
+        state = self.__dict__.copy()
+        # asyncio.Lock and threading.Lock are not picklable; exclude them.
+        state.pop("_locks", None)
+        state.pop("_lock_guard", None)
+        return state
+
+    def __setstate__(self, state: Dict[str, Any]) -> None:
+        self.__dict__.update(state)  # type: ignore
+        self._locks = weakref.WeakKeyDictionary()
+        self._lock_guard = threading.Lock()
