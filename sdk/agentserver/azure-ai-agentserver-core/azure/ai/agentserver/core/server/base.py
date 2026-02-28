@@ -213,12 +213,19 @@ class FoundryCBAgent:
                 logger.error(f"Error processing /invoke request: {e}", exc_info=True)
                 return JSONResponse({"error": _format_error(e)}, status_code=500)
 
+        async def invoke_openapi_endpoint(request):
+            spec = self.agent_openapi_spec()
+            if spec is None:
+                return JSONResponse({"error": "OpenAPI spec not available"}, status_code=404)
+            return JSONResponse(spec)
+
         routes = [
             Route("/runs", runs_endpoint, methods=["POST"], name="agent_run"),
             Route("/responses", runs_endpoint, methods=["POST"], name="agent_response"),
             Route("/liveness", liveness_endpoint, methods=["GET"], name="agent_liveness"),
             Route("/readiness", readiness_endpoint, methods=["GET"], name="agent_readiness"),
             Route("/invoke", invoke_endpoint, methods=["POST"], name="agent_invoke"),
+            Route("/invoke/docs/openapi.json", invoke_openapi_endpoint, methods=["GET"], name="agent_invoke_openapi"),
         ]
 
         self.app = Starlette(routes=routes)
@@ -587,6 +594,19 @@ class FoundryCBAgent:
             "output": output,
         })
         yield project_models.ResponseCompletedEvent(sequence_number=sequence_number, response=response)
+
+    def agent_openapi_spec(self) -> Optional[dict]:
+        """Return the OpenAPI specification for the ``/invoke`` endpoint.
+
+        The default implementation returns ``None``, which causes the
+        ``GET /invoke/docs/openapi.json`` endpoint to respond with HTTP 404.
+        Override this method in a subclass to expose an OpenAPI document.
+
+        :return: A dict representing the OpenAPI specification, or ``None`` if
+            no specification is available.
+        :rtype: Optional[dict]
+        """
+        return None
 
     async def agent_liveness(self, request) -> Union[Response, dict]:
         return Response(status_code=200)
