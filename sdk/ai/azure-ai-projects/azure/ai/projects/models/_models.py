@@ -7230,8 +7230,8 @@ class PromptBasedEvaluatorDefinition(EvaluatorDefinition, discriminator="prompt"
 class ProtocolVersionRecord(_Model):
     """A record mapping for a single protocol and its version.
 
-    :ivar protocol: The protocol type. Required. Known values are: "activity_protocol",
-     "responses", and "invocations".
+    :ivar protocol: The protocol type. Required. Known values are: "activity_protocol" and
+     "responses".
     :vartype protocol: str or ~azure.ai.projects.models.AgentProtocol
     :ivar version: The version string for the protocol, e.g. 'v0.1.1'. Required.
     :vartype version: str
@@ -7240,8 +7240,7 @@ class ProtocolVersionRecord(_Model):
     protocol: Union[str, "_models.AgentProtocol"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """The protocol type. Required. Known values are: \"activity_protocol\", \"responses\", and
-     \"invocations\"."""
+    """The protocol type. Required. Known values are: \"activity_protocol\" and \"responses\"."""
     version: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The version string for the protocol, e.g. 'v0.1.1'. Required."""
 
@@ -8307,12 +8306,14 @@ class ToolChoiceAllowed(ToolChoiceParam, discriminator="allowed_tools"):
     :vartype mode: str or str
     :ivar tools: A list of tool definitions that the model should be allowed to call. For the
      Responses API, the list of tool definitions might look like:
+
      .. code-block:: json
-     [
-     { "type": "function", "name": "get_weather" },
-     { "type": "mcp", "server_label": "deepwiki" },
-     { "type": "image_generation" }
-     ]. Required.
+
+        [
+          { "type": "function", "name": "get_weather" },
+          { "type": "mcp", "server_label": "deepwiki" },
+          { "type": "image_generation" }
+        ]. Required.
     :vartype tools: list[dict[str, any]]
     """
 
@@ -8326,12 +8327,14 @@ class ToolChoiceAllowed(ToolChoiceParam, discriminator="allowed_tools"):
     tools: list[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A list of tool definitions that the model should be allowed to call. For the Responses API, the
      list of tool definitions might look like:
+     
      .. code-block:: json
-     [
-     { \"type\": \"function\", \"name\": \"get_weather\" },
-     { \"type\": \"mcp\", \"server_label\": \"deepwiki\" },
-     { \"type\": \"image_generation\" }
-     ]. Required."""
+     
+        [
+          { \"type\": \"function\", \"name\": \"get_weather\" },
+          { \"type\": \"mcp\", \"server_label\": \"deepwiki\" },
+          { \"type\": \"image_generation\" }
+        ]. Required."""
 
     @overload
     def __init__(

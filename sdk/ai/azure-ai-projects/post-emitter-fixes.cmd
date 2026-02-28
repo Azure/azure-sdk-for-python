@@ -54,14 +54,14 @@ echo Now do these additional changes manually, if you want the "Generate docs" j
 REM Remove `generate_summary` from class `Reasoning`. It's deprecated but causes two types of errors. Consider removing it from TypeSpec.
 
 REM Remove required 'foundry_features' from public API surface
-copy agent-scripts\patch_foundry_features_args.py .
-python patch_foundry_features_args.py
-del patch_foundry_features_args.py
+REM copy agent-scripts\patch_foundry_features_args.py .
+REM python patch_foundry_features_args.py
+REM del patch_foundry_features_args.py
 
 REM Add Foundry-Features header to next-link HttpRequest only in functions that use foundry_features
-copy agent-scripts\patch_prepare_request_foundry_headers.py .
-python patch_prepare_request_foundry_headers.py
-del patch_prepare_request_foundry_headers.py
+REM copy agent-scripts\patch_prepare_request_foundry_headers.py .
+REM python patch_prepare_request_foundry_headers.py
+REM del patch_prepare_request_foundry_headers.py
 
 echo Finishing by running 'black' tool to format code. 
 black --config ../../../eng/black-pyproject.toml .

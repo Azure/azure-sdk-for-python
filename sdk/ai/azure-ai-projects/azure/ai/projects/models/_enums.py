@@ -10,7 +10,7 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class AgentDefintionOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class AgentDefinitionOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Feature opt-in keys for agent definition operations supporting hosted or workflow agents."""
 
     HOSTED_AGENTS_V1_PREVIEW = "HostedAgents=V1Preview"
