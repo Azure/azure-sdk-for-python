@@ -48,8 +48,8 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
     :type endpoint: str
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :param enable_preview: Whether to enable preview features. Optional, default is False.
-    :type enable_preview: bool
+    :param allow_preview: Whether to enable preview features. Optional, default is False.
+    :type allow_preview: bool
     :keyword api_version: The API version to use for this operation. Known values are "v1" and
      None. Default value is "v1". Note that overriding this default value may result in unsupported
      behavior.
@@ -57,10 +57,10 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
     """
 
     def __init__(
-        self, endpoint: str, credential: AsyncTokenCredential, *, enable_preview: Optional[bool] = False, **kwargs: Any
+        self, endpoint: str, credential: AsyncTokenCredential, *, allow_preview: Optional[bool] = False, **kwargs: Any
     ) -> None:
 
-        self._enable_preview = enable_preview
+        self._allow_preview = allow_preview
         self._console_logging_enabled: bool = (
             os.environ.get("AZURE_AI_PROJECTS_CONSOLE_LOGGING", "false").lower() == "true"
         )
