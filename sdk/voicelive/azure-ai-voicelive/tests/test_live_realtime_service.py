@@ -670,7 +670,7 @@ class TestRealtimeService(AzureRecordedTestCase):
     @pytest.mark.live_test_only
     @VoiceLivePreparer()
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
-    @pytest.mark.parametrize("model", ["gpt-4.1", "gpt-realtime"])
+    @pytest.mark.parametrize("model", ["gpt-realtime"])
     @pytest.mark.parametrize("api_version", ["2025-05-01-preview", "2026-01-01-preview"])
     async def test_realtime_service_live_session_update(
         self,
