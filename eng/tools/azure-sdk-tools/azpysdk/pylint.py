@@ -217,26 +217,26 @@ class pylint(Check):
                         results.append(e.returncode)
                         package_failed = True
 
-            if args.next and in_ci() and package_failed:
-                from gh_tools.vnext_issue_creator import create_vnext_issue
+            if args.next and in_ci():
+                if package_failed:
+                    from gh_tools.vnext_issue_creator import create_vnext_issue
 
-                # Get version from the internal venv where pylint is installed
-                check_version = None
-                try:
-                    version_result = subprocess_run(
-                        [executable, "-m", "pylint", "--version"],
-                        capture_output=True,
-                    )
-                    version_output = version_result.stdout.rstrip().decode("utf-8")
-                    matches = re.findall(r"(\d+\.\d+\.\d+)", version_output)
-                    check_version = matches[0] if matches else None
-                except Exception:
-                    pass
-                create_vnext_issue(package_dir, "pylint", check_version)
+                    # Get version from the internal venv where pylint is installed
+                    check_version = None
+                    try:
+                        version_result = subprocess_run(
+                            [executable, "-m", "pylint", "--version"],
+                            capture_output=True,
+                        )
+                        version_output = version_result.stdout.rstrip().decode("utf-8")
+                        matches = re.findall(r"(\d+\.\d+\.\d+)", version_output)
+                        check_version = matches[0] if matches else None
+                    except Exception:
+                        pass
+                    create_vnext_issue(package_dir, "pylint", check_version)
+                else:
+                    from gh_tools.vnext_issue_creator import close_vnext_issue
 
-            if args.next and in_ci() and not package_failed:
-                from gh_tools.vnext_issue_creator import close_vnext_issue
-
-                close_vnext_issue(package_name, "pylint")
+                    close_vnext_issue(package_name, "pylint")
 
         return max(results) if results else 0
