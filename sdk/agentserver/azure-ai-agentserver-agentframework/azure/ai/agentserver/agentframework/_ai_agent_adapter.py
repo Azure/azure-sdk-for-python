@@ -4,7 +4,7 @@
 # pylint: disable=no-name-in-module,import-error
 from __future__ import annotations
 
-from typing import Any, AsyncGenerator, Optional, Union
+from typing import Any, AsyncGenerator, Dict, Optional, Union
 
 from agent_framework import SupportsAgentRun
 
@@ -59,7 +59,7 @@ class AgentFrameworkAIAgentAdapter(AgentFrameworkAgent):
             # Attach per-request context to the agent instance so tools can access it
             # without LLM involvement. Uses request body metadata as the transport
             # (Vnext infra strips HTTP auth headers before they reach the agent).
-            request_context: dict[str, Any] = {}
+            request_context: Dict[str, Any] = {}
             metadata = context.raw_payload.get("metadata", {})
             if isinstance(metadata, dict):
                 request_context.update(metadata)

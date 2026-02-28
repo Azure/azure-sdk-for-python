@@ -5,7 +5,7 @@ from __future__ import annotations
 
 import datetime
 import json
-from typing import Any, Optional
+from typing import Any, Dict, List, Optional, Union
 
 from agent_framework import AgentResponse, Content
 
@@ -66,7 +66,7 @@ class AgentFrameworkOutputNonStreamingConverter:  # pylint: disable=name-too-lon
         logger.debug("Transforming non-streaming response (messages=%d)", len(response.messages))
         self._ensure_response_started()
 
-        completed_items: list[dict] = []
+        completed_items: List[dict] = []
 
         for i, message in enumerate(response.messages):
             logger.debug("Non-streaming: processing message index=%d type=%s", i, type(message).__name__)
@@ -87,13 +87,13 @@ class AgentFrameworkOutputNonStreamingConverter:  # pylint: disable=name-too-lon
 
     # ------------------------- helper append methods -------------------------
 
-    def _append_content_item(self, content: Any, sink: list[dict]) -> None:
+    def _append_content_item(self, content: Any, sink: List[dict]) -> None:
         """Dispatch a content object to the appropriate append helper.
 
         :param content: The content object to dispatch.
         :type content: Any
         :param sink: The list to append items to.
-        :type sink: list[dict]
+        :type sink: List[dict]
         """
         match content.type:
             case "text" | "text_reasoning":
@@ -109,7 +109,7 @@ class AgentFrameworkOutputNonStreamingConverter:  # pylint: disable=name-too-lon
             case _:
                 logger.warning("Unhandled content type in non-streaming: %s", content.type)
 
-    def _append_text_content(self, content: Content, sink: list[dict]) -> None:
+    def _append_text_content(self, content: Content, sink: List[dict]) -> None:
         text_value = content.text
         if not text_value:
             return
@@ -132,7 +132,7 @@ class AgentFrameworkOutputNonStreamingConverter:  # pylint: disable=name-too-lon
         )
         logger.debug("    added message item id=%s text_len=%d", item_id, len(text_value))
 
-    def _append_function_call_content(self, content: Content, sink: list[dict]) -> None:
+    def _append_function_call_content(self, content: Content, sink: List[dict]) -> None:
         name = content.name or ""
         arguments = content.arguments or ""
         if not isinstance(arguments, str):
@@ -160,10 +160,10 @@ class AgentFrameworkOutputNonStreamingConverter:  # pylint: disable=name-too-lon
             len(arguments or ""),
         )
 
-    def _append_function_result_content(self, content: Content, sink: list[dict]) -> None:
+    def _append_function_result_content(self, content: Content, sink: List[dict]) -> None:
         # Coerce the function result into a simple display string.
         raw = content.result
-        result: list[str | dict[str, Any]] = []
+        result: List[Union[str, Dict[str, Any]]] = []
         match raw:
             case str():
                 result = [raw]
@@ -187,7 +187,7 @@ class AgentFrameworkOutputNonStreamingConverter:  # pylint: disable=name-too-lon
             len(result),
         )
 
-    def _append_user_input_request_content(self, content: Content, sink: list[dict]) -> None:
+    def _append_user_input_request_content(self, content: Content, sink: List[dict]) -> None:
         converted_content = None
         if self._hitl_helper:
             converted_content = self._hitl_helper.convert_user_input_request_content(content)
@@ -217,7 +217,7 @@ class AgentFrameworkOutputNonStreamingConverter:  # pylint: disable=name-too-lon
         logger.debug("added user_input_request content call_id=%s", call_id)
 
     # ------------- simple normalization helper -------------------------
-    def _coerce_result_text(self, value: Any) -> str | dict:
+    def _coerce_result_text(self, value: Any) -> Union[str, Dict[str, Any]]:
         """Return a string or dict representation of a result value.
 
         :param value: The result value to coerce.
@@ -235,10 +235,10 @@ class AgentFrameworkOutputNonStreamingConverter:  # pylint: disable=name-too-lon
             case _:
                 return ""
 
-    def _construct_response_data(self, output_items: list[dict]) -> dict:
+    def _construct_response_data(self, output_items: List[dict]) -> Dict[str, Any]:
         agent_id = generate_agent_id(self._context)
 
-        response_data: dict[str, Any] = {
+        response_data: Dict[str, Any] = {
             "object": "response",
             "metadata": {},
             "agent": agent_id,

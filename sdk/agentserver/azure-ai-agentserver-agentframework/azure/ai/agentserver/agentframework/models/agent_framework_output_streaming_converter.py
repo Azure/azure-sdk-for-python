@@ -10,7 +10,7 @@ import json
 import uuid
 from collections.abc import AsyncIterable
 from types import SimpleNamespace
-from typing import Any, List, Optional, cast
+from typing import Any, Dict, List, Optional, Union, cast
 
 from agent_framework import AgentResponseUpdate, Content, ResponseStream
 
@@ -207,7 +207,7 @@ class _FunctionCallStreamingState(_BaseStreamingState):
         self.name = None
         self.args_buffer = ""
         self.requires_approval = False
-        self.approval_request_id: str | None = None
+        self.approval_request_id: Optional[str] = None
 
     def prework(self, ctx: Any) -> List[ResponseStreamEvent]:
         events: List[ResponseStreamEvent] = []
@@ -334,7 +334,7 @@ class _FunctionCallOutputStreamingState(_BaseStreamingState):
         self,
         context: AgentRunContext,
         call_id: Optional[str] = None,
-        output: Optional[list[str]] = None,
+        output: Optional[List[str]] = None,
     ) -> None:
         # Avoid mutable default argument (Ruff B006)
         self.context = context
@@ -371,7 +371,7 @@ class _FunctionCallOutputStreamingState(_BaseStreamingState):
         events: List[ResponseStreamEvent] = []
         # treat entire output as final
         raw = getattr(content, "result", None)
-        result: list[str | dict[str, Any]] = []
+        result: List[Union[str, Dict[str, Any]]] = []
         match raw:
             case str():
                 result = [raw] if raw else [str(self.output)]
@@ -382,7 +382,7 @@ class _FunctionCallOutputStreamingState(_BaseStreamingState):
         events.extend(self.afterwork(ctx))
         return events
 
-    def _coerce_result_text(self, value: Any) -> str | dict:
+    def _coerce_result_text(self, value: Any) -> Union[str, Dict[str, Any]]:
         """Return a string or dict representation of a result value.
 
         :param value: The result value to coerce.

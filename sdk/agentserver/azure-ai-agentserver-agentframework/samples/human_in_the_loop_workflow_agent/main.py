@@ -3,7 +3,7 @@
 import asyncio
 import json
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, Dict, Optional
 
 from agent_framework import (  # noqa: E402
     Executor,
@@ -31,12 +31,12 @@ load_dotenv()
 class HumanReviewRequest:
     """A request message type for escalation to a human reviewer."""
 
-    agent_request: ReviewRequest | None = None
+    agent_request: Optional[ReviewRequest] = None
 
     def convert_to_payload(self) -> str:
         """Convert the HumanReviewRequest to a payload string."""
         request = self.agent_request
-        payload: dict[str, Any] = {"agent_request": None}
+        payload: Dict[str, Any] = {"agent_request": None}
 
         if request:
             payload["agent_request"] = {
@@ -51,7 +51,7 @@ class HumanReviewRequest:
 class ReviewerWithHumanInTheLoop(Executor):
     """Executor that always escalates reviews to a human manager."""
 
-    def __init__(self, worker_id: str, reviewer_id: str | None = None) -> None:
+    def __init__(self, worker_id: str, reviewer_id: Optional[str] = None) -> None:
         unique_id = reviewer_id or f"{worker_id}-reviewer"
         super().__init__(id=unique_id)
         self._worker_id = worker_id

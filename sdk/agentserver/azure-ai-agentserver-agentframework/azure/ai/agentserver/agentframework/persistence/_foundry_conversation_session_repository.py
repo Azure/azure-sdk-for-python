@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from typing import Optional, Union
+from typing import Dict, Optional, Union
 
 from agent_framework import AgentSession
 
@@ -28,7 +28,7 @@ class FoundryConversationSessionRepository(AgentSessionRepository):
             )
         self._client = AIProjectClient(project_endpoint, credential)
         self._history_provider = FoundryConversationHistoryProvider(project_client=self._client)
-        self._inventory: dict[str, AgentSession] = {}
+        self._inventory: Dict[str, AgentSession] = {}
 
     async def get(
         self,

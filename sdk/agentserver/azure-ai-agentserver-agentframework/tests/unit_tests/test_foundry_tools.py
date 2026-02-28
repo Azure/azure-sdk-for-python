@@ -6,7 +6,7 @@ import inspect
 import sys
 from pathlib import Path
 from types import SimpleNamespace
-from typing import Any
+from typing import Any, Optional
 from unittest.mock import AsyncMock
 
 import pytest
@@ -47,7 +47,7 @@ def test_attach_signature_from_pydantic_model_required_and_optional() -> None:
 	InputModel = create_model(
 		"InputModel",
 		required_int=(int, Field(description="required")),
-		optional_str=(str | None, Field(default=None, description="optional")),
+		optional_str=(Optional[str], Field(default=None, description="optional")),
 	)
 
 	async def tool_func(**kwargs):

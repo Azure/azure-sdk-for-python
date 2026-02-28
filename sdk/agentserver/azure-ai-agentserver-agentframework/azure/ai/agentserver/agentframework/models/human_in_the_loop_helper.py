@@ -15,10 +15,10 @@ logger = get_logger()
 class HumanInTheLoopHelper:
     def get_pending_hitl_request(
         self,
-        session_messages: list[Message] | None = None,
+        session_messages: Optional[List[Message]] = None,
         checkpoint: Optional[WorkflowCheckpoint] = None,
-    ) -> dict[str, Union[WorkflowEvent, Any]]:
-        res: dict[str, Union[WorkflowEvent, Any]] = {}
+    ) -> Dict[str, Union[WorkflowEvent, Any]]:
+        res: Dict[str, Union[WorkflowEvent, Any]] = {}
 
         if checkpoint:
             pending_events = getattr(checkpoint, "pending_request_info_events", None) or getattr(
@@ -96,7 +96,7 @@ class HumanInTheLoopHelper:
             logger.warning("Expected list input for HitL response validation, got str.")
             return None
 
-        res: list[Message] = []
+        res: List[Message] = []
         for item in input:
             if item.get("type") != "function_call_output":
                 logger.warning("Expected function_call_output type for HitL response validation.")
@@ -123,7 +123,7 @@ class HumanInTheLoopHelper:
 
     def remove_hitl_content_from_session(self, session_messages: List[Message]) -> List[Message]:
         """Remove HITL function call contents and related results from a conversation session."""
-        filtered_messages: list[Message] = []
+        filtered_messages: List[Message] = []
 
         prev_function_call = None
         prev_hitl_request = None
@@ -131,7 +131,7 @@ class HumanInTheLoopHelper:
         pending_tool_message: Optional[Message] = None
 
         for message in session_messages:
-            filtered_contents: list[Any] = []
+            filtered_contents: List[Any] = []
             for content in message.contents:
                 if content.type == "function_result":
                     result_call_id = getattr(content, "call_id", "")

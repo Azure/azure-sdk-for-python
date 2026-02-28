@@ -4,7 +4,7 @@
 # mypy: disable-error-code="no-redef"
 from __future__ import annotations
 
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional, Union
 
 from agent_framework import Content, Message
 
@@ -21,12 +21,12 @@ class AgentFrameworkInputConverter:
 
     async def transform_input(  # pylint: disable=too-many-return-statements
         self,
-        input_item: str | List[Dict] | None,
+        input_item: Optional[Union[str, List[Dict]]],
         agent_session: Any = None,
         checkpoint: Any = None,
-    ) -> str | Message | list[str | Message] | None:
+    ) -> Optional[Union[str, Message, List[Union[str, Message]]]]:
         if self._hitl_helper and isinstance(input_item, list):
-            session_messages: list[Message] = []
+            session_messages: List[Message] = []
             if agent_session is not None:
                 message_store = getattr(agent_session, "message_store", None)
                 if message_store and hasattr(message_store, "list_messages"):
@@ -47,12 +47,12 @@ class AgentFrameworkInputConverter:
 
 
 def transform_input(  # pylint: disable=too-many-return-statements
-    input_item: str | List[Dict] | None,
-) -> str | Message | list[str | Message] | None:
+    input_item: Optional[Union[str, List[Dict]]],
+) -> Optional[Union[str, Message, List[Union[str, Message]]]]:
     """Normalize inputs for agent.run.
 
-    Accepts: str | List | None
-    Returns: None | str | Message | list[str] | list[Message]
+    Accepts: Optional[Union[str, List]]
+    Returns: Optional[Union[str, Message, List[Union[str, Message]]]]
 
     :param input_item: The raw input to normalize.
     :type input_item: str or List[Dict] or None
@@ -67,7 +67,7 @@ def transform_input(  # pylint: disable=too-many-return-statements
 
     try:
         if isinstance(input_item, list):
-            messages: list[str | Message] = []
+            messages: List[Union[str, Message]] = []
 
             for item in input_item:
                 match item:
@@ -98,13 +98,13 @@ def transform_input(  # pylint: disable=too-many-return-statements
         raise Exception(f"Error processing messages: {e}") from e  # pylint: disable=broad-exception-raised
 
 
-def _parse_implicit_user_content(content: str | list | None) -> list[str]:
+def _parse_implicit_user_content(content: Optional[Union[str, List[Any]]]) -> List[str]:
     """Extract text from an implicit user message (no role/type keys).
 
     :param content: The content to parse.
     :type content: str or list or None
     :return: A list of extracted text strings.
-    :rtype: list[str]
+    :rtype: List[str]
     """
     match content:
         case str():
@@ -117,7 +117,11 @@ def _parse_implicit_user_content(content: str | list | None) -> list[str]:
             return []
 
 
-def _parse_explicit_message(role: str, content: str | list | None, sink: list[str | Message]) -> None:
+def _parse_explicit_message(
+    role: str,
+    content: Optional[Union[str, List[Any]]],
+    sink: List[Union[str, Message]],
+) -> None:
     """Parse an explicit message dict and append to sink.
 
     :param role: The role of the message sender.
@@ -125,7 +129,7 @@ def _parse_explicit_message(role: str, content: str | list | None, sink: list[st
     :param content: The message content.
     :type content: str or list or None
     :param sink: The list to append parsed messages to.
-    :type sink: list[str | Message]
+    :type sink: List[Union[str, Message]]
     """
     match role:
         case "user" | "assistant" | "system" | "tool":
@@ -145,15 +149,15 @@ def _parse_explicit_message(role: str, content: str | list | None, sink: list[st
         sink.append(Message(role=role, contents=[Content.from_text(content_text)]))
 
 
-def _coerce_to_strings(messages: list[str | Message]) -> list[str | Message]:
+def _coerce_to_strings(messages: List[Union[str, Message]]) -> List[Union[str, Message]]:
     """Coerce a mixed list of str/Message into all strings.
 
     :param messages: The mixed list of strings and Messages.
-    :type messages: list[str | Message]
+    :type messages: List[Union[str, Message]]
     :return: A list with Messages coerced to strings.
-    :rtype: list[str | Message]
+    :rtype: List[Union[str, Message]]
     """
-    result: list[str | Message] = []
+    result: List[Union[str, Message]] = []
     for msg in messages:
         match msg:
             case Message():
@@ -164,7 +168,7 @@ def _coerce_to_strings(messages: list[str | Message]) -> list[str | Message]:
     return result
 
 
-def _extract_input_text(content_item: Dict) -> str | None:
+def _extract_input_text(content_item: Dict) -> Optional[str]:
     match content_item:
         case {"type": "input_text", "text": str() as text}:
             return text

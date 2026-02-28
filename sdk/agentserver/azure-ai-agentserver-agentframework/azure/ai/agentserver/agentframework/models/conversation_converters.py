@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 # pylint: disable=too-many-return-statements
 import json
-from typing import Any, Mapping, Optional
+from typing import Any, Dict, List, Mapping, Optional
 from uuid import uuid4
 
 from agent_framework import Content, Message
@@ -79,7 +79,7 @@ def _convert_message_item(item: Any) -> Optional[Message]:
     role_value = _ROLE_MAP.get(str(getattr(item, "role", "user")).lower(), "user")
     raw_contents = getattr(item, "content", None) or []
 
-    converted_contents: list[Any] = []
+    converted_contents: List[Any] = []
     for content in raw_contents:
         converted = _convert_message_content(content)
         if converted:
@@ -128,7 +128,7 @@ def _convert_reasoning_item(item: Any) -> Optional[Message]:
     summaries = data.get("summary", []) or []
     content_items = data.get("content", []) or []
 
-    reasoning_contents: list[Any] = []
+    reasoning_contents: List[Any] = []
     for content in content_items:
         text = content.get("text") if isinstance(content, Mapping) else None
         if text:
@@ -143,7 +143,7 @@ def _convert_reasoning_item(item: Any) -> Optional[Message]:
     if not reasoning_contents and not summary_text:
         return None
 
-    kwargs: dict[str, Any] = {}
+    kwargs: Dict[str, Any] = {}
     if summary_text:
         kwargs["text"] = summary_text
     if reasoning_contents:

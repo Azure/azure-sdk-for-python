@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 from collections.abc import Sequence
-from typing import Any, Optional
+from typing import Any, Dict, List, Optional
 
 from agent_framework import BaseHistoryProvider, Message
 
@@ -33,9 +33,9 @@ class FoundryConversationHistoryProvider(BaseHistoryProvider):
         self,
         session_id: Optional[str],
         *,
-        state: Optional[dict[str, Any]] = None,
+        state: Optional[Dict[str, Any]] = None,
         **kwargs: Any,
-    ) -> list[Message]:
+    ) -> List[Message]:
         if state is None:
             return []
 
@@ -55,7 +55,7 @@ class FoundryConversationHistoryProvider(BaseHistoryProvider):
         session_id: Optional[str],
         messages: Sequence[Message],
         *,
-        state: Optional[dict[str, Any]] = None,
+        state: Optional[Dict[str, Any]] = None,
         **kwargs: Any,
     ) -> None:
         if state is None:
@@ -68,13 +68,13 @@ class FoundryConversationHistoryProvider(BaseHistoryProvider):
         state["messages"] = [*existing_messages, *messages]
 
     @staticmethod
-    def _resolve_conversation_id(session_id: Optional[str], state: dict[str, Any]) -> Optional[str]:
+    def _resolve_conversation_id(session_id: Optional[str], state: Dict[str, Any]) -> Optional[str]:
         conversation_id = state.get("conversation_id")
         if isinstance(conversation_id, str) and conversation_id:
             return conversation_id
         return session_id
 
-    async def _get_conversation_history(self, conversation_id: str) -> list[Message]:
+    async def _get_conversation_history(self, conversation_id: str) -> List[Message]:
         if not self._project_client:
             logger.error("AIProjectClient is not configured; cannot load conversation history.")
             return []
@@ -82,7 +82,7 @@ class FoundryConversationHistoryProvider(BaseHistoryProvider):
         try:
             async with self._project_client.get_openai_client() as openai_client:
                 raw_items = await openai_client.conversations.items.list(conversation_id)
-                retrieved_messages: list[Message] = []
+                retrieved_messages: List[Message] = []
 
                 if raw_items is None:
                     return []

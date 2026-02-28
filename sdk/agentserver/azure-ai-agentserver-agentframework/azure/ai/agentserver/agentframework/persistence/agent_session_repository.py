@@ -4,7 +4,7 @@
 import json
 import os
 from abc import ABC, abstractmethod
-from typing import Any, Optional
+from typing import Any, Dict, Optional
 
 from agent_framework import AgentSession
 
@@ -45,7 +45,7 @@ class InMemoryAgentSessionRepository(AgentSessionRepository):
     """In-memory implementation of AgentSessionRepository."""
 
     def __init__(self) -> None:
-        self._inventory: dict[str, AgentSession] = {}
+        self._inventory: Dict[str, AgentSession] = {}
 
     async def get(
         self,

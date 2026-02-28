@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 from unittest.mock import AsyncMock, Mock
+from typing import Dict
 
 import pytest
 from agent_framework import AgentSession, BaseHistoryProvider, Content, InMemoryCheckpointStorage, Message
@@ -25,7 +26,7 @@ from azure.ai.agentserver.agentframework.persistence.checkpoint_repository impor
 class _MemorySerializedSessionRepository(SerializedAgentSessionRepository):
     def __init__(self) -> None:
         super().__init__()
-        self._storage: dict[str, dict] = {}
+        self._storage: Dict[str, dict] = {}
 
     async def read_from_storage(self, conversation_id):
         if not conversation_id:
