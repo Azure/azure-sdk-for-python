@@ -86,7 +86,7 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
 
         super().__init__(endpoint=endpoint, credential=credential, **kwargs)
 
-        self._config._allow_preview = allow_preview
+        self._config._allow_preview = allow_preview  # type: ignore[attr-defined]
         self.telemetry = TelemetryOperations(self)  # type: ignore
 
     @distributed_trace
