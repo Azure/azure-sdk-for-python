@@ -588,7 +588,7 @@ class CancelInvocationMessage:
 
 
 class InvokeEventResult:
-    """Result of invokeEvent
+    """Result of invoke_event
 
     :ivar invocation_id: Invocation identifier correlated with the response. Required.
     :vartype invocation_id: str
@@ -704,6 +704,7 @@ class WebPubSubClientProtocol:
         GroupDataMessage,
         ServerDataMessage,
         AckMessage,
+        InvokeResponseMessage,
         None,
     ]:
         """Parse messages from raw message
@@ -711,7 +712,8 @@ class WebPubSubClientProtocol:
         :param raw_message: The raw message. Required.
         :type raw_message: str
         :return: The parsed message.
-        :rtype: Union[ConnectedMessage, DisconnectedMessage, GroupDataMessage, ServerDataMessage, AckMessage, None]
+        :rtype: Union[ConnectedMessage, DisconnectedMessage, GroupDataMessage, ServerDataMessage, AckMessage,
+         InvokeResponseMessage, None]
         :raises ValueError: If raw_message is None or raw_message type is not string.
         """
         if raw_message is None:

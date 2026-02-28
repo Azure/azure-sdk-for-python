@@ -219,7 +219,7 @@ class WebPubSubClient(
      retry will sleep for [0.0s, 0.2s, 0.4s, ...] between retries. The default value is 0.8.
     :keyword float reconnect_retry_backoff_max: The maximum back off time. Default value is 120.0 seconds
     :keyword ~azure.messaging.webpubsubclient.RetryMode reconnect_retry_mode: Fixed or exponential delay
-     between attemps, default is exponential.
+     between attempts, default is exponential.
     :keyword int message_retry_total: total number of retries to allow for sending message. Default is 3.
     :keyword float message_retry_backoff_factor: A backoff factor to apply between attempts after the second try
      (most errors are resolved immediately by a second try without a delay). In fixed mode, retry policy will always
@@ -227,7 +227,7 @@ class WebPubSubClient(
      "{backoff factor} * (2 ** ({number of retries} - 1))" seconds. If the backoff_factor is 0.1, then the
      retry will sleep for [0.0s, 0.2s, 0.4s, ...] between retries. The default value is 0.8.
     :keyword float message_retry_backoff_max: The maximum back off time. Default value is 120.0 seconds
-    :keyword RetryMode message_retry_mode: Fixed or exponential delay between attemps, default is exponential.
+    :keyword RetryMode message_retry_mode: Fixed or exponential delay between attempts, default is exponential.
     :keyword bool auto_rejoin_groups: auto_rejoin_groups, default is True
     :keyword bool logging_enable: Whether to output network trace logs to the logger. Default is `False`.
     :keyword float ack_timeout: Time limit to wait for ack message from server. The default value is 30.0 seconds.
@@ -756,6 +756,7 @@ class WebPubSubClient(
 
             return self._map_invoke_response(entry.result)
         except asyncio.TimeoutError as e:
+            await self._send_cancel_invocation(invocation_id)
             raise InvocationError(
                 "Timeout while waiting for invoke response.",
                 invocation_id=invocation_id,
