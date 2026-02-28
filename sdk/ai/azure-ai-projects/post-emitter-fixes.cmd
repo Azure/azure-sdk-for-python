@@ -59,9 +59,9 @@ REM python patch_foundry_features_args.py
 REM del patch_foundry_features_args.py
 
 REM Add Foundry-Features header to next-link HttpRequest only in functions that use foundry_features
-REM copy agent-scripts\patch_prepare_request_foundry_headers.py .
-REM python patch_prepare_request_foundry_headers.py
-REM del patch_prepare_request_foundry_headers.py
+copy agent-scripts\patch_prepare_request_foundry_headers.py .
+python patch_prepare_request_foundry_headers.py
+del patch_prepare_request_foundry_headers.py
 
 echo Finishing by running 'black' tool to format code. 
 black --config ../../../eng/black-pyproject.toml .

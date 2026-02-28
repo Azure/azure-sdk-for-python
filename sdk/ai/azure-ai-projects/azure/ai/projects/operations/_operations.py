@@ -5418,7 +5418,10 @@ class BetaEvaluationTaxonomiesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    params=_next_request_params,
+                    headers={"Foundry-Features": self._serialize.header("foundry_features", foundry_features, "str")},
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -5926,7 +5929,10 @@ class BetaEvaluatorsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    params=_next_request_params,
+                    headers={"Foundry-Features": self._serialize.header("foundry_features", foundry_features, "str")},
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -6028,7 +6034,10 @@ class BetaEvaluatorsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    params=_next_request_params,
+                    headers={"Foundry-Features": self._serialize.header("foundry_features", foundry_features, "str")},
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -6870,7 +6879,10 @@ class BetaInsightsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    params=_next_request_params,
+                    headers={"Foundry-Features": self._serialize.header("foundry_features", foundry_features, "str")},
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -8209,7 +8221,10 @@ class BetaRedTeamsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    params=_next_request_params,
+                    headers={"Foundry-Features": self._serialize.header("foundry_features", foundry_features, "str")},
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -8611,7 +8626,10 @@ class BetaSchedulesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    params=_next_request_params,
+                    headers={"Foundry-Features": self._serialize.header("foundry_features", foundry_features, "str")},
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -8958,7 +8976,10 @@ class BetaSchedulesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    params=_next_request_params,
+                    headers={"Foundry-Features": self._serialize.header("foundry_features", foundry_features, "str")},
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
