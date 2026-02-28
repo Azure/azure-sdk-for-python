@@ -32,6 +32,7 @@ jobs:
       - template: /eng/pipelines/templates/variables/globals.yml
       - template: /eng/pipelines/templates/variables/image.yml
     displayName: 'Run AI Eval'
+    condition: and(succeededOrFailed(), ne(variables['Skip.AIEval'],'true'))
     pool:
       name: $(LINUXPOOL)
       image: $(LINUXVMIMAGE)
