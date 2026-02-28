@@ -10,7 +10,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 import os
 import re
 import logging
-from typing import List, Any
+from typing import List, Any, Optional
 import httpx
 from openai import OpenAI
 from azure.core.tracing.decorator import distributed_trace
@@ -18,7 +18,6 @@ from azure.core.credentials import TokenCredential
 from azure.identity import get_bearer_token_provider
 from ._client import AIProjectClient as AIProjectClientGenerated
 from .operations import TelemetryOperations
-
 
 logger = logging.getLogger(__name__)
 
@@ -60,7 +59,6 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
         self, endpoint: str, credential: TokenCredential, *, allow_preview: Optional[bool] = False, **kwargs: Any
     ) -> None:
 
-        self._allow_preview = allow_preview
         self._console_logging_enabled: bool = (
             os.environ.get("AZURE_AI_PROJECTS_CONSOLE_LOGGING", "false").lower() == "true"
         )
@@ -88,6 +86,7 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
 
         super().__init__(endpoint=endpoint, credential=credential, **kwargs)
 
+        self._config._allow_preview = allow_preview
         self.telemetry = TelemetryOperations(self)  # type: ignore
 
     @distributed_trace

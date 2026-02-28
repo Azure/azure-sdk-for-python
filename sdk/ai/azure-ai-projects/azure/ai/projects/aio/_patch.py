@@ -9,7 +9,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 import os
 import logging
-from typing import List, Any
+from typing import List, Any, Optional
 import httpx
 from openai import AsyncOpenAI
 from azure.core.tracing.decorator import distributed_trace
@@ -88,6 +88,7 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
 
         super().__init__(endpoint=endpoint, credential=credential, **kwargs)
 
+        self._config._allow_preview = allow_preview
         self.telemetry = TelemetryOperations(self)  # type: ignore
 
     @distributed_trace
