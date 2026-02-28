@@ -14,7 +14,10 @@ from ._models import SearchIndexerDataSourceConnection as _SearchIndexerDataSour
 from ._models import KnowledgeBase as _KnowledgeBase
 from ._enums import (
     LexicalAnalyzerName,
+    OcrSkillLanguage,
     SearchFieldDataType as _SearchFieldDataType,
+    SplitSkillLanguage,
+    TextTranslationSkillLanguage,
 )
 from ...knowledgebases.models import (
     KnowledgeRetrievalReasoningEffort,
@@ -158,6 +161,22 @@ def _collection_helper(typ: Any) -> str:
 # The Collection method is added at runtime via monkey-patching
 SearchFieldDataType = _SearchFieldDataType
 SearchFieldDataType.Collection = staticmethod(_collection_helper)  # type: ignore[attr-defined]
+
+# Backward-compatible aliases (old camelCase names -> new UPPER_CASE names)
+SearchFieldDataType.String = SearchFieldDataType.STRING  # type: ignore[attr-defined]
+SearchFieldDataType.Int32 = SearchFieldDataType.INT32  # type: ignore[attr-defined]
+SearchFieldDataType.Int64 = SearchFieldDataType.INT64  # type: ignore[attr-defined]
+SearchFieldDataType.Single = SearchFieldDataType.SINGLE  # type: ignore[attr-defined]
+SearchFieldDataType.Double = SearchFieldDataType.DOUBLE  # type: ignore[attr-defined]
+SearchFieldDataType.Boolean = SearchFieldDataType.BOOLEAN  # type: ignore[attr-defined]
+SearchFieldDataType.DateTimeOffset = SearchFieldDataType.DATE_TIME_OFFSET  # type: ignore[attr-defined]
+SearchFieldDataType.GeographyPoint = SearchFieldDataType.GEOGRAPHY_POINT  # type: ignore[attr-defined]
+SearchFieldDataType.ComplexType = SearchFieldDataType.COMPLEX  # type: ignore[attr-defined]
+
+# Backward-compatible alias: IS was renamed to IS_ENUM to avoid conflict with Python keyword
+OcrSkillLanguage.IS = OcrSkillLanguage.IS_ENUM  # type: ignore[attr-defined]
+SplitSkillLanguage.IS = SplitSkillLanguage.IS_ENUM  # type: ignore[attr-defined]
+TextTranslationSkillLanguage.IS = TextTranslationSkillLanguage.IS_ENUM  # type: ignore[attr-defined]
 
 
 def Collection(typ: Any) -> str:
@@ -424,14 +443,65 @@ def ComplexField(
     return SearchField(**result)
 
 
+class _RemovedModel:
+    """Base class for models that have been removed from the SDK.
+
+    Allows import to succeed but raises an error on instantiation.
+    """
+
+    _removed_name: str = ""
+    _replacement_name: str = ""
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        raise ValueError(f"{self._removed_name} has been removed. Use {self._replacement_name} instead.")
+
+    def __init_subclass__(cls, **kwargs: Any) -> None:
+        super().__init_subclass__(**kwargs)
+        # Allow direct tombstone class definitions (direct subclasses of _RemovedModel),
+        # but prevent further subclassing of tombstone classes.
+        if _RemovedModel not in cls.__bases__:
+            parent = cls.__bases__[0]
+            raise TypeError(
+                f"{getattr(parent, '_removed_name', parent.__name__)} has been removed and cannot be subclassed. "
+                f"Use {getattr(parent, '_replacement_name', '')} instead."
+            )
+
+
+class EntityRecognitionSkill(_RemovedModel):
+    """EntityRecognitionSkill has been removed. Use EntityRecognitionSkillV3 instead."""
+
+    _removed_name = "EntityRecognitionSkill"
+    _replacement_name = "EntityRecognitionSkillV3"
+
+
+class EntityRecognitionSkillLanguage(_RemovedModel):
+    """EntityRecognitionSkillLanguage has been removed. Use EntityRecognitionSkillV3 instead."""
+
+    _removed_name = "EntityRecognitionSkillLanguage"
+    _replacement_name = "EntityRecognitionSkillV3"
+
+
+class SentimentSkill(_RemovedModel):
+    """SentimentSkill has been removed. Use SentimentSkillV3 instead."""
+
+    _removed_name = "SentimentSkill"
+    _replacement_name = "SentimentSkillV3"
+
+
 __all__: list[str] = [
+    "EntityRecognitionSkill",
+    "EntityRecognitionSkillLanguage",
     "KnowledgeBase",
+    "OcrSkillLanguage",
     "SearchField",
     "SearchFieldDataType",
     "SearchIndexerDataSourceConnection",
+    "SentimentSkill",
     "SimpleField",
     "SearchableField",
     "ComplexField",
+    "SplitSkillLanguage",
+    "TextTranslationSkillLanguage",
 ]  # Add all objects you want publicly available to users at this package level
 
 

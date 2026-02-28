@@ -35,6 +35,9 @@ settings.tracing_implementation = "OpenTelemetry"
 _utils._span_impl_type = settings.tracing_implementation()
 
 
+@pytest.mark.skip(
+    reason="Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema"
+)
 class TestResponsesInstrumentorCodeInterpreter(TestAiAgentsInstrumentorBase):
     """
     Test suite for Code Interpreter agent telemetry instrumentation.
@@ -103,7 +106,7 @@ TRANSPORTATION,Contoso air,1100000
                 response = openai_client.responses.create(
                     conversation=conversation.id,
                     input="Calculate the average operating profit from the transportation data",
-                    extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                    extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
                 )
 
                 # Explicitly call and iterate through conversation items
@@ -290,7 +293,7 @@ TRANSPORTATION,Contoso air,1100000
                 response = openai_client.responses.create(
                     conversation=conversation.id,
                     input="Calculate the average operating profit from the transportation data",
-                    extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                    extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
                 )
 
                 # Explicitly call and iterate through conversation items
@@ -482,7 +485,7 @@ TRANSPORTATION,Contoso air,1100000
                     conversation=conversation.id,
                     input="Calculate the average operating profit from the transportation data",
                     stream=True,
-                    extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                    extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
                 )
 
                 # Consume the stream
@@ -673,7 +676,7 @@ TRANSPORTATION,Contoso air,1100000
                     conversation=conversation.id,
                     input="Calculate the average operating profit from the transportation data",
                     stream=True,
-                    extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                    extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
                 )
 
                 # Consume the stream

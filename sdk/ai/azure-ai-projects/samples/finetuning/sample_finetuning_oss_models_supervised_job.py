@@ -15,7 +15,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install azure-ai-projects>=2.0.0b1 python-dotenv
+    pip install "azure-ai-projects>=2.0.0b4" python-dotenv
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
@@ -29,17 +29,14 @@ import os
 from dotenv import load_dotenv
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
-from pathlib import Path
+from fine_tuning_sample_helper import resolve_data_file_path
 
 load_dotenv()
 
 endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
 model_name = os.environ.get("MODEL_NAME", "Ministral-3B")
-script_dir = Path(__file__).parent
-training_file_path = os.environ.get("TRAINING_FILE_PATH", os.path.join(script_dir, "data", "sft_training_set.jsonl"))
-validation_file_path = os.environ.get(
-    "VALIDATION_FILE_PATH", os.path.join(script_dir, "data", "sft_validation_set.jsonl")
-)
+training_file_path = resolve_data_file_path(__file__, "TRAINING_FILE_PATH", "sft_training_set.jsonl")
+validation_file_path = resolve_data_file_path(__file__, "VALIDATION_FILE_PATH", "sft_validation_set.jsonl")
 
 with (
     DefaultAzureCredential() as credential,
@@ -75,7 +72,7 @@ with (
             "trainingType": "GlobalStandard"
         },  # Recommended approach to set trainingType. Omitting this field may lead to unsupported behavior.
         # Preferred trainingtype is GlobalStandard.  Note:  Global training offers cost savings , but copies data and weights outside the current resource region.
-        # Learn more - https://azure.microsoft.com/en-us/pricing/details/cognitive-services/openai-service/ and https://azure.microsoft.com/en-us/explore/global-infrastructure/data-residency/
+        # Learn more - https://azure.microsoft.com/pricing/details/cognitive-services/openai-service/ and https://azure.microsoft.com/explore/global-infrastructure/data-residency/
     )
     print(fine_tuning_job)
     # [END finetuning_oss_model_supervised_job_sample]

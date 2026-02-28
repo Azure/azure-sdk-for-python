@@ -17,7 +17,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b1" python-dotenv aiohttp
+    pip install "azure-ai-projects>=2.0.0b4" python-dotenv aiohttp
 
     Deploy a chat model (e.g. gpt-4.1) and an embedding model (e.g. text-embedding-3-small).
     Once you have deployed models, set the deployment name in the variables below.
@@ -38,7 +38,6 @@ from azure.core.exceptions import ResourceNotFoundError
 from azure.identity.aio import DefaultAzureCredential
 from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import (
-    EasyInputMessage,
     MemoryStoreDefaultDefinition,
     MemoryStoreDefaultOptions,
     MemorySearchOptions,
@@ -59,7 +58,7 @@ async def main() -> None:
         # Delete memory store, if it already exists
         memory_store_name = "my_memory_store"
         try:
-            await project_client.memory_stores.delete(memory_store_name)
+            await project_client.beta.memory_stores.delete(memory_store_name)
             print(f"Memory store `{memory_store_name}` deleted")
         except ResourceNotFoundError:
             pass
@@ -72,7 +71,7 @@ async def main() -> None:
                 user_profile_enabled=True, chat_summary_enabled=True
             ),  # Note: This line will not be needed once the service is fixed to use correct defaults
         )
-        memory_store = await project_client.memory_stores.create(
+        memory_store = await project_client.beta.memory_stores.create(
             name=memory_store_name,
             description="Example memory store for conversations",
             definition=definition,
@@ -87,8 +86,12 @@ async def main() -> None:
         scope = "user_123"
 
         # Add a memory to the memory store
-        user_message = EasyInputMessage(role="user", content="I prefer dark roast coffee and usually drink it in the morning")
-        update_poller = await project_client.memory_stores.begin_update_memories(
+        user_message = {
+            "role": "user",
+            "content": "I prefer dark roast coffee and usually drink it in the morning",
+            "type": "message",
+        }
+        update_poller = await project_client.beta.memory_stores.begin_update_memories(
             name=memory_store.name,
             scope=scope,
             items=[user_message],  # Pass conversation items that you want to add to memory
@@ -104,20 +107,23 @@ async def main() -> None:
             )
 
         # Retrieve memories from the memory store
-        query_message = EasyInputMessage(role="user", content="What are my coffee preferences?")
-        search_response = await project_client.memory_stores.search_memories(
-            name=memory_store.name, scope=scope, items=[query_message], options=MemorySearchOptions(max_memories=5)
+        query_message = {"role": "user", "content": "What are my coffee preferences?", "type": "message"}
+        search_response = await project_client.beta.memory_stores.search_memories(
+            name=memory_store.name,
+            scope=scope,
+            items=[query_message],
+            options=MemorySearchOptions(max_memories=5),
         )
         print(f"Found {len(search_response.memories)} memories")
         for memory in search_response.memories:
             print(f"  - Memory ID: {memory.memory_item.memory_id}, Content: {memory.memory_item.content}")
 
         # Delete memories for a specific scope
-        await project_client.memory_stores.delete_scope(name=memory_store.name, scope=scope)
+        await project_client.beta.memory_stores.delete_scope(name=memory_store.name, scope=scope)
         print(f"Deleted memories for scope '{scope}'")
 
         # Delete memory store
-        await project_client.memory_stores.delete(memory_store.name)
+        await project_client.beta.memory_stores.delete(memory_store.name)
         print(f"Deleted memory store `{memory_store.name}`")
 
 

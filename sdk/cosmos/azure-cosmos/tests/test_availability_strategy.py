@@ -8,7 +8,7 @@ import time
 import unittest
 import uuid
 from concurrent.futures import ThreadPoolExecutor
-from typing import Optional, Any
+from typing import Optional, Any, Union
 
 import pytest
 from azure.core.exceptions import ServiceResponseError
@@ -16,14 +16,13 @@ from azure.core.exceptions import ServiceResponseError
 import test_config
 from _fault_injection_transport import FaultInjectionTransport
 from azure.cosmos import CosmosClient, _location_cache
-from azure.cosmos._availability_strategy_config import _validate_hedging_config
+from azure.cosmos._availability_strategy_config import _validate_request_hedging_strategy
 from azure.cosmos.documents import _OperationType as OperationType
 from azure.cosmos.exceptions import CosmosHttpResponseError
 from azure.cosmos.http_constants import ResourceType
 
 #cspell:ignore PPAF, ppaf
 
-_Unset: Any = object()
 class MockHandler(logging.Handler):
     def __init__(self):
         super(MockHandler, self).__init__()
@@ -73,14 +72,14 @@ def _perform_read_operation(
         created_doc,
         expected_uris,
         excluded_uris,
-        availability_strategy_config: Optional[dict[str, Any]] = _Unset,
+        availability_strategy: Optional[Union[bool, dict[str, Any]]] = None,
         excluded_locations: Optional[list[str]] = None,
         **kwargs):
     excluded_locations = [] if excluded_locations is None else excluded_locations
 
     """Execute different types of read operations"""
-    if availability_strategy_config is not _Unset:
-        kwargs['availability_strategy_config'] = availability_strategy_config
+    if availability_strategy is not None:
+        kwargs['availability_strategy'] = availability_strategy
     if operation == READ:
         container.read_item(
             item=created_doc['id'],
@@ -133,14 +132,14 @@ def _perform_write_operation(
         expected_uris,
         excluded_uris,
         retry_write=False,
-        availability_strategy_config: Optional[dict[str, Any]] = _Unset,
+        availability_strategy: Optional[Union[bool, dict[str, Any]]] = None,
         excluded_locations: Optional[list[str]] = None,
         **kwargs):
     """Execute different types of write operations"""
 
     excluded_locations = [] if excluded_locations is None else excluded_locations
-    if availability_strategy_config is not _Unset:
-        kwargs['availability_strategy_config'] = availability_strategy_config
+    if availability_strategy is not None:
+        kwargs['availability_strategy'] = availability_strategy
 
     if operation == CREATE:
         doc = _create_doc()
@@ -343,12 +342,12 @@ class TestAvailabilityStrategy:
         """Test that creating strategy with non-positive thresholds raises ValueError when enabled"""
         with pytest.raises(ValueError, match=error_message):
             config = {'threshold_ms':threshold_ms, 'threshold_steps_ms':threshold_steps_ms}
-            _validate_hedging_config(config)
+            _validate_request_hedging_strategy(config)
 
     @pytest.mark.parametrize("operation", [READ, QUERY, QUERY_PK, READ_ALL, CHANGE_FEED, CREATE, UPSERT, REPLACE, DELETE, PATCH, BATCH])
     @pytest.mark.parametrize("client_availability_strategy, request_availability_strategy", [
         (None, {'threshold_ms':150,  'threshold_steps_ms':50}),
-        ({'threshold_ms':150, 'threshold_steps_ms':50}, _Unset),
+        ({'threshold_ms':150, 'threshold_steps_ms':50}, None),
         ({'threshold_ms':150, 'threshold_steps_ms':50}, {'threshold_ms':150, 'threshold_steps_ms':50})
     ])
     def test_availability_strategy_in_steady_state(
@@ -359,7 +358,7 @@ class TestAvailabilityStrategy:
         """Test for steady state, operations go to first preferred location even with availability strategy enabled"""
         setup = self._setup_method_with_custom_transport(
             None,
-            availability_strategy_config=client_availability_strategy)
+            availability_strategy=client_availability_strategy)
 
         doc = _create_doc()
         setup['col'].create_item(body=doc)
@@ -375,7 +374,7 @@ class TestAvailabilityStrategy:
                 doc,
                 expected_uris,
                 excluded_uris,
-                availability_strategy_config=request_availability_strategy)
+                availability_strategy=request_availability_strategy)
         else:
             _perform_write_operation(
                 operation,
@@ -383,13 +382,13 @@ class TestAvailabilityStrategy:
                 doc,
                 expected_uris,
                 excluded_uris,
-                availability_strategy_config=request_availability_strategy)
+                availability_strategy=request_availability_strategy)
         self._clean_up_container(setup['db'].id, setup['col'].id)
 
     @pytest.mark.parametrize("operation", [READ, QUERY, QUERY_PK, READ_ALL, CHANGE_FEED, CREATE, UPSERT, REPLACE, DELETE, PATCH, BATCH])
     @pytest.mark.parametrize("client_availability_strategy, request_availability_strategy", [
         (None, {'threshold_ms':150, 'threshold_steps_ms':50}),
-        ({'threshold_ms':150, 'threshold_steps_ms':50}, _Unset),
+        ({'threshold_ms':150, 'threshold_steps_ms':50}, None),
         ({'threshold_ms':700, 'threshold_steps_ms':50}, {'threshold_ms':150, 'threshold_steps_ms':50})
     ])
     def test_client_availability_strategy_failover(
@@ -414,7 +413,7 @@ class TestAvailabilityStrategy:
         setup = self._setup_method_with_custom_transport(
             custom_transport,
             multiple_write_locations=True,
-            availability_strategy_config=client_availability_strategy)
+            availability_strategy=client_availability_strategy)
 
         setup_without_fault = self._setup_method_with_custom_transport(None)
         doc = _create_doc()
@@ -430,7 +429,7 @@ class TestAvailabilityStrategy:
                 doc,
                 expected_uris,
                 [],
-                availability_strategy_config=request_availability_strategy)
+                availability_strategy=request_availability_strategy)
         else:
             _perform_write_operation(
                 operation,
@@ -439,7 +438,7 @@ class TestAvailabilityStrategy:
                 expected_uris,
                 [],
                 retry_write=True,
-                availability_strategy_config=request_availability_strategy)
+                availability_strategy=request_availability_strategy)
         self._clean_up_container(setup['db'].id, setup['col'].id)
 
     @pytest.mark.parametrize("operation", [READ, QUERY, QUERY_PK, READ_ALL, CHANGE_FEED, CREATE, UPSERT, REPLACE, DELETE, PATCH, BATCH])
@@ -483,9 +482,9 @@ class TestAvailabilityStrategy:
         # Test should fail with original error without failover
         with pytest.raises(CosmosHttpResponseError) as exc_info:
             if operation in [READ, QUERY, QUERY_PK, READ_ALL, CHANGE_FEED]:
-                _perform_read_operation(operation, setup['col'], doc, expected_uris, [], availability_strategy_config=strategy)
+                _perform_read_operation(operation, setup['col'], doc, expected_uris, [], availability_strategy=strategy)
             else:
-                _perform_write_operation(operation, setup['col'], doc, expected_uris, [], retry_write=True, availability_strategy_config=strategy)
+                _perform_write_operation(operation, setup['col'], doc, expected_uris, [], retry_write=True, availability_strategy=strategy)
                 
         # Verify error code
         assert exc_info.value.status_code == status_code
@@ -534,9 +533,9 @@ class TestAvailabilityStrategy:
         # Test should fail with error from the first region
         with pytest.raises(CosmosHttpResponseError) as exc_info:
             if operation in [READ, QUERY, QUERY_PK, READ_ALL, CHANGE_FEED]:
-                _perform_read_operation(operation, setup['col'], doc, expected_uris, [], availability_strategy_config=strategy)
+                _perform_read_operation(operation, setup['col'], doc, expected_uris, [], availability_strategy=strategy)
             else:
-                _perform_write_operation(operation, setup['col'], doc, expected_uris, [], retry_write=True, availability_strategy_config=strategy)
+                _perform_write_operation(operation, setup['col'], doc, expected_uris, [], retry_write=True, availability_strategy=strategy)
 
         # Verify error code
         assert exc_info.value.status_code == 400
@@ -560,7 +559,7 @@ class TestAvailabilityStrategy:
             CosmosHttpResponseError(status_code=400, message="Injected Error") # using non retryable errors to verify the request will only go to the first region
         )
         custom_transport = self._get_custom_transport_with_fault_injection(predicate, error_lambda)
-        setup = self._setup_method_with_custom_transport(custom_transport, availability_strategy_config=client_strategy)
+        setup = self._setup_method_with_custom_transport(custom_transport, availability_strategy=client_strategy)
         setup_without_fault = self._setup_method_with_custom_transport(None)
         doc = _create_doc()
         setup_without_fault['col'].create_item(body=doc)
@@ -571,9 +570,9 @@ class TestAvailabilityStrategy:
         # Test should fail with error from the first region
         with pytest.raises(CosmosHttpResponseError) as exc_info:
             if operation in [READ, QUERY, QUERY_PK, READ_ALL, CHANGE_FEED]:
-                _perform_read_operation(operation, setup['col'], doc, expected_uris, excluded_uris, availability_strategy_config=None)
+                _perform_read_operation(operation, setup['col'], doc, expected_uris, excluded_uris, availability_strategy=False)
             else:
-                _perform_write_operation(operation, setup['col'], doc, expected_uris, excluded_uris, retry_write=True, availability_strategy_config=None)
+                _perform_write_operation(operation, setup['col'], doc, expected_uris, excluded_uris, retry_write=True, availability_strategy=False)
 
         # Verify error code
         assert exc_info.value.status_code == 400
@@ -610,9 +609,9 @@ class TestAvailabilityStrategy:
         # Test operation with fault injection
 
         if operation in [READ, QUERY, QUERY_PK, READ_ALL, CHANGE_FEED]:
-            _perform_read_operation(operation, setup['col'], doc, expected_uris, [], availability_strategy_config=request_strategy)
+            _perform_read_operation(operation, setup['col'], doc, expected_uris, [], availability_strategy=request_strategy)
         else:
-            _perform_write_operation(operation, setup['col'], doc, expected_uris, [], retry_write=True, availability_strategy_config=request_strategy)
+            _perform_write_operation(operation, setup['col'], doc, expected_uris, [], retry_write=True, availability_strategy=request_strategy)
 
         self._clean_up_container(setup['db'].id, setup['col'].id)
 
@@ -654,7 +653,7 @@ class TestAvailabilityStrategy:
                     expected_uris,
                     excluded_uris,
                     excluded_locations=[self.REGION_2],
-                    availability_strategy_config=strategy)
+                    availability_strategy=strategy)
             else:
                 _perform_write_operation(
                     operation,
@@ -664,7 +663,7 @@ class TestAvailabilityStrategy:
                     excluded_uris,
                     retry_write=True,
                     excluded_locations=[self.REGION_2],
-                    availability_strategy_config=strategy)
+                    availability_strategy=strategy)
 
         # Verify error code
         assert exc_info.value.status_code == 400
@@ -700,7 +699,7 @@ class TestAvailabilityStrategy:
 
         # Test should fail with error from the first region
         with pytest.raises(CosmosHttpResponseError) as exc_info:
-            _perform_write_operation(operation, setup['col'], doc, expected_uris, excluded_uris, availability_strategy_config=strategy)
+            _perform_write_operation(operation, setup['col'], doc, expected_uris, excluded_uris, availability_strategy=strategy)
 
         # Verify error code
         assert exc_info.value.status_code == 400
@@ -754,7 +753,7 @@ class TestAvailabilityStrategy:
                         doc,
                         expected_uris,
                         [],
-                        availability_strategy_config=strategy)
+                        availability_strategy=strategy)
                 else:
                     _perform_write_operation(
                         operation,
@@ -763,7 +762,7 @@ class TestAvailabilityStrategy:
                         expected_uris,
                         [],
                         retry_write=True,
-                        availability_strategy_config=strategy)
+                        availability_strategy=strategy)
 
             # Subsequent operations should go directly to second region due to per partition circular breaker
             expected_uris = [failed_over_uri]
@@ -780,7 +779,7 @@ class TestAvailabilityStrategy:
                     doc,
                     expected_uris,
                     excluded_uris,
-                    availability_strategy_config=strategy)
+                    availability_strategy=strategy)
             else:
                 _perform_write_operation(
                     operation,
@@ -789,7 +788,7 @@ class TestAvailabilityStrategy:
                     expected_uris,
                     excluded_uris,
                     retry_write=True,
-                    availability_strategy_config=strategy)
+                    availability_strategy=strategy)
 
         finally:
             del os.environ["AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER"]
@@ -831,7 +830,7 @@ class TestAvailabilityStrategy:
                 doc,
                 [uri_down],
                 [failed_over_uri],
-                availability_strategy_config=strategy)
+                availability_strategy=strategy)
 
         # Verify error code matches first region's error
         assert exc_info.value.status_code == 400

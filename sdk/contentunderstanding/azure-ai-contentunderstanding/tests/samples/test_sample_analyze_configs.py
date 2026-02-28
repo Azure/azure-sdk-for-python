@@ -153,7 +153,7 @@ class TestSampleAnalyzeConfigs(ContentUnderstandingClientTestBase):
                 formulas = getattr(page, "formulas", None)
                 if formulas:
                     formulas_count += len(formulas)
-        
+
         if formulas_count > 0:
             print(f"[PASS] Found {formulas_count} formula(s) in document pages")
         else:
