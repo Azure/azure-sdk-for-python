@@ -22,6 +22,8 @@ class UpstreamMessageType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SEND_TO_GROUP = "sendToGroup"
     SEND_EVENT = "sendEvent"
     SEQUENCE_ACK = "sequenceAck"
+    INVOKE = "invoke"
+    CANCEL_INVOCATION = "cancelInvocation"
 
 
 class WebPubSubDataType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

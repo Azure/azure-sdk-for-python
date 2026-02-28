@@ -51,6 +51,12 @@ from ..models._models import (
     OpenClientError,
     ReconnectError,
     RecoverError,
+    InvokeMessage,
+    InvokeResponseMessage,
+    CancelInvocationMessage,
+    InvokeEventResult,
+    InvocationError,
+    InvocationManagerAsync,
 )
 from ..models._enums import (
     WebPubSubDataType,
@@ -275,6 +281,7 @@ class WebPubSubClient(
             **kwargs,
         )
         self._ack_map: AckMapAsync = AckMapAsync()
+        self._invocation_map: InvocationManagerAsync = InvocationManagerAsync()
         self._ws: Optional[WebSocketAppAsync] = None
         self._event: asyncio.Event = asyncio.Event()
         self._task_seq_ack: Optional[asyncio.Task] = None
@@ -605,6 +612,206 @@ class WebPubSubClient(
 
         await self._retry(send_to_group_attempt)
 
+    @overload
+    async def invoke_event(
+        self,
+        event_name: str,
+        content: str,
+        data_type: Literal[WebPubSubDataType.TEXT],
+        **kwargs: Any,
+    ) -> InvokeEventResult:
+        """Invoke an upstream event and wait for the correlated response.
+
+        :param event_name: The event name. Required.
+        :type event_name: str.
+        :param content: The data content. Required.
+        :type content: str.
+        :param data_type: The data type. Required.
+        :type data_type: ~azure.messaging.webpubsubclient.models.WebPubSubDataType.TEXT
+        :keyword str invocation_id: The optional invocation id. If not specified, client will generate one.
+        :keyword float timeout: Time limit in seconds to wait for the invoke response. If None (the default),
+         waits indefinitely.
+        :return: The invocation result.
+        :rtype: ~azure.messaging.webpubsubclient.models.InvokeEventResult
+        """
+
+    @overload
+    async def invoke_event(
+        self,
+        event_name: str,
+        content: memoryview,
+        data_type: Literal[WebPubSubDataType.BINARY, WebPubSubDataType.PROTOBUF],
+        **kwargs: Any,
+    ) -> InvokeEventResult:
+        """Invoke an upstream event and wait for the correlated response.
+
+        :param event_name: The event name. Required.
+        :type event_name: str.
+        :param content: The data content. Required.
+        :type content: memoryview.
+        :param data_type: The data type. Required.
+        :type data_type: ~azure.messaging.webpubsubclient.models.WebPubSubDataType.BINARY or
+         ~azure.messaging.webpubsubclient.models.WebPubSubDataType.PROTOBUF
+        :keyword str invocation_id: The optional invocation id. If not specified, client will generate one.
+        :keyword float timeout: Time limit in seconds to wait for the invoke response. If None (the default),
+         waits indefinitely.
+        :return: The invocation result.
+        :rtype: ~azure.messaging.webpubsubclient.models.InvokeEventResult
+        """
+
+    @overload
+    async def invoke_event(
+        self,
+        event_name: str,
+        content: Dict[str, Any],
+        data_type: Literal[WebPubSubDataType.JSON],
+        **kwargs: Any,
+    ) -> InvokeEventResult:
+        """Invoke an upstream event and wait for the correlated response.
+
+        :param event_name: The event name. Required.
+        :type event_name: str.
+        :param content: The data content. Required.
+        :type content: Dict[str, Any].
+        :param data_type: The data type. Required.
+        :type data_type: ~azure.messaging.webpubsubclient.models.WebPubSubDataType.JSON
+        :keyword str invocation_id: The optional invocation id. If not specified, client will generate one.
+        :keyword float timeout: Time limit in seconds to wait for the invoke response. If None (the default),
+         waits indefinitely.
+        :return: The invocation result.
+        :rtype: ~azure.messaging.webpubsubclient.models.InvokeEventResult
+        """
+
+    async def invoke_event(
+        self,
+        event_name: str,
+        content: Union[str, memoryview, Dict[str, Any]],
+        data_type: WebPubSubDataType,
+        **kwargs: Any,
+    ) -> InvokeEventResult:
+        """Invoke an upstream event and wait for the correlated response.
+
+        :param event_name: The event name. Required.
+        :type event_name: str.
+        :param content: The data content. Required.
+        :type content: Union[str, memoryview, Dict[str, Any]].
+        :param data_type: The data type. Required.
+        :type data_type: ~azure.messaging.webpubsubclient.models.WebPubSubDataType or str.
+        :keyword str invocation_id: The optional invocation id. If not specified, client will generate one.
+        :keyword float timeout: Time limit in seconds to wait for the invoke response. If None (the default),
+         waits indefinitely.
+        :return: The invocation result.
+        :rtype: ~azure.messaging.webpubsubclient.models.InvokeEventResult
+        """
+
+        async def invoke_event_attempt() -> InvokeEventResult:
+            return await self._invoke_event_core(event_name, content, data_type, **kwargs)
+
+        return await self._retry_with_result(invoke_event_attempt)
+
+    async def _invoke_event_core(
+        self,
+        event_name: str,
+        content: Union[str, memoryview, Dict[str, Any]],
+        data_type: WebPubSubDataType,
+        **kwargs: Any,
+    ) -> InvokeEventResult:
+        invocation_id_opt = kwargs.pop("invocation_id", None)
+        timeout = kwargs.pop("timeout", None)
+        invocation_id, entry = self._invocation_map.register(invocation_id_opt)
+
+        invoke_message = InvokeMessage(
+            invocation_id=invocation_id,
+            target="event",
+            event=event_name,
+            data_type=data_type,
+            data=content,
+        )
+
+        try:
+            await self._send_message(invoke_message, **kwargs)
+        except Exception as e:
+            invocation_error = (
+                e
+                if isinstance(e, InvocationError)
+                else InvocationError(
+                    str(e) if str(e) else "Failed to send invocation message.",
+                    invocation_id=invocation_id,
+                )
+            )
+            self._invocation_map.reject(invocation_id, invocation_error)
+            raise invocation_error from e
+
+        try:
+            await asyncio.wait_for(entry.event.wait(), timeout=timeout)
+
+            if entry.error:
+                raise entry.error
+
+            if entry.result is None:
+                raise InvocationError(
+                    "No invoke response received.",
+                    invocation_id=invocation_id,
+                )
+
+            return self._map_invoke_response(entry.result)
+        except asyncio.TimeoutError as e:
+            raise InvocationError(
+                "Timeout while waiting for invoke response.",
+                invocation_id=invocation_id,
+            ) from e
+        except Exception as e: # pylint: disable=broad-except
+            should_cancel = isinstance(e, InvocationError) and e.error_detail is None
+            if should_cancel:
+                await self._send_cancel_invocation(invocation_id)
+            raise
+        finally:
+            self._invocation_map.discard(invocation_id)
+
+    def _map_invoke_response(self, message: InvokeResponseMessage) -> InvokeEventResult:
+        if message.success is not True:
+            if message.success is False:
+                raise InvocationError(
+                    message.error.message if message.error else "Invocation failed.",
+                    invocation_id=message.invocation_id,
+                    error_detail=message.error,
+                )
+            raise InvocationError(
+                "Unsupported invoke response frame.",
+                invocation_id=message.invocation_id,
+            )
+
+        return InvokeEventResult(
+            invocation_id=message.invocation_id,
+            data_type=message.data_type,
+            data=message.data,
+        )
+
+    async def _send_cancel_invocation(self, invocation_id: str) -> None:
+        try:
+            await self._send_message(CancelInvocationMessage(invocation_id=invocation_id))
+        except Exception as e:  # pylint: disable=broad-except
+            _LOGGER.debug("Failed to send cancelInvocation for %s: %s", invocation_id, e)
+
+    async def _retry_with_result(self, func: Callable[[], Awaitable[InvokeEventResult]]) -> InvokeEventResult:
+        retry_attempt = 0
+        while True:
+            try:
+                return await func()
+            except InvocationError:
+                raise
+            except Exception as e:  # pylint: disable=broad-except
+                retry_attempt = retry_attempt + 1
+                delay_seconds = self._message_retry_policy.next_retry_delay(retry_attempt)
+                if delay_seconds is None:
+                    raise e
+                _LOGGER.debug(
+                    "will retry %sth times after %s seconds",
+                    retry_attempt,
+                    delay_seconds,
+                )
+                await asyncio.sleep(delay_seconds)
+
     async def _retry(self, func: Callable[[], Awaitable[None]]):
         retry_attempt = 0
         while True:
@@ -790,6 +997,13 @@ class WebPubSubClient(
                         sequence_id=message.sequence_id,
                     ),
                 )
+            elif message.kind == "invokeResponse":
+                resolved = self._invocation_map.resolve(message)
+                if not resolved:
+                    _LOGGER.debug(
+                        "Received invokeResponse for unknown invocationId: %s",
+                        message.invocation_id,
+                    )
             else:
                 _LOGGER.warning("unknown message type: %s", message.kind)
 
@@ -808,6 +1022,13 @@ class WebPubSubClient(
                 self._last_close_event = CloseEvent(close_status_code=close_status_code, close_reason=close_msg)
                 # clean ack cache
                 self._ack_map.clear()
+
+                self._invocation_map.reject_all(
+                    lambda inv_id: InvocationError(
+                        "Connection is disconnected before receiving invoke response from the service",
+                        invocation_id=inv_id,
+                    )
+                )
 
                 if self._is_stopping:
                     _LOGGER.warning("The client is stopping state. Stop recovery.")
