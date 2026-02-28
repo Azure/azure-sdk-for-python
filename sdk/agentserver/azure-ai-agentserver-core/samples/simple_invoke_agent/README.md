@@ -14,8 +14,9 @@ The `/runs` and `/responses` endpoints are **not** used in this sample.
 
 | File | Purpose |
 |------|---------|
-| `main.py` | Agent server — implements `agent_invoke` with stream/non-stream logic |
-| `test_invoke_client.py` | Test client — sends both a non-streaming and a streaming request |
+| `main.py` | Agent server — implements `agent_invoke` with stream/non-stream logic and `agent_openapi_spec` |
+| `openapi.json` | OpenAPI 3.1.0 spec for the `/invoke` endpoint, loaded at runtime by `agent_openapi_spec` |
+| `test_invoke_client.py` | Test client — sends a non-streaming request, a streaming request, and fetches the OpenAPI spec |
 | `requirements.txt` | Python dependencies |
 
 ## Setup
@@ -78,6 +79,12 @@ curl -s -X POST http://localhost:8000/invoke \
     -d '{"message": "Hello world"}'
 ```
 
+Fetch the OpenAPI spec:
+
+```bash
+curl -s http://localhost:8000/invoke/docs/openapi.json
+```
+
 ## Key concepts
 
 ### How streaming is detected
@@ -119,3 +126,18 @@ return StreamingResponse(_sse_stream(message), media_type="text/event-stream")
 `agent_run` is abstract in `FoundryCBAgent` and must be overridden. In this sample it
 just raises `NotImplementedError` to make the intent explicit — `/runs` and
 `/responses` are out of scope here.
+
+### OpenAPI spec
+
+The OpenAPI 3.1.0 document lives in `openapi.json` alongside `main.py`. Override
+`agent_openapi_spec` to read and return it; the framework serves it at
+`GET /invoke/docs/openapi.json`:
+
+```python
+_OPENAPI_SPEC_FILE = Path(__file__).parent / "openapi.json"
+
+def agent_openapi_spec(self) -> dict:
+    return json.loads(_OPENAPI_SPEC_FILE.read_text(encoding="utf-8"))
+```
+
+If the method is not overridden (or returns `None`), the endpoint returns HTTP 404.

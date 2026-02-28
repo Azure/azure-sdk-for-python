@@ -20,6 +20,7 @@ import requests
 
 BASE_URL = "http://localhost:8088"
 PAYLOAD = {"message": "The quick brown fox jumps over the lazy dog"}
+OPENAPI_URL = f"{BASE_URL}/invoke/docs/openapi.json"
 
 
 # ---------------------------------------------------------------------------
@@ -82,6 +83,24 @@ def test_stream() -> None:
 
 
 # ---------------------------------------------------------------------------
+# OpenAPI spec request
+# ---------------------------------------------------------------------------
+
+
+def test_openapi_spec() -> None:
+    """Fetch the OpenAPI spec from ``GET /invoke/docs/openapi.json``."""
+    print("=" * 60)
+    print("OpenAPI spec  (GET /invoke/docs/openapi.json)")
+    print("=" * 60)
+
+    response = requests.get(OPENAPI_URL, timeout=10.0)
+
+    print(f"HTTP status : {response.status_code}")
+    print(f"Response    : {json.dumps(response.json(), ensure_ascii=False, indent=2)}")
+    print()
+
+
+# ---------------------------------------------------------------------------
 # Entry point
 # ---------------------------------------------------------------------------
 
@@ -89,3 +108,4 @@ def test_stream() -> None:
 if __name__ == "__main__":
     test_non_stream()
     test_stream()
+    test_openapi_spec()

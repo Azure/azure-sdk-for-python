@@ -34,8 +34,11 @@ Streaming::
 """
 
 import json
+from pathlib import Path
 
 from starlette.responses import JSONResponse, StreamingResponse
+
+_OPENAPI_SPEC_FILE = Path(__file__).parent / "openapi.json"
 
 from azure.ai.agentserver.core import AgentInvokeContext, AgentRunContext, FoundryCBAgent
 
@@ -82,7 +85,21 @@ class SimpleInvokeAgent(FoundryCBAgent):
 
     ``/runs`` and ``/responses`` are not used; :meth:`agent_run` raises
     :class:`NotImplementedError` to signal this clearly.
+
+    The OpenAPI specification for the ``/invoke`` endpoint is exposed at
+    ``GET /invoke/docs/openapi.json``.
     """
+
+    def agent_openapi_spec(self) -> dict:
+        """Return the OpenAPI 3.1.0 specification for the ``/invoke`` endpoint.
+
+        The spec is loaded from ``openapi.json`` in the same directory as this
+        file and served by the framework at ``GET /invoke/docs/openapi.json``.
+
+        :return: OpenAPI 3.1.0 document describing this agent's ``/invoke`` endpoint.
+        :rtype: dict
+        """
+        return json.loads(_OPENAPI_SPEC_FILE.read_text(encoding="utf-8"))
 
     async def agent_run(self, context: AgentRunContext):
         """Not used in this sample.
