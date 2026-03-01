@@ -53,6 +53,8 @@ REM powershell -Command "(Get-Content azure\ai\projects\models\_models.py) -repl
 REM Now do these additional changes manually, if you want the "Generate docs" job to succeed in PR pipeline
 REM Remove `generate_summary` from class `Reasoning`. It's deprecated but causes two types of errors. Consider removing it from TypeSpec.
 
+exit /b
+
 REM Remove required 'foundry_features' from public API surface, and instead set them internally in the relevant methods
 copy agent-scripts\auto_set_foundry_features.py .
 python auto_set_foundry_features.py

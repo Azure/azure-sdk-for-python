@@ -1,350 +1,425 @@
-from __future__ import annotations
+#!/usr/bin/env python3
+"""
+auto_set_foundry_features.py
+
+Script to apply the foundry-features opt-in changes to the generated operations files.
+
+Run from: azure-sdk-for-python/sdk/ai/azure-ai-projects
+
+Steps applied to each target file:
+  1. Insert _get_foundry_features_opt_in_keys constant after the last import statement.
+  2. Remove the 'foundry_features' parameter from all non-build_ method signatures.
+     Also remove the corresponding :keyword / :paramtype docstring entries.
+  3. Add a local variable 'foundry_features' at the top of each implementation method body
+     (required params → fixed string; optional → conditional on allow_preview flag).
+  4. In any nested 'def prepare_request(next_link=None):' function, ensure the paginated
+     GET request includes the Foundry-Features header.
+"""
 
 import ast
 import re
-from pathlib import Path
+import os
+import sys
+
+# ── Constants ───────────────────────────────────────────────────────────────
+
+FF_OPT_IN_LINE = (
+    '_get_foundry_features_opt_in_keys: str = ",".join('
+    '[key.value for key in _models.AgentDefinitionOptInKeys] + '
+    '[key.value for key in _models.FoundryFeaturesOptInKeys])'
+)
 
 TARGET_FILES = [
-    Path("azure/ai/projects/aio/operations/_operations.py"),
-    Path("azure/ai/projects/operations/_operations.py"),
+    os.path.join("azure", "ai", "projects", "aio", "operations", "_operations.py"),
+    os.path.join("azure", "ai", "projects", "operations", "_operations.py"),
 ]
 
-OPT_IN_CONST = (
-    '_get_foundry_features_opt_in_keys: str = ",".join([key.value for key in '
-    "_models.AgentDefinitionOptInKeys] + [key.value for key in _models.FoundryFeaturesOptInKeys])"
-)
-
-FOUNDRY_ARG_OLD = "foundry_features=foundry_features,"
-FOUNDRY_ARG_NEW = (
-    "foundry_features=cast(Any, _get_foundry_features_opt_in_keys if "
-    '(self.__class__.__name__.startswith("Beta") or getattr(self._config, "_allow_preview", False)) else None),'
-)
-
-FOUNDRY_ARG_OLD_AFTER_FIRST_PASS = (
-    "foundry_features=_get_foundry_features_opt_in_keys if "
-    '(self.__class__.__name__.startswith("Beta") or self._config._allow_preview) else None,'
-)
-
-FOUNDRY_ARG_OLD_AFTER_FIRST_PASS_GETATTR = (
-    "foundry_features=_get_foundry_features_opt_in_keys if "
-    '(self.__class__.__name__.startswith("Beta") or getattr(self._config, "_allow_preview", False)) else None,'
-)
-
-NEXT_LINK_OLD = '"GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params'
-NEXT_LINK_NEW = (
-    '"GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), '
-    'params=_next_request_params, headers={"Foundry-Features": '
-    '_SERIALIZER.header("foundry_features", cast(Any, _get_foundry_features_opt_in_keys if '
-    '(self.__class__.__name__.startswith("Beta") or getattr(self._config, "_allow_preview", False)) else None), "str")}'
-)
-
-NEXT_LINK_OLD_AFTER_FIRST_PASS = (
-    '"GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), '
-    'params=_next_request_params, headers={"Foundry-Features": '
-    '_SERIALIZER.header("foundry_features", foundry_features, "str")}'
-)
+# ── Entry point ──────────────────────────────────────────────────────────────
 
 
-def _apply_global_rewrites(text: str) -> str:
-    text = text.replace("self._config._allow_preview", 'getattr(self._config, "_allow_preview", False)')
+def main():
+    # Locate the azure-ai-projects root (one level up from agent-scripts/)
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    base_dir = os.path.dirname(script_dir)
 
-    # Normalize all previously generated foundry_features argument variants.
-    text = text.replace(FOUNDRY_ARG_OLD, FOUNDRY_ARG_NEW)
-    text = text.replace(FOUNDRY_ARG_OLD_AFTER_FIRST_PASS, FOUNDRY_ARG_NEW)
-    text = text.replace(FOUNDRY_ARG_OLD_AFTER_FIRST_PASS_GETATTR, FOUNDRY_ARG_NEW)
-    text = re.sub(
-        r"foundry_features=_get_foundry_features_opt_in_keys if "
-        r'\(self\.__class__\.__name__\.startswith\("Beta"\) or '
-        r'getattr\(self\._config, "_allow_preview", False\)\) else None,',
-        FOUNDRY_ARG_NEW,
-        text,
-    )
-
-    # Normalize prepare_request next-link call variants.
-    text = text.replace(NEXT_LINK_OLD, NEXT_LINK_NEW)
-    text = text.replace(NEXT_LINK_OLD_AFTER_FIRST_PASS, NEXT_LINK_NEW)
-    text = text.replace(
-        'headers={"Foundry-Features": _SERIALIZER.header("foundry_features", foundry_features, "str")}',
-        'headers={"Foundry-Features": _SERIALIZER.header("foundry_features", cast(Any, _get_foundry_features_opt_in_keys if (self.__class__.__name__.startswith("Beta") or getattr(self._config, "_allow_preview", False)) else None), "str")}',
-    )
-    text = text.replace(
-        'headers={"Foundry-Features": self._serialize.header("foundry_features", foundry_features, "str")}',
-        'headers={"Foundry-Features": _SERIALIZER.header("foundry_features", cast(Any, _get_foundry_features_opt_in_keys if (self.__class__.__name__.startswith("Beta") or getattr(self._config, "_allow_preview", False)) else None), "str")}',
-    )
-
-    text = re.sub(
-        r"^[ \t]*foundry_features = _get_foundry_features_opt_in_keys if "
-        r'\(self\.__class__\.__name__\.startswith\("Beta"\) or '
-        r'getattr\(self\._config, "_allow_preview", False\)\) else None\r?\n',
-        "",
-        text,
-        flags=re.MULTILINE,
-    )
-
-    return text
-
-
-def _ensure_serializer_instance(text: str, newline: str) -> str:
-    if "_SERIALIZER = Serializer()" in text:
-        return text
-
-    lines = text.splitlines(keepends=True)
-    for idx, line in enumerate(lines):
-        if line.startswith("class "):
-            insertion = [
-                "_SERIALIZER = Serializer()" + newline,
-                "_SERIALIZER.client_side_validation = False" + newline,
-                newline,
-            ]
-            lines[idx:idx] = insertion
-            return "".join(lines)
-
-    return text
-
-
-def _detect_newline(text: str) -> str:
-    return "\r\n" if "\r\n" in text else "\n"
-
-
-def _insert_opt_in_const(text: str, newline: str) -> str:
-    if OPT_IN_CONST in text:
-        return text
-
-    lines = text.splitlines(keepends=True)
-
-    for idx, line in enumerate(lines):
-        if line.startswith("JSON = MutableMapping"):
-            insertion = [OPT_IN_CONST + newline, newline]
-            lines[idx:idx] = insertion
-            return "".join(lines)
-
-    last_import_idx = -1
-    for idx, line in enumerate(lines):
-        stripped = line.strip()
-        if stripped.startswith("import ") or stripped.startswith("from "):
-            last_import_idx = idx
-
-    if last_import_idx >= 0:
-        insertion = [newline, OPT_IN_CONST + newline]
-        lines[last_import_idx + 1 : last_import_idx + 1] = insertion
-
-    return "".join(lines)
-
-
-def _split_top_level_commas(text: str) -> list[str]:
-    parts: list[str] = []
-    current: list[str] = []
-    depth = 0
-
-    for ch in text:
-        if ch in "([{":
-            depth += 1
-        elif ch in ")]}":
-            depth -= 1
-
-        if ch == "," and depth == 0:
-            parts.append("".join(current))
-            current = []
-        else:
-            current.append(ch)
-
-    parts.append("".join(current))
-    return parts
-
-
-def _remove_foundry_from_signature(signature_text: str) -> str:
-    open_idx = signature_text.find("(")
-    if open_idx < 0:
-        return signature_text
-
-    depth = 0
-    close_idx = -1
-    for idx, ch in enumerate(signature_text[open_idx:], start=open_idx):
-        if ch == "(":
-            depth += 1
-        elif ch == ")":
-            depth -= 1
-            if depth == 0:
-                close_idx = idx
-                break
-
-    if close_idx < 0:
-        return signature_text
-
-    params_text = signature_text[open_idx + 1 : close_idx]
-    params = _split_top_level_commas(params_text)
-
-    filtered: list[str] = []
-    for param in params:
-        stripped = param.strip()
-        if stripped.startswith("foundry_features:"):
+    for rel_path in TARGET_FILES:
+        filepath = os.path.join(base_dir, rel_path)
+        if not os.path.exists(filepath):
+            print(f"WARNING: File not found: {filepath}")
             continue
-        filtered.append(param)
+        process_file(filepath)
 
-    # Remove a bare "*" marker if it would be followed only by **kwargs or nothing.
-    changed = True
-    while changed:
-        changed = False
-        for idx, token in enumerate(filtered):
-            if token.strip() != "*":
-                continue
-            next_nonempty = ""
-            for candidate in filtered[idx + 1 :]:
-                if candidate.strip():
-                    next_nonempty = candidate.strip()
-                    break
-            if not next_nonempty or next_nonempty.startswith("**"):
-                del filtered[idx]
-                changed = True
-                break
-
-    new_params_text = ",".join(filtered)
-    return signature_text[: open_idx + 1] + new_params_text + signature_text[close_idx:]
+    print("\nAll done!")
 
 
-def _find_signature_end(block_text: str) -> int:
-    depth = 0
-    seen_open = False
-    for idx, ch in enumerate(block_text):
-        if ch == "(":
-            depth += 1
-            seen_open = True
-        elif ch == ")":
-            depth -= 1
-        elif ch == ":" and seen_open and depth == 0:
-            return idx + 1
-    return -1
+# ── File-level processing ────────────────────────────────────────────────────
 
 
-def _remove_foundry_docstring_lines(block_text: str) -> str:
-    lines = block_text.splitlines(keepends=True)
-    out: list[str] = []
-    idx = 0
+def process_file(filepath):
+    print(f"\nProcessing: {filepath}")
+    with open(filepath, "r", encoding="utf-8") as f:
+        content = f.read()
 
-    while idx < len(lines):
-        line = lines[idx]
-        if ":keyword foundry_features:" in line:
-            idx += 1
-            while idx < len(lines):
-                if ":paramtype foundry_features:" in lines[idx]:
-                    idx += 1
-                    break
-                idx += 1
-            continue
+    # Idempotency guard
+    if "_get_foundry_features_opt_in_keys" in content:
+        print("  Already processed (found _get_foundry_features_opt_in_keys). Skipping.")
+        return
 
-        out.append(line)
-        idx += 1
+    # Parse AST to find functions that need changes
+    try:
+        tree = ast.parse(content)
+    except SyntaxError as e:
+        print(f"  ERROR: Cannot parse file: {e}")
+        return
 
-    return "".join(out)
+    lines = content.splitlines(keepends=False)
+    original_len = len(lines)
+    ends_with_newline = content.endswith("\n")
 
-
-def _remove_bad_first_pass_helper_lines(block_text: str) -> str:
-    bad_line_1 = (
-        "foundry_features = _get_foundry_features_opt_in_keys if "
-        '(self.__class__.__name__.startswith("Beta") or self._config._allow_preview) else None'
-    )
-    bad_line_2 = (
-        "foundry_features = _get_foundry_features_opt_in_keys if "
-        '(self.__class__.__name__.startswith("Beta") or getattr(self._config, "_allow_preview", False)) else None'
-    )
-
-    lines = block_text.splitlines(keepends=True)
-    out: list[str] = []
-    for line in lines:
-        stripped = line.strip()
-        if stripped == bad_line_1 or stripped == bad_line_2:
-            continue
-        out.append(line)
-    return "".join(out)
-
-
-def _get_function_block_indent(block_text: str) -> str:
-    first_line = block_text.splitlines()[0]
-    return first_line[: len(first_line) - len(first_line.lstrip(" "))]
-
-
-def _transform_function_block(block_text: str) -> str:
-    signature_end = _find_signature_end(block_text)
-    if signature_end > 0:
-        signature_text = block_text[:signature_end]
-        rest = block_text[signature_end:]
-        signature_text = _remove_foundry_from_signature(signature_text)
-        block_text = signature_text + rest
-
-    block_text = _remove_foundry_docstring_lines(block_text)
-    block_text = _remove_bad_first_pass_helper_lines(block_text)
-
-    block_text = block_text.replace(FOUNDRY_ARG_OLD, FOUNDRY_ARG_NEW)
-    block_text = block_text.replace(FOUNDRY_ARG_OLD_AFTER_FIRST_PASS, FOUNDRY_ARG_NEW)
-    block_text = block_text.replace(FOUNDRY_ARG_OLD_AFTER_FIRST_PASS_GETATTR, FOUNDRY_ARG_NEW)
-
-    if "def prepare_request(next_link=None):" in block_text:
-        block_text = block_text.replace(NEXT_LINK_OLD, NEXT_LINK_NEW)
-        block_text = block_text.replace(NEXT_LINK_OLD_AFTER_FIRST_PASS, NEXT_LINK_NEW)
-
-    return block_text
-
-
-def _node_has_foundry_features_arg(node: ast.FunctionDef | ast.AsyncFunctionDef) -> bool:
-    all_args = [
-        *node.args.posonlyargs,
-        *node.args.args,
-        *node.args.kwonlyargs,
-    ]
-    return any(arg.arg == "foundry_features" for arg in all_args)
-
-
-def _apply_to_file(path: Path) -> bool:
-    original_text = path.read_text(encoding="utf-8")
-    newline = _detect_newline(original_text)
-
-    text = _insert_opt_in_const(original_text, newline)
-    text = _ensure_serializer_instance(text, newline)
-    text = _apply_global_rewrites(text)
-    tree = ast.parse(text)
-
-    targets: list[ast.FunctionDef | ast.AsyncFunctionDef] = []
+    # Collect all functions with a 'foundry_features' parameter that aren't build_ functions
+    functions_to_process = []
     for node in ast.walk(tree):
-        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
-            if node.name.startswith("build_"):
-                continue
-            if _node_has_foundry_features_arg(node):
-                targets.append(node)
+        if not isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+            continue
+        if node.name.startswith("build_"):
+            continue
 
-    if not targets and text == original_text:
-        return False
+        found, is_optional = _find_ff_in_args(node)
+        if not found:
+            continue
 
-    lines = text.splitlines(keepends=True)
+        is_overload = any(
+            (isinstance(d, ast.Name) and d.id == "overload")
+            or (isinstance(d, ast.Attribute) and d.attr == "overload")
+            for d in node.decorator_list
+        )
 
-    for node in sorted(targets, key=lambda n: n.lineno, reverse=True):
-        start = node.lineno - 1
-        end = node.end_lineno
-        block_text = "".join(lines[start:end])
-        block_text = _transform_function_block(block_text)
-        lines[start:end] = [block_text]
+        has_docstring = False
+        docstring_end_1based = None
+        if node.body:
+            first = node.body[0]
+            if (
+                isinstance(first, ast.Expr)
+                and hasattr(first, "value")
+                and isinstance(first.value, ast.Constant)
+                and isinstance(first.value.value, str)
+            ):
+                has_docstring = True
+                docstring_end_1based = first.end_lineno  # 1-based
 
-    new_text = "".join(lines)
-    if new_text != original_text:
-        path.write_text(new_text, encoding="utf-8", newline="")
-        return True
-    return False
+        func_length = node.end_lineno - node.lineno + 1
+        functions_to_process.append(
+            {
+                "name": node.name,
+                "lineno": node.lineno,          # 1-based
+                "end_lineno": node.end_lineno,  # 1-based
+                "func_length": func_length,
+                "is_optional": is_optional,
+                "is_overload": is_overload,
+                "has_docstring": has_docstring,
+                "docstring_end_1based": docstring_end_1based,
+            }
+        )
+
+    # Process bottom-to-top so earlier line numbers stay valid
+    functions_to_process.sort(key=lambda x: x["lineno"], reverse=True)
+
+    print(f"  Found {len(functions_to_process)} function(s) to process")
+    for fi in functions_to_process:
+        opt = "optional" if fi["is_optional"] else "required"
+        ov = " [overload]" if fi["is_overload"] else ""
+        print(f"    - {fi['name']}() line {fi['lineno']} ({opt}){ov}")
+
+    for fi in functions_to_process:
+        lines = _apply_function_changes(lines, fi)
+
+    # Step 1: Insert the opt-in-keys constant right after the last import statement
+    lines = _insert_ff_constant(lines)
+
+    new_content = "\n".join(lines)
+    if ends_with_newline and not new_content.endswith("\n"):
+        new_content += "\n"
+
+    with open(filepath, "w", encoding="utf-8") as f:
+        f.write(new_content)
+
+    print(f"  Saved ({len(lines)} lines, was {original_len} lines)")
 
 
-def main() -> int:
-    root = Path.cwd()
-    changed_any = False
+# ── AST helpers ──────────────────────────────────────────────────────────────
 
-    for relative_path in TARGET_FILES:
-        full_path = root / relative_path
-        if not full_path.exists():
-            raise FileNotFoundError(f"Target file not found: {relative_path}")
-        changed = _apply_to_file(full_path)
-        print(f"{relative_path}: {'modified' if changed else 'no changes'}")
-        changed_any = changed_any or changed
 
-    print("Done." if changed_any else "Done (no updates needed).")
-    return 0
+def _find_ff_in_args(node):
+    """Return (found: bool, is_optional: bool) for foundry_features parameter."""
+    for i, arg in enumerate(node.args.kwonlyargs):
+        if arg.arg == "foundry_features":
+            return True, node.args.kw_defaults[i] is not None
 
+    for i, arg in enumerate(node.args.args):
+        if arg.arg == "foundry_features":
+            num_without_default = len(node.args.args) - len(node.args.defaults)
+            return True, i >= num_without_default
+
+    return False, False
+
+
+# ── Constant insertion ────────────────────────────────────────────────────────
+
+
+def _insert_ff_constant(lines):
+    """Find the last top-level import/from line and insert the constant right after it."""
+    last_import_0 = -1
+    for i, line in enumerate(lines):
+        if line and not line[0].isspace():
+            if line.startswith("from ") or line.startswith("import "):
+                last_import_0 = i
+
+    if last_import_0 == -1:
+        raise ValueError("No import statements found in file")
+
+    lines.insert(last_import_0 + 1, FF_OPT_IN_LINE)
+    return lines
+
+
+# ── Per-function changes ──────────────────────────────────────────────────────
+
+
+def _apply_function_changes(lines, fi):
+    start_0 = fi["lineno"] - 1   # 0-indexed start of the 'def' line
+    is_optional = fi["is_optional"]
+    is_overload = fi["is_overload"]
+    has_docstring = fi["has_docstring"]
+    func_length = fi["func_length"]  # original line count of the function
+
+    # Step 2a – Remove foundry_features from the function signature
+    sig_end_0 = _find_signature_end_idx(lines, start_0)
+    lines, sig_line_removed = _remove_ff_from_signature(lines, start_0, sig_end_0)
+
+    # Compute a safe upper bound for the function's content in the (possibly modified) lines
+    search_end = min(start_0 + func_length + 10, len(lines))
+
+    # Step 2b – Remove :keyword foundry_features: … :paramtype foundry_features: from docstring
+    if has_docstring:
+        lines = _remove_ff_from_docstring(lines, start_0, search_end)
+
+    # Step 3 – Add local variable at top of implementation method body
+    if not is_overload and has_docstring:
+        lines = _add_ff_local_var(lines, start_0, search_end, is_optional)
+
+    # Step 4 – Fix prepare_request(next_link=None) if present
+    if not is_overload:
+        lines = _fix_prepare_request(lines, start_0, search_end)
+
+    return lines
+
+
+# ── Signature handling ────────────────────────────────────────────────────────
+
+
+def _find_signature_end_idx(lines, func_start_0):
+    """Return 0-based index of the line containing the closing ')' of the function signature."""
+    depth = 0
+    started = False
+    for i in range(func_start_0, len(lines)):
+        for ch in lines[i]:
+            if ch == "(":
+                depth += 1
+                started = True
+            elif ch == ")":
+                depth -= 1
+                if started and depth == 0:
+                    return i
+    return func_start_0
+
+
+def _remove_ff_from_signature(lines, start_0, sig_end_0):
+    """
+    Remove the foundry_features parameter from the function signature.
+    Returns (lines, line_removed) where line_removed indicates whether a line was deleted.
+    """
+    for i in range(start_0, sig_end_0 + 1):
+        line = lines[i]
+        stripped = line.strip()
+
+        # Case A: foundry_features is the sole parameter on this line
+        #   e.g. "        foundry_features: Optional[str] = None,"
+        if re.match(r"^foundry_features\s*:", stripped) and "def " not in line:
+            del lines[i]
+            # If foundry_features was the only kwonly arg, the preceding '*,'
+            # separator would now be orphaned (SyntaxError). Remove it too.
+            if i > 0 and lines[i - 1].strip() == "*,":
+                next_stripped = lines[i].strip() if i < len(lines) else ""
+                if next_stripped.startswith("**") or next_stripped == ")":
+                    del lines[i - 1]
+            return lines, True
+
+        # Case B: foundry_features shares a line with other parameters
+        #   e.g. "self, name: str, *, foundry_features: str, **kwargs: Any"
+        if "foundry_features" in line and re.search(r"\bfoundry_features\s*:", line):
+            # Make sure it is not a docstring line
+            if ":keyword " not in line and ":paramtype " not in line:
+                new_line = _remove_ff_from_mixed_line(line)
+                if new_line != line:
+                    lines[i] = new_line
+                    return lines, False
+
+    return lines, False
+
+
+def _remove_ff_from_mixed_line(line):
+    """
+    Remove 'foundry_features: TYPE[= DEFAULT], ' from a line that also has other parameters.
+    Uses bracket-depth counting to handle complex type annotations.
+    """
+    idx = line.find("foundry_features:")
+    if idx == -1:
+        return line
+
+    # Walk forward from after "foundry_features:" to find the end of this parameter
+    depth = 0
+    pos = idx + len("foundry_features:")
+    while pos < len(line):
+        c = line[pos]
+        if c in "([{":
+            depth += 1
+        elif c in ")]}":
+            if depth == 0:
+                break           # hit the closing paren of the parameter list
+            depth -= 1
+        elif c == "," and depth == 0:
+            pos += 1            # consume comma
+            if pos < len(line) and line[pos] == " ":
+                pos += 1        # consume one trailing space
+            break
+        pos += 1
+
+    result = line[:idx] + line[pos:]
+    # Clean up unlikely double-comma artifact
+    result = re.sub(r",\s*,", ",", result)
+    return result
+
+
+# ── Docstring handling ────────────────────────────────────────────────────────
+
+
+def _remove_ff_from_docstring(lines, func_start_0, search_end):
+    """Delete the ':keyword foundry_features:' … ':paramtype foundry_features:' block."""
+    kw_idx = None
+    pt_idx = None
+
+    for i in range(func_start_0, min(search_end, len(lines))):
+        if ":keyword foundry_features:" in lines[i]:
+            kw_idx = i
+        if kw_idx is not None and ":paramtype foundry_features:" in lines[i]:
+            pt_idx = i
+            break
+
+    if kw_idx is not None and pt_idx is not None:
+        del lines[kw_idx : pt_idx + 1]
+
+    return lines
+
+
+# ── Local variable insertion ─────────────────────────────────────────────────
+
+
+def _find_docstring_end_idx(lines, func_start_0, search_end):
+    """Return the 0-based index of the line containing the closing ''' or \"\"\" of the docstring."""
+    in_docstring = False
+    quote_char = None
+
+    for i in range(func_start_0, min(search_end, len(lines))):
+        stripped = lines[i].strip()
+        if not in_docstring:
+            if stripped.startswith('"""') or stripped.startswith("'''"):
+                quote_char = stripped[:3]
+                rest = stripped[3:]
+                if quote_char in rest:
+                    return i          # single-line docstring
+                in_docstring = True
+        else:
+            if quote_char and quote_char in stripped:
+                return i              # found the closing triple-quote
+
+    return None
+
+
+def _add_ff_local_var(lines, func_start_0, search_end, is_optional):
+    """Insert the foundry_features local variable right after the closing docstring line."""
+    doc_end_i = _find_docstring_end_idx(lines, func_start_0, search_end)
+    if doc_end_i is None:
+        print(f"    WARNING: Could not find docstring end for function at line {func_start_0 + 1}")
+        return lines
+
+    # Derive body indentation from the 'def' line's indentation + 4 spaces
+    def_line = lines[func_start_0]
+    def_indent = len(def_line) - len(def_line.lstrip())
+    body_indent = " " * (def_indent + 4)
+
+    if is_optional:
+        var_line = (
+            f"{body_indent}foundry_features: Optional[str] = "
+            f"_get_foundry_features_opt_in_keys "
+            f'if (self.__class__.__name__.startswith("Beta") or '
+            f"self._config._allow_preview) else None  # type: ignore"
+        )
+    else:
+        var_line = f"{body_indent}foundry_features: str = _get_foundry_features_opt_in_keys"
+
+    lines.insert(doc_end_i + 1, var_line)
+    return lines
+
+
+# ── prepare_request fix ───────────────────────────────────────────────────────
+
+
+def _fix_prepare_request(lines, func_start_0, search_end):
+    """
+    Within a nested 'def prepare_request(next_link=None):' function, find the
+    HttpRequest("GET", ..., params=_next_request_params) call that lacks a Foundry-Features
+    header and add one.
+
+    Looks for a single-line pattern of the form:
+        "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+    (without a trailing 'headers=') and appends the header argument.
+    """
+    # Locate the nested prepare_request function
+    prepare_req_start = None
+    for i in range(func_start_0, min(search_end, len(lines))):
+        if re.search(r"def\s+prepare_request\s*\(\s*next_link\s*=\s*None\s*\)\s*:", lines[i]):
+            prepare_req_start = i
+            break
+
+    if prepare_req_start is None:
+        return lines
+
+    # Look for the specific single-line HttpRequest pattern (no 'headers=' yet)
+    for i in range(prepare_req_start, min(prepare_req_start + 60, len(lines))):
+        if i >= len(lines):
+            break
+        line = lines[i]
+        if (
+            '"GET"' in line
+            and "urllib.parse.urljoin(next_link, _parsed_next_link.path)" in line
+            and "params=_next_request_params" in line
+            and "headers=" not in line
+        ):
+            old_pattern = (
+                '"GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), '
+                "params=_next_request_params"
+            )
+            new_pattern = (
+                '"GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), '
+                "params=_next_request_params, "
+                'headers={"Foundry-Features": _SERIALIZER.header("foundry_features", foundry_features, "str")}'
+            )
+            lines[i] = line.replace(old_pattern, new_pattern)
+            break
+
+    return lines
+
+
+# ── Main guard ────────────────────────────────────────────────────────────────
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    main()

@@ -32,9 +32,8 @@ At the top of each Python script, you will find some comments, followed by a sec
 _get_foundry_features_opt_in_keys: str = ",".join([key.value for key in _models.AgentDefinitionOptInKeys] + [key.value for key in _models.FoundryFeaturesOptInKeys])
 
 Step 2:
-Find all the methods that show "foundry_features" as an input argument. It could be optional or required.
-You can search for the string
-"foundry_features: " to find all those. But I would like you to ignore all the methods with
+Find all the methods that show "foundry_features" as an input string argument. It could be optional or required.
+You can search for the string "foundry_features: " to find all those. But I would like you to ignore all the methods with
 names that start with "build_". They should not be modified.
 
 For each method you find, delete the "foundry_feature" line from the method signature.
@@ -45,12 +44,24 @@ the line that starts with ":paramtype foundry_features:". So you may need to del
 lines, not just two lines that include the above strings, but also all lines in between those two lines.
 
 Step 3:
-For each one of the method you found, also look for the line:
-foundry_features=foundry_features
-and replace it with:
-foundry_features=_get_foundry_features_opt_in_keys if (self.__class__.__name__.startswith("Beta") or self._config._allow_preview) else None,
+For each one of the methods you found, declare a new local variable at the top of the method.
+
+if "foundry_features" in the method signature was a required input argument before you remove it,
+then define the new local variable (with the same name) as follows:
+
+_foundry_features: str = _get_foundry_features_opt_in_keys
+
+If "foundry_features" in the method signature was an optional input argument before you removed it,
+then define the new local variable (with the same name) as follows:
+
+_foundry_features: Optional[str] = _get_foundry_features_opt_in_keys if (self.__class__.__name__.startswith("Beta") or self._config._allow_preview) else None  # type: ignore
 
 Step 4:
+For each one of the methods you found, look for the line "foundry_features=foundry_features" 
+specifying an input argument to a function call, where the function name starts with "build_".
+Replace that with "foundry_features=_foundry_features".
+
+Step 5:
 For each one of the methods you found, also see if it includes a function definition with
 the following signature:
 def prepare_request(next_link=None):
@@ -59,14 +70,15 @@ If so, look for the following line inside that function:
 "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
 
 And replace it with this line:
-"GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params, headers={"Foundry-Features": _SERIALIZER.header("foundry_features", foundry_features, "str")}
+"GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params, headers={"Foundry-Features": _SERIALIZER.header("foundry_features", _foundry_features, "str")}
 
-Step 5:
+Step 6:
 After your created the Python script, run it in the folder \azure-sdk-for-python\sdk\ai\azure-ai-projects
 in order to apply the changes mentioned above.
 
-Step 6:
+Step 7:
 To verify your result, run the MyPy tool in the same folder and make sure there are no errors originating
 from the package source file. To run MyPy:
 tox run -e mypy -c ../../../eng/tox/tox.ini --root
 there should be no errors from files under the folder \azure-sdk-for-python\sdk\ai\azure-ai-projects\azure folder.
+Note that there could be errors from other folders. Ignore those.
