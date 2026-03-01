@@ -14,7 +14,6 @@ from azure.core.polling import AsyncNoPolling
 from azure.core.utils import case_insensitive_dict
 from ... import models as _models
 from ...models import (
-    FoundryFeaturesOptInKeys,
     MemoryStoreOperationUsage,
     ResponseUsageInputTokensDetails,
     ResponseUsageOutputTokensDetails,
@@ -290,10 +289,6 @@ class BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
          ~azure.ai.projects.models.AsyncUpdateMemoriesLROPoller
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] = (
-            FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
-        )
-
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
@@ -304,7 +299,6 @@ class BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = await self._update_memories_initial(
-                foundry_features=_foundry_features,
                 name=name,
                 body=body,
                 scope=scope,

@@ -16,14 +16,21 @@ Last updated: 2/18/2026
 
 Write a Python script that will apply all the changes mentioned below.
 Save the Python script in the folder "agent-scripts" and call it "auto_set_foundry_features.py".
-The assumption is that this script runs in the folder \azure-sdk-for-python\sdk\ai\azure-ai-projects
+The assumption is that this script runs in the folder azure-sdk-for-python\sdk\ai\azure-ai-projects
 to apply the desired changes.
 
-The Python script is only allowed to edit these two files:
-\sdk\ai\azure-ai-projects\azure\ai\projects\aio\operations\_operations.py and
-\sdk\ai\azure-ai-projects\azure\ai\projects\operations\_operations.py.
+The Python script is only allowed to edit these four files:
+\azure-sdk-for-python\sdk\ai\azure-ai-projects\azure\ai\projects\aio\operations\_operations.py
+\azure-sdk-for-python\sdk\ai\azure-ai-projects\azure\ai\projects\operations\_operations.py
+\azure-sdk-for-python\sdk\ai\azure-ai-projects\azure\ai\projects\models\__init__.py
+\azure-sdk-for-python\sdk\ai\azure-ai-projects\azure\ai\projects\models\_enums.py
 
-Apply all the steps mentioned below to each one of those two files.
+Part 1:
+
+In Part 1, you are only allowed to edit the two _operation.py files. In this part, your goal
+is to update all public methods that have "foundry_features" as input argument, and instead
+define them locally as appropriate. You will also fix the paging call in "list" operations, 
+such that "foundry_features" applies to all paging calls.
 
 Step 1:
 At the top of each Python script, you will find some comments, followed by a section of
@@ -38,6 +45,8 @@ the methods with names that start with "build_". They should not be modified.
 
 For each method you find, delete the "foundry_feature" line from the method signature. But take note
 of how "foundry_features" is defined here, as you will need that in the next step.
+Make sure you also take care of the case where "foundry_features" is the only input arguments (other than
+**kwargs).
 
 Also delete the method doc strings lines associated with this (now deleted) input argument. 
 Do that by deleting the line that starts with ":keyword foundry_features:", up to and including
@@ -94,13 +103,26 @@ If so, look for the following line inside that function:
 And replace it with this line:
 "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params, headers={"Foundry-Features": _SERIALIZER.header("foundry_features", _foundry_features, "str")}
 
-Step 6:
-After your created the Python script, run it in the folder \azure-sdk-for-python\sdk\ai\azure-ai-projects
+Part 2:
+
+In Part 2, you are allowed to edit all four files mentioned above. No other files. In this part you will:
+* Rename the class AgentDefinitionOptInKeys to _AgentDefinitionOptInKeys and make it internal.
+* Rename the class FoundryFeaturesOptInKeys to _FoundryFeaturesOptInKeys and make it internal.
+Which means you need to remove them from the relevant __init__.py files and fix all imports as a result.
+
+Verification:
+
+After your created the Python script and saved it to disk, run it in the folder \azure-sdk-for-python\sdk\ai\azure-ai-projects
 in order to apply the changes mentioned above.
 
-Step 7:
-To verify your result, run the 'black' tool, which validates the formatting of the code:
+To verify your result, first run the 'black' tool, which validates the formatting of the code:
 black --config ../../../eng/black-pyproject.toml .
 
-Do not run MyPy as part of your validation.
+Once that is error free, run MyPy tool in the following way: 
+tox run -e mypy -c ../../../eng/tox/tox.ini --root .
 
+and make sure there are no errors in the files under folder \azure-sdk-for-python\sdk\ai\azure-ai-projects\azure .
+Note there may be errors in sample or test code. Ignore those.
+
+If there are any errors during verification, update the auto_set_foundry_features.py script to make sure those
+will not appear again.
