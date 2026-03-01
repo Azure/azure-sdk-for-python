@@ -3,7 +3,7 @@ required Foundry-Features HTTP request headers. Before running the Agent,
 make sure your package sources code (files under \sdk\ai\azure-ai-projects\azure) do not have any
 mypy errors.
 
-The agent created the Python script "handle_foundry_preview_features.py" in this folder. Next time
+The agent created the Python script "auto_set_foundry_features.py" in this folder. Next time
 you re-emit from TypeSpec, try running that script from the \sdk\ai\azure-ai-projects folder
 and see if again it did the job correctly.
 
@@ -15,7 +15,7 @@ Last updated: 2/18/2026
 
 
 Write a Python script that will apply all the changes mentioned below.
-Save the Python script in the folder "agent-scripts" and call it "handle_foundry_preview_features.py".
+Save the Python script in the folder "agent-scripts" and call it "auto_set_foundry_features.py".
 The assumption is that this script runs in the folder \azure-sdk-for-python\sdk\ai\azure-ai-projects
 to apply the desired changes.
 
@@ -43,35 +43,28 @@ Also delete the method doc strings lines associated with this (now deleted) inpu
 be the lines that start with ":keyword foundry_features:" and ":paramtype foundry_features:".
 
 Step 3:
-For each one of the method you modified, look for the line:
+For each one of the method you found, also look for the line:
 foundry_features=foundry_features
 and replace it with:
 foundry_features=_get_foundry_features_opt_in_keys if (self.__class__.__name__.startswith("Beta") or self._config._allow_preview) else None,
 
 Step 4:
+For each one of the methods you found, also see if it includes a function defintion with
+the following signature:
+def prepare_request(next_link=None):
+
+If so, look for the following line inside that function:
+"GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+
+And replace it with this line:
+"GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params, headers={"Foundry-Features": _SERIALIZER.header("foundry_features", foundry_features, "str")}
+
+Step 5:
 After your created the Python script, run it in the folder \azure-sdk-for-python\sdk\ai\azure-ai-projects
 in order to apply the changes mentioned above.
 
-Step 5:
+Step 6:
 To verify your result, run the MyPy tool in the same folder and make sure there are no errors originating
 from the package source file. To run MyPy:
 tox run -e mypy -c ../../../eng/tox/tox.ini --root
 there should be no errors from files under the folder \azure-sdk-for-python\sdk\ai\azure-ai-projects\azure folder.
-
-
-----------------------------------
-
-
-
-This is the GitHub Copilot instruction to introduce agent-scripts\patch_prepare_request_foundry_headers.py:
-
-Mody post-emitter-fixes.cmd to change
-from
-_request = HttpRequest(
-    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-)
-to
-_request = HttpRequest(
-    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params, headers={"Foundry-Features": _SERIALIZER.header("foundry_features", foundry_features, "str")}
-)
-But only for the function that has foundry_features exist.
