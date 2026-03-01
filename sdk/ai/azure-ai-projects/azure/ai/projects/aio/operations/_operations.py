@@ -104,6 +104,8 @@ from ...operations._operations import (
 )
 from .._configuration import AIProjectClientConfiguration
 
+_get_agent_definition_opt_in_keys: str = ",".join([key.value for key in _models.AgentDefinitionOptInKeys])
+
 JSON = MutableMapping[str, Any]
 _Unset: Any = object()
 T = TypeVar("T")
@@ -225,7 +227,6 @@ class AgentsOperations:
         *,
         name: str,
         definition: _models.AgentDefinition,
-        foundry_features: Optional[Union[str, _models.AgentDefinitionOptInKeys]] = None,
         content_type: str = "application/json",
         metadata: Optional[dict[str, str]] = None,
         description: Optional[str] = None,
@@ -233,21 +234,11 @@ class AgentsOperations:
     ) -> _models.AgentDetails: ...
     @overload
     async def _create_agent(
-        self,
-        body: JSON,
-        *,
-        foundry_features: Optional[Union[str, _models.AgentDefinitionOptInKeys]] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AgentDetails: ...
     @overload
     async def _create_agent(
-        self,
-        body: IO[bytes],
-        *,
-        foundry_features: Optional[Union[str, _models.AgentDefinitionOptInKeys]] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AgentDetails: ...
 
     @distributed_trace_async
@@ -257,7 +248,6 @@ class AgentsOperations:
         *,
         name: str = _Unset,
         definition: _models.AgentDefinition = _Unset,
-        foundry_features: Optional[Union[str, _models.AgentDefinitionOptInKeys]] = None,
         metadata: Optional[dict[str, str]] = None,
         description: Optional[str] = None,
         **kwargs: Any
@@ -276,10 +266,6 @@ class AgentsOperations:
         :keyword definition: The agent definition. This can be a workflow, hosted agent, or a simple
          agent definition. Required.
         :paramtype definition: ~azure.ai.projects.models.AgentDefinition
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. Known values are: "HostedAgents=V1Preview" and
-         "WorkflowAgents=V1Preview". Default value is None.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.AgentDefinitionOptInKeys
         :keyword metadata: Set of 16 key-value pairs that can be attached to an object. This can be
          useful for storing additional information about the object in a structured
          format, and querying for objects via API or the dashboard.
@@ -293,6 +279,7 @@ class AgentsOperations:
         :rtype: ~azure.ai.projects.models.AgentDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        _foundry_features: Optional[str] = _get_agent_definition_opt_in_keys if self._config._allow_preview else None  # type: ignore
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -322,7 +309,7 @@ class AgentsOperations:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_agents_create_agent_request(
-            foundry_features=foundry_features,
+            foundry_features=_foundry_features,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -370,7 +357,6 @@ class AgentsOperations:
         agent_name: str,
         *,
         definition: _models.AgentDefinition,
-        foundry_features: Optional[Union[str, _models.AgentDefinitionOptInKeys]] = None,
         content_type: str = "application/json",
         metadata: Optional[dict[str, str]] = None,
         description: Optional[str] = None,
@@ -378,23 +364,11 @@ class AgentsOperations:
     ) -> _models.AgentDetails: ...
     @overload
     async def _update_agent(
-        self,
-        agent_name: str,
-        body: JSON,
-        *,
-        foundry_features: Optional[Union[str, _models.AgentDefinitionOptInKeys]] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, agent_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AgentDetails: ...
     @overload
     async def _update_agent(
-        self,
-        agent_name: str,
-        body: IO[bytes],
-        *,
-        foundry_features: Optional[Union[str, _models.AgentDefinitionOptInKeys]] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, agent_name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AgentDetails: ...
 
     @distributed_trace_async
@@ -404,7 +378,6 @@ class AgentsOperations:
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
         definition: _models.AgentDefinition = _Unset,
-        foundry_features: Optional[Union[str, _models.AgentDefinitionOptInKeys]] = None,
         metadata: Optional[dict[str, str]] = None,
         description: Optional[str] = None,
         **kwargs: Any
@@ -419,10 +392,6 @@ class AgentsOperations:
         :keyword definition: The agent definition. This can be a workflow, hosted agent, or a simple
          agent definition. Required.
         :paramtype definition: ~azure.ai.projects.models.AgentDefinition
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. Known values are: "HostedAgents=V1Preview" and
-         "WorkflowAgents=V1Preview". Default value is None.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.AgentDefinitionOptInKeys
         :keyword metadata: Set of 16 key-value pairs that can be attached to an object. This can be
          useful for storing additional information about the object in a structured
          format, and querying for objects via API or the dashboard.
@@ -436,6 +405,7 @@ class AgentsOperations:
         :rtype: ~azure.ai.projects.models.AgentDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        _foundry_features: Optional[str] = _get_agent_definition_opt_in_keys if self._config._allow_preview else None  # type: ignore
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -464,7 +434,7 @@ class AgentsOperations:
 
         _request = build_agents_update_agent_request(
             agent_name=agent_name,
-            foundry_features=foundry_features,
+            foundry_features=_foundry_features,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -942,7 +912,6 @@ class AgentsOperations:
         agent_name: str,
         *,
         definition: _models.AgentDefinition,
-        foundry_features: Optional[Union[str, _models.AgentDefinitionOptInKeys]] = None,
         content_type: str = "application/json",
         metadata: Optional[dict[str, str]] = None,
         description: Optional[str] = None,
@@ -960,10 +929,6 @@ class AgentsOperations:
         :keyword definition: The agent definition. This can be a workflow, hosted agent, or a simple
          agent definition. Required.
         :paramtype definition: ~azure.ai.projects.models.AgentDefinition
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. Known values are: "HostedAgents=V1Preview" and
-         "WorkflowAgents=V1Preview". Default value is None.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.AgentDefinitionOptInKeys
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -983,13 +948,7 @@ class AgentsOperations:
 
     @overload
     async def create_version(
-        self,
-        agent_name: str,
-        body: JSON,
-        *,
-        foundry_features: Optional[Union[str, _models.AgentDefinitionOptInKeys]] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, agent_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AgentVersionDetails:
         """Create a new agent version.
 
@@ -1002,10 +961,6 @@ class AgentsOperations:
         :type agent_name: str
         :param body: Required.
         :type body: JSON
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. Known values are: "HostedAgents=V1Preview" and
-         "WorkflowAgents=V1Preview". Default value is None.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.AgentDefinitionOptInKeys
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1016,13 +971,7 @@ class AgentsOperations:
 
     @overload
     async def create_version(
-        self,
-        agent_name: str,
-        body: IO[bytes],
-        *,
-        foundry_features: Optional[Union[str, _models.AgentDefinitionOptInKeys]] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, agent_name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AgentVersionDetails:
         """Create a new agent version.
 
@@ -1035,10 +984,6 @@ class AgentsOperations:
         :type agent_name: str
         :param body: Required.
         :type body: IO[bytes]
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. Known values are: "HostedAgents=V1Preview" and
-         "WorkflowAgents=V1Preview". Default value is None.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.AgentDefinitionOptInKeys
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1054,7 +999,6 @@ class AgentsOperations:
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
         definition: _models.AgentDefinition = _Unset,
-        foundry_features: Optional[Union[str, _models.AgentDefinitionOptInKeys]] = None,
         metadata: Optional[dict[str, str]] = None,
         description: Optional[str] = None,
         **kwargs: Any
@@ -1073,10 +1017,6 @@ class AgentsOperations:
         :keyword definition: The agent definition. This can be a workflow, hosted agent, or a simple
          agent definition. Required.
         :paramtype definition: ~azure.ai.projects.models.AgentDefinition
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. Known values are: "HostedAgents=V1Preview" and
-         "WorkflowAgents=V1Preview". Default value is None.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.AgentDefinitionOptInKeys
         :keyword metadata: Set of 16 key-value pairs that can be attached to an object. This can be
          useful for storing additional information about the object in a structured
          format, and querying for objects via API or the dashboard.
@@ -1090,6 +1030,7 @@ class AgentsOperations:
         :rtype: ~azure.ai.projects.models.AgentVersionDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        _foundry_features: Optional[str] = _get_agent_definition_opt_in_keys if self._config._allow_preview else None  # type: ignore
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -1118,7 +1059,7 @@ class AgentsOperations:
 
         _request = build_agents_create_version_request(
             agent_name=agent_name,
-            foundry_features=foundry_features,
+            foundry_features=_foundry_features,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -1722,13 +1663,7 @@ class EvaluationRulesOperations:
 
     @overload
     async def create_or_update(
-        self,
-        id: str,
-        evaluation_rule: _models.EvaluationRule,
-        *,
-        foundry_features: Optional[Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW]] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, id: str, evaluation_rule: _models.EvaluationRule, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.EvaluationRule:
         """Create or update an evaluation rule.
 
@@ -1736,9 +1671,6 @@ class EvaluationRulesOperations:
         :type id: str
         :param evaluation_rule: Evaluation rule resource. Required.
         :type evaluation_rule: ~azure.ai.projects.models.EvaluationRule
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. EVALUATIONS_V1_PREVIEW. Default value is None.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.EVALUATIONS_V1_PREVIEW
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1749,13 +1681,7 @@ class EvaluationRulesOperations:
 
     @overload
     async def create_or_update(
-        self,
-        id: str,
-        evaluation_rule: JSON,
-        *,
-        foundry_features: Optional[Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW]] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, id: str, evaluation_rule: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.EvaluationRule:
         """Create or update an evaluation rule.
 
@@ -1763,9 +1689,6 @@ class EvaluationRulesOperations:
         :type id: str
         :param evaluation_rule: Evaluation rule resource. Required.
         :type evaluation_rule: JSON
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. EVALUATIONS_V1_PREVIEW. Default value is None.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.EVALUATIONS_V1_PREVIEW
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1776,13 +1699,7 @@ class EvaluationRulesOperations:
 
     @overload
     async def create_or_update(
-        self,
-        id: str,
-        evaluation_rule: IO[bytes],
-        *,
-        foundry_features: Optional[Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW]] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, id: str, evaluation_rule: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.EvaluationRule:
         """Create or update an evaluation rule.
 
@@ -1790,9 +1707,6 @@ class EvaluationRulesOperations:
         :type id: str
         :param evaluation_rule: Evaluation rule resource. Required.
         :type evaluation_rule: IO[bytes]
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. EVALUATIONS_V1_PREVIEW. Default value is None.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.EVALUATIONS_V1_PREVIEW
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1803,12 +1717,7 @@ class EvaluationRulesOperations:
 
     @distributed_trace_async
     async def create_or_update(
-        self,
-        id: str,
-        evaluation_rule: Union[_models.EvaluationRule, JSON, IO[bytes]],
-        *,
-        foundry_features: Optional[Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW]] = None,
-        **kwargs: Any
+        self, id: str, evaluation_rule: Union[_models.EvaluationRule, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.EvaluationRule:
         """Create or update an evaluation rule.
 
@@ -1817,13 +1726,11 @@ class EvaluationRulesOperations:
         :param evaluation_rule: Evaluation rule resource. Is one of the following types:
          EvaluationRule, JSON, IO[bytes] Required.
         :type evaluation_rule: ~azure.ai.projects.models.EvaluationRule or JSON or IO[bytes]
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. EVALUATIONS_V1_PREVIEW. Default value is None.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.EVALUATIONS_V1_PREVIEW
         :return: EvaluationRule. The EvaluationRule is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.EvaluationRule
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        _foundry_features: Optional[Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW]] = FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW if self._config._allow_preview else None  # type: ignore
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -1847,7 +1754,7 @@ class EvaluationRulesOperations:
 
         _request = build_evaluation_rules_create_or_update_request(
             id=id,
-            foundry_features=foundry_features,
+            foundry_features=_foundry_features,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -3563,20 +3470,18 @@ class BetaEvaluationTaxonomiesOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
-    async def get(
-        self, name: str, *, foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW], **kwargs: Any
-    ) -> _models.EvaluationTaxonomy:
+    async def get(self, name: str, **kwargs: Any) -> _models.EvaluationTaxonomy:
         """Get an evaluation run by name.
 
         :param name: The name of the resource. Required.
         :type name: str
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. EVALUATIONS_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.EVALUATIONS_V1_PREVIEW
         :return: EvaluationTaxonomy. The EvaluationTaxonomy is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.EvaluationTaxonomy
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        _foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
+        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -3592,7 +3497,7 @@ class BetaEvaluationTaxonomiesOperations:
 
         _request = build_beta_evaluation_taxonomies_get_request(
             name=name,
-            foundry_features=foundry_features,
+            foundry_features=_foundry_features,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -3630,18 +3535,10 @@ class BetaEvaluationTaxonomiesOperations:
 
     @distributed_trace
     def list(
-        self,
-        *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW],
-        input_name: Optional[str] = None,
-        input_type: Optional[str] = None,
-        **kwargs: Any
+        self, *, input_name: Optional[str] = None, input_type: Optional[str] = None, **kwargs: Any
     ) -> AsyncItemPaged["_models.EvaluationTaxonomy"]:
         """List evaluation taxonomies.
 
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. EVALUATIONS_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.EVALUATIONS_V1_PREVIEW
         :keyword input_name: Filter by the evaluation input name. Default value is None.
         :paramtype input_name: str
         :keyword input_type: Filter by taxonomy input type. Default value is None.
@@ -3650,6 +3547,9 @@ class BetaEvaluationTaxonomiesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.EvaluationTaxonomy]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        _foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
+        )
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
@@ -3667,7 +3567,7 @@ class BetaEvaluationTaxonomiesOperations:
             if not next_link:
 
                 _request = build_beta_evaluation_taxonomies_list_request(
-                    foundry_features=foundry_features,
+                    foundry_features=_foundry_features,
                     input_name=input_name,
                     input_type=input_type,
                     api_version=self._config.api_version,
@@ -3695,7 +3595,7 @@ class BetaEvaluationTaxonomiesOperations:
                     "GET",
                     urllib.parse.urljoin(next_link, _parsed_next_link.path),
                     params=_next_request_params,
-                    headers={"Foundry-Features": self._serialize.header("foundry_features", foundry_features, "str")},
+                    headers={"Foundry-Features": _SERIALIZER.header("foundry_features", _foundry_features, "str")},
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -3731,20 +3631,18 @@ class BetaEvaluationTaxonomiesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
-    async def delete(
-        self, name: str, *, foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW], **kwargs: Any
-    ) -> None:
+    async def delete(self, name: str, **kwargs: Any) -> None:
         """Delete an evaluation taxonomy by name.
 
         :param name: The name of the resource. Required.
         :type name: str
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. EVALUATIONS_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.EVALUATIONS_V1_PREVIEW
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        _foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
+        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -3760,7 +3658,7 @@ class BetaEvaluationTaxonomiesOperations:
 
         _request = build_beta_evaluation_taxonomies_delete_request(
             name=name,
-            foundry_features=foundry_features,
+            foundry_features=_foundry_features,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -3786,13 +3684,7 @@ class BetaEvaluationTaxonomiesOperations:
 
     @overload
     async def create(
-        self,
-        name: str,
-        body: _models.EvaluationTaxonomy,
-        *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW],
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, name: str, body: _models.EvaluationTaxonomy, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.EvaluationTaxonomy:
         """Create an evaluation taxonomy.
 
@@ -3800,9 +3692,6 @@ class BetaEvaluationTaxonomiesOperations:
         :type name: str
         :param body: The evaluation taxonomy. Required.
         :type body: ~azure.ai.projects.models.EvaluationTaxonomy
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. EVALUATIONS_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.EVALUATIONS_V1_PREVIEW
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3813,13 +3702,7 @@ class BetaEvaluationTaxonomiesOperations:
 
     @overload
     async def create(
-        self,
-        name: str,
-        body: JSON,
-        *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW],
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.EvaluationTaxonomy:
         """Create an evaluation taxonomy.
 
@@ -3827,9 +3710,6 @@ class BetaEvaluationTaxonomiesOperations:
         :type name: str
         :param body: The evaluation taxonomy. Required.
         :type body: JSON
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. EVALUATIONS_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.EVALUATIONS_V1_PREVIEW
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3840,13 +3720,7 @@ class BetaEvaluationTaxonomiesOperations:
 
     @overload
     async def create(
-        self,
-        name: str,
-        body: IO[bytes],
-        *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW],
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.EvaluationTaxonomy:
         """Create an evaluation taxonomy.
 
@@ -3854,9 +3728,6 @@ class BetaEvaluationTaxonomiesOperations:
         :type name: str
         :param body: The evaluation taxonomy. Required.
         :type body: IO[bytes]
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. EVALUATIONS_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.EVALUATIONS_V1_PREVIEW
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3867,12 +3738,7 @@ class BetaEvaluationTaxonomiesOperations:
 
     @distributed_trace_async
     async def create(
-        self,
-        name: str,
-        body: Union[_models.EvaluationTaxonomy, JSON, IO[bytes]],
-        *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW],
-        **kwargs: Any
+        self, name: str, body: Union[_models.EvaluationTaxonomy, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.EvaluationTaxonomy:
         """Create an evaluation taxonomy.
 
@@ -3881,13 +3747,13 @@ class BetaEvaluationTaxonomiesOperations:
         :param body: The evaluation taxonomy. Is one of the following types: EvaluationTaxonomy, JSON,
          IO[bytes] Required.
         :type body: ~azure.ai.projects.models.EvaluationTaxonomy or JSON or IO[bytes]
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. EVALUATIONS_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.EVALUATIONS_V1_PREVIEW
         :return: EvaluationTaxonomy. The EvaluationTaxonomy is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.EvaluationTaxonomy
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        _foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
+        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -3911,7 +3777,7 @@ class BetaEvaluationTaxonomiesOperations:
 
         _request = build_beta_evaluation_taxonomies_create_request(
             name=name,
-            foundry_features=foundry_features,
+            foundry_features=_foundry_features,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -3951,13 +3817,7 @@ class BetaEvaluationTaxonomiesOperations:
 
     @overload
     async def update(
-        self,
-        name: str,
-        body: _models.EvaluationTaxonomy,
-        *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW],
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, name: str, body: _models.EvaluationTaxonomy, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.EvaluationTaxonomy:
         """Update an evaluation taxonomy.
 
@@ -3965,9 +3825,6 @@ class BetaEvaluationTaxonomiesOperations:
         :type name: str
         :param body: The evaluation taxonomy. Required.
         :type body: ~azure.ai.projects.models.EvaluationTaxonomy
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. EVALUATIONS_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.EVALUATIONS_V1_PREVIEW
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3978,13 +3835,7 @@ class BetaEvaluationTaxonomiesOperations:
 
     @overload
     async def update(
-        self,
-        name: str,
-        body: JSON,
-        *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW],
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.EvaluationTaxonomy:
         """Update an evaluation taxonomy.
 
@@ -3992,9 +3843,6 @@ class BetaEvaluationTaxonomiesOperations:
         :type name: str
         :param body: The evaluation taxonomy. Required.
         :type body: JSON
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. EVALUATIONS_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.EVALUATIONS_V1_PREVIEW
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4005,13 +3853,7 @@ class BetaEvaluationTaxonomiesOperations:
 
     @overload
     async def update(
-        self,
-        name: str,
-        body: IO[bytes],
-        *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW],
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.EvaluationTaxonomy:
         """Update an evaluation taxonomy.
 
@@ -4019,9 +3861,6 @@ class BetaEvaluationTaxonomiesOperations:
         :type name: str
         :param body: The evaluation taxonomy. Required.
         :type body: IO[bytes]
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. EVALUATIONS_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.EVALUATIONS_V1_PREVIEW
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4032,12 +3871,7 @@ class BetaEvaluationTaxonomiesOperations:
 
     @distributed_trace_async
     async def update(
-        self,
-        name: str,
-        body: Union[_models.EvaluationTaxonomy, JSON, IO[bytes]],
-        *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW],
-        **kwargs: Any
+        self, name: str, body: Union[_models.EvaluationTaxonomy, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.EvaluationTaxonomy:
         """Update an evaluation taxonomy.
 
@@ -4046,13 +3880,13 @@ class BetaEvaluationTaxonomiesOperations:
         :param body: The evaluation taxonomy. Is one of the following types: EvaluationTaxonomy, JSON,
          IO[bytes] Required.
         :type body: ~azure.ai.projects.models.EvaluationTaxonomy or JSON or IO[bytes]
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. EVALUATIONS_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.EVALUATIONS_V1_PREVIEW
         :return: EvaluationTaxonomy. The EvaluationTaxonomy is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.EvaluationTaxonomy
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        _foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
+        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -4076,7 +3910,7 @@ class BetaEvaluationTaxonomiesOperations:
 
         _request = build_beta_evaluation_taxonomies_update_request(
             name=name,
-            foundry_features=foundry_features,
+            foundry_features=_foundry_features,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -4137,7 +3971,6 @@ class BetaEvaluatorsOperations:
         self,
         name: str,
         *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW],
         type: Optional[Union[Literal["builtin"], Literal["custom"], Literal["all"], str]] = None,
         limit: Optional[int] = None,
         **kwargs: Any
@@ -4146,9 +3979,6 @@ class BetaEvaluatorsOperations:
 
         :param name: The name of the resource. Required.
         :type name: str
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. EVALUATIONS_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.EVALUATIONS_V1_PREVIEW
         :keyword type: Filter evaluators by type. Possible values: 'all', 'custom', 'builtin'. Is one
          of the following types: Literal["builtin"], Literal["custom"], Literal["all"], str Default
          value is None.
@@ -4160,6 +3990,9 @@ class BetaEvaluatorsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.EvaluatorVersion]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        _foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
+        )
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
@@ -4178,7 +4011,7 @@ class BetaEvaluatorsOperations:
 
                 _request = build_beta_evaluators_list_versions_request(
                     name=name,
-                    foundry_features=foundry_features,
+                    foundry_features=_foundry_features,
                     type=type,
                     limit=limit,
                     api_version=self._config.api_version,
@@ -4206,7 +4039,7 @@ class BetaEvaluatorsOperations:
                     "GET",
                     urllib.parse.urljoin(next_link, _parsed_next_link.path),
                     params=_next_request_params,
-                    headers={"Foundry-Features": self._serialize.header("foundry_features", foundry_features, "str")},
+                    headers={"Foundry-Features": _SERIALIZER.header("foundry_features", _foundry_features, "str")},
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -4245,16 +4078,12 @@ class BetaEvaluatorsOperations:
     def list(
         self,
         *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW],
         type: Optional[Union[Literal["builtin"], Literal["custom"], Literal["all"], str]] = None,
         limit: Optional[int] = None,
         **kwargs: Any
     ) -> AsyncItemPaged["_models.EvaluatorVersion"]:
         """List the latest version of each evaluator.
 
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. EVALUATIONS_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.EVALUATIONS_V1_PREVIEW
         :keyword type: Filter evaluators by type. Possible values: 'all', 'custom', 'builtin'. Is one
          of the following types: Literal["builtin"], Literal["custom"], Literal["all"], str Default
          value is None.
@@ -4266,6 +4095,9 @@ class BetaEvaluatorsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.EvaluatorVersion]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        _foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
+        )
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
@@ -4283,7 +4115,7 @@ class BetaEvaluatorsOperations:
             if not next_link:
 
                 _request = build_beta_evaluators_list_request(
-                    foundry_features=foundry_features,
+                    foundry_features=_foundry_features,
                     type=type,
                     limit=limit,
                     api_version=self._config.api_version,
@@ -4311,7 +4143,7 @@ class BetaEvaluatorsOperations:
                     "GET",
                     urllib.parse.urljoin(next_link, _parsed_next_link.path),
                     params=_next_request_params,
-                    headers={"Foundry-Features": self._serialize.header("foundry_features", foundry_features, "str")},
+                    headers={"Foundry-Features": _SERIALIZER.header("foundry_features", _foundry_features, "str")},
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -4347,14 +4179,7 @@ class BetaEvaluatorsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
-    async def get_version(
-        self,
-        name: str,
-        version: str,
-        *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW],
-        **kwargs: Any
-    ) -> _models.EvaluatorVersion:
+    async def get_version(self, name: str, version: str, **kwargs: Any) -> _models.EvaluatorVersion:
         """Get the specific version of the EvaluatorVersion. The service returns 404 Not Found error if
         the EvaluatorVersion does not exist.
 
@@ -4362,13 +4187,13 @@ class BetaEvaluatorsOperations:
         :type name: str
         :param version: The specific version id of the EvaluatorVersion to retrieve. Required.
         :type version: str
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. EVALUATIONS_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.EVALUATIONS_V1_PREVIEW
         :return: EvaluatorVersion. The EvaluatorVersion is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.EvaluatorVersion
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        _foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
+        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -4385,7 +4210,7 @@ class BetaEvaluatorsOperations:
         _request = build_beta_evaluators_get_version_request(
             name=name,
             version=version,
-            foundry_features=foundry_features,
+            foundry_features=_foundry_features,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -4422,14 +4247,7 @@ class BetaEvaluatorsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def delete_version(
-        self,
-        name: str,
-        version: str,
-        *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW],
-        **kwargs: Any
-    ) -> None:
+    async def delete_version(self, name: str, version: str, **kwargs: Any) -> None:
         """Delete the specific version of the EvaluatorVersion. The service returns 204 No Content if the
         EvaluatorVersion was deleted successfully or if the EvaluatorVersion does not exist.
 
@@ -4437,13 +4255,13 @@ class BetaEvaluatorsOperations:
         :type name: str
         :param version: The version of the EvaluatorVersion to delete. Required.
         :type version: str
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. EVALUATIONS_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.EVALUATIONS_V1_PREVIEW
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        _foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
+        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -4460,7 +4278,7 @@ class BetaEvaluatorsOperations:
         _request = build_beta_evaluators_delete_version_request(
             name=name,
             version=version,
-            foundry_features=foundry_features,
+            foundry_features=_foundry_features,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -4490,7 +4308,6 @@ class BetaEvaluatorsOperations:
         name: str,
         evaluator_version: _models.EvaluatorVersion,
         *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW],
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.EvaluatorVersion:
@@ -4500,9 +4317,6 @@ class BetaEvaluatorsOperations:
         :type name: str
         :param evaluator_version: Required.
         :type evaluator_version: ~azure.ai.projects.models.EvaluatorVersion
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. EVALUATIONS_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.EVALUATIONS_V1_PREVIEW
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4513,13 +4327,7 @@ class BetaEvaluatorsOperations:
 
     @overload
     async def create_version(
-        self,
-        name: str,
-        evaluator_version: JSON,
-        *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW],
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, name: str, evaluator_version: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.EvaluatorVersion:
         """Create a new EvaluatorVersion with auto incremented version id.
 
@@ -4527,9 +4335,6 @@ class BetaEvaluatorsOperations:
         :type name: str
         :param evaluator_version: Required.
         :type evaluator_version: JSON
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. EVALUATIONS_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.EVALUATIONS_V1_PREVIEW
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4540,13 +4345,7 @@ class BetaEvaluatorsOperations:
 
     @overload
     async def create_version(
-        self,
-        name: str,
-        evaluator_version: IO[bytes],
-        *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW],
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, name: str, evaluator_version: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.EvaluatorVersion:
         """Create a new EvaluatorVersion with auto incremented version id.
 
@@ -4554,9 +4353,6 @@ class BetaEvaluatorsOperations:
         :type name: str
         :param evaluator_version: Required.
         :type evaluator_version: IO[bytes]
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. EVALUATIONS_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.EVALUATIONS_V1_PREVIEW
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4567,12 +4363,7 @@ class BetaEvaluatorsOperations:
 
     @distributed_trace_async
     async def create_version(
-        self,
-        name: str,
-        evaluator_version: Union[_models.EvaluatorVersion, JSON, IO[bytes]],
-        *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW],
-        **kwargs: Any
+        self, name: str, evaluator_version: Union[_models.EvaluatorVersion, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.EvaluatorVersion:
         """Create a new EvaluatorVersion with auto incremented version id.
 
@@ -4581,13 +4372,13 @@ class BetaEvaluatorsOperations:
         :param evaluator_version: Is one of the following types: EvaluatorVersion, JSON, IO[bytes]
          Required.
         :type evaluator_version: ~azure.ai.projects.models.EvaluatorVersion or JSON or IO[bytes]
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. EVALUATIONS_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.EVALUATIONS_V1_PREVIEW
         :return: EvaluatorVersion. The EvaluatorVersion is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.EvaluatorVersion
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        _foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
+        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -4611,7 +4402,7 @@ class BetaEvaluatorsOperations:
 
         _request = build_beta_evaluators_create_version_request(
             name=name,
-            foundry_features=foundry_features,
+            foundry_features=_foundry_features,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -4656,7 +4447,6 @@ class BetaEvaluatorsOperations:
         version: str,
         evaluator_version: _models.EvaluatorVersion,
         *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW],
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.EvaluatorVersion:
@@ -4668,9 +4458,6 @@ class BetaEvaluatorsOperations:
         :type version: str
         :param evaluator_version: Evaluator resource. Required.
         :type evaluator_version: ~azure.ai.projects.models.EvaluatorVersion
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. EVALUATIONS_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.EVALUATIONS_V1_PREVIEW
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4681,14 +4468,7 @@ class BetaEvaluatorsOperations:
 
     @overload
     async def update_version(
-        self,
-        name: str,
-        version: str,
-        evaluator_version: JSON,
-        *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW],
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, name: str, version: str, evaluator_version: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.EvaluatorVersion:
         """Update an existing EvaluatorVersion with the given version id.
 
@@ -4698,9 +4478,6 @@ class BetaEvaluatorsOperations:
         :type version: str
         :param evaluator_version: Evaluator resource. Required.
         :type evaluator_version: JSON
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. EVALUATIONS_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.EVALUATIONS_V1_PREVIEW
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4716,7 +4493,6 @@ class BetaEvaluatorsOperations:
         version: str,
         evaluator_version: IO[bytes],
         *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW],
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.EvaluatorVersion:
@@ -4728,9 +4504,6 @@ class BetaEvaluatorsOperations:
         :type version: str
         :param evaluator_version: Evaluator resource. Required.
         :type evaluator_version: IO[bytes]
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. EVALUATIONS_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.EVALUATIONS_V1_PREVIEW
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4745,8 +4518,6 @@ class BetaEvaluatorsOperations:
         name: str,
         version: str,
         evaluator_version: Union[_models.EvaluatorVersion, JSON, IO[bytes]],
-        *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW],
         **kwargs: Any
     ) -> _models.EvaluatorVersion:
         """Update an existing EvaluatorVersion with the given version id.
@@ -4758,13 +4529,13 @@ class BetaEvaluatorsOperations:
         :param evaluator_version: Evaluator resource. Is one of the following types: EvaluatorVersion,
          JSON, IO[bytes] Required.
         :type evaluator_version: ~azure.ai.projects.models.EvaluatorVersion or JSON or IO[bytes]
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. EVALUATIONS_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.EVALUATIONS_V1_PREVIEW
         :return: EvaluatorVersion. The EvaluatorVersion is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.EvaluatorVersion
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        _foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
+        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -4789,7 +4560,7 @@ class BetaEvaluatorsOperations:
         _request = build_beta_evaluators_update_version_request(
             name=name,
             version=version,
-            foundry_features=foundry_features,
+            foundry_features=_foundry_features,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -4847,21 +4618,13 @@ class BetaInsightsOperations:
 
     @overload
     async def generate(
-        self,
-        insight: _models.Insight,
-        *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW],
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, insight: _models.Insight, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Insight:
         """Generate Insights.
 
         :param insight: Complete evaluation configuration including data source, evaluators, and result
          settings. Required.
         :type insight: ~azure.ai.projects.models.Insight
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. INSIGHTS_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.INSIGHTS_V1_PREVIEW
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4872,21 +4635,13 @@ class BetaInsightsOperations:
 
     @overload
     async def generate(
-        self,
-        insight: JSON,
-        *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW],
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, insight: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Insight:
         """Generate Insights.
 
         :param insight: Complete evaluation configuration including data source, evaluators, and result
          settings. Required.
         :type insight: JSON
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. INSIGHTS_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.INSIGHTS_V1_PREVIEW
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4897,21 +4652,13 @@ class BetaInsightsOperations:
 
     @overload
     async def generate(
-        self,
-        insight: IO[bytes],
-        *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW],
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, insight: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Insight:
         """Generate Insights.
 
         :param insight: Complete evaluation configuration including data source, evaluators, and result
          settings. Required.
         :type insight: IO[bytes]
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. INSIGHTS_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.INSIGHTS_V1_PREVIEW
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4921,25 +4668,19 @@ class BetaInsightsOperations:
         """
 
     @distributed_trace_async
-    async def generate(
-        self,
-        insight: Union[_models.Insight, JSON, IO[bytes]],
-        *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW],
-        **kwargs: Any
-    ) -> _models.Insight:
+    async def generate(self, insight: Union[_models.Insight, JSON, IO[bytes]], **kwargs: Any) -> _models.Insight:
         """Generate Insights.
 
         :param insight: Complete evaluation configuration including data source, evaluators, and result
          settings. Is one of the following types: Insight, JSON, IO[bytes] Required.
         :type insight: ~azure.ai.projects.models.Insight or JSON or IO[bytes]
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. INSIGHTS_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.INSIGHTS_V1_PREVIEW
         :return: Insight. The Insight is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.Insight
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        _foundry_features: Literal[FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW
+        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -4962,7 +4703,7 @@ class BetaInsightsOperations:
             _content = json.dumps(insight, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_beta_insights_generate_request(
-            foundry_features=foundry_features,
+            foundry_features=_foundry_features,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -5002,20 +4743,12 @@ class BetaInsightsOperations:
 
     @distributed_trace_async
     async def get(
-        self,
-        insight_id: str,
-        *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW],
-        include_coordinates: Optional[bool] = None,
-        **kwargs: Any
+        self, insight_id: str, *, include_coordinates: Optional[bool] = None, **kwargs: Any
     ) -> _models.Insight:
         """Get a specific insight by Id.
 
         :param insight_id: The unique identifier for the insights report. Required.
         :type insight_id: str
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. INSIGHTS_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.INSIGHTS_V1_PREVIEW
         :keyword include_coordinates: Whether to include coordinates for visualization in the response.
          Defaults to false. Default value is None.
         :paramtype include_coordinates: bool
@@ -5023,6 +4756,9 @@ class BetaInsightsOperations:
         :rtype: ~azure.ai.projects.models.Insight
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        _foundry_features: Literal[FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW
+        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -5038,7 +4774,7 @@ class BetaInsightsOperations:
 
         _request = build_beta_insights_get_request(
             insight_id=insight_id,
-            foundry_features=foundry_features,
+            foundry_features=_foundry_features,
             include_coordinates=include_coordinates,
             api_version=self._config.api_version,
             headers=_headers,
@@ -5079,7 +4815,6 @@ class BetaInsightsOperations:
     def list(
         self,
         *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW],
         type: Optional[Union[str, _models.InsightType]] = None,
         eval_id: Optional[str] = None,
         run_id: Optional[str] = None,
@@ -5089,9 +4824,6 @@ class BetaInsightsOperations:
     ) -> AsyncItemPaged["_models.Insight"]:
         """List all insights in reverse chronological order (newest first).
 
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. INSIGHTS_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.INSIGHTS_V1_PREVIEW
         :keyword type: Filter by the type of analysis. Known values are: "EvaluationRunClusterInsight",
          "AgentClusterInsight", and "EvaluationComparison". Default value is None.
         :paramtype type: str or ~azure.ai.projects.models.InsightType
@@ -5108,6 +4840,9 @@ class BetaInsightsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.Insight]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        _foundry_features: Literal[FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW
+        )
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
@@ -5125,7 +4860,7 @@ class BetaInsightsOperations:
             if not next_link:
 
                 _request = build_beta_insights_list_request(
-                    foundry_features=foundry_features,
+                    foundry_features=_foundry_features,
                     type=type,
                     eval_id=eval_id,
                     run_id=run_id,
@@ -5156,7 +4891,7 @@ class BetaInsightsOperations:
                     "GET",
                     urllib.parse.urljoin(next_link, _parsed_next_link.path),
                     params=_next_request_params,
-                    headers={"Foundry-Features": self._serialize.header("foundry_features", foundry_features, "str")},
+                    headers={"Foundry-Features": _SERIALIZER.header("foundry_features", _foundry_features, "str")},
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -5213,7 +4948,6 @@ class BetaMemoryStoresOperations:
     async def create(
         self,
         *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW],
         name: str,
         definition: _models.MemoryStoreDefinition,
         content_type: str = "application/json",
@@ -5223,9 +4957,6 @@ class BetaMemoryStoresOperations:
     ) -> _models.MemoryStoreDetails:
         """Create a memory store.
 
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. MEMORY_STORES_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.MEMORY_STORES_V1_PREVIEW
         :keyword name: The name of the memory store. Required.
         :paramtype name: str
         :keyword definition: The memory store definition. Required.
@@ -5245,20 +4976,12 @@ class BetaMemoryStoresOperations:
 
     @overload
     async def create(
-        self,
-        body: JSON,
-        *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW],
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.MemoryStoreDetails:
         """Create a memory store.
 
         :param body: Required.
         :type body: JSON
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. MEMORY_STORES_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.MEMORY_STORES_V1_PREVIEW
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5269,20 +4992,12 @@ class BetaMemoryStoresOperations:
 
     @overload
     async def create(
-        self,
-        body: IO[bytes],
-        *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW],
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.MemoryStoreDetails:
         """Create a memory store.
 
         :param body: Required.
         :type body: IO[bytes]
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. MEMORY_STORES_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.MEMORY_STORES_V1_PREVIEW
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5296,7 +5011,6 @@ class BetaMemoryStoresOperations:
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW],
         name: str = _Unset,
         definition: _models.MemoryStoreDefinition = _Unset,
         description: Optional[str] = None,
@@ -5307,9 +5021,6 @@ class BetaMemoryStoresOperations:
 
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. MEMORY_STORES_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.MEMORY_STORES_V1_PREVIEW
         :keyword name: The name of the memory store. Required.
         :paramtype name: str
         :keyword definition: The memory store definition. Required.
@@ -5323,6 +5034,9 @@ class BetaMemoryStoresOperations:
         :rtype: ~azure.ai.projects.models.MemoryStoreDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        _foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
+        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -5352,7 +5066,7 @@ class BetaMemoryStoresOperations:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_beta_memory_stores_create_request(
-            foundry_features=foundry_features,
+            foundry_features=_foundry_features,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -5399,7 +5113,6 @@ class BetaMemoryStoresOperations:
         self,
         name: str,
         *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW],
         content_type: str = "application/json",
         description: Optional[str] = None,
         metadata: Optional[dict[str, str]] = None,
@@ -5409,9 +5122,6 @@ class BetaMemoryStoresOperations:
 
         :param name: The name of the memory store to update. Required.
         :type name: str
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. MEMORY_STORES_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.MEMORY_STORES_V1_PREVIEW
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5427,13 +5137,7 @@ class BetaMemoryStoresOperations:
 
     @overload
     async def update(
-        self,
-        name: str,
-        body: JSON,
-        *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW],
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.MemoryStoreDetails:
         """Update a memory store.
 
@@ -5441,9 +5145,6 @@ class BetaMemoryStoresOperations:
         :type name: str
         :param body: Required.
         :type body: JSON
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. MEMORY_STORES_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.MEMORY_STORES_V1_PREVIEW
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5454,13 +5155,7 @@ class BetaMemoryStoresOperations:
 
     @overload
     async def update(
-        self,
-        name: str,
-        body: IO[bytes],
-        *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW],
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.MemoryStoreDetails:
         """Update a memory store.
 
@@ -5468,9 +5163,6 @@ class BetaMemoryStoresOperations:
         :type name: str
         :param body: Required.
         :type body: IO[bytes]
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. MEMORY_STORES_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.MEMORY_STORES_V1_PREVIEW
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5485,7 +5177,6 @@ class BetaMemoryStoresOperations:
         name: str,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW],
         description: Optional[str] = None,
         metadata: Optional[dict[str, str]] = None,
         **kwargs: Any
@@ -5496,9 +5187,6 @@ class BetaMemoryStoresOperations:
         :type name: str
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. MEMORY_STORES_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.MEMORY_STORES_V1_PREVIEW
         :keyword description: A human-readable description of the memory store. Default value is None.
         :paramtype description: str
         :keyword metadata: Arbitrary key-value metadata to associate with the memory store. Default
@@ -5508,6 +5196,9 @@ class BetaMemoryStoresOperations:
         :rtype: ~azure.ai.projects.models.MemoryStoreDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        _foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
+        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -5534,7 +5225,7 @@ class BetaMemoryStoresOperations:
 
         _request = build_beta_memory_stores_update_request(
             name=name,
-            foundry_features=foundry_features,
+            foundry_features=_foundry_features,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -5577,20 +5268,18 @@ class BetaMemoryStoresOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def get(
-        self, name: str, *, foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW], **kwargs: Any
-    ) -> _models.MemoryStoreDetails:
+    async def get(self, name: str, **kwargs: Any) -> _models.MemoryStoreDetails:
         """Retrieve a memory store.
 
         :param name: The name of the memory store to retrieve. Required.
         :type name: str
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. MEMORY_STORES_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.MEMORY_STORES_V1_PREVIEW
         :return: MemoryStoreDetails. The MemoryStoreDetails is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.MemoryStoreDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        _foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
+        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -5606,7 +5295,7 @@ class BetaMemoryStoresOperations:
 
         _request = build_beta_memory_stores_get_request(
             name=name,
-            foundry_features=foundry_features,
+            foundry_features=_foundry_features,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -5650,7 +5339,6 @@ class BetaMemoryStoresOperations:
     def list(
         self,
         *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW],
         limit: Optional[int] = None,
         order: Optional[Union[str, _models.PageOrder]] = None,
         before: Optional[str] = None,
@@ -5658,9 +5346,6 @@ class BetaMemoryStoresOperations:
     ) -> AsyncItemPaged["_models.MemoryStoreDetails"]:
         """List all memory stores.
 
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. MEMORY_STORES_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.MEMORY_STORES_V1_PREVIEW
         :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
          100, and the
          default is 20. Default value is None.
@@ -5679,6 +5364,9 @@ class BetaMemoryStoresOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.MemoryStoreDetails]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        _foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
+        )
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
@@ -5695,7 +5383,7 @@ class BetaMemoryStoresOperations:
         def prepare_request(_continuation_token=None):
 
             _request = build_beta_memory_stores_list_request(
-                foundry_features=foundry_features,
+                foundry_features=_foundry_features,
                 limit=limit,
                 order=order,
                 after=_continuation_token,
@@ -5739,20 +5427,18 @@ class BetaMemoryStoresOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
-    async def delete(
-        self, name: str, *, foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW], **kwargs: Any
-    ) -> _models.DeleteMemoryStoreResult:
+    async def delete(self, name: str, **kwargs: Any) -> _models.DeleteMemoryStoreResult:
         """Delete a memory store.
 
         :param name: The name of the memory store to delete. Required.
         :type name: str
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. MEMORY_STORES_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.MEMORY_STORES_V1_PREVIEW
         :return: DeleteMemoryStoreResult. The DeleteMemoryStoreResult is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.DeleteMemoryStoreResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        _foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
+        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -5768,7 +5454,7 @@ class BetaMemoryStoresOperations:
 
         _request = build_beta_memory_stores_delete_request(
             name=name,
-            foundry_features=foundry_features,
+            foundry_features=_foundry_features,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -5813,7 +5499,6 @@ class BetaMemoryStoresOperations:
         self,
         name: str,
         *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW],
         scope: str,
         content_type: str = "application/json",
         items: Optional[List[dict[str, Any]]] = None,
@@ -5823,23 +5508,11 @@ class BetaMemoryStoresOperations:
     ) -> _models.MemoryStoreSearchResult: ...
     @overload
     async def _search_memories(
-        self,
-        name: str,
-        body: JSON,
-        *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW],
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.MemoryStoreSearchResult: ...
     @overload
     async def _search_memories(
-        self,
-        name: str,
-        body: IO[bytes],
-        *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW],
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.MemoryStoreSearchResult: ...
 
     @distributed_trace_async
@@ -5848,7 +5521,6 @@ class BetaMemoryStoresOperations:
         name: str,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW],
         scope: str = _Unset,
         items: Optional[List[dict[str, Any]]] = None,
         previous_search_id: Optional[str] = None,
@@ -5861,9 +5533,6 @@ class BetaMemoryStoresOperations:
         :type name: str
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. MEMORY_STORES_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.MEMORY_STORES_V1_PREVIEW
         :keyword scope: The namespace that logically groups and isolates memories, such as a user ID.
          Required.
         :paramtype scope: str
@@ -5878,6 +5547,9 @@ class BetaMemoryStoresOperations:
         :rtype: ~azure.ai.projects.models.MemoryStoreSearchResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        _foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
+        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -5911,7 +5583,7 @@ class BetaMemoryStoresOperations:
 
         _request = build_beta_memory_stores_search_memories_request(
             name=name,
-            foundry_features=foundry_features,
+            foundry_features=_foundry_features,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -5958,13 +5630,15 @@ class BetaMemoryStoresOperations:
         name: str,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW],
         scope: str = _Unset,
         items: Optional[List[dict[str, Any]]] = None,
         previous_update_id: Optional[str] = None,
         update_delay: Optional[int] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
+        _foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
+        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -5998,7 +5672,7 @@ class BetaMemoryStoresOperations:
 
         _request = build_beta_memory_stores_update_memories_request(
             name=name,
-            foundry_features=foundry_features,
+            foundry_features=_foundry_features,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -6044,7 +5718,6 @@ class BetaMemoryStoresOperations:
         self,
         name: str,
         *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW],
         scope: str,
         content_type: str = "application/json",
         items: Optional[List[dict[str, Any]]] = None,
@@ -6054,23 +5727,11 @@ class BetaMemoryStoresOperations:
     ) -> AsyncLROPoller[_models.MemoryStoreUpdateCompletedResult]: ...
     @overload
     async def _begin_update_memories(
-        self,
-        name: str,
-        body: JSON,
-        *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW],
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[_models.MemoryStoreUpdateCompletedResult]: ...
     @overload
     async def _begin_update_memories(
-        self,
-        name: str,
-        body: IO[bytes],
-        *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW],
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[_models.MemoryStoreUpdateCompletedResult]: ...
 
     @distributed_trace_async
@@ -6079,7 +5740,6 @@ class BetaMemoryStoresOperations:
         name: str,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW],
         scope: str = _Unset,
         items: Optional[List[dict[str, Any]]] = None,
         previous_update_id: Optional[str] = None,
@@ -6092,9 +5752,6 @@ class BetaMemoryStoresOperations:
         :type name: str
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. MEMORY_STORES_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.MEMORY_STORES_V1_PREVIEW
         :keyword scope: The namespace that logically groups and isolates memories, such as a user ID.
          Required.
         :paramtype scope: str
@@ -6115,6 +5772,9 @@ class BetaMemoryStoresOperations:
          ~azure.core.polling.AsyncLROPoller[~azure.ai.projects.models.MemoryStoreUpdateCompletedResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        _foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
+        )
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
@@ -6127,7 +5787,7 @@ class BetaMemoryStoresOperations:
             raw_result = await self._update_memories_initial(
                 name=name,
                 body=body,
-                foundry_features=foundry_features,
+                foundry_features=_foundry_features,
                 scope=scope,
                 items=items,
                 previous_update_id=previous_update_id,
@@ -6179,21 +5839,12 @@ class BetaMemoryStoresOperations:
 
     @overload
     async def delete_scope(
-        self,
-        name: str,
-        *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW],
-        scope: str,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, name: str, *, scope: str, content_type: str = "application/json", **kwargs: Any
     ) -> _models.MemoryStoreDeleteScopeResult:
         """Delete all memories associated with a specific scope from a memory store.
 
         :param name: The name of the memory store. Required.
         :type name: str
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. MEMORY_STORES_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.MEMORY_STORES_V1_PREVIEW
         :keyword scope: The namespace that logically groups and isolates memories to delete, such as a
          user ID. Required.
         :paramtype scope: str
@@ -6208,13 +5859,7 @@ class BetaMemoryStoresOperations:
 
     @overload
     async def delete_scope(
-        self,
-        name: str,
-        body: JSON,
-        *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW],
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.MemoryStoreDeleteScopeResult:
         """Delete all memories associated with a specific scope from a memory store.
 
@@ -6222,9 +5867,6 @@ class BetaMemoryStoresOperations:
         :type name: str
         :param body: Required.
         :type body: JSON
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. MEMORY_STORES_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.MEMORY_STORES_V1_PREVIEW
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6236,13 +5878,7 @@ class BetaMemoryStoresOperations:
 
     @overload
     async def delete_scope(
-        self,
-        name: str,
-        body: IO[bytes],
-        *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW],
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.MemoryStoreDeleteScopeResult:
         """Delete all memories associated with a specific scope from a memory store.
 
@@ -6250,9 +5886,6 @@ class BetaMemoryStoresOperations:
         :type name: str
         :param body: Required.
         :type body: IO[bytes]
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. MEMORY_STORES_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.MEMORY_STORES_V1_PREVIEW
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6264,13 +5897,7 @@ class BetaMemoryStoresOperations:
 
     @distributed_trace_async
     async def delete_scope(
-        self,
-        name: str,
-        body: Union[JSON, IO[bytes]] = _Unset,
-        *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW],
-        scope: str = _Unset,
-        **kwargs: Any
+        self, name: str, body: Union[JSON, IO[bytes]] = _Unset, *, scope: str = _Unset, **kwargs: Any
     ) -> _models.MemoryStoreDeleteScopeResult:
         """Delete all memories associated with a specific scope from a memory store.
 
@@ -6278,9 +5905,6 @@ class BetaMemoryStoresOperations:
         :type name: str
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. MEMORY_STORES_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.MEMORY_STORES_V1_PREVIEW
         :keyword scope: The namespace that logically groups and isolates memories to delete, such as a
          user ID. Required.
         :paramtype scope: str
@@ -6289,6 +5913,9 @@ class BetaMemoryStoresOperations:
         :rtype: ~azure.ai.projects.models.MemoryStoreDeleteScopeResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        _foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
+        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -6317,7 +5944,7 @@ class BetaMemoryStoresOperations:
 
         _request = build_beta_memory_stores_delete_scope_request(
             name=name,
-            foundry_features=foundry_features,
+            foundry_features=_foundry_features,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -6378,20 +6005,18 @@ class BetaRedTeamsOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
-    async def get(
-        self, name: str, *, foundry_features: Literal[FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW], **kwargs: Any
-    ) -> _models.RedTeam:
+    async def get(self, name: str, **kwargs: Any) -> _models.RedTeam:
         """Get a redteam by name.
 
         :param name: Identifier of the red team run. Required.
         :type name: str
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. RED_TEAMS_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.RED_TEAMS_V1_PREVIEW
         :return: RedTeam. The RedTeam is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.RedTeam
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        _foundry_features: Literal[FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW
+        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -6407,7 +6032,7 @@ class BetaRedTeamsOperations:
 
         _request = build_beta_red_teams_get_request(
             name=name,
-            foundry_features=foundry_features,
+            foundry_features=_foundry_features,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -6444,18 +6069,16 @@ class BetaRedTeamsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list(
-        self, *, foundry_features: Literal[FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW], **kwargs: Any
-    ) -> AsyncItemPaged["_models.RedTeam"]:
+    def list(self, **kwargs: Any) -> AsyncItemPaged["_models.RedTeam"]:
         """List a redteam by name.
 
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. RED_TEAMS_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.RED_TEAMS_V1_PREVIEW
         :return: An iterator like instance of RedTeam
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.RedTeam]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        _foundry_features: Literal[FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW
+        )
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
@@ -6473,7 +6096,7 @@ class BetaRedTeamsOperations:
             if not next_link:
 
                 _request = build_beta_red_teams_list_request(
-                    foundry_features=foundry_features,
+                    foundry_features=_foundry_features,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -6499,7 +6122,7 @@ class BetaRedTeamsOperations:
                     "GET",
                     urllib.parse.urljoin(next_link, _parsed_next_link.path),
                     params=_next_request_params,
-                    headers={"Foundry-Features": self._serialize.header("foundry_features", foundry_features, "str")},
+                    headers={"Foundry-Features": _SERIALIZER.header("foundry_features", _foundry_features, "str")},
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -6536,20 +6159,12 @@ class BetaRedTeamsOperations:
 
     @overload
     async def create(
-        self,
-        red_team: _models.RedTeam,
-        *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW],
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, red_team: _models.RedTeam, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.RedTeam:
         """Creates a redteam run.
 
         :param red_team: Redteam to be run. Required.
         :type red_team: ~azure.ai.projects.models.RedTeam
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. RED_TEAMS_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.RED_TEAMS_V1_PREVIEW
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6559,21 +6174,11 @@ class BetaRedTeamsOperations:
         """
 
     @overload
-    async def create(
-        self,
-        red_team: JSON,
-        *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW],
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.RedTeam:
+    async def create(self, red_team: JSON, *, content_type: str = "application/json", **kwargs: Any) -> _models.RedTeam:
         """Creates a redteam run.
 
         :param red_team: Redteam to be run. Required.
         :type red_team: JSON
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. RED_TEAMS_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.RED_TEAMS_V1_PREVIEW
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6584,20 +6189,12 @@ class BetaRedTeamsOperations:
 
     @overload
     async def create(
-        self,
-        red_team: IO[bytes],
-        *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW],
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, red_team: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.RedTeam:
         """Creates a redteam run.
 
         :param red_team: Redteam to be run. Required.
         :type red_team: IO[bytes]
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. RED_TEAMS_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.RED_TEAMS_V1_PREVIEW
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6607,25 +6204,19 @@ class BetaRedTeamsOperations:
         """
 
     @distributed_trace_async
-    async def create(
-        self,
-        red_team: Union[_models.RedTeam, JSON, IO[bytes]],
-        *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW],
-        **kwargs: Any
-    ) -> _models.RedTeam:
+    async def create(self, red_team: Union[_models.RedTeam, JSON, IO[bytes]], **kwargs: Any) -> _models.RedTeam:
         """Creates a redteam run.
 
         :param red_team: Redteam to be run. Is one of the following types: RedTeam, JSON, IO[bytes]
          Required.
         :type red_team: ~azure.ai.projects.models.RedTeam or JSON or IO[bytes]
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. RED_TEAMS_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.RED_TEAMS_V1_PREVIEW
         :return: RedTeam. The RedTeam is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.RedTeam
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        _foundry_features: Literal[FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW
+        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -6648,7 +6239,7 @@ class BetaRedTeamsOperations:
             _content = json.dumps(red_team, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_beta_red_teams_create_request(
-            foundry_features=foundry_features,
+            foundry_features=_foundry_features,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -6709,24 +6300,18 @@ class BetaSchedulesOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
-    async def delete(
-        self,
-        schedule_id: str,
-        *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW],
-        **kwargs: Any
-    ) -> None:
+    async def delete(self, schedule_id: str, **kwargs: Any) -> None:
         """Delete a schedule.
 
         :param schedule_id: Identifier of the schedule. Required.
         :type schedule_id: str
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. SCHEDULES_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.SCHEDULES_V1_PREVIEW
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        _foundry_features: Literal[FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW
+        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -6742,7 +6327,7 @@ class BetaSchedulesOperations:
 
         _request = build_beta_schedules_delete_request(
             schedule_id=schedule_id,
-            foundry_features=foundry_features,
+            foundry_features=_foundry_features,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -6767,24 +6352,18 @@ class BetaSchedulesOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace_async
-    async def get(
-        self,
-        schedule_id: str,
-        *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW],
-        **kwargs: Any
-    ) -> _models.Schedule:
+    async def get(self, schedule_id: str, **kwargs: Any) -> _models.Schedule:
         """Get a schedule by id.
 
         :param schedule_id: Identifier of the schedule. Required.
         :type schedule_id: str
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. SCHEDULES_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.SCHEDULES_V1_PREVIEW
         :return: Schedule. The Schedule is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.Schedule
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        _foundry_features: Literal[FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW
+        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -6800,7 +6379,7 @@ class BetaSchedulesOperations:
 
         _request = build_beta_schedules_get_request(
             schedule_id=schedule_id,
-            foundry_features=foundry_features,
+            foundry_features=_foundry_features,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -6840,16 +6419,12 @@ class BetaSchedulesOperations:
     def list(
         self,
         *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW],
         type: Optional[Union[str, _models.ScheduleTaskType]] = None,
         enabled: Optional[bool] = None,
         **kwargs: Any
     ) -> AsyncItemPaged["_models.Schedule"]:
         """List all schedules.
 
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. SCHEDULES_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.SCHEDULES_V1_PREVIEW
         :keyword type: Filter by the type of schedule. Known values are: "Evaluation" and "Insight".
          Default value is None.
         :paramtype type: str or ~azure.ai.projects.models.ScheduleTaskType
@@ -6859,6 +6434,9 @@ class BetaSchedulesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.Schedule]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        _foundry_features: Literal[FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW
+        )
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
@@ -6876,7 +6454,7 @@ class BetaSchedulesOperations:
             if not next_link:
 
                 _request = build_beta_schedules_list_request(
-                    foundry_features=foundry_features,
+                    foundry_features=_foundry_features,
                     type=type,
                     enabled=enabled,
                     api_version=self._config.api_version,
@@ -6904,7 +6482,7 @@ class BetaSchedulesOperations:
                     "GET",
                     urllib.parse.urljoin(next_link, _parsed_next_link.path),
                     params=_next_request_params,
-                    headers={"Foundry-Features": self._serialize.header("foundry_features", foundry_features, "str")},
+                    headers={"Foundry-Features": _SERIALIZER.header("foundry_features", _foundry_features, "str")},
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -6941,13 +6519,7 @@ class BetaSchedulesOperations:
 
     @overload
     async def create_or_update(
-        self,
-        schedule_id: str,
-        schedule: _models.Schedule,
-        *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW],
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, schedule_id: str, schedule: _models.Schedule, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Schedule:
         """Create or update operation template.
 
@@ -6955,9 +6527,6 @@ class BetaSchedulesOperations:
         :type schedule_id: str
         :param schedule: The resource instance. Required.
         :type schedule: ~azure.ai.projects.models.Schedule
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. SCHEDULES_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.SCHEDULES_V1_PREVIEW
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6968,13 +6537,7 @@ class BetaSchedulesOperations:
 
     @overload
     async def create_or_update(
-        self,
-        schedule_id: str,
-        schedule: JSON,
-        *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW],
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, schedule_id: str, schedule: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Schedule:
         """Create or update operation template.
 
@@ -6982,9 +6545,6 @@ class BetaSchedulesOperations:
         :type schedule_id: str
         :param schedule: The resource instance. Required.
         :type schedule: JSON
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. SCHEDULES_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.SCHEDULES_V1_PREVIEW
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6995,13 +6555,7 @@ class BetaSchedulesOperations:
 
     @overload
     async def create_or_update(
-        self,
-        schedule_id: str,
-        schedule: IO[bytes],
-        *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW],
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, schedule_id: str, schedule: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Schedule:
         """Create or update operation template.
 
@@ -7009,9 +6563,6 @@ class BetaSchedulesOperations:
         :type schedule_id: str
         :param schedule: The resource instance. Required.
         :type schedule: IO[bytes]
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. SCHEDULES_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.SCHEDULES_V1_PREVIEW
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7022,12 +6573,7 @@ class BetaSchedulesOperations:
 
     @distributed_trace_async
     async def create_or_update(
-        self,
-        schedule_id: str,
-        schedule: Union[_models.Schedule, JSON, IO[bytes]],
-        *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW],
-        **kwargs: Any
+        self, schedule_id: str, schedule: Union[_models.Schedule, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.Schedule:
         """Create or update operation template.
 
@@ -7036,13 +6582,13 @@ class BetaSchedulesOperations:
         :param schedule: The resource instance. Is one of the following types: Schedule, JSON,
          IO[bytes] Required.
         :type schedule: ~azure.ai.projects.models.Schedule or JSON or IO[bytes]
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. SCHEDULES_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.SCHEDULES_V1_PREVIEW
         :return: Schedule. The Schedule is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.Schedule
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        _foundry_features: Literal[FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW
+        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -7066,7 +6612,7 @@ class BetaSchedulesOperations:
 
         _request = build_beta_schedules_create_or_update_request(
             schedule_id=schedule_id,
-            foundry_features=foundry_features,
+            foundry_features=_foundry_features,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -7105,27 +6651,20 @@ class BetaSchedulesOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def get_run(
-        self,
-        schedule_id: str,
-        run_id: str,
-        *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW],
-        **kwargs: Any
-    ) -> _models.ScheduleRun:
+    async def get_run(self, schedule_id: str, run_id: str, **kwargs: Any) -> _models.ScheduleRun:
         """Get a schedule run by id.
 
         :param schedule_id: The unique identifier of the schedule. Required.
         :type schedule_id: str
         :param run_id: The unique identifier of the schedule run. Required.
         :type run_id: str
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. SCHEDULES_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.SCHEDULES_V1_PREVIEW
         :return: ScheduleRun. The ScheduleRun is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.ScheduleRun
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        _foundry_features: Literal[FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW
+        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -7142,7 +6681,7 @@ class BetaSchedulesOperations:
         _request = build_beta_schedules_get_run_request(
             schedule_id=schedule_id,
             run_id=run_id,
-            foundry_features=foundry_features,
+            foundry_features=_foundry_features,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -7187,7 +6726,6 @@ class BetaSchedulesOperations:
         self,
         schedule_id: str,
         *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW],
         type: Optional[Union[str, _models.ScheduleTaskType]] = None,
         enabled: Optional[bool] = None,
         **kwargs: Any
@@ -7196,9 +6734,6 @@ class BetaSchedulesOperations:
 
         :param schedule_id: Identifier of the schedule. Required.
         :type schedule_id: str
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. SCHEDULES_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.SCHEDULES_V1_PREVIEW
         :keyword type: Filter by the type of schedule. Known values are: "Evaluation" and "Insight".
          Default value is None.
         :paramtype type: str or ~azure.ai.projects.models.ScheduleTaskType
@@ -7208,6 +6743,9 @@ class BetaSchedulesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.ScheduleRun]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        _foundry_features: Literal[FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW
+        )
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
@@ -7226,7 +6764,7 @@ class BetaSchedulesOperations:
 
                 _request = build_beta_schedules_list_runs_request(
                     schedule_id=schedule_id,
-                    foundry_features=foundry_features,
+                    foundry_features=_foundry_features,
                     type=type,
                     enabled=enabled,
                     api_version=self._config.api_version,
@@ -7254,7 +6792,7 @@ class BetaSchedulesOperations:
                     "GET",
                     urllib.parse.urljoin(next_link, _parsed_next_link.path),
                     params=_next_request_params,
-                    headers={"Foundry-Features": self._serialize.header("foundry_features", foundry_features, "str")},
+                    headers={"Foundry-Features": _SERIALIZER.header("foundry_features", _foundry_features, "str")},
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
