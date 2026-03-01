@@ -76,7 +76,10 @@ def make_local_var(kind, value, body_indent):
             f"  # type: ignore\n"
         )
     if kind == "literal_required":
-        return f"{body_indent}_foundry_features = FoundryFeaturesOptInKeys.{value}\n"
+        return (
+            f"{body_indent}_foundry_features: Literal[FoundryFeaturesOptInKeys.{value}]"
+            f" = FoundryFeaturesOptInKeys.{value}\n"
+        )
     return None
 
 

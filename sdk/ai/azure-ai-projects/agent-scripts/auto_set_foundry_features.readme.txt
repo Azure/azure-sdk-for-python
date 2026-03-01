@@ -57,7 +57,7 @@ where "SOME_VALUE" is one of the enum values on FoundryFeaturesOptInKeys.
 
 In this case, define the new local variable as follows:
 
-_foundry_features = FoundryFeaturesOptInKeys.SOME_VALUE
+_foundry_features: Literal[FoundryFeaturesOptInKeys.SOME_VALUE] = FoundryFeaturesOptInKeys.SOME_VALUE
 
 where "SOME_VALUE" is the same value you originally saw in the method signature.
 
