@@ -1,425 +1,446 @@
 #!/usr/bin/env python3
 """
-auto_set_foundry_features.py
+Auto-set Foundry Features script.
 
-Script to apply the foundry-features opt-in changes to the generated operations files.
+Modifies the following two files to implement a global opt-in flag for Foundry preview features:
+  azure/ai/projects/operations/_operations.py
+  azure/ai/projects/aio/operations/_operations.py
 
-Run from: azure-sdk-for-python/sdk/ai/azure-ai-projects
+Changes applied to each file:
+  Step 1: Insert _get_agent_definition_opt_in_keys variable after last import.
+  Step 2: Remove 'foundry_features' from non-build_ method signatures and docstrings.
+  Step 3: Insert '_foundry_features' local variable in implementation method bodies.
+  Step 4: Replace 'foundry_features=foundry_features' with 'foundry_features=_foundry_features'
+          in build_ function calls.
+  Step 5: Add Foundry-Features header to the GET line inside prepare_request() for list methods
+          that had foundry_features.
 
-Steps applied to each target file:
-  1. Insert _get_foundry_features_opt_in_keys constant after the last import statement.
-  2. Remove the 'foundry_features' parameter from all non-build_ method signatures.
-     Also remove the corresponding :keyword / :paramtype docstring entries.
-  3. Add a local variable 'foundry_features' at the top of each implementation method body
-     (required params → fixed string; optional → conditional on allow_preview flag).
-  4. In any nested 'def prepare_request(next_link=None):' function, ensure the paginated
-     GET request includes the Foundry-Features header.
+Run this script from the folder:
+  \\azure-sdk-for-python\\sdk\\ai\\azure-ai-projects
 """
 
-import ast
-import re
 import os
+import re
 import sys
 
-# ── Constants ───────────────────────────────────────────────────────────────
-
-FF_OPT_IN_LINE = (
-    '_get_foundry_features_opt_in_keys: str = ",".join('
-    '[key.value for key in _models.AgentDefinitionOptInKeys] + '
-    '[key.value for key in _models.FoundryFeaturesOptInKeys])'
-)
-
-TARGET_FILES = [
-    os.path.join("azure", "ai", "projects", "aio", "operations", "_operations.py"),
+FILES = [
     os.path.join("azure", "ai", "projects", "operations", "_operations.py"),
+    os.path.join("azure", "ai", "projects", "aio", "operations", "_operations.py"),
 ]
 
-# ── Entry point ──────────────────────────────────────────────────────────────
+GLOBAL_VAR_LINE = (
+    "_get_agent_definition_opt_in_keys: str = " '",".join([key.value for key in _models.AgentDefinitionOptInKeys])\n'
+)
 
 
-def main():
-    # Locate the azure-ai-projects root (one level up from agent-scripts/)
-    script_dir = os.path.dirname(os.path.abspath(__file__))
-    base_dir = os.path.dirname(script_dir)
+# ---------------------------------------------------------------------------
+# Helper functions
+# ---------------------------------------------------------------------------
 
-    for rel_path in TARGET_FILES:
-        filepath = os.path.join(base_dir, rel_path)
-        if not os.path.exists(filepath):
-            print(f"WARNING: File not found: {filepath}")
+
+def get_ff_info(line):
+    """Parse foundry_features annotation from a line containing 'foundry_features: '.
+
+    Returns (kind, value) where kind is one of:
+      'union_optional'   -> Optional[Union[str, _models.AgentDefinitionOptInKeys]] = None
+      'literal_optional' -> Optional[Literal[FoundryFeaturesOptInKeys.X]] = None
+      'literal_required' -> Literal[FoundryFeaturesOptInKeys.X]   (required, no default)
+    and value is the enum member name (e.g. 'EVALUATIONS_V1_PREVIEW') or None for union_optional.
+    """
+    if "Optional[Union[str, _models.AgentDefinitionOptInKeys]]" in line:
+        return "union_optional", None
+
+    m = re.search(r"Optional\[Literal\[FoundryFeaturesOptInKeys\.(\w+)\]\]", line)
+    if m:
+        return "literal_optional", m.group(1)
+
+    m = re.search(r"\bLiteral\[FoundryFeaturesOptInKeys\.(\w+)\]", line)
+    if m:
+        return "literal_required", m.group(1)
+
+    return None, None
+
+
+def make_local_var(kind, value, body_indent):
+    """Generate the _foundry_features local variable declaration line."""
+    if kind == "union_optional":
+        return (
+            f"{body_indent}_foundry_features: Optional[str] = "
+            f"_get_agent_definition_opt_in_keys if self._config._allow_preview else None"
+            f"  # type: ignore\n"
+        )
+    if kind == "literal_optional":
+        return (
+            f"{body_indent}_foundry_features: Optional[Literal[FoundryFeaturesOptInKeys.{value}]] = "
+            f"FoundryFeaturesOptInKeys.{value} if self._config._allow_preview else None"
+            f"  # type: ignore\n"
+        )
+    if kind == "literal_required":
+        return f"{body_indent}_foundry_features = FoundryFeaturesOptInKeys.{value}\n"
+    return None
+
+
+# ---------------------------------------------------------------------------
+# Step 1 – insert the global variable after the last import statement
+# ---------------------------------------------------------------------------
+
+
+def step1_insert_global(lines):
+    """Insert _get_agent_definition_opt_in_keys after the last top-level import."""
+    # Skip if the variable is already present
+    for line in lines:
+        if "_get_agent_definition_opt_in_keys" in line:
+            print("  [Step 1] Global variable already present – skipping")
+            return lines
+
+    last_import_idx = -1
+    for i, line in enumerate(lines):
+        if re.match(r"^(from|import)\b", line):
+            last_import_idx = i
+
+    if last_import_idx >= 0:
+        lines.insert(last_import_idx + 1, GLOBAL_VAR_LINE)
+        print(f"  [Step 1] Inserted global variable after line {last_import_idx + 1}")
+    else:
+        print("  [Step 1] WARNING: No import statement found – global variable not inserted")
+
+    return lines
+
+
+# ---------------------------------------------------------------------------
+# Steps 2-5 – state-machine processor
+# ---------------------------------------------------------------------------
+#
+# States:
+#   GLOBAL            – scanning at module / top level
+#   IN_BUILD          – inside a build_* function (never modified)
+#   IN_CLASS_SIG      – inside the signature of a class-level method
+#   IN_CLASS_BEFORE_BODY – signature closed; expecting docstring or body start
+#   IN_CLASS_DOCSTRING – inside a triple-quoted docstring of a class method
+#   IN_CLASS_BODY     – inside the body of a class method implementation
+#
+# is_overload tracks whether the current method is decorated with @overload.
+# For overload methods we remove foundry_features from the signature and
+# docstring, but never insert a local variable.
+#
+# ff_kind / ff_value record what type of foundry_features was found in the
+# current method's signature, so we can generate the right local variable.
+
+
+def steps_2to5(lines):
+    """Apply Steps 2-5 to a list of source lines, returning the modified list."""
+    result = []
+    i = 0
+
+    # --- state ---
+    state = "GLOBAL"
+    last_decorator = None  # last @xxx decorator seen before a def
+    current_indent = ""  # indent of the current method's def line
+    current_name = ""  # name of the current method
+    is_overload = False  # is the current method an @overload stub?
+    ff_kind = None  # type of foundry_features found in signature
+    ff_value = None  # enum value (for Literal types) or None
+    local_var_inserted = False  # have we inserted _foundry_features yet?
+    sig_paren_depth = 0  # open-paren depth within the current signature
+    in_keyword_block = False  # inside :keyword foundry_features: doc block
+
+    while i < len(lines):
+        line = lines[i]
+        stripped = line.strip()
+
+        # ---- (A) Decorator lines ----------------------------------------
+        if re.match(r"^\s*@\w", line):
+            last_decorator = stripped
+            result.append(line)
+            i += 1
             continue
-        process_file(filepath)
 
-    print("\nAll done!")
+        # ---- (B) def / async def lines -----------------------------------
+        def_m = re.match(r"^( *)(?:async )?def (\w+)\s*\(", line)
+        if def_m:
+            def_indent = def_m.group(1)
+            def_name = def_m.group(2)
+            indent_len = len(def_indent)
+
+            # Module-level function (0-indent).  All of these are build_*
+            # functions in the sync file; there are none in the aio file.
+            if indent_len == 0:
+                state = "IN_BUILD"
+                current_name = def_name
+                current_indent = def_indent
+                ff_kind = None
+                ff_value = None
+                last_decorator = None
+                result.append(line)
+                i += 1
+                sig_paren_depth = line.count("(") - line.count(")")
+                continue
+
+            # Class-level method (exactly 4-space indent).
+            if indent_len == 4:
+                state = "IN_CLASS_SIG"
+                is_overload = bool(last_decorator and "overload" in last_decorator)
+                ff_kind = None
+                ff_value = None
+                local_var_inserted = False
+                in_keyword_block = False
+                current_name = def_name
+                current_indent = def_indent
+                last_decorator = None
+                sig_paren_depth = line.count("(") - line.count(")")
+                result.append(line)
+                i += 1
+                # Handle single-line signatures (rare but possible)
+                if sig_paren_depth <= 0:
+                    if re.search(r":\s*\.\.\.\s*$", stripped):
+                        state = "GLOBAL"
+                    else:
+                        state = "IN_CLASS_BEFORE_BODY"
+                continue
+
+            # Inner function (8+ indent) – must not change state; pass through.
+            last_decorator = None
+            result.append(line)
+            i += 1
+            continue
+
+        # ---- (C) Reset last_decorator for non-decorator, non-def lines ---
+        if stripped and not stripped.startswith("#"):
+            last_decorator = None
+
+        # ================================================================
+        #   State-specific processing
+        # ================================================================
+
+        # -- GLOBAL / IN_BUILD: pass through unchanged --------------------
+        if state in ("GLOBAL", "IN_BUILD"):
+            result.append(line)
+            i += 1
+            continue
+
+        # -- IN_CLASS_SIG: processing the function signature ---------------
+        if state == "IN_CLASS_SIG":
+            sig_paren_depth += line.count("(") - line.count(")")
+
+            if "foundry_features: " in line:
+                ff_kind, ff_value = get_ff_info(line)
+
+                # Is this a STANDALONE foundry_features line?
+                # Standalone means the line (after stripping) starts with
+                # 'foundry_features: '.
+                if re.match(r"^\s*foundry_features:\s+", line):
+                    # Delete this line entirely
+                    i += 1
+                    if sig_paren_depth <= 0:
+                        if re.search(r":\s*\.\.\.\s*$", stripped):
+                            state = "GLOBAL"
+                        else:
+                            state = "IN_CLASS_BEFORE_BODY"
+                    continue
+                else:
+                    # COMBINED line – remove the foundry_features fragment.
+                    # Pattern: "..., *, foundry_features: TYPE, **kwargs..."
+                    # We remove ", *, foundry_features: TYPE," leaving "..., **kwargs..."
+                    new_line = re.sub(
+                        r",\s*\*,\s*foundry_features:\s+[^,]+(?:=\s*None)?,\s*",
+                        ", ",
+                        line,
+                    )
+                    result.append(new_line)
+                    i += 1
+                    if sig_paren_depth <= 0:
+                        if re.search(r":\s*\.\.\.\s*$", new_line.strip()):
+                            state = "GLOBAL"
+                        else:
+                            state = "IN_CLASS_BEFORE_BODY"
+                    continue
+
+            result.append(line)
+            i += 1
+            if sig_paren_depth <= 0:
+                if re.search(r":\s*\.\.\.\s*$", stripped):
+                    state = "GLOBAL"
+                else:
+                    state = "IN_CLASS_BEFORE_BODY"
+            continue
+
+        # -- IN_CLASS_BEFORE_BODY: looking for docstring or first body line --
+        if state == "IN_CLASS_BEFORE_BODY":
+            if not stripped:
+                # Blank line – keep and stay in this state
+                result.append(line)
+                i += 1
+                continue
+
+            if stripped.startswith('"""') or stripped.startswith("'''"):
+                quote = '"""' if '"""' in stripped else "'''"
+                # Count occurrences to detect single-line docstring
+                if stripped.count(quote) >= 2:
+                    # Single-line docstring, e.g.  """Retrieves the agent."""
+                    result.append(line)
+                    i += 1
+                    if is_overload:
+                        state = "GLOBAL"
+                    else:
+                        state = "IN_CLASS_BODY"
+                        if ff_kind and not local_var_inserted:
+                            lv = make_local_var(ff_kind, ff_value, current_indent + "    ")
+                            if lv:
+                                result.append(lv)
+                                local_var_inserted = True
+                else:
+                    # Start of multi-line docstring
+                    state = "IN_CLASS_DOCSTRING"
+                    in_keyword_block = False
+                    result.append(line)
+                    i += 1
+                continue
+
+            if stripped == "...":
+                # Overload stub body on its own line (no docstring)
+                result.append(line)
+                i += 1
+                state = "GLOBAL"
+                continue
+
+            # First real body line (no docstring)
+            state = "IN_CLASS_BODY"
+            if not is_overload and ff_kind and not local_var_inserted:
+                lv = make_local_var(ff_kind, ff_value, current_indent + "    ")
+                if lv:
+                    result.append(lv)
+                    local_var_inserted = True
+            result.append(line)
+            i += 1
+            continue
+
+        # -- IN_CLASS_DOCSTRING: inside the triple-quoted docstring ----------
+        if state == "IN_CLASS_DOCSTRING":
+            # Handle :keyword foundry_features: removal
+            if ":keyword foundry_features:" in line:
+                in_keyword_block = True
+                i += 1  # skip this line
+                continue
+
+            if in_keyword_block:
+                if ":paramtype foundry_features:" in line:
+                    # End of the foundry_features docstring block; skip this line
+                    in_keyword_block = False
+                    i += 1
+                    continue
+                if stripped.startswith(":"):
+                    # A new :keyword/:paramtype/:param/:return/etc. section
+                    in_keyword_block = False
+                    result.append(line)
+                    i += 1
+                    continue
+                # Continuation of the foundry_features description – skip
+                i += 1
+                continue
+
+            # Detect end of docstring (closing triple-quote)
+            if '"""' in stripped or "'''" in stripped:
+                # Check it's not just an opening quote (it IS the closing)
+                result.append(line)
+                i += 1
+                if is_overload:
+                    # Overload: the docstring IS the body – method is done
+                    state = "GLOBAL"
+                else:
+                    # Implementation: body follows
+                    state = "IN_CLASS_BODY"
+                    if ff_kind and not local_var_inserted:
+                        lv = make_local_var(ff_kind, ff_value, current_indent + "    ")
+                        if lv:
+                            result.append(lv)
+                            local_var_inserted = True
+                continue
+
+            result.append(line)
+            i += 1
+            continue
+
+        # -- IN_CLASS_BODY: inside the method implementation body ------------
+        if state == "IN_CLASS_BODY":
+            # Step 4: replace foundry_features=foundry_features in build_ calls
+            if "foundry_features=foundry_features" in line:
+                line = line.replace(
+                    "foundry_features=foundry_features",
+                    "foundry_features=_foundry_features",
+                )
+
+            # Step 5: add Foundry-Features header in prepare_request GET calls
+            # Only applicable when this method had foundry_features.
+            get_str = '"GET", urllib.parse.urljoin(next_link, _parsed_next_link.path),' " params=_next_request_params"
+            if ff_kind is not None and get_str in line and "Foundry-Features" not in line:
+                new_get = (
+                    '"GET", urllib.parse.urljoin(next_link, _parsed_next_link.path),'
+                    " params=_next_request_params,"
+                    ' headers={"Foundry-Features":'
+                    ' _SERIALIZER.header("foundry_features", _foundry_features, "str")}'
+                )
+                line = line.replace(get_str, new_get)
+
+            result.append(line)
+            i += 1
+            continue
+
+        # Fallback (should not be reached)
+        result.append(line)
+        i += 1
+
+    return result
 
 
-# ── File-level processing ────────────────────────────────────────────────────
+# ---------------------------------------------------------------------------
+# Main entry point
+# ---------------------------------------------------------------------------
 
 
 def process_file(filepath):
     print(f"\nProcessing: {filepath}")
-    with open(filepath, "r", encoding="utf-8") as f:
-        content = f.read()
-
-    # Idempotency guard
-    if "_get_foundry_features_opt_in_keys" in content:
-        print("  Already processed (found _get_foundry_features_opt_in_keys). Skipping.")
-        return
-
-    # Parse AST to find functions that need changes
-    try:
-        tree = ast.parse(content)
-    except SyntaxError as e:
-        print(f"  ERROR: Cannot parse file: {e}")
-        return
-
-    lines = content.splitlines(keepends=False)
-    original_len = len(lines)
-    ends_with_newline = content.endswith("\n")
-
-    # Collect all functions with a 'foundry_features' parameter that aren't build_ functions
-    functions_to_process = []
-    for node in ast.walk(tree):
-        if not isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
-            continue
-        if node.name.startswith("build_"):
-            continue
-
-        found, is_optional = _find_ff_in_args(node)
-        if not found:
-            continue
-
-        is_overload = any(
-            (isinstance(d, ast.Name) and d.id == "overload")
-            or (isinstance(d, ast.Attribute) and d.attr == "overload")
-            for d in node.decorator_list
-        )
-
-        has_docstring = False
-        docstring_end_1based = None
-        if node.body:
-            first = node.body[0]
-            if (
-                isinstance(first, ast.Expr)
-                and hasattr(first, "value")
-                and isinstance(first.value, ast.Constant)
-                and isinstance(first.value.value, str)
-            ):
-                has_docstring = True
-                docstring_end_1based = first.end_lineno  # 1-based
-
-        func_length = node.end_lineno - node.lineno + 1
-        functions_to_process.append(
-            {
-                "name": node.name,
-                "lineno": node.lineno,          # 1-based
-                "end_lineno": node.end_lineno,  # 1-based
-                "func_length": func_length,
-                "is_optional": is_optional,
-                "is_overload": is_overload,
-                "has_docstring": has_docstring,
-                "docstring_end_1based": docstring_end_1based,
-            }
-        )
-
-    # Process bottom-to-top so earlier line numbers stay valid
-    functions_to_process.sort(key=lambda x: x["lineno"], reverse=True)
-
-    print(f"  Found {len(functions_to_process)} function(s) to process")
-    for fi in functions_to_process:
-        opt = "optional" if fi["is_optional"] else "required"
-        ov = " [overload]" if fi["is_overload"] else ""
-        print(f"    - {fi['name']}() line {fi['lineno']} ({opt}){ov}")
-
-    for fi in functions_to_process:
-        lines = _apply_function_changes(lines, fi)
-
-    # Step 1: Insert the opt-in-keys constant right after the last import statement
-    lines = _insert_ff_constant(lines)
-
-    new_content = "\n".join(lines)
-    if ends_with_newline and not new_content.endswith("\n"):
-        new_content += "\n"
-
-    with open(filepath, "w", encoding="utf-8") as f:
-        f.write(new_content)
-
-    print(f"  Saved ({len(lines)} lines, was {original_len} lines)")
-
-
-# ── AST helpers ──────────────────────────────────────────────────────────────
-
-
-def _find_ff_in_args(node):
-    """Return (found: bool, is_optional: bool) for foundry_features parameter."""
-    for i, arg in enumerate(node.args.kwonlyargs):
-        if arg.arg == "foundry_features":
-            return True, node.args.kw_defaults[i] is not None
-
-    for i, arg in enumerate(node.args.args):
-        if arg.arg == "foundry_features":
-            num_without_default = len(node.args.args) - len(node.args.defaults)
-            return True, i >= num_without_default
-
-    return False, False
-
-
-# ── Constant insertion ────────────────────────────────────────────────────────
-
-
-def _insert_ff_constant(lines):
-    """Find the last top-level import/from line and insert the constant right after it."""
-    last_import_0 = -1
-    for i, line in enumerate(lines):
-        if line and not line[0].isspace():
-            if line.startswith("from ") or line.startswith("import "):
-                last_import_0 = i
-
-    if last_import_0 == -1:
-        raise ValueError("No import statements found in file")
-
-    lines.insert(last_import_0 + 1, FF_OPT_IN_LINE)
-    return lines
-
-
-# ── Per-function changes ──────────────────────────────────────────────────────
-
-
-def _apply_function_changes(lines, fi):
-    start_0 = fi["lineno"] - 1   # 0-indexed start of the 'def' line
-    is_optional = fi["is_optional"]
-    is_overload = fi["is_overload"]
-    has_docstring = fi["has_docstring"]
-    func_length = fi["func_length"]  # original line count of the function
-
-    # Step 2a – Remove foundry_features from the function signature
-    sig_end_0 = _find_signature_end_idx(lines, start_0)
-    lines, sig_line_removed = _remove_ff_from_signature(lines, start_0, sig_end_0)
-
-    # Compute a safe upper bound for the function's content in the (possibly modified) lines
-    search_end = min(start_0 + func_length + 10, len(lines))
-
-    # Step 2b – Remove :keyword foundry_features: … :paramtype foundry_features: from docstring
-    if has_docstring:
-        lines = _remove_ff_from_docstring(lines, start_0, search_end)
-
-    # Step 3 – Add local variable at top of implementation method body
-    if not is_overload and has_docstring:
-        lines = _add_ff_local_var(lines, start_0, search_end, is_optional)
-
-    # Step 4 – Fix prepare_request(next_link=None) if present
-    if not is_overload:
-        lines = _fix_prepare_request(lines, start_0, search_end)
-
-    return lines
-
-
-# ── Signature handling ────────────────────────────────────────────────────────
-
-
-def _find_signature_end_idx(lines, func_start_0):
-    """Return 0-based index of the line containing the closing ')' of the function signature."""
-    depth = 0
-    started = False
-    for i in range(func_start_0, len(lines)):
-        for ch in lines[i]:
-            if ch == "(":
-                depth += 1
-                started = True
-            elif ch == ")":
-                depth -= 1
-                if started and depth == 0:
-                    return i
-    return func_start_0
-
-
-def _remove_ff_from_signature(lines, start_0, sig_end_0):
-    """
-    Remove the foundry_features parameter from the function signature.
-    Returns (lines, line_removed) where line_removed indicates whether a line was deleted.
-    """
-    for i in range(start_0, sig_end_0 + 1):
-        line = lines[i]
-        stripped = line.strip()
-
-        # Case A: foundry_features is the sole parameter on this line
-        #   e.g. "        foundry_features: Optional[str] = None,"
-        if re.match(r"^foundry_features\s*:", stripped) and "def " not in line:
-            del lines[i]
-            # If foundry_features was the only kwonly arg, the preceding '*,'
-            # separator would now be orphaned (SyntaxError). Remove it too.
-            if i > 0 and lines[i - 1].strip() == "*,":
-                next_stripped = lines[i].strip() if i < len(lines) else ""
-                if next_stripped.startswith("**") or next_stripped == ")":
-                    del lines[i - 1]
-            return lines, True
-
-        # Case B: foundry_features shares a line with other parameters
-        #   e.g. "self, name: str, *, foundry_features: str, **kwargs: Any"
-        if "foundry_features" in line and re.search(r"\bfoundry_features\s*:", line):
-            # Make sure it is not a docstring line
-            if ":keyword " not in line and ":paramtype " not in line:
-                new_line = _remove_ff_from_mixed_line(line)
-                if new_line != line:
-                    lines[i] = new_line
-                    return lines, False
-
-    return lines, False
-
-
-def _remove_ff_from_mixed_line(line):
-    """
-    Remove 'foundry_features: TYPE[= DEFAULT], ' from a line that also has other parameters.
-    Uses bracket-depth counting to handle complex type annotations.
-    """
-    idx = line.find("foundry_features:")
-    if idx == -1:
-        return line
-
-    # Walk forward from after "foundry_features:" to find the end of this parameter
-    depth = 0
-    pos = idx + len("foundry_features:")
-    while pos < len(line):
-        c = line[pos]
-        if c in "([{":
-            depth += 1
-        elif c in ")]}":
-            if depth == 0:
-                break           # hit the closing paren of the parameter list
-            depth -= 1
-        elif c == "," and depth == 0:
-            pos += 1            # consume comma
-            if pos < len(line) and line[pos] == " ":
-                pos += 1        # consume one trailing space
-            break
-        pos += 1
-
-    result = line[:idx] + line[pos:]
-    # Clean up unlikely double-comma artifact
-    result = re.sub(r",\s*,", ",", result)
-    return result
-
-
-# ── Docstring handling ────────────────────────────────────────────────────────
-
-
-def _remove_ff_from_docstring(lines, func_start_0, search_end):
-    """Delete the ':keyword foundry_features:' … ':paramtype foundry_features:' block."""
-    kw_idx = None
-    pt_idx = None
-
-    for i in range(func_start_0, min(search_end, len(lines))):
-        if ":keyword foundry_features:" in lines[i]:
-            kw_idx = i
-        if kw_idx is not None and ":paramtype foundry_features:" in lines[i]:
-            pt_idx = i
-            break
-
-    if kw_idx is not None and pt_idx is not None:
-        del lines[kw_idx : pt_idx + 1]
-
-    return lines
-
-
-# ── Local variable insertion ─────────────────────────────────────────────────
-
-
-def _find_docstring_end_idx(lines, func_start_0, search_end):
-    """Return the 0-based index of the line containing the closing ''' or \"\"\" of the docstring."""
-    in_docstring = False
-    quote_char = None
-
-    for i in range(func_start_0, min(search_end, len(lines))):
-        stripped = lines[i].strip()
-        if not in_docstring:
-            if stripped.startswith('"""') or stripped.startswith("'''"):
-                quote_char = stripped[:3]
-                rest = stripped[3:]
-                if quote_char in rest:
-                    return i          # single-line docstring
-                in_docstring = True
-        else:
-            if quote_char and quote_char in stripped:
-                return i              # found the closing triple-quote
-
-    return None
-
-
-def _add_ff_local_var(lines, func_start_0, search_end, is_optional):
-    """Insert the foundry_features local variable right after the closing docstring line."""
-    doc_end_i = _find_docstring_end_idx(lines, func_start_0, search_end)
-    if doc_end_i is None:
-        print(f"    WARNING: Could not find docstring end for function at line {func_start_0 + 1}")
-        return lines
-
-    # Derive body indentation from the 'def' line's indentation + 4 spaces
-    def_line = lines[func_start_0]
-    def_indent = len(def_line) - len(def_line.lstrip())
-    body_indent = " " * (def_indent + 4)
-
-    if is_optional:
-        var_line = (
-            f"{body_indent}foundry_features: Optional[str] = "
-            f"_get_foundry_features_opt_in_keys "
-            f'if (self.__class__.__name__.startswith("Beta") or '
-            f"self._config._allow_preview) else None  # type: ignore"
-        )
+    if not os.path.isfile(filepath):
+        print(f"  ERROR: File not found – {filepath}")
+        return False
+
+    with open(filepath, "r", encoding="utf-8") as fh:
+        lines = fh.readlines()
+
+    print(f"  Original line count: {len(lines)}")
+
+    lines = step1_insert_global(lines)
+    lines = steps_2to5(lines)
+
+    with open(filepath, "w", encoding="utf-8") as fh:
+        fh.writelines(lines)
+
+    print(f"  Modified line count: {len(lines)}")
+    return True
+
+
+def main():
+    # Ensure we're running from the correct directory
+    for filepath in FILES:
+        if not os.path.isfile(filepath):
+            print(
+                f"ERROR: Expected to run from the azure-ai-projects folder, "
+                f"but '{filepath}' was not found.\n"
+                f"Please run this script from:\n"
+                f"  \\azure-sdk-for-python\\sdk\\ai\\azure-ai-projects"
+            )
+            sys.exit(1)
+
+    success = True
+    for filepath in FILES:
+        ok = process_file(filepath)
+        success = success and ok
+
+    if success:
+        print("\nAll files processed successfully.")
     else:
-        var_line = f"{body_indent}foundry_features: str = _get_foundry_features_opt_in_keys"
+        print("\nOne or more files could not be processed.")
+        sys.exit(1)
 
-    lines.insert(doc_end_i + 1, var_line)
-    return lines
-
-
-# ── prepare_request fix ───────────────────────────────────────────────────────
-
-
-def _fix_prepare_request(lines, func_start_0, search_end):
-    """
-    Within a nested 'def prepare_request(next_link=None):' function, find the
-    HttpRequest("GET", ..., params=_next_request_params) call that lacks a Foundry-Features
-    header and add one.
-
-    Looks for a single-line pattern of the form:
-        "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-    (without a trailing 'headers=') and appends the header argument.
-    """
-    # Locate the nested prepare_request function
-    prepare_req_start = None
-    for i in range(func_start_0, min(search_end, len(lines))):
-        if re.search(r"def\s+prepare_request\s*\(\s*next_link\s*=\s*None\s*\)\s*:", lines[i]):
-            prepare_req_start = i
-            break
-
-    if prepare_req_start is None:
-        return lines
-
-    # Look for the specific single-line HttpRequest pattern (no 'headers=' yet)
-    for i in range(prepare_req_start, min(prepare_req_start + 60, len(lines))):
-        if i >= len(lines):
-            break
-        line = lines[i]
-        if (
-            '"GET"' in line
-            and "urllib.parse.urljoin(next_link, _parsed_next_link.path)" in line
-            and "params=_next_request_params" in line
-            and "headers=" not in line
-        ):
-            old_pattern = (
-                '"GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), '
-                "params=_next_request_params"
-            )
-            new_pattern = (
-                '"GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), '
-                "params=_next_request_params, "
-                'headers={"Foundry-Features": _SERIALIZER.header("foundry_features", foundry_features, "str")}'
-            )
-            lines[i] = line.replace(old_pattern, new_pattern)
-            break
-
-    return lines
-
-
-# ── Main guard ────────────────────────────────────────────────────────────────
 
 if __name__ == "__main__":
     main()

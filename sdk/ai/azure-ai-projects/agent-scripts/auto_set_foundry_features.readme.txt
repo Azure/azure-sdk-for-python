@@ -29,14 +29,15 @@ Step 1:
 At the top of each Python script, you will find some comments, followed by a section of
 "from" and "import" statements. After all of those, insert the following line:
 
-_get_foundry_features_opt_in_keys: str = ",".join([key.value for key in _models.AgentDefinitionOptInKeys] + [key.value for key in _models.FoundryFeaturesOptInKeys])
+_get_agent_definition_opt_in_keys: str = ",".join([key.value for key in _models.AgentDefinitionOptInKeys])
 
 Step 2:
-Find all the methods that show "foundry_features" as an input string argument. It could be optional or required.
-You can search for the string "foundry_features: " to find all those. But I would like you to ignore all the methods with
-names that start with "build_". They should not be modified.
+Find all the methods that show "foundry_features" as an input argument. It could be optional or required.
+You can search for the string "foundry_features: " to find all those. But I would like you to ignore all
+the methods with names that start with "build_". They should not be modified.
 
-For each method you find, delete the "foundry_feature" line from the method signature.
+For each method you find, delete the "foundry_feature" line from the method signature. But take note
+of how "foundry_features" is defined here, as you will need that in the next step.
 
 Also delete the method doc strings lines associated with this (now deleted) input argument. 
 Do that by deleting the line that starts with ":keyword foundry_features:", up to and including
@@ -44,17 +45,38 @@ the line that starts with ":paramtype foundry_features:". So you may need to del
 lines, not just two lines that include the above strings, but also all lines in between those two lines.
 
 Step 3:
-For each one of the methods you found, declare a new local variable at the top of the method.
+For each one of the methods you found, declare a new local variable _foundry_features at the top of the method,
+that will replace the input argument that was removed in the previous step.
 
-if "foundry_features" in the method signature was a required input argument before you remove it,
-then define the new local variable (with the same name) as follows:
+if "foundry_features" in the method signature was a required input argument before you removed it,
+it should have had the form:
 
-_foundry_features: str = _get_foundry_features_opt_in_keys
+foundry_features: Literal[FoundryFeaturesOptInKeys.SOME_VALUE],
+
+where "SOME_VALUE" is one of the enum values on FoundryFeaturesOptInKeys.
+
+In this case, define the new local variable as follows:
+
+_foundry_features = FoundryFeaturesOptInKeys.SOME_VALUE
+
+where "SOME_VALUE" is the same value you originally saw in the method signature.
 
 If "foundry_features" in the method signature was an optional input argument before you removed it,
-then define the new local variable (with the same name) as follows:
+it should have one of two forms. It could have this form:
 
-_foundry_features: Optional[str] = _get_foundry_features_opt_in_keys if (self.__class__.__name__.startswith("Beta") or self._config._allow_preview) else None  # type: ignore
+foundry_features: Optional[Union[str, _models.AgentDefinitionOptInKeys]] = None,
+
+in which case the local argument that you should define is the following:
+_foundry_features: Optional[str] = _get_agent_definition_opt_in_keys if self._config._allow_preview else None  # type: ignore
+
+Or it can have the form:
+
+foundry_features: Optional[Literal[FoundryFeaturesOptInKeys.SOME_VALUE]] = None,
+
+where "SOME_VALUE" is one of the enum values on FoundryFeaturesOptInKeys.
+in which case the local argument that you should define is the following:
+
+_foundry_features: Optional[Literal[FoundryFeaturesOptInKeys.SOME_VALUE]] = FoundryFeaturesOptInKeys.SOME_VALUE if self._config._allow_preview else None  # type: ignore
 
 Step 4:
 For each one of the methods you found, look for the line "foundry_features=foundry_features" 
@@ -77,8 +99,8 @@ After your created the Python script, run it in the folder \azure-sdk-for-python
 in order to apply the changes mentioned above.
 
 Step 7:
-To verify your result, run the MyPy tool in the same folder and make sure there are no errors originating
-from the package source file. To run MyPy:
-tox run -e mypy -c ../../../eng/tox/tox.ini --root
-there should be no errors from files under the folder \azure-sdk-for-python\sdk\ai\azure-ai-projects\azure folder.
-Note that there could be errors from other folders. Ignore those.
+To verify your result, run the 'black' tool, which validates the formatting of the code:
+black --config ../../../eng/black-pyproject.toml .
+
+Do not run MyPy as part of your validation.
+
