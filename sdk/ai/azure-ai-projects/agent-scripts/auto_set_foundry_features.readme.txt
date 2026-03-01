@@ -39,8 +39,10 @@ names that start with "build_". They should not be modified.
 
 For each method you find, delete the "foundry_feature" line from the method signature.
 
-Also delete the method doc strings lines associated with this (now deleted) input argument. Those will
-be the lines that start with ":keyword foundry_features:" and ":paramtype foundry_features:".
+Also delete the method doc strings lines associated with this (now deleted) input argument. 
+Do that by deleting the line that starts with ":keyword foundry_features:", up to and including
+the line that starts with ":paramtype foundry_features:". So you may need to delete multiple
+lines, not just two lines that include the above strings, but also all lines in between those two lines.
 
 Step 3:
 For each one of the method you found, also look for the line:
@@ -49,7 +51,7 @@ and replace it with:
 foundry_features=_get_foundry_features_opt_in_keys if (self.__class__.__name__.startswith("Beta") or self._config._allow_preview) else None,
 
 Step 4:
-For each one of the methods you found, also see if it includes a function defintion with
+For each one of the methods you found, also see if it includes a function definition with
 the following signature:
 def prepare_request(next_link=None):
 
