@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 #!/usr/bin/env python3
 """
 Script to apply Foundry Features global opt-in changes to azure-ai-projects SDK.
@@ -325,9 +326,7 @@ def fix_missing_local_var(content: str) -> str:
             # Check if this method uses foundry_features=_foundry_features
             # but does NOT define _foundry_features
             uses_ff = any("foundry_features=_foundry_features" in ml for ml in method_lines)
-            defines_ff = any(
-                re.match(r"\s+_foundry_features\s*[=:]", ml) for ml in method_lines
-            )
+            defines_ff = any(re.match(r"\s+_foundry_features\s*[=:]", ml) for ml in method_lines)
 
             if uses_ff and not defines_ff:
                 # Determine the value from the build_ call or _initial call in the body
