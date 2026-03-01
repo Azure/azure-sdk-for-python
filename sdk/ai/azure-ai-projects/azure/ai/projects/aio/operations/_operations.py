@@ -35,7 +35,7 @@ from azure.core.utils import case_insensitive_dict
 from ... import models as _models
 from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.serialization import Deserializer, Serializer
-from ...models._enums import FoundryFeaturesOptInKeys
+from ...models._enums import _AgentDefinitionOptInKeys, _FoundryFeaturesOptInKeys
 from ...operations._operations import (
     build_agents_create_agent_from_manifest_request,
     build_agents_create_agent_request,
@@ -103,8 +103,6 @@ from ...operations._operations import (
     build_indexes_list_versions_request,
 )
 from .._configuration import AIProjectClientConfiguration
-
-_get_agent_definition_opt_in_keys: str = ",".join([key.value for key in _models.AgentDefinitionOptInKeys])
 
 JSON = MutableMapping[str, Any]
 _Unset: Any = object()
@@ -1730,7 +1728,7 @@ class EvaluationRulesOperations:
         :rtype: ~azure.ai.projects.models.EvaluationRule
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Optional[Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW]] = FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW if self._config._allow_preview else None  # type: ignore
+        _foundry_features: Optional[Literal[_FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW]] = _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW if self._config._allow_preview else None  # type: ignore
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -3479,8 +3477,8 @@ class BetaEvaluationTaxonomiesOperations:
         :rtype: ~azure.ai.projects.models.EvaluationTaxonomy
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
-            FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
+        _foundry_features: Literal[_FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
+            _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
         )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -3547,8 +3545,8 @@ class BetaEvaluationTaxonomiesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.EvaluationTaxonomy]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
-            FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
+        _foundry_features: Literal[_FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
+            _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
         )
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
@@ -3640,8 +3638,8 @@ class BetaEvaluationTaxonomiesOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
-            FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
+        _foundry_features: Literal[_FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
+            _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
         )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -3751,8 +3749,8 @@ class BetaEvaluationTaxonomiesOperations:
         :rtype: ~azure.ai.projects.models.EvaluationTaxonomy
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
-            FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
+        _foundry_features: Literal[_FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
+            _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
         )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -3884,8 +3882,8 @@ class BetaEvaluationTaxonomiesOperations:
         :rtype: ~azure.ai.projects.models.EvaluationTaxonomy
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
-            FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
+        _foundry_features: Literal[_FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
+            _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
         )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -3990,8 +3988,8 @@ class BetaEvaluatorsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.EvaluatorVersion]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
-            FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
+        _foundry_features: Literal[_FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
+            _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
         )
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
@@ -4095,8 +4093,8 @@ class BetaEvaluatorsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.EvaluatorVersion]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
-            FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
+        _foundry_features: Literal[_FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
+            _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
         )
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
@@ -4191,8 +4189,8 @@ class BetaEvaluatorsOperations:
         :rtype: ~azure.ai.projects.models.EvaluatorVersion
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
-            FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
+        _foundry_features: Literal[_FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
+            _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
         )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -4259,8 +4257,8 @@ class BetaEvaluatorsOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
-            FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
+        _foundry_features: Literal[_FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
+            _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
         )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -4376,8 +4374,8 @@ class BetaEvaluatorsOperations:
         :rtype: ~azure.ai.projects.models.EvaluatorVersion
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
-            FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
+        _foundry_features: Literal[_FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
+            _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
         )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -4533,8 +4531,8 @@ class BetaEvaluatorsOperations:
         :rtype: ~azure.ai.projects.models.EvaluatorVersion
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
-            FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
+        _foundry_features: Literal[_FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
+            _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
         )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -4678,8 +4676,8 @@ class BetaInsightsOperations:
         :rtype: ~azure.ai.projects.models.Insight
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW] = (
-            FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW
+        _foundry_features: Literal[_FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW] = (
+            _FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW
         )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -4756,8 +4754,8 @@ class BetaInsightsOperations:
         :rtype: ~azure.ai.projects.models.Insight
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW] = (
-            FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW
+        _foundry_features: Literal[_FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW] = (
+            _FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW
         )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -4840,8 +4838,8 @@ class BetaInsightsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.Insight]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW] = (
-            FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW
+        _foundry_features: Literal[_FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW] = (
+            _FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW
         )
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
@@ -5034,8 +5032,8 @@ class BetaMemoryStoresOperations:
         :rtype: ~azure.ai.projects.models.MemoryStoreDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] = (
-            FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
+        _foundry_features: Literal[_FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] = (
+            _FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
         )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -5196,8 +5194,8 @@ class BetaMemoryStoresOperations:
         :rtype: ~azure.ai.projects.models.MemoryStoreDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] = (
-            FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
+        _foundry_features: Literal[_FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] = (
+            _FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
         )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -5277,8 +5275,8 @@ class BetaMemoryStoresOperations:
         :rtype: ~azure.ai.projects.models.MemoryStoreDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] = (
-            FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
+        _foundry_features: Literal[_FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] = (
+            _FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
         )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -5364,8 +5362,8 @@ class BetaMemoryStoresOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.MemoryStoreDetails]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] = (
-            FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
+        _foundry_features: Literal[_FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] = (
+            _FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
         )
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
@@ -5436,8 +5434,8 @@ class BetaMemoryStoresOperations:
         :rtype: ~azure.ai.projects.models.DeleteMemoryStoreResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] = (
-            FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
+        _foundry_features: Literal[_FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] = (
+            _FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
         )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -5547,8 +5545,8 @@ class BetaMemoryStoresOperations:
         :rtype: ~azure.ai.projects.models.MemoryStoreSearchResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] = (
-            FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
+        _foundry_features: Literal[_FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] = (
+            _FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
         )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -5636,8 +5634,8 @@ class BetaMemoryStoresOperations:
         update_delay: Optional[int] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        _foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] = (
-            FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
+        _foundry_features: Literal[_FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] = (
+            _FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
         )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -5772,8 +5770,8 @@ class BetaMemoryStoresOperations:
          ~azure.core.polling.AsyncLROPoller[~azure.ai.projects.models.MemoryStoreUpdateCompletedResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] = (
-            FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
+        _foundry_features: Literal[_FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] = (
+            _FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
         )
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
@@ -5913,8 +5911,8 @@ class BetaMemoryStoresOperations:
         :rtype: ~azure.ai.projects.models.MemoryStoreDeleteScopeResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] = (
-            FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
+        _foundry_features: Literal[_FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] = (
+            _FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
         )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -6014,8 +6012,8 @@ class BetaRedTeamsOperations:
         :rtype: ~azure.ai.projects.models.RedTeam
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW] = (
-            FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW
+        _foundry_features: Literal[_FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW] = (
+            _FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW
         )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -6076,8 +6074,8 @@ class BetaRedTeamsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.RedTeam]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW] = (
-            FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW
+        _foundry_features: Literal[_FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW] = (
+            _FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW
         )
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
@@ -6214,8 +6212,8 @@ class BetaRedTeamsOperations:
         :rtype: ~azure.ai.projects.models.RedTeam
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW] = (
-            FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW
+        _foundry_features: Literal[_FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW] = (
+            _FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW
         )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -6309,8 +6307,8 @@ class BetaSchedulesOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW] = (
-            FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW
+        _foundry_features: Literal[_FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW] = (
+            _FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW
         )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -6361,8 +6359,8 @@ class BetaSchedulesOperations:
         :rtype: ~azure.ai.projects.models.Schedule
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW] = (
-            FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW
+        _foundry_features: Literal[_FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW] = (
+            _FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW
         )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -6434,8 +6432,8 @@ class BetaSchedulesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.Schedule]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW] = (
-            FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW
+        _foundry_features: Literal[_FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW] = (
+            _FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW
         )
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
@@ -6586,8 +6584,8 @@ class BetaSchedulesOperations:
         :rtype: ~azure.ai.projects.models.Schedule
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW] = (
-            FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW
+        _foundry_features: Literal[_FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW] = (
+            _FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW
         )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -6662,8 +6660,8 @@ class BetaSchedulesOperations:
         :rtype: ~azure.ai.projects.models.ScheduleRun
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW] = (
-            FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW
+        _foundry_features: Literal[_FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW] = (
+            _FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW
         )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -6743,8 +6741,8 @@ class BetaSchedulesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.ScheduleRun]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW] = (
-            FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW
+        _foundry_features: Literal[_FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW] = (
+            _FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW
         )
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}

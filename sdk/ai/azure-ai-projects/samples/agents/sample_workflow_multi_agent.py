@@ -29,7 +29,6 @@ from dotenv import load_dotenv
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
-    AgentDefintionOptInKeys,
     PromptAgentDefinition,
     WorkflowAgentDefinition,
 )
@@ -40,7 +39,7 @@ endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
 
 with (
     DefaultAzureCredential() as credential,
-    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+    AIProjectClient(endpoint=endpoint, credential=credential, allow_preview=True) as project_client,
     project_client.get_openai_client() as openai_client,
 ):
     # Create Teacher Agent
@@ -142,7 +141,6 @@ trigger:
     workflow = project_client.agents.create_version(
         agent_name="student-teacher-workflow",
         definition=WorkflowAgentDefinition(workflow=workflow_yaml),
-        foundry_features=AgentDefintionOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW,
     )
 
     print(f"Agent created (id: {workflow.id}, name: {workflow.name}, version: {workflow.version})")

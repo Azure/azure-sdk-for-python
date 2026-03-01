@@ -47,7 +47,7 @@ endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
 
 with (
     DefaultAzureCredential(exclude_interactive_browser_credential=False) as credential,
-    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+    AIProjectClient(endpoint=endpoint, credential=credential, allow_preview=True) as project_client,
 ):
 
     # Delete memory store, if it already exists
