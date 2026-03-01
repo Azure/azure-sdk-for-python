@@ -7,7 +7,7 @@ The agent created the Python script "auto_set_foundry_features.py" in this folde
 you re-emit from TypeSpec, try running that script from the \sdk\ai\azure-ai-projects folder
 and see if again it did the job correctly.
 
-Model used was GPT-5.3-Codex.
+Model used was Claude Sonnet 4.6
 
 Last updated: 2/18/2026
 
@@ -108,7 +108,7 @@ Part 2:
 In Part 2, you are allowed to edit all four files mentioned above. No other files. In this part you will:
 * Rename the class AgentDefinitionOptInKeys to _AgentDefinitionOptInKeys and make it internal.
 * Rename the class FoundryFeaturesOptInKeys to _FoundryFeaturesOptInKeys and make it internal.
-Which means you need to remove them from the relevant __init__.py files and fix all imports as a result.
+Which means you need to remove them from the relevant __init__.py file and fix all imports as a result.
 
 Verification:
 
