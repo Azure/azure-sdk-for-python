@@ -8306,14 +8306,12 @@ class ToolChoiceAllowed(ToolChoiceParam, discriminator="allowed_tools"):
     :vartype mode: str or str
     :ivar tools: A list of tool definitions that the model should be allowed to call. For the
      Responses API, the list of tool definitions might look like:
-
      .. code-block:: json
-
-        [
-          { "type": "function", "name": "get_weather" },
-          { "type": "mcp", "server_label": "deepwiki" },
-          { "type": "image_generation" }
-        ]. Required.
+     [
+     { "type": "function", "name": "get_weather" },
+     { "type": "mcp", "server_label": "deepwiki" },
+     { "type": "image_generation" }
+     ]. Required.
     :vartype tools: list[dict[str, any]]
     """
 
@@ -8327,14 +8325,12 @@ class ToolChoiceAllowed(ToolChoiceParam, discriminator="allowed_tools"):
     tools: list[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A list of tool definitions that the model should be allowed to call. For the Responses API, the
      list of tool definitions might look like:
-     
      .. code-block:: json
-     
-        [
-          { \"type\": \"function\", \"name\": \"get_weather\" },
-          { \"type\": \"mcp\", \"server_label\": \"deepwiki\" },
-          { \"type\": \"image_generation\" }
-        ]. Required."""
+     [
+     { \"type\": \"function\", \"name\": \"get_weather\" },
+     { \"type\": \"mcp\", \"server_label\": \"deepwiki\" },
+     { \"type\": \"image_generation\" }
+     ]. Required."""
 
     @overload
     def __init__(
