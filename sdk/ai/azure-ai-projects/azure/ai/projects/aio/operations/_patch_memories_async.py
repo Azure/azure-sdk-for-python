@@ -290,7 +290,7 @@ class BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
          ~azure.ai.projects.models.AsyncUpdateMemoriesLROPoller
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] = (
+        _foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] = (
             FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
         )
 
@@ -304,7 +304,7 @@ class BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = await self._update_memories_initial(
-                foundry_features=foundry_features,
+                foundry_features=_foundry_features,
                 name=name,
                 body=body,
                 scope=scope,
