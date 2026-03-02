@@ -9,7 +9,7 @@ import sys
 from unittest.mock import Mock
 import pytest
 from devtools_testutils.aio import recorded_by_proxy_async
-from async_preparers import app_config_decorator_async
+from preparers import AppConfigProviderPreparer
 from testcase import has_feature_flag
 from asynctestcase import AppConfigTestCase
 from test_constants import FEATURE_MANAGEMENT_KEY
@@ -22,7 +22,7 @@ try:
 
     class TestAppConfigurationProvider(AppConfigTestCase, unittest.TestCase):
         # method: refresh
-        @app_config_decorator_async
+        @AppConfigProviderPreparer()
         @recorded_by_proxy_async
         @pytest.mark.skipif(sys.version_info < (3, 8), reason="Python 3.7 does not support AsyncMock")
         @pytest.mark.asyncio
@@ -91,7 +91,7 @@ try:
                 assert mock_callback.call_count == 2
 
         # method: refresh
-        @app_config_decorator_async
+        @AppConfigProviderPreparer()
         @recorded_by_proxy_async
         @pytest.mark.skipif(sys.version_info < (3, 8), reason="Python 3.7 does not support AsyncMock")
         @pytest.mark.asyncio
@@ -142,7 +142,7 @@ try:
                 assert mock_callback.call_count == 1
 
         # method: refresh
-        @app_config_decorator_async
+        @AppConfigProviderPreparer()
         @recorded_by_proxy_async
         @pytest.mark.skipif(sys.version_info < (3, 8), reason="Python 3.7 does not support AsyncMock")
         @pytest.mark.asyncio

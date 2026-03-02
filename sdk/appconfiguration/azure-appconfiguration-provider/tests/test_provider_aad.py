@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 from devtools_testutils import recorded_by_proxy
-from preparers import app_config_decorator_aad
+from preparers import AppConfigProviderPreparer
 from testcase import AppConfigTestCase, has_feature_flag
 from test_constants import FEATURE_MANAGEMENT_KEY
 from azure.appconfiguration.provider import SettingSelector, AzureAppConfigurationKeyVaultOptions
@@ -12,8 +12,8 @@ from azure.appconfiguration.provider import SettingSelector, AzureAppConfigurati
 
 class TestAppConfigurationProvider(AppConfigTestCase):
     # method: provider_creation_aad
+    @AppConfigProviderPreparer()
     @recorded_by_proxy
-    @app_config_decorator_aad
     def test_provider_creation_aad(self, appconfiguration_endpoint_string, appconfiguration_keyvault_secret_url):
         client = self.create_client(
             endpoint=appconfiguration_endpoint_string,
@@ -27,8 +27,8 @@ class TestAppConfigurationProvider(AppConfigTestCase):
         assert has_feature_flag(client, "Alpha")
 
     # method: provider_trim_prefixes
+    @AppConfigProviderPreparer()
     @recorded_by_proxy
-    @app_config_decorator_aad
     def test_provider_trim_prefixes(self, appconfiguration_endpoint_string, appconfiguration_keyvault_secret_url):
         trimmed = {"test."}
         client = self.create_client(
@@ -45,8 +45,8 @@ class TestAppConfigurationProvider(AppConfigTestCase):
         assert has_feature_flag(client, "Alpha")
 
     # method: provider_selectors
+    @AppConfigProviderPreparer()
     @recorded_by_proxy
-    @app_config_decorator_aad
     def test_provider_selectors(self, appconfiguration_endpoint_string, appconfiguration_keyvault_secret_url):
         selects = {SettingSelector(key_filter="message*", label_filter="dev")}
         client = self.create_client(
@@ -59,8 +59,8 @@ class TestAppConfigurationProvider(AppConfigTestCase):
         assert FEATURE_MANAGEMENT_KEY not in client
 
     # method: provider_selectors
+    @AppConfigProviderPreparer()
     @recorded_by_proxy
-    @app_config_decorator_aad
     def test_provider_key_vault_reference(self, appconfiguration_endpoint_string, appconfiguration_keyvault_secret_url):
         selects = {SettingSelector(key_filter="*", label_filter="prod")}
         client = self.create_client(
@@ -71,8 +71,8 @@ class TestAppConfigurationProvider(AppConfigTestCase):
         assert client["secret"] == "Very secret value"
 
     # method: provider_selectors
+    @AppConfigProviderPreparer()
     @recorded_by_proxy
-    @app_config_decorator_aad
     def test_provider_secret_resolver(self, appconfiguration_endpoint_string):
         selects = {SettingSelector(key_filter="*", label_filter="prod")}
         client = self.create_client(
@@ -81,8 +81,8 @@ class TestAppConfigurationProvider(AppConfigTestCase):
         assert client["secret"] == "Resolver Value"
 
     # method: provider_selectors
+    @AppConfigProviderPreparer()
     @recorded_by_proxy
-    @app_config_decorator_aad
     def test_provider_key_vault_reference_options(
         self, appconfiguration_endpoint_string, appconfiguration_keyvault_secret_url
     ):
@@ -97,8 +97,8 @@ class TestAppConfigurationProvider(AppConfigTestCase):
         assert client["secret"] == "Very secret value"
 
     # method: provider_selectors
+    @AppConfigProviderPreparer()
     @recorded_by_proxy
-    @app_config_decorator_aad
     def test_provider_secret_resolver_options(self, appconfiguration_endpoint_string):
         selects = {SettingSelector(key_filter="*", label_filter="prod")}
         key_vault_options = AzureAppConfigurationKeyVaultOptions(secret_resolver=secret_resolver)
@@ -107,8 +107,8 @@ class TestAppConfigurationProvider(AppConfigTestCase):
         )
         assert client["secret"] == "Resolver Value"
 
+    @AppConfigProviderPreparer()
     @recorded_by_proxy
-    @app_config_decorator_aad
     def test_provider_tag_filters(self, appconfiguration_endpoint_string, appconfiguration_keyvault_secret_url):
         selects = {SettingSelector(key_filter="*", tag_filters=["a=b"])}
         client = self.create_client(

@@ -6,7 +6,7 @@
 import unittest
 from unittest.mock import Mock, patch
 from devtools_testutils import recorded_by_proxy
-from preparers import app_config_decorator_aad
+from preparers import AppConfigProviderPreparer
 from testcase import AppConfigTestCase
 from azure.appconfiguration import SecretReferenceConfigurationSetting
 from azure.keyvault.secrets import SecretClient
@@ -389,8 +389,8 @@ class TestSecretProvider(AppConfigTestCase, unittest.TestCase):
                     # Verify the result
                     self.assertEqual(result, "secret-value")
 
+    @AppConfigProviderPreparer()
     @recorded_by_proxy
-    @app_config_decorator_aad
     def test_integration_with_keyvault(self, appconfiguration_endpoint_string, appconfiguration_keyvault_secret_url):
         """Test integration with Key Vault."""
         if not appconfiguration_keyvault_secret_url:

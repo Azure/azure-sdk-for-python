@@ -15,7 +15,7 @@ from azure.appconfiguration import (
 )
 from azure.core.exceptions import ResourceNotFoundError
 from devtools_testutils.aio import recorded_by_proxy_async
-from async_preparers import app_config_decorator_async
+from preparers import AppConfigProviderPreparer
 from asynctestcase import (
     AppConfigTestCase,
     cleanup_test_resources_async,
@@ -120,7 +120,7 @@ class TestSnapshotProviderIntegration(AppConfigTestCase):
             assert selector.label_filter == NULL_CHAR
             assert selector.tag_filters is None
 
-    @app_config_decorator_async
+    @AppConfigProviderPreparer()
     @recorded_by_proxy_async
     async def test_load_provider_with_snapshot_not_found(self, appconfiguration_connection_string):
         """Test loading provider with a non-existent snapshot returns error."""
@@ -131,7 +131,7 @@ class TestSnapshotProviderIntegration(AppConfigTestCase):
         )
         assert len(provider._dict) == 0, "Provider should have no settings when snapshot is not found"
 
-    @app_config_decorator_async
+    @AppConfigProviderPreparer()
     @recorded_by_proxy_async
     async def test_load_provider_with_regular_selectors(self, appconfiguration_connection_string):
         """Test loading provider with regular selectors works (baseline test)."""
@@ -144,7 +144,7 @@ class TestSnapshotProviderIntegration(AppConfigTestCase):
             assert "message" in provider
 
     @pytest.mark.live_test_only  # Needed to fix an azure core dependency compatibility issue
-    @app_config_decorator_async
+    @AppConfigProviderPreparer()
     @recorded_by_proxy_async
     async def test_create_snapshot_and_load_provider(self, appconfiguration_connection_string, **kwargs):
         """Test creating a snapshot and loading provider from it."""
@@ -289,7 +289,7 @@ class TestSnapshotProviderIntegration(AppConfigTestCase):
         return variables
 
     @pytest.mark.live_test_only  # Needed to fix an azure core dependency compatibility issue
-    @app_config_decorator_async
+    @AppConfigProviderPreparer()
     @recorded_by_proxy_async
     async def test_create_snapshot_and_load_provider_with_feature_flags(
         self, appconfiguration_connection_string, **kwargs

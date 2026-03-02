@@ -6,7 +6,7 @@
 import datetime
 from unittest.mock import MagicMock, patch
 from devtools_testutils import recorded_by_proxy
-from preparers import app_config_decorator
+from preparers import AppConfigProviderPreparer
 from testcase import AppConfigTestCase, has_feature_flag
 from test_constants import FEATURE_MANAGEMENT_KEY
 from azure.appconfiguration.provider import SettingSelector, AzureAppConfigurationKeyVaultOptions
@@ -22,8 +22,8 @@ def sleep(seconds):
 
 class TestAppConfigurationProvider(AppConfigTestCase):
     # method: provider_creation
+    @AppConfigProviderPreparer()
     @recorded_by_proxy
-    @app_config_decorator
     def test_provider_creation(self, appconfiguration_connection_string, appconfiguration_keyvault_secret_url):
         client = self.create_client(
             connection_string=appconfiguration_connection_string,
@@ -37,8 +37,8 @@ class TestAppConfigurationProvider(AppConfigTestCase):
         assert has_feature_flag(client, "Alpha")
 
     # method: provider_trim_prefixes
+    @AppConfigProviderPreparer()
     @recorded_by_proxy
-    @app_config_decorator
     def test_provider_trim_prefixes(self, appconfiguration_connection_string, appconfiguration_keyvault_secret_url):
         trimmed = {"test."}
         client = self.create_client(
@@ -55,8 +55,8 @@ class TestAppConfigurationProvider(AppConfigTestCase):
         assert has_feature_flag(client, "Alpha")
 
     # method: provider_selectors
+    @AppConfigProviderPreparer()
     @recorded_by_proxy
-    @app_config_decorator
     def test_provider_selectors(self, appconfiguration_connection_string, appconfiguration_keyvault_secret_url):
         selects = {SettingSelector(key_filter="message*", label_filter="dev")}
         client = self.create_client(
@@ -69,8 +69,8 @@ class TestAppConfigurationProvider(AppConfigTestCase):
         assert FEATURE_MANAGEMENT_KEY not in client
 
     # method: provider_selectors
+    @AppConfigProviderPreparer()
     @recorded_by_proxy
-    @app_config_decorator
     def test_provider_key_vault_reference(
         self, appconfiguration_connection_string, appconfiguration_keyvault_secret_url
     ):
@@ -83,8 +83,8 @@ class TestAppConfigurationProvider(AppConfigTestCase):
         assert client["secret"] == "Very secret value"
 
     # method: provider_selectors
+    @AppConfigProviderPreparer()
     @recorded_by_proxy
-    @app_config_decorator
     def test_provider_secret_resolver(self, appconfiguration_connection_string):
         selects = {SettingSelector(key_filter="*", label_filter="prod")}
         client = self.create_client(
@@ -93,8 +93,8 @@ class TestAppConfigurationProvider(AppConfigTestCase):
         assert client["secret"] == "Resolver Value"
 
     # method: provider_selectors
+    @AppConfigProviderPreparer()
     @recorded_by_proxy
-    @app_config_decorator
     def test_provider_key_vault_reference_options(
         self, appconfiguration_connection_string, appconfiguration_keyvault_secret_url
     ):
@@ -109,8 +109,8 @@ class TestAppConfigurationProvider(AppConfigTestCase):
         assert client["secret"] == "Very secret value"
 
     # method: provider_selectors
+    @AppConfigProviderPreparer()
     @recorded_by_proxy
-    @app_config_decorator
     def test_provider_secret_resolver_options(self, appconfiguration_connection_string):
         selects = {SettingSelector(key_filter="*", label_filter="prod")}
         key_vault_options = AzureAppConfigurationKeyVaultOptions(secret_resolver=secret_resolver)
@@ -191,8 +191,8 @@ class TestAppConfigurationProvider(AppConfigTestCase):
             assert provider._tracing_context.uses_ai_configuration == True
             assert provider._tracing_context.uses_aicc_configuration == True
 
+    @AppConfigProviderPreparer()
     @recorded_by_proxy
-    @app_config_decorator
     def test_provider_tag_filters(self, appconfiguration_connection_string, appconfiguration_keyvault_secret_url):
         selects = {SettingSelector(key_filter="*", tag_filters=["a=b"])}
         client = self.create_client(
@@ -209,8 +209,8 @@ class TestAppConfigurationProvider(AppConfigTestCase):
         assert has_feature_flag(client, "TaggedFeatureFlag")
         assert "message" not in client
 
+    @AppConfigProviderPreparer()
     @recorded_by_proxy
-    @app_config_decorator
     def test_provider_two_tag_filters(self, appconfiguration_connection_string, appconfiguration_keyvault_secret_url):
         selects = {SettingSelector(key_filter="*", tag_filters=["a=b", "second=tag"])}
         client = self.create_client(
@@ -227,8 +227,8 @@ class TestAppConfigurationProvider(AppConfigTestCase):
         assert has_feature_flag(client, "TaggedFeatureFlag")
         assert "message" not in client
 
+    @AppConfigProviderPreparer()
     @recorded_by_proxy
-    @app_config_decorator
     def test_provider_special_chars_tag_filters(
         self, appconfiguration_connection_string, appconfiguration_keyvault_secret_url
     ):
@@ -253,8 +253,8 @@ class TestAppConfigurationProvider(AppConfigTestCase):
         assert "complex_tag" in client
 
     # method: load
+    @AppConfigProviderPreparer()
     @recorded_by_proxy
-    @app_config_decorator
     def test_configuration_mapper(self, appconfiguration_connection_string, appconfiguration_keyvault_secret_url):
         def test_mapper(setting):
             if setting.key == "message":
@@ -270,8 +270,8 @@ class TestAppConfigurationProvider(AppConfigTestCase):
         assert client["refresh_message"] == "original value"
 
     # method: load
+    @AppConfigProviderPreparer()
     @recorded_by_proxy
-    @app_config_decorator
     def test_configuration_mapper_with_trimming(
         self, appconfiguration_connection_string, appconfiguration_keyvault_secret_url
     ):
@@ -292,8 +292,8 @@ class TestAppConfigurationProvider(AppConfigTestCase):
         assert "refresh_message" not in client
 
     # method: load
+    @AppConfigProviderPreparer()
     @recorded_by_proxy
-    @app_config_decorator
     def test_configuration_mapper_with_feature_flags(
         self, appconfiguration_connection_string, appconfiguration_keyvault_secret_url
     ):

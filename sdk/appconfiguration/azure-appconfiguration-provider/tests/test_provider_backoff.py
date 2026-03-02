@@ -4,14 +4,14 @@
 # license information.
 # --------------------------------------------------------------------------
 from devtools_testutils import recorded_by_proxy
-from preparers import app_config_decorator
+from preparers import AppConfigProviderPreparer
 from testcase import AppConfigTestCase
 
 
 class TestAppConfigurationProvider(AppConfigTestCase):
     # method: _calculate_backoff
+    @AppConfigProviderPreparer()
     @recorded_by_proxy
-    @app_config_decorator
     def test_backoff(self, appconfiguration_connection_string, appconfiguration_keyvault_secret_url):
         client = self.create_client(
             connection_string=appconfiguration_connection_string,
@@ -31,8 +31,8 @@ class TestAppConfigurationProvider(AppConfigTestCase):
         assert backoff >= min_backoff and backoff <= (min_backoff * (1 << attempts))
 
     # method: _calculate_backoff
+    @AppConfigProviderPreparer()
     @recorded_by_proxy
-    @app_config_decorator
     def test_backoff_max_attempts(self, appconfiguration_connection_string, appconfiguration_keyvault_secret_url):
         client = self.create_client(
             connection_string=appconfiguration_connection_string,
@@ -52,8 +52,8 @@ class TestAppConfigurationProvider(AppConfigTestCase):
         assert backoff >= min_backoff and backoff <= (min_backoff * (1 << 30))
 
     # method: _calculate_backoff
+    @AppConfigProviderPreparer()
     @recorded_by_proxy
-    @app_config_decorator
     def test_backoff_bounds(self, appconfiguration_connection_string, appconfiguration_keyvault_secret_url):
         client = self.create_client(
             connection_string=appconfiguration_connection_string,
@@ -83,8 +83,8 @@ class TestAppConfigurationProvider(AppConfigTestCase):
         assert client._refresh_timer._max_backoff == 600
 
     # method: _calculate_backoff
+    @AppConfigProviderPreparer()
     @recorded_by_proxy
-    @app_config_decorator
     def test_backoff_invalid_attempts(self, appconfiguration_connection_string, appconfiguration_keyvault_secret_url):
         client = self.create_client(
             connection_string=appconfiguration_connection_string,
@@ -104,8 +104,8 @@ class TestAppConfigurationProvider(AppConfigTestCase):
         assert backoff == min_backoff
 
     # method: _calculate_backoff
+    @AppConfigProviderPreparer()
     @recorded_by_proxy
-    @app_config_decorator
     def test_backoff_missmatch_settings(self, appconfiguration_connection_string, appconfiguration_keyvault_secret_url):
         min_backoff = 30000
         client = self.create_client(

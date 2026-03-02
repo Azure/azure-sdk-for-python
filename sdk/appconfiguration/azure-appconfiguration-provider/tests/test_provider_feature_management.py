@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 from devtools_testutils import recorded_by_proxy
-from preparers import app_config_decorator
+from preparers import AppConfigProviderPreparer
 from testcase import AppConfigTestCase, setup_configs, has_feature_flag, get_feature_flag
 from test_constants import FEATURE_MANAGEMENT_KEY
 from azure.appconfiguration import AzureAppConfigurationClient
@@ -13,8 +13,8 @@ from azure.appconfiguration.provider import SettingSelector, load
 
 class TestAppConfigurationProviderFeatureManagement(AppConfigTestCase):
     # method: load
+    @AppConfigProviderPreparer()
     @recorded_by_proxy
-    @app_config_decorator
     def test_load_only_feature_flags(self, appconfiguration_connection_string):
         client = self.create_client(
             connection_string=appconfiguration_connection_string,
@@ -29,8 +29,8 @@ class TestAppConfigurationProviderFeatureManagement(AppConfigTestCase):
         assert "enabled" not in alpha.get("telemetry")
 
     # method: load
+    @AppConfigProviderPreparer()
     @recorded_by_proxy
-    @app_config_decorator
     def test_select_feature_flags(self, appconfiguration_connection_string):
         client = AzureAppConfigurationClient.from_connection_string(appconfiguration_connection_string)
         setup_configs(client, None, None)

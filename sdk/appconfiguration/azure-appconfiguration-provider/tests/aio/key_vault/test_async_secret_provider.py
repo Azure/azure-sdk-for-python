@@ -6,7 +6,7 @@
 import unittest
 from unittest.mock import Mock, patch, AsyncMock
 from devtools_testutils.aio import recorded_by_proxy_async
-from async_preparers import app_config_decorator_async
+from preparers import AppConfigProviderPreparer
 from asynctestcase import AppConfigTestCase
 from azure.appconfiguration import SecretReferenceConfigurationSetting
 from azure.keyvault.secrets.aio import SecretClient
@@ -434,7 +434,7 @@ class TestSecretProviderAsync(AppConfigTestCase, unittest.IsolatedAsyncioTestCas
                     # Verify the result
                     self.assertEqual(result, "secret-value")
 
-    @app_config_decorator_async
+    @AppConfigProviderPreparer()
     @recorded_by_proxy_async
     async def test_integration_with_keyvault(
         self, appconfiguration_endpoint_string, appconfiguration_keyvault_secret_url
