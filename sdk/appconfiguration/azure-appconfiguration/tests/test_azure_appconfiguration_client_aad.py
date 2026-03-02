@@ -17,8 +17,8 @@ from consts import (
     PAGE_SIZE,
     KEY_UUID,
 )
-from preparers import AppConfigPreparer
-from devtools_testutils import recorded_by_proxy, set_custom_default_matcher
+import functools
+from devtools_testutils import EnvironmentVariableLoader, recorded_by_proxy, set_custom_default_matcher
 from testcase import AppConfigTestCase
 from azure.core import MatchConditions
 from azure.core.exceptions import (
@@ -35,6 +35,12 @@ from azure.appconfiguration import (
     FILTER_PERCENTAGE,
     FILTER_TARGETING,
     FILTER_TIME_WINDOW,
+)
+
+AppConfigPreparer = functools.partial(
+    EnvironmentVariableLoader,
+    "appconfiguration",
+    appconfiguration_endpoint_string="https://fake_app_config.azconfig-test.io",
 )
 
 

@@ -4,16 +4,16 @@
 # license information.
 # --------------------------------------------------------------------------
 import copy
+import functools
 import json
 import re
 import time
 from uuid import uuid4
 from datetime import datetime, timezone
-from devtools_testutils import set_custom_default_matcher
-from devtools_testutils.aio import recorded_by_proxy_async
-from preparers import AppConfigPreparer
 import pytest
 from asynctestcase import AsyncAppConfigTestCase
+from devtools_testutils import EnvironmentVariableLoader, set_custom_default_matcher
+from devtools_testutils.aio import recorded_by_proxy_async
 from consts import (
     KEY,
     LABEL,
@@ -42,6 +42,12 @@ from azure.appconfiguration import (
     FILTER_TIME_WINDOW,
 )
 from azure.appconfiguration.aio import AzureAppConfigurationClient
+
+AppConfigPreparer = functools.partial(
+    EnvironmentVariableLoader,
+    "appconfiguration",
+    appconfiguration_connection_string="Endpoint=https://fake_app_config.azconfig-test.io;Id=0-l4-s0:h5htBaY5Z1LwFz50bIQv;Secret=lamefakesecretlamefakesecretlamefakesecrett=",
+)
 
 
 class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):  # pylint: disable=too-many-public-methods

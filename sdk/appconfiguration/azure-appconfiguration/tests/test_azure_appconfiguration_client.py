@@ -4,6 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 import copy
+import functools
 import json
 import re
 import time
@@ -20,8 +21,7 @@ from consts import (
     PAGE_SIZE,
     KEY_UUID,
 )
-from preparers import AppConfigPreparer
-from devtools_testutils import recorded_by_proxy, set_custom_default_matcher
+from devtools_testutils import EnvironmentVariableLoader, recorded_by_proxy, set_custom_default_matcher
 from azure.core import MatchConditions
 from azure.core.exceptions import (
     AzureError,
@@ -40,6 +40,12 @@ from azure.appconfiguration import (
     FILTER_PERCENTAGE,
     FILTER_TARGETING,
     FILTER_TIME_WINDOW,
+)
+
+AppConfigPreparer = functools.partial(
+    EnvironmentVariableLoader,
+    "appconfiguration",
+    appconfiguration_connection_string="Endpoint=https://fake_app_config.azconfig-test.io;Id=0-l4-s0:h5htBaY5Z1LwFz50bIQv;Secret=lamefakesecretlamefakesecretlamefakesecrett=",
 )
 
 

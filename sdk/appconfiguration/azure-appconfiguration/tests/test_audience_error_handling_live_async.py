@@ -3,11 +3,18 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import functools
 from asynctestcase import AsyncAppConfigTestCase
-from preparers import AppConfigPreparer
+from devtools_testutils import EnvironmentVariableLoader
 from devtools_testutils.aio import recorded_by_proxy_async
 from azure.appconfiguration._audience_error_handling_policy import (
     AudienceErrorHandlingPolicy,
+)
+
+AppConfigPreparer = functools.partial(
+    EnvironmentVariableLoader,
+    "appconfiguration",
+    appconfiguration_endpoint_string="https://fake_app_config.azconfig-test.io",
 )
 
 # cspell:disable-next-line
