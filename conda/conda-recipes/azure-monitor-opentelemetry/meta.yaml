@@ -38,13 +38,13 @@ about:
   home: "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/monitor/azure-monitor-opentelemetry"
   license: MIT
   license_family: MIT
-  license_file: 
+  license_file:
   summary: "Microsoft Azure Monitor Opentelemetry Client Library for Python"
   description: |
     This is the Microsoft Azure Monitor Opentelemetry Client Library for Python.
-    Please see https://aka.ms/azsdk/conda/releases/monitor for version details.
-  doc_url: 
-  dev_url: 
+    Please see https://aka.ms/azsdk/conda/releases/monitor-opentelemetry for version details.
+  doc_url:
+  dev_url:
 
 extra:
   recipe-maintainers:
