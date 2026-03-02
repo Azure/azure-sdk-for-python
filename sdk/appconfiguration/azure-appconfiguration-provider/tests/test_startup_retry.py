@@ -6,9 +6,6 @@
 import unittest
 from unittest.mock import patch, MagicMock
 import datetime
-
-from azure.core.exceptions import HttpResponseError
-
 from azure.appconfiguration.provider._azureappconfigurationproviderbase import (
     _get_startup_backoff,
     _calculate_backoff_duration,

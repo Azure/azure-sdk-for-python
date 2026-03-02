@@ -4,8 +4,8 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from devtools_testutils import recorded_by_proxy
-from preparers import AppConfigProviderPreparer
+import functools
+from devtools_testutils import EnvironmentVariableLoader, recorded_by_proxy
 from test_constants import FEATURE_MANAGEMENT_KEY
 from testcase import (
     AppConfigTestCase,
@@ -13,6 +13,13 @@ from testcase import (
 )
 from azure.appconfiguration.provider import SettingSelector
 from azure.appconfiguration.provider._constants import NULL_CHAR
+
+AppConfigProviderPreparer = functools.partial(
+    EnvironmentVariableLoader,
+    "appconfiguration",
+    appconfiguration_connection_string="Endpoint=https://Sanitized.azconfig.io;Id=0-l4-s0:h5htBaY5Z1LwFz50bIQv;Secret=lamefakesecretlamefakesecretlamefakesecrett=",
+    appconfiguration_keyvault_secret_url="https://Sanitized.vault.azure.net/secrets/fake-secret/",
+)
 
 
 class TestTagFilters(AppConfigTestCase):

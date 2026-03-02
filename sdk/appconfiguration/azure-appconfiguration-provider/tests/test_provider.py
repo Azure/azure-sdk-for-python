@@ -5,8 +5,8 @@
 # --------------------------------------------------------------------------
 import datetime
 from unittest.mock import MagicMock, patch
-from devtools_testutils import recorded_by_proxy
-from preparers import AppConfigProviderPreparer
+import functools
+from devtools_testutils import EnvironmentVariableLoader, recorded_by_proxy
 from testcase import AppConfigTestCase, has_feature_flag
 from test_constants import FEATURE_MANAGEMENT_KEY
 from azure.appconfiguration.provider import SettingSelector, AzureAppConfigurationKeyVaultOptions
@@ -14,6 +14,14 @@ from azure.appconfiguration.provider._azureappconfigurationproviderbase import (
     delay_failure,
 )
 from azure.appconfiguration.provider._azureappconfigurationprovider import _buildprovider
+
+
+AppConfigProviderPreparer = functools.partial(
+    EnvironmentVariableLoader,
+    "appconfiguration",
+    appconfiguration_connection_string="Endpoint=https://Sanitized.azconfig.io;Id=0-l4-s0:h5htBaY5Z1LwFz50bIQv;Secret=lamefakesecretlamefakesecretlamefakesecrett=",
+    appconfiguration_keyvault_secret_url="https://Sanitized.vault.azure.net/secrets/fake-secret/",
+)
 
 
 def sleep(seconds):

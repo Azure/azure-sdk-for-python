@@ -3,10 +3,10 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import functools
 import unittest
 from unittest.mock import Mock, patch
-from devtools_testutils import recorded_by_proxy
-from preparers import AppConfigProviderPreparer
+from devtools_testutils import EnvironmentVariableLoader, recorded_by_proxy
 from testcase import AppConfigTestCase
 from azure.appconfiguration import SecretReferenceConfigurationSetting
 from azure.keyvault.secrets import SecretClient
@@ -15,6 +15,13 @@ from azure.appconfiguration.provider._key_vault._secret_provider import SecretPr
 TEST_SECRET_ID = "https://myvault.vault.azure.net/secrets/my_secret"
 
 TEST_SECRET_ID_VERSION = TEST_SECRET_ID + "/12345"
+
+AppConfigProviderPreparer = functools.partial(
+    EnvironmentVariableLoader,
+    "appconfiguration",
+    appconfiguration_endpoint_string="https://Sanitized.azconfig.io",
+    appconfiguration_keyvault_secret_url="https://Sanitized.vault.azure.net/secrets/fake-secret/",
+)
 
 
 class TestSecretProvider(AppConfigTestCase, unittest.TestCase):

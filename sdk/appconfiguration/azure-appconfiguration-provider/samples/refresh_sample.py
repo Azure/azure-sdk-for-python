@@ -5,12 +5,12 @@
 # -------------------------------------------------------------------------
 import os
 import time
+import random
 from sample_utilities import get_client_modifications
 from azure.appconfiguration import (  # type:ignore
     AzureAppConfigurationClient,
     ConfigurationSetting,
 )
-import random
 from azure.appconfiguration.provider import load, WatchKey
 
 kwargs = get_client_modifications()

@@ -3,10 +3,11 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import functools
 import unittest
 from unittest.mock import Mock, patch, AsyncMock
+from devtools_testutils import EnvironmentVariableLoader
 from devtools_testutils.aio import recorded_by_proxy_async
-from preparers import AppConfigProviderPreparer
 from asynctestcase import AppConfigTestCase
 from azure.appconfiguration import SecretReferenceConfigurationSetting
 from azure.keyvault.secrets.aio import SecretClient
@@ -15,6 +16,13 @@ from azure.appconfiguration.provider.aio._key_vault._async_secret_provider impor
 TEST_SECRET_ID = "https://myvault.vault.azure.net/secrets/my_secret"
 
 TEST_SECRET_ID_VERSION = TEST_SECRET_ID + "/12345"
+
+AppConfigProviderPreparer = functools.partial(
+    EnvironmentVariableLoader,
+    "appconfiguration",
+    appconfiguration_endpoint_string="https://Sanitized.azconfig.io",
+    appconfiguration_keyvault_secret_url="https://Sanitized.vault.azure.net/secrets/fake-secret/",
+)
 
 
 class TestSecretProviderAsync(AppConfigTestCase, unittest.IsolatedAsyncioTestCase):
@@ -254,7 +262,7 @@ class TestSecretProviderAsync(AppConfigTestCase, unittest.IsolatedAsyncioTestCas
         config = SecretReferenceConfigurationSetting(key="test-key", secret_id=TEST_SECRET_ID_VERSION)
 
         # Create a mock async secret resolver
-        async def async_resolver(secret_id):
+        async def async_resolver(_):
             return "async-resolved-secret-value"
 
         # Create a SecretProvider with the mock resolver

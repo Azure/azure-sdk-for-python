@@ -4,8 +4,8 @@
 # license information.
 # --------------------------------------------------------------------------
 
+from unittest.mock import Mock, patch
 import pytest
-from unittest.mock import Mock, patch, MagicMock
 from azure.appconfiguration import ConfigurationSetting, SnapshotComposition
 from azure.appconfiguration.provider._snapshot_reference_parser import SnapshotReferenceParser
 from azure.appconfiguration.provider._constants import (

@@ -3,18 +3,26 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import functools
 import time
 import unittest
 import sys
 from unittest.mock import Mock
 import pytest
+from devtools_testutils import EnvironmentVariableLoader
 from devtools_testutils.aio import recorded_by_proxy_async
-from preparers import AppConfigProviderPreparer
 from testcase import has_feature_flag
 from asynctestcase import AppConfigTestCase
 from test_constants import FEATURE_MANAGEMENT_KEY
 from azure.appconfiguration import ConfigurationSetting
 from azure.appconfiguration.provider import WatchKey
+
+AppConfigProviderPreparer = functools.partial(
+    EnvironmentVariableLoader,
+    "appconfiguration",
+    appconfiguration_endpoint_string="https://Sanitized.azconfig.io",
+    appconfiguration_keyvault_secret_url="https://Sanitized.vault.azure.net/secrets/fake-secret/",
+)
 
 try:
     # Python 3.7 does not support AsyncMock

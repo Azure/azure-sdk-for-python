@@ -3,19 +3,24 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import pytest
+import functools
 import time
+import pytest
 from azure.appconfiguration.provider._models import SettingSelector
 from azure.appconfiguration.provider._constants import NULL_CHAR, FEATURE_MANAGEMENT_KEY, FEATURE_FLAG_KEY
-from azure.appconfiguration.provider import load, WatchKey
+from azure.appconfiguration.provider import WatchKey
 from azure.appconfiguration import (
     ConfigurationSetting,
     FeatureFlagConfigurationSetting,
 )
-from azure.core.exceptions import ResourceNotFoundError
-from devtools_testutils import recorded_by_proxy
-from preparers import AppConfigProviderPreparer
+from devtools_testutils import EnvironmentVariableLoader, recorded_by_proxy
 from testcase import AppConfigTestCase, cleanup_test_resources, set_test_settings, create_snapshot
+
+AppConfigProviderPreparer = functools.partial(
+    EnvironmentVariableLoader,
+    "appconfiguration",
+    appconfiguration_connection_string="Endpoint=https://Sanitized.azconfig.io;Id=0-l4-s0:h5htBaY5Z1LwFz50bIQv;Secret=lamefakesecretlamefakesecretlamefakesecrett=",
+)
 
 
 class TestSnapshotSupport:

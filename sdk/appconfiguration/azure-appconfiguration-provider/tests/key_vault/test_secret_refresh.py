@@ -3,14 +3,22 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import functools
 import time
 import unittest
 from unittest.mock import Mock, patch
-from devtools_testutils import recorded_by_proxy
-from preparers import AppConfigProviderPreparer
+from devtools_testutils import EnvironmentVariableLoader, recorded_by_proxy
 from testcase import AppConfigTestCase
 from azure.appconfiguration import SecretReferenceConfigurationSetting
 from azure.appconfiguration.provider import SettingSelector, WatchKey
+
+AppConfigProviderPreparer = functools.partial(
+    EnvironmentVariableLoader,
+    "appconfiguration",
+    appconfiguration_endpoint_string="https://Sanitized.azconfig.io",
+    appconfiguration_keyvault_secret_url="https://Sanitized.vault.azure.net/secrets/fake-secret/",
+    appconfiguration_keyvault_secret_url2="https://Sanitized.vault.azure.net/secrets/fake-secret2/",
+)
 
 
 class TestSecretRefresh(AppConfigTestCase, unittest.TestCase):
