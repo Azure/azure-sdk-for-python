@@ -4,6 +4,8 @@
 
 #### Features Added
 
+* Added InferenceRequestTimeout property for HttpTimeout Policy to Reranking API. See [45469](https://github.com/Azure/azure-sdk-for-python/pull/45469)
+
 #### Breaking Changes
 
 #### Bugs Fixed
