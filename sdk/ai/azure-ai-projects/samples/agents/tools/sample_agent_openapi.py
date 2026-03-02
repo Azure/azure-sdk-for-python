@@ -14,7 +14,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b1" python-dotenv jsonref
+    pip install "azure-ai-projects>=2.0.0b4" python-dotenv jsonref
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
@@ -26,7 +26,7 @@ USAGE:
 import os
 import jsonref
 from dotenv import load_dotenv
-
+from typing import Any, cast
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
@@ -50,7 +50,7 @@ with (
 
     # [START tool_declaration]
     with open(weather_asset_file_path, "r") as f:
-        openapi_weather = jsonref.loads(f.read())
+        openapi_weather = cast(dict[str, Any], jsonref.loads(f.read()))
 
     tool = OpenApiTool(
         openapi=OpenApiFunctionDefinition(
@@ -73,8 +73,8 @@ with (
     print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
 
     response = openai_client.responses.create(
-        input="Use the OpenAPI tool to print out, what is the weather in Seattle, WA today.",
-        extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+        input="Use the OpenAPI tool to print out, what is the weather in Seattle today.",
+        extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
     )
     print(f"Agent response: {response.output_text}")
 

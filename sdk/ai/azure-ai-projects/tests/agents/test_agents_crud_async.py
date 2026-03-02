@@ -9,8 +9,12 @@ import io
 from test_base import TestBase, servicePreparer
 from devtools_testutils.aio import recorded_by_proxy_async
 from azure.ai.projects.models import PromptAgentDefinition, AgentDetails, AgentVersionDetails
+import pytest
 
 
+@pytest.mark.skip(
+    reason="Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema"
+)
 class TestAgentCrudAsync(TestBase):
 
     @servicePreparer()
@@ -54,17 +58,6 @@ class TestAgentCrudAsync(TestBase):
                 agent_name=second_agent_name, body=io.BytesIO(binary_body)
             )
             self._validate_agent_version(agent2_version1)
-
-            # Create another version of the same Agent, by updating the existing one
-            # TODO: Uncomment the lines below, and the delete lines at the end, once the service is fixed (at the moment returns 500 InternalServiceError)
-            # agent2_version2: AgentVersionDetails = await project_client.agents.update(
-            #     agent_name=second_agent_name,
-            #     definition=PromptAgentDefinition(
-            #         model=model,
-            #         instructions="Third set of instructions here",
-            #     ),
-            # )
-            # self._validate_agent_version(agent2_version2)
 
             # Retrieve the first Agent
             retrieved_agent: AgentDetails = await project_client.agents.get(agent_name=first_agent_name)
