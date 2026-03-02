@@ -13,6 +13,9 @@ from devtools_testutils import recorded_by_proxy, RecordedTransport
 from azure.ai.projects.models import PromptAgentDefinition, FileSearchTool
 
 
+@pytest.mark.skip(
+    reason="Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema"
+)
 class TestAgentFileSearch(TestBase):
 
     # To only run this test:
@@ -93,7 +96,7 @@ class TestAgentFileSearch(TestBase):
 
             response = openai_client.responses.create(
                 input="What products are mentioned in the document?",
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             )
 
             print(f"Response completed (id: {response.id})")
@@ -260,7 +263,7 @@ Widget C:
             print("\n--- Turn 1: Initial query ---")
             response_1 = openai_client.responses.create(
                 input="What is the price of Widget B?",
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             )
 
             response_1_text = response_1.output_text
@@ -272,7 +275,7 @@ Widget C:
             response_2 = openai_client.responses.create(
                 input="What about its stock level?",
                 previous_response_id=response_1.id,
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             )
 
             response_2_text = response_2.output_text
@@ -286,7 +289,7 @@ Widget C:
             response_3 = openai_client.responses.create(
                 input="How does that compare to Widget A's stock?",
                 previous_response_id=response_2.id,
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             )
 
             response_3_text = response_3.output_text
@@ -300,7 +303,7 @@ Widget C:
             response_4 = openai_client.responses.create(
                 input="Which widget has the highest rating?",
                 previous_response_id=response_3.id,
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             )
 
             response_4_text = response_4.output_text

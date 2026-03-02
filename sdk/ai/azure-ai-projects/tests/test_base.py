@@ -24,9 +24,6 @@ from azure.ai.projects.models import (
     DeploymentType,
     Index,
     IndexType,
-    InputContentType,
-    ItemResource,
-    InputItemType,
     ModelDeployment,
 )
 from openai.types.responses import Response
@@ -45,16 +42,21 @@ servicePreparer = functools.partial(
     EnvironmentVariableLoader,
     "",
     azure_ai_project_endpoint="https://sanitized-account-name.services.ai.azure.com/api/projects/sanitized-project-name",
-    azure_ai_model_deployment_name="gpt-4o",
-    image_generation_model_deployment_name="gpt-image-1-mini",
+    azure_ai_model_deployment_name="sanitized-model-deployment-name",
+    image_generation_model_deployment_name="sanitized-gpt-image",
     container_app_resource_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/00000/providers/Microsoft.App/containerApps/00000",
     container_ingress_subdomain_suffix="00000",
     bing_project_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sanitized-resource-group/providers/Microsoft.CognitiveServices/accounts/sanitized-account/projects/sanitized-project/connections/sanitized-bing-connection",
     ai_search_project_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sanitized-resource-group/providers/Microsoft.CognitiveServices/accounts/sanitized-account/projects/sanitized-project/connections/sanitized-ai-search-connection",
+    bing_custom_search_project_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sanitized-resource-group/providers/Microsoft.CognitiveServices/accounts/sanitized-account/projects/sanitized-project/connections/sanitized-bing-custom-search-connection",
+    fabric_project_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sanitized-resource-group/providers/Microsoft.CognitiveServices/accounts/sanitized-account/projects/sanitized-project/connections/sanitized-fabric-connection",
+    openapi_project_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sanitized-resource-group/providers/Microsoft.CognitiveServices/accounts/sanitized-account/projects/sanitized-project/connections/sanitized-openapi-connection",
+    a2a_project_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sanitized-resource-group/providers/Microsoft.CognitiveServices/accounts/sanitized-account/projects/sanitized-project/connections/sanitized-a2a-connection",
     ai_search_index_name="sanitized-index-name",
     mcp_project_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sanitized-resource-group/providers/Microsoft.CognitiveServices/accounts/sanitized-account/projects/sanitized-project/connections/sanitized-mcp-connection",
     browser_automation_project_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sanitized-resource-group/providers/Microsoft.CognitiveServices/accounts/sanitized-account/projects/sanitized-project/connections/sanitized-browser-automation-connection",
     sharepoint_project_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sanitized-resource-group/providers/Microsoft.CognitiveServices/accounts/sanitized-account/projects/sanitized-project/connections/sanitized-sharepoint-connection",
+    bing_custom_search_instance_name="sanitized-bing-custom-search-instance",
     completed_oai_model_sft_fine_tuning_job_id="sanitized-ftjob-id",
     completed_oai_model_rft_fine_tuning_job_id="sanitized-ftjob-id",
     completed_oai_model_dpo_fine_tuning_job_id="sanitized-ftjob-id",
@@ -68,8 +70,18 @@ servicePreparer = functools.partial(
     fabric_user_input="List all customers!",
     a2a_user_input="What can the secondary agent do?",
     bing_custom_user_input="Tell me more about foundry agent service",
-    memory_store_chat_model_deployment_name="gpt-4.1-mini",
+    memory_store_chat_model_deployment_name="sanitized-gpt-memory",
     memory_store_embedding_model_deployment_name="text-embedding-ada-002",
+)
+
+fineTuningServicePreparer = functools.partial(
+    EnvironmentVariableLoader,
+    "",
+    azure_ai_project_endpoint="https://sanitized-account-name.services.ai.azure.com/api/projects/sanitized-project-name",
+    azure_ai_model_deployment_name="sanitized-model-deployment-name",
+    azure_ai_projects_azure_subscription_id="00000000-0000-0000-0000-000000000000",
+    azure_ai_projects_azure_resource_group="sanitized-resource-group",
+    azure_ai_projects_azure_aoai_account="sanitized-aoai-account",
 )
 
 # Fine-tuning job type constants
@@ -557,7 +569,7 @@ class TestBase(AzureRecordedTestCase):
         expected_type: Optional[str] = None,
         expected_id: Optional[str] = None,
         expected_role: Optional[str] = None,
-        expected_content_type: Optional[InputContentType] = None,
+        expected_content_type: Optional[str] = None,
         expected_content_text: Optional[str] = None,
     ) -> None:
         assert item

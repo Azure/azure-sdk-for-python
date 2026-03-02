@@ -4,13 +4,21 @@
 # Licensed under the MIT License.
 # ------------------------------------
 """Shared base code for sample tests - sync dependencies only."""
+import ast
 import os
 import sys
 import re
+import logging
+import importlib
 import pytest
 import inspect
 import importlib.util
 import functools
+import traceback
+import tempfile
+from datetime import datetime
+from contextlib import contextmanager
+
 
 from dataclasses import dataclass, field
 from typing import overload, Union, Optional
@@ -24,6 +32,7 @@ from azure.core.credentials_async import AsyncTokenCredential
 from devtools_testutils.fake_credentials import FakeTokenCredential
 from devtools_testutils.fake_credentials_async import AsyncFakeCredential
 from devtools_testutils import is_live
+from devtools_testutils import add_general_string_sanitizer
 from azure.ai.projects import AIProjectClient
 
 # Fixed timestamp for playback mode (Nov 2023).
@@ -172,23 +181,21 @@ class BaseSampleExecutor:
         test_instance,
         sample_path: str,
         *,
-        env_var_mapping: dict[str, str] = {},
+        env_vars: dict[str, str] = {},
+        allowed_llm_validation_failures: Optional[set[str]] = None,
         **kwargs,
     ):
         self.test_instance = test_instance
         self.sample_path = sample_path
         self.print_calls: list[str] = []
         self._original_print = print
+        self.allowed_llm_validation_failures = allowed_llm_validation_failures or set()
 
         # Prepare environment variables
         self.env_vars = {}
-        for sample_var, test_var in env_var_mapping.items():
-            if not isinstance(test_var, str):
-                continue
-            value = kwargs.pop(test_var, None)
-            if value is not None and isinstance(value, str):
-                self.env_vars[sample_var] = value
-
+        for key, val in env_vars.items():
+            if isinstance(key, str) and isinstance(val, str):
+                self.env_vars[key] = val
         # Any remaining ALL_CAPS string kwargs are treated as env vars for the sample.
         # This supports decorators/tests passing env-var overrides via **kwargs.
         env_var_overrides: dict[str, str] = {}
@@ -219,6 +226,190 @@ class BaseSampleExecutor:
         self.print_calls.append(" ".join(str(arg) for arg in args))
         self._original_print(*args, **kwargs)
 
+    @contextmanager
+    def _capture_debug_logs(self):
+        """Capture logger DEBUG output into the same array used for print capture."""
+
+        bearer_token_pattern = re.compile(r"(?i)(Bearer\s+)([^\s\"',;]+)")
+
+        def _sanitize_log_message(message: str) -> str:
+            return bearer_token_pattern.sub(r"\1<REDACTED>", message)
+
+        class _PrintCaptureLogHandler(logging.Handler):
+            def __init__(self, sink: list[str]):
+                super().__init__(level=logging.DEBUG)
+                self._sink = sink
+                self._included_logger_prefixes = (
+                    "azure",
+                    "msrest",
+                    "openai",
+                    "httpx",
+                )
+
+            def emit(self, record: logging.LogRecord) -> None:
+                if not any(record.name.startswith(prefix) for prefix in self._included_logger_prefixes):
+                    return
+                try:
+                    message = self.format(record)
+                except Exception:  # pylint: disable=broad-exception-caught
+                    message = record.getMessage()
+                self._sink.append(_sanitize_log_message(message))
+
+        root_logger = logging.getLogger()
+        previous_root_level = root_logger.level
+
+        target_loggers = [
+            "azure",
+            "azure.core",
+            "azure.core.pipeline.policies.http_logging_policy",
+            "msrest",
+            "msrest.http_logger",
+            "httpx",
+            "openai",
+        ]
+
+        previous_logger_levels: dict[str, int] = {}
+        for logger_name in target_loggers:
+            logger_instance = logging.getLogger(logger_name)
+            previous_logger_levels[logger_name] = logger_instance.level
+            logger_instance.setLevel(logging.DEBUG)
+
+        patched_is_enabled_for = []
+        for module_name in ["msrest.http_logger", "azure.core.pipeline.policies._universal"]:
+            try:
+                module = importlib.import_module(module_name)
+                module_logger = getattr(module, "_LOGGER", None)
+                if module_logger and hasattr(module_logger, "isEnabledFor"):
+                    original_is_enabled_for = module_logger.isEnabledFor
+
+                    def _always_true(_level, _logger=module_logger):
+                        return True
+
+                    module_logger.isEnabledFor = _always_true
+                    patched_is_enabled_for.append((module_logger, original_is_enabled_for))
+            except Exception:  # pylint: disable=broad-exception-caught
+                continue
+
+        capture_handler = _PrintCaptureLogHandler(self.print_calls)
+        capture_handler.setFormatter(logging.Formatter("[%(name)s] %(message)s"))
+
+        root_logger.setLevel(logging.DEBUG)
+        root_logger.addHandler(capture_handler)
+
+        try:
+            yield
+        finally:
+            root_logger.removeHandler(capture_handler)
+            root_logger.setLevel(previous_root_level)
+
+            for logger_name, logger_level in previous_logger_levels.items():
+                logging.getLogger(logger_name).setLevel(logger_level)
+
+            for module_logger, original_is_enabled_for in patched_is_enabled_for:
+                module_logger.isEnabledFor = original_is_enabled_for
+
+    def _get_log_file_path(self, log_env_var: str) -> Optional[str]:
+        """Get and prepare log file path based on environment variable.
+
+        Args:
+            log_env_var: Environment variable name to check for log format
+
+        Returns:
+            Path to the log file (cleaned up and ready to write), or None if logging is disabled
+        """
+        # Only create logs in live mode
+        if not _is_live_mode():
+            return None
+
+        # Only log if environment variable is set
+        log_format = os.environ.get(log_env_var)
+        if not log_format:
+            return None
+
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        sample_filename = os.path.basename(self.sample_path).replace(".py", "")
+
+        # Replace placeholders in the format template
+        log_filename = log_format.replace("<sample_filename>", sample_filename).replace("<timestamp>", timestamp)
+        log_file = os.path.join(tempfile.gettempdir(), log_filename)
+
+        # Remove existing file if present to ensure clean overwrite
+        if os.path.exists(log_file):
+            os.remove(log_file)
+
+        return log_file
+
+    def _write_error_log(self, reason: str, exception_info: str) -> Optional[str]:
+        """Write captured print statements to a log file for execution errors.
+
+        Args:
+            reason: Description of the exception
+            exception_info: Traceback or exception details to include in log
+
+        Returns:
+            Path to the created log file, or None if logging is disabled
+        """
+        log_file = self._get_log_file_path("SAMPLE_TEST_ERROR_LOG")
+        if not log_file:
+            return None
+
+        with open(log_file, "w", encoding="utf-8") as f:
+            f.write(f"Sample: {self.sample_path}\n")
+            f.write(f"Execution Error:\n{reason}\n\n")
+            f.write("Exception Details:\n")
+            f.write("=" * 80 + "\n")
+            f.write(exception_info)
+            f.write("\n" + "=" * 80 + "\n\n")
+            f.write("Print Statements:\n")
+            f.write("=" * 80 + "\n")
+            for i, print_call in enumerate(self.print_calls, 1):
+                f.write(f"{i}. {print_call}\n")
+        return log_file
+
+    def _write_failed_log(self, reason: str) -> Optional[str]:
+        """Write captured print statements to a log file for validation failures.
+
+        Args:
+            reason: Description of why validation failed
+
+        Returns:
+            Path to the created log file, or None if logging is disabled
+        """
+        log_file = self._get_log_file_path("SAMPLE_TEST_FAILED_LOG")
+        if not log_file:
+            return None
+
+        with open(log_file, "w", encoding="utf-8") as f:
+            f.write(f"Sample: {self.sample_path}\n")
+            f.write(f"Validation Failed: {reason}\n\n")
+            f.write("Print Statements:\n")
+            f.write("=" * 80 + "\n")
+            for i, print_call in enumerate(self.print_calls, 1):
+                f.write(f"{i}. {print_call}\n")
+        return log_file
+
+    def _write_passed_log(self, reason: str = "Validation passed") -> Optional[str]:
+        """Write captured print statements to a log file for validation passes.
+
+        Args:
+            reason: Description of successful validation
+
+        Returns:
+            Path to the created log file, or None if logging is disabled
+        """
+        log_file = self._get_log_file_path("SAMPLE_TEST_PASSED_LOG")
+        if not log_file:
+            return None
+
+        with open(log_file, "w", encoding="utf-8") as f:
+            f.write(f"Sample: {self.sample_path}\n")
+            f.write(f"Validation Passed: {reason}\n\n")
+            f.write("Print Statements:\n")
+            f.write("=" * 80 + "\n")
+            for i, print_call in enumerate(self.print_calls, 1):
+                f.write(f"{i}. {print_call}\n")
+        return log_file
+
     def _get_validation_request_params(self, instructions: str, model: str = "gpt-4o") -> dict:
         """Get common parameters for validation request."""
         return {
@@ -240,23 +431,122 @@ class BaseSampleExecutor:
 
     def _assert_validation_result(self, test_report: dict) -> None:
         """Assert validation result and print reason."""
-        if not test_report["correct"]:
-            # Write print statements to log file in temp folder for debugging
-            import tempfile
-            from datetime import datetime
+        sample_filename = os.path.basename(self.sample_path)
+        is_allowed_to_fail = sample_filename in self.allowed_llm_validation_failures
 
-            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-            log_file = os.path.join(tempfile.gettempdir(), f"sample_validation_error_{timestamp}.log")
-            with open(log_file, "w", encoding="utf-8") as f:
-                f.write(f"Sample: {self.sample_path}\n")
-                f.write(f"Validation Error: {test_report['reason']}\n\n")
-                f.write("Print Statements:\n")
-                f.write("=" * 80 + "\n")
-                for i, print_call in enumerate(self.print_calls, 1):
-                    f.write(f"{i}. {print_call}\n")
-            print(f"\nValidation failed! Print statements logged to: {log_file}")
-        assert test_report["correct"], f"Error is identified: {test_report['reason']}"
-        print(f"Reason: {test_report['reason']}")
+        if not test_report["correct"]:
+            log_file = self._write_failed_log(test_report["reason"])
+            if log_file:
+                print(f"\nValidation failed! Print statements logged to: {log_file}")
+
+            if is_allowed_to_fail:
+                print(
+                    f"\nWARNING: '{sample_filename}' is in allowed_llm_validation_failures - test passing despite validation failure"
+                )
+                print(f"Reason: {test_report['reason']}")
+            else:
+                assert False, f"Error is identified: {test_report['reason']}"
+        else:
+            log_file = self._write_passed_log(test_report["reason"])
+            if log_file:
+                print(f"\nValidation passed! Print statements logged to: {log_file}")
+            print(f"Reason: {test_report['reason']}")
+
+    def _resolve_local_module_file(
+        self,
+        *,
+        current_file: str,
+        module_name: str,
+        level: int,
+    ) -> Optional[str]:
+        sample_dir_abs = os.path.abspath(self.sample_dir)
+
+        def _candidate_from_base(base_path: str) -> Optional[str]:
+            candidates = [f"{base_path}.py", os.path.join(base_path, "__init__.py")]
+            for candidate in candidates:
+                candidate_abs = os.path.abspath(candidate)
+                if not os.path.isfile(candidate_abs):
+                    continue
+                try:
+                    if os.path.commonpath([sample_dir_abs, candidate_abs]) != sample_dir_abs:
+                        continue
+                except ValueError:
+                    continue
+                return candidate_abs
+            return None
+
+        if level > 0:
+            base_dir = os.path.dirname(os.path.abspath(current_file))
+            for _ in range(level - 1):
+                base_dir = os.path.dirname(base_dir)
+
+            relative_base = base_dir
+            if module_name:
+                relative_base = os.path.join(base_dir, *module_name.split("."))
+            resolved = _candidate_from_base(relative_base)
+            if resolved:
+                return resolved
+
+        if module_name:
+            absolute_base = os.path.join(sample_dir_abs, *module_name.split("."))
+            resolved = _candidate_from_base(absolute_base)
+            if resolved:
+                return resolved
+
+        return None
+
+    def _collect_sample_code_files_for_code_interpreter(self) -> list[str]:
+        """Collect sample source files to attach for code interpreter validation.
+
+        Starts from ``self.sample_path`` and recursively walks local Python imports
+        (both ``import`` and ``from ... import ...``) that resolve to files under
+        the sample directory. The returned list always includes the entry sample
+        file first, followed by discovered local dependencies, each included once.
+
+        Returns:
+            List of absolute file paths for local sample code files.
+        """
+        visited: set[str] = set()
+        discovered: list[str] = []
+        pending: list[str] = [os.path.abspath(self.sample_path)]
+
+        while pending:
+            current_file = pending.pop()
+            if current_file in visited:
+                continue
+            if not os.path.isfile(current_file):
+                continue
+
+            visited.add(current_file)
+            discovered.append(current_file)
+
+            try:
+                with open(current_file, "r", encoding="utf-8") as source_file:
+                    source_code = source_file.read()
+                parsed = ast.parse(source_code)
+            except Exception:  # pylint: disable=broad-exception-caught
+                continue
+
+            for node in ast.walk(parsed):
+                if isinstance(node, ast.Import):
+                    for alias in node.names:
+                        resolved = self._resolve_local_module_file(
+                            current_file=current_file,
+                            module_name=alias.name,
+                            level=0,
+                        )
+                        if resolved and resolved not in visited:
+                            pending.append(resolved)
+                elif isinstance(node, ast.ImportFrom):
+                    resolved = self._resolve_local_module_file(
+                        current_file=current_file,
+                        module_name=node.module or "",
+                        level=node.level,
+                    )
+                    if resolved and resolved not in visited:
+                        pending.append(resolved)
+
+        return discovered
 
 
 class SamplePathPasser:
@@ -280,8 +570,24 @@ class SamplePathPasser:
 class SyncSampleExecutor(BaseSampleExecutor):
     """Synchronous sample executor that only uses sync credentials."""
 
-    def __init__(self, test_instance, sample_path: str, *, env_var_mapping: dict[str, str] = {}, **kwargs):
-        super().__init__(test_instance, sample_path, env_var_mapping=env_var_mapping, **kwargs)
+    def __init__(
+        self,
+        test_instance,
+        sample_path: str,
+        *,
+        env_vars: Optional[dict[str, str]] = None,
+        allowed_llm_validation_failures: Optional[set[str]] = None,
+        **kwargs,
+    ):
+        if env_vars is None:
+            env_vars = {}
+        super().__init__(
+            test_instance,
+            sample_path,
+            env_vars=env_vars,
+            allowed_llm_validation_failures=allowed_llm_validation_failures,
+            **kwargs,
+        )
         self.tokenCredential: Optional[TokenCredential | FakeTokenCredential] = None
 
     def _get_mock_credential(self):
@@ -308,26 +614,38 @@ class SyncSampleExecutor(BaseSampleExecutor):
             MonkeyPatch.context() as mp,
             self._get_mock_credential(),
         ):
+            mp.setenv("AZURE_AI_PROJECTS_CONSOLE_LOGGING", "true")
             for var_name, var_value in self.env_vars.items():
                 mp.setenv(var_name, var_value)
             if self.spec.loader is None:
                 raise ImportError(f"Could not load module {self.spec.name} from {self.sample_path}")
 
             with (
+                self._capture_debug_logs(),
                 mock.patch("builtins.print", side_effect=self._capture_print),
                 mock.patch("builtins.open", side_effect=patched_open_fn),
             ):
-                self.spec.loader.exec_module(self.module)
-                # In playback mode, patch time functions on the module:
-                # - time.sleep: avoid waiting for polling loops (instant)
-                # - time.time: return fixed value for deterministic request bodies
-                # Must be done after exec_module so the module's 'time' reference can be patched.
-                if not is_live() and hasattr(self.module, "time"):
-                    self.module.time.sleep = lambda _: None
-                    self.module.time.time = lambda: PLAYBACK_TIMESTAMP
-                # Call main() if it exists (samples wrap their code in main())
-                if hasattr(self.module, "main") and callable(self.module.main):
-                    self.module.main()
+                try:
+                    self.spec.loader.exec_module(self.module)
+                    # In playback mode, patch time functions on the module:
+                    # - time.sleep: avoid waiting for polling loops (instant)
+                    # - time.time: return fixed value for deterministic request bodies
+                    # Must be done after exec_module so the module's 'time' reference can be patched.
+                    if not is_live() and hasattr(self.module, "time"):
+                        self.module.time.sleep = lambda _: None
+                        self.module.time.time = lambda: PLAYBACK_TIMESTAMP
+                    # Call main() if it exists (samples wrap their code in main())
+                    if hasattr(self.module, "main") and callable(self.module.main):
+                        self.module.main()
+                except Exception as e:
+                    # Log print statements with exception details before re-raising
+                    exception_info = traceback.format_exc()
+                    log_file = self._write_error_log(
+                        reason=f"{type(e).__name__}: {str(e)}", exception_info=exception_info
+                    )
+                    if log_file:
+                        print(f"\nSample execution failed! Print statements logged to: {log_file}")
+                    raise
 
     def validate_print_calls_by_llm(
         self,
@@ -335,6 +653,7 @@ class SyncSampleExecutor(BaseSampleExecutor):
         instructions: str,
         project_endpoint: str,
         model: str = "gpt-4o",
+        use_code_interpreter: bool = True,
     ):
         """Validate captured print output using synchronous OpenAI client."""
         if not instructions or not instructions.strip():
@@ -348,20 +667,114 @@ class SyncSampleExecutor(BaseSampleExecutor):
         )
         with (
             AIProjectClient(
-                endpoint=endpoint, credential=cast(TokenCredential, self.tokenCredential)
+                endpoint=endpoint, credential=cast(TokenCredential, self.tokenCredential), logging_enable=True
             ) as project_client,
             project_client.get_openai_client() as openai_client,
         ):
-            response = openai_client.responses.create(**self._get_validation_request_params(instructions, model=model))
-            test_report = json.loads(response.output_text)
+            response = None
+            uploaded_file_ids: list[str] = []
+            try:
+                request_params = self._get_validation_request_params(instructions, model=model)
+
+                if use_code_interpreter:
+                    sample_code_files = self._collect_sample_code_files_for_code_interpreter()
+                    code_interpreter_file_ids: list[str]
+
+                    if is_live():
+                        # Keep upload/delete out of recordings because multipart payloads contain
+                        # full file bytes and become brittle whenever sample files change.
+                        #
+                        # Since upload calls are skipped from recording, playback cannot discover
+                        # runtime file IDs via `files.create`. To keep `responses.create` replayable,
+                        # sanitize each live file ID to a deterministic placeholder and reuse the
+                        # same placeholders in playback mode below.
+                        for file_path in sample_code_files:
+                            with open(file_path, "rb") as source_file:
+                                uploaded = openai_client.files.create(
+                                    file=source_file,
+                                    purpose="assistants",
+                                    extra_headers={"x-recording-skip": "request-response"},
+                                )
+
+                            uploaded_file_id = getattr(uploaded, "id", None)
+                            if isinstance(uploaded_file_id, str) and uploaded_file_id:
+                                uploaded_file_ids.append(uploaded_file_id)
+                                scrubbed_file_id = f"code_interpreter_file_{len(uploaded_file_ids)}"
+                                add_general_string_sanitizer(
+                                    function_scoped=True,
+                                    target=uploaded_file_id,
+                                    value=scrubbed_file_id,
+                                )
+
+                        code_interpreter_file_ids = uploaded_file_ids
+                    else:
+                        # Playback counterpart of the live sanitization mapping above.
+                        # Must match the same deterministic sequence used during recording.
+                        code_interpreter_file_ids = [
+                            f"code_interpreter_file_{index}" for index, _ in enumerate(sample_code_files, start=1)
+                        ]
+
+                    code_interpreter_container: dict[str, object] = {
+                        "type": "auto",
+                    }
+                    if code_interpreter_file_ids:
+                        code_interpreter_container["file_ids"] = code_interpreter_file_ids
+
+                    request_params["tools"] = [
+                        {
+                            "type": "code_interpreter",
+                            "container": code_interpreter_container,
+                        }
+                    ]
+
+                response = openai_client.responses.create(**request_params)
+                test_report = json.loads(response.output_text)
+            except Exception as e:  # pylint: disable=broad-exception-caught
+                response_output_text = None
+                try:
+                    response_output_text = response.output_text if response is not None else None
+                except Exception:  # pylint: disable=broad-exception-caught
+                    response_output_text = None
+
+                reason = f"LLM validation request/parsing failed: {type(e).__name__}: {str(e)}"
+                if response_output_text:
+                    reason += f". Raw output_text: {response_output_text}"
+
+                test_report = {"correct": False, "reason": reason}
+            finally:
+                if use_code_interpreter and is_live():
+                    # Skip recording delete operations for the same reason as uploads.
+                    for uploaded_file_id in uploaded_file_ids:
+                        try:
+                            openai_client.files.delete(
+                                uploaded_file_id,
+                                extra_headers={"x-recording-skip": "request-response"},
+                            )
+                        except Exception:  # pylint: disable=broad-exception-caught
+                            pass
+
             self._assert_validation_result(test_report)
 
 
 class AsyncSampleExecutor(BaseSampleExecutor):
     """Asynchronous sample executor that uses async credentials."""
 
-    def __init__(self, test_instance, sample_path: str, *, env_var_mapping: dict[str, str] = {}, **kwargs):
-        super().__init__(test_instance, sample_path, env_var_mapping=env_var_mapping, **kwargs)
+    def __init__(
+        self,
+        test_instance,
+        sample_path: str,
+        *,
+        env_vars: dict[str, str] = {},
+        allowed_llm_validation_failures: Optional[set[str]] = None,
+        **kwargs,
+    ):
+        super().__init__(
+            test_instance,
+            sample_path,
+            env_vars=env_vars,
+            allowed_llm_validation_failures=allowed_llm_validation_failures,
+            **kwargs,
+        )
         self.tokenCredential: Optional[AsyncTokenCredential | AsyncFakeCredential] = None
 
     def _get_mock_credential(self):
@@ -387,24 +800,34 @@ class AsyncSampleExecutor(BaseSampleExecutor):
         with (
             MonkeyPatch.context() as mp,
             self._get_mock_credential(),
+            self._capture_debug_logs(),
             mock.patch("builtins.print", side_effect=self._capture_print),
             mock.patch("builtins.open", side_effect=patched_open_fn),
         ):
+            mp.setenv("AZURE_AI_PROJECTS_CONSOLE_LOGGING", "true")
             for var_name, var_value in self.env_vars.items():
                 mp.setenv(var_name, var_value)
             if self.spec.loader is None:
                 raise ImportError(f"Could not load module {self.spec.name} from {self.sample_path}")
-            self.spec.loader.exec_module(self.module)
-            # In playback mode, patch time functions on the module:
-            # - time.sleep: avoid waiting for polling loops (instant)
-            # - time.time: return fixed value for deterministic request bodies
-            # Must be done after exec_module so the module's 'time' reference can be patched.
-            if not is_live() and hasattr(self.module, "time"):
-                self.module.time.sleep = lambda _: None
-                self.module.time.time = lambda: PLAYBACK_TIMESTAMP
-            # Call main() if it exists (samples wrap their code in main())
-            if hasattr(self.module, "main") and callable(self.module.main):
-                await self.module.main()
+            try:
+                self.spec.loader.exec_module(self.module)
+                # In playback mode, patch time functions on the module:
+                # - time.sleep: avoid waiting for polling loops (instant)
+                # - time.time: return fixed value for deterministic request bodies
+                # Must be done after exec_module so the module's 'time' reference can be patched.
+                if not is_live() and hasattr(self.module, "time"):
+                    self.module.time.sleep = lambda _: None
+                    self.module.time.time = lambda: PLAYBACK_TIMESTAMP
+                # Call main() if it exists (samples wrap their code in main())
+                if hasattr(self.module, "main") and callable(self.module.main):
+                    await self.module.main()  # type: ignore[misc]
+            except Exception as e:
+                # Log print statements with exception details before re-raising
+                exception_info = traceback.format_exc()
+                log_file = self._write_error_log(reason=f"{type(e).__name__}: {str(e)}", exception_info=exception_info)
+                if log_file:
+                    print(f"\nSample execution failed! Print statements logged to: {log_file}")
+                raise
 
     async def validate_print_calls_by_llm_async(
         self,
@@ -412,6 +835,7 @@ class AsyncSampleExecutor(BaseSampleExecutor):
         instructions: str,
         project_endpoint: str,
         model: str = "gpt-4o",
+        use_code_interpreter: bool = True,
     ):
         """Validate captured print output using asynchronous OpenAI client."""
         if not instructions or not instructions.strip():
@@ -425,14 +849,92 @@ class AsyncSampleExecutor(BaseSampleExecutor):
         )
         async with (
             AsyncAIProjectClient(
-                endpoint=endpoint, credential=cast(AsyncTokenCredential, self.tokenCredential)
+                endpoint=endpoint, credential=cast(AsyncTokenCredential, self.tokenCredential), logging_enable=True
             ) as project_client,
             project_client.get_openai_client() as openai_client,
         ):
-            response = await openai_client.responses.create(
-                **self._get_validation_request_params(instructions, model=model)
-            )
-            test_report = json.loads(response.output_text)
+            response = None
+            uploaded_file_ids: list[str] = []
+            try:
+                request_params = self._get_validation_request_params(instructions, model=model)
+
+                if use_code_interpreter:
+                    sample_code_files = self._collect_sample_code_files_for_code_interpreter()
+                    code_interpreter_file_ids: list[str]
+
+                    if is_live():
+                        # Keep upload/delete out of recordings because multipart payloads contain
+                        # full file bytes and become brittle whenever sample files change.
+                        #
+                        # Since upload calls are skipped from recording, playback cannot discover
+                        # runtime file IDs via `files.create`. To keep `responses.create` replayable,
+                        # sanitize each live file ID to a deterministic placeholder and reuse the
+                        # same placeholders in playback mode below.
+                        for file_path in sample_code_files:
+                            with open(file_path, "rb") as source_file:
+                                uploaded = await openai_client.files.create(
+                                    file=source_file,
+                                    purpose="assistants",
+                                    extra_headers={"x-recording-skip": "request-response"},
+                                )
+
+                            uploaded_file_id = getattr(uploaded, "id", None)
+                            if isinstance(uploaded_file_id, str) and uploaded_file_id:
+                                uploaded_file_ids.append(uploaded_file_id)
+                                scrubbed_file_id = f"code_interpreter_file_{len(uploaded_file_ids)}"
+                                add_general_string_sanitizer(
+                                    function_scoped=True,
+                                    target=uploaded_file_id,
+                                    value=scrubbed_file_id,
+                                )
+
+                        code_interpreter_file_ids = uploaded_file_ids
+                    else:
+                        # Playback counterpart of the live sanitization mapping above.
+                        # Must match the same deterministic sequence used during recording.
+                        code_interpreter_file_ids = [
+                            f"code_interpreter_file_{index}" for index, _ in enumerate(sample_code_files, start=1)
+                        ]
+
+                    code_interpreter_container: dict[str, object] = {
+                        "type": "auto",
+                    }
+                    if code_interpreter_file_ids:
+                        code_interpreter_container["file_ids"] = code_interpreter_file_ids
+
+                    request_params["tools"] = [
+                        {
+                            "type": "code_interpreter",
+                            "container": code_interpreter_container,
+                        }
+                    ]
+
+                response = await openai_client.responses.create(**request_params)
+                test_report = json.loads(response.output_text)
+            except Exception as e:  # pylint: disable=broad-exception-caught
+                response_output_text = None
+                try:
+                    response_output_text = response.output_text if response is not None else None
+                except Exception:  # pylint: disable=broad-exception-caught
+                    response_output_text = None
+
+                reason = f"LLM validation request/parsing failed: {type(e).__name__}: {str(e)}"
+                if response_output_text:
+                    reason += f". Raw output_text: {response_output_text}"
+
+                test_report = {"correct": False, "reason": reason}
+            finally:
+                if use_code_interpreter and is_live():
+                    # Skip recording delete operations for the same reason as uploads.
+                    for uploaded_file_id in uploaded_file_ids:
+                        try:
+                            await openai_client.files.delete(
+                                uploaded_file_id,
+                                extra_headers={"x-recording-skip": "request-response"},
+                            )
+                        except Exception:  # pylint: disable=broad-exception-caught
+                            pass
+
             self._assert_validation_result(test_report)
 
 
@@ -475,8 +977,6 @@ def _register_env_var_sanitizers(
     """Register function-scoped sanitizers to replace live env-var values with playback values."""
     if not _is_live_mode():
         return
-
-    from devtools_testutils import add_general_string_sanitizer
 
     for env_key, live_value in resolved_env_vars.items():
         playback_value = playback_values.get(env_key)
