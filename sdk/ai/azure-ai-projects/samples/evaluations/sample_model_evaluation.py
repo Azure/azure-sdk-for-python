@@ -95,7 +95,7 @@ with (
     }
 
     agent_eval_run: Union[RunCreateResponse, RunRetrieveResponse] = openai_client.evals.runs.create(
-        eval_id=eval_object.id, name=f"Evaluation Run for Model {model}", data_source=data_source  # type: ignore  # type: ignore
+        eval_id=eval_object.id, name=f"Evaluation Run for Model {model}", data_source=data_source  # type: ignore
     )
     print(f"Evaluation run created (id: {agent_eval_run.id})")
 

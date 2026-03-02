@@ -4,14 +4,17 @@
 
 ### Features Added
 
+* To enable preview (beta) operations, a new optional boolean input argument named `allow_preview` was added
+to the constructor of `AIProjectClient`. Caller must set it to True to opt-in to preview features.
+This includes creating an Hosted Agent or Workflow Agent. Methods on the `.beta` sub-client (for example
+`.beta.memory_stores.create()`) do not require setting `allow_preview=True` since it's implied by the sub-client name.
+When preview features are enabled, the client libraries sends the HTTP request header `Foundry-Features`
+with the appropriate value in all relevant calls to the service.
+
 ### Breaking Changes
 
-* To use Workflow Agents, which are still in preview, you now need to set an additional input
-argument `foundry_features=AgentDefintionOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW` when calling
-`.agents.create_version()`.
-* To use Hosted Agents, which are still in preview, you now need to set an additional input
-argument `foundry_features=AgentDefintionOptInKeys.HOSTED_AGENTS_V1_PREVIEW` when calling
-`.agents.create_version()`.
+* Input argument `foundry_features` was removed from all methods that supported it. Use the new `allow_preview`
+instead on client constructor (see above).
 * Class `TextResponseFormatConfiguration` renamed to `TextResponseFormat`.
 * Class `TextResponseFormatConfigurationResponseFormatText` renamed to `TextResponseFormatTest`.
 * Class `TextResponseFormatConfigurationResponseFormatJsonObject` renamed to `TextResponseFormatJsonObject`.

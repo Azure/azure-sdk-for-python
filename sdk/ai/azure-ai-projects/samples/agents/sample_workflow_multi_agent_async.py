@@ -30,7 +30,6 @@ from dotenv import load_dotenv
 from azure.identity.aio import DefaultAzureCredential
 from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import (
-    AgentDefintionOptInKeys,
     PromptAgentDefinition,
     WorkflowAgentDefinition,
 )
@@ -44,7 +43,7 @@ async def main():
 
     async with (
         DefaultAzureCredential() as credential,
-        AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+        AIProjectClient(endpoint=endpoint, credential=credential, allow_preview=True) as project_client,
         project_client.get_openai_client() as openai_client,
     ):
 
@@ -144,7 +143,6 @@ trigger:
         workflow = await project_client.agents.create_version(
             agent_name="student-teacher-workflow-async",
             definition=WorkflowAgentDefinition(workflow=workflow_yaml),
-            foundry_features=AgentDefintionOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW,
         )
 
         print(f"Agent created (id: {workflow.id}, name: {workflow.name}, version: {workflow.version})")
@@ -157,7 +155,6 @@ trigger:
             extra_body={"agent_reference": {"name": workflow.name, "type": "agent_reference"}},
             input="1 + 1 = ?",
             stream=True,
-            # Remove me? metadata={"x-ms-debug-mode-enabled": "1"},
         )
 
         async for event in stream:
@@ -170,7 +167,8 @@ trigger:
                     end="",
                 )
             elif event.type == "response.completed":
-                print(f"\nFinal response output: {event.response.output_text}", flush=True)
+                response = await openai_client.responses.retrieve(event.response.id)
+                print(f": Final Response: {response}", end="")
             print("", flush=True)
 
         await openai_client.conversations.delete(conversation_id=conversation.id)

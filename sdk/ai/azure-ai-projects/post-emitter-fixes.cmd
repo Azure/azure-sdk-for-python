@@ -50,18 +50,15 @@ REM powershell -Command "(Get-Content azure\ai\projects\_utils\model_base.py) -r
 REM Add pyright ignore comment to created_by fields to suppress reportIncompatibleVariableOverride errors
 REM powershell -Command "(Get-Content azure\ai\projects\models\_models.py) -replace 'created_by: Optional\[str\] = rest_field\(visibility=\[\"read\", \"create\", \"update\", \"delete\", \"query\"\]\)', 'created_by: Optional[str] = rest_field(visibility=[\"read\", \"create\", \"update\", \"delete\", \"query\"])  # pyright: ignore[reportIncompatibleVariableOverride]' | Set-Content azure\ai\projects\models\_models.py"
 
-echo Now do these additional changes manually, if you want the "Generate docs" job to succeed in PR pipeline
+REM Now do these additional changes manually, if you want the "Generate docs" job to succeed in PR pipeline
 REM Remove `generate_summary` from class `Reasoning`. It's deprecated but causes two types of errors. Consider removing it from TypeSpec.
 
-REM Remove required 'foundry_features' from public API surface
-copy agent-scripts\patch_foundry_features_args.py .
-python patch_foundry_features_args.py
-del patch_foundry_features_args.py
+REM exit /b
 
-REM Add Foundry-Features header to next-link HttpRequest only in functions that use foundry_features
-copy agent-scripts\patch_prepare_request_foundry_headers.py .
-python patch_prepare_request_foundry_headers.py
-del patch_prepare_request_foundry_headers.py
+REM Remove required 'foundry_features' from public API surface, and instead set them internally in the relevant methods
+copy agent-scripts\auto_set_foundry_features.py .
+python auto_set_foundry_features.py
+del auto_set_foundry_features.py
 
-echo Finishing by running 'black' tool to format code. 
+REM Finishing by running 'black' tool to format code. 
 black --config ../../../eng/black-pyproject.toml .
