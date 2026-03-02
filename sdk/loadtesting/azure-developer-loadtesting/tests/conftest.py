@@ -48,7 +48,12 @@ def add_sanitizers(test_proxy):
     add_general_regex_sanitizer(regex=tenant_id, value="00000000-0000-0000-0000-000000000000")
     add_general_regex_sanitizer(regex=client_id, value="00000000-0000-0000-0000-000000000000")
     add_general_regex_sanitizer(regex=client_secret, value="00000000-0000-0000-0000-000000000000")
+    add_general_regex_sanitizer(
+        regex=r"https://[a-zA-Z0-9-]+\.[a-zA-Z0-9-]+\.cnt-[a-zA-Z0-9-]+\.loadtesting\.azure\.com",
+        value="https://Sanitized.eastus.cnt-prod.loadtesting.azure.com"
+    )
     add_header_regex_sanitizer(key="Set-Cookie", value="[set-cookie;]")
     add_header_regex_sanitizer(key="Cookie", value="cookie;")
     add_body_key_sanitizer(json_path="$..access_token", value="access_token")
     add_body_key_sanitizer(json_path="$..url", value="url")
+    add_header_regex_sanitizer(key="Location", regex=r"https://example\.com", value="")

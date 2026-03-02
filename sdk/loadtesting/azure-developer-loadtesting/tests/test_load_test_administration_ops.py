@@ -88,14 +88,16 @@ class TestLoadTestAdministrationOperations(LoadTestingTest):
         set_bodiless_matcher()
 
         client = self.create_administration_client(loadtesting_endpoint)
-        result = client.begin_upload_test_file(
+        poller = client.begin_upload_test_file(
             loadtesting_test_id,
             "sample.jmx",
             open(os.path.join(Path(__file__).resolve().parent, "sample.jmx"), "rb"),
         )
 
+        result = poller.result(1000)
+        assert poller.status() is not None
         assert result is not None
-        assert result.validation_status is not None
+        assert poller.done() is True
 
     @LoadTestingPreparer()
     @recorded_by_proxy
@@ -200,7 +202,7 @@ class TestLoadTestAdministrationOperations(LoadTestingTest):
         set_bodiless_matcher()
 
         client = self.create_administration_client(loadtesting_endpoint)
-        trigger_id = "test-trigger-id"
+        trigger_id = "tests-schedule-trigger-id-sync"
         result = client.create_or_update_trigger(
             trigger_id,
             {
@@ -212,6 +214,7 @@ class TestLoadTestAdministrationOperations(LoadTestingTest):
                     "frequency": "Daily",
                     "interval": 1,
                 },
+                "startDateTime": "2026-03-04T05:42:51.038Z",
             },
         )
 
@@ -223,7 +226,7 @@ class TestLoadTestAdministrationOperations(LoadTestingTest):
         set_bodiless_matcher()
 
         client = self.create_administration_client(loadtesting_endpoint)
-        trigger_id = "test-trigger-id"
+        trigger_id = "tests-schedule-trigger-id-sync"
         result = client.get_trigger(trigger_id)
         assert result is not None
 
@@ -244,7 +247,7 @@ class TestLoadTestAdministrationOperations(LoadTestingTest):
         set_bodiless_matcher()
 
         client = self.create_administration_client(loadtesting_endpoint)
-        trigger_id = "test-trigger-id"
+        trigger_id = "tests-schedule-trigger-id-sync"
         result = client.delete_trigger(trigger_id)
         assert result is None
 
@@ -255,7 +258,7 @@ class TestLoadTestAdministrationOperations(LoadTestingTest):
         set_bodiless_matcher()
 
         client = self.create_administration_client(loadtesting_endpoint)
-        notification_rule_id = "test-notification-rule-id"
+        notification_rule_id = "tests-notification-id-sync"
         result = client.create_or_update_notification_rule(
             notification_rule_id,
             {
@@ -285,7 +288,7 @@ class TestLoadTestAdministrationOperations(LoadTestingTest):
         set_bodiless_matcher()
 
         client = self.create_administration_client(loadtesting_endpoint)
-        notification_rule_id = "test-notification-rule-id"
+        notification_rule_id = "tests-notification-id-sync"
         result = client.get_notification_rule(notification_rule_id)
         assert result is not None
 
@@ -306,7 +309,7 @@ class TestLoadTestAdministrationOperations(LoadTestingTest):
         set_bodiless_matcher()
 
         client = self.create_administration_client(loadtesting_endpoint)
-        notification_rule_id = "test-notification-rule-id"
+        notification_rule_id = "tests-notification-id-sync"
         result = client.delete_notification_rule(notification_rule_id)
         assert result is None
 
@@ -320,6 +323,25 @@ class TestLoadTestAdministrationOperations(LoadTestingTest):
         result = client.begin_generate_test_plan_recommendations(loadtesting_recording_test_id)
         assert result is not None
         
+    @LoadTestingPreparer()
+    @recorded_by_proxy
+    def test_begin_clone_test(self, loadtesting_endpoint, loadtesting_test_id):
+        set_bodiless_matcher()
+
+        client = self.create_administration_client(loadtesting_endpoint)
+        new_test_id = "clone-test-id-sync"
+        
+        poller = client.begin_clone_test(
+            loadtesting_test_id,
+            new_test_id=new_test_id,
+            display_name="Cloned Test",
+            description="Cloned test for pytest",
+        )
+        
+        result = poller.result()
+        assert result is not None
+        assert poller.done() is True
+
     @LoadTestingPreparer()
     @recorded_by_proxy
     def test_delete_load_test(self, loadtesting_endpoint, loadtesting_test_id):

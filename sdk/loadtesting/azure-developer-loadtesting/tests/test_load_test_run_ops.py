@@ -78,14 +78,16 @@ class TestLoadTestRunOperations(LoadTestingTest):
         set_bodiless_matcher()
 
         client = self.create_administration_client(loadtesting_endpoint)
-        result = client.begin_upload_test_file(
+        poller = client.begin_upload_test_file(
             loadtesting_test_id,
             "sample.jmx",
             open(os.path.join(Path(__file__).resolve().parent, "sample.jmx"), "rb"),
         )
 
+        result = poller.result(1000)
+        assert poller.status() is not None
         assert result is not None
-        assert result.validation_status is not None
+        assert poller.done() is True
 
     @LoadTestingPreparer()
     @recorded_by_proxy
@@ -260,7 +262,7 @@ class TestLoadTestRunOperations(LoadTestingTest):
     def test_stop_test_run(self, loadtesting_endpoint, loadtesting_test_id):
         set_bodiless_matcher()
 
-        test_run_id = "sample-test-run-3"
+        test_run_id = "some-test-run-id-stop-async"
         run_client = self.create_run_client(loadtesting_endpoint)
 
         run_client.begin_test_run(
@@ -276,6 +278,28 @@ class TestLoadTestRunOperations(LoadTestingTest):
 
         # Clean-up
         run_client.delete_test_run(test_run_id)
+    
+    @LoadTestingPreparer()
+    @recorded_by_proxy
+    def test_begin_generate_test_run_insights(self, loadtesting_endpoint, loadtesting_completed_test_run_id):
+        set_bodiless_matcher()
+
+        run_client = self.create_run_client(loadtesting_endpoint)
+
+        poller = run_client.begin_generate_test_run_insights(loadtesting_completed_test_run_id)
+        poller.result()
+        assert poller.status() is not None
+        assert poller.done() is True
+
+    @LoadTestingPreparer()
+    @recorded_by_proxy
+    def test_get_latest_test_run_insights(self, loadtesting_endpoint, loadtesting_completed_test_run_id):
+        set_bodiless_matcher()
+
+        run_client = self.create_run_client(loadtesting_endpoint)
+
+        insights = run_client.get_latest_test_run_insights(loadtesting_completed_test_run_id)
+        assert insights is not None
 
     @LoadTestingPreparer()
     @recorded_by_proxy
