@@ -32,7 +32,7 @@ class LoadTestingTest(AzureRecordedTestCase):
 LoadTestingPreparer = functools.partial(
     EnvironmentVariableLoader,
     "loadtesting",
-    loadtesting_endpoint="00000000-0000-0000-0000-000000000000.eastus.cnt-prod.loadtesting.azure.com",
+    loadtesting_endpoint="00000000-0000-0000-0000-000000000000.eastus2euap.cnt-canary.loadtesting.azure.com",
     loadtesting_test_id="some-test-id",
     loadtesting_test_run_id="some-test-run-id",
     loadtesting_app_component_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myRG/providers/Microsoft.Web/sites/contoso-sampleapp",
@@ -41,4 +41,5 @@ LoadTestingPreparer = functools.partial(
     loadtesting_test_profile_run_id="some-test-profile-run-id",
     loadtesting_recording_test_id="some-recording-test-id",
     loadtesting_completed_test_run_id="some-completed-test-run-id",
+    loadtesting_action_group_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myRG/providers/microsoft.insights/actionGroups/myActionGroup",
 )

@@ -1,6 +1,6 @@
 # Release History
 
-## 1.2.0 (2026-03-06)
+## 1.2.0b1 (2026-03-06)
 
 Updated the client library to use API Version 2025-11-01-preview. This adds all the capabilities that were introduced until this API version.
 
@@ -12,7 +12,7 @@ Updated the client library to use API Version 2025-11-01-preview. This adds all 
 - Support for Trigger
     - Added methods `create_or_update_trigger`, `get_trigger`, `delete_trigger` and `list_triggers` in `LoadTestAdministrationClient` to work with Scheduling test triggers.
 - Support for Actionable Insights
-    - Added methods `begin_generate_test_run_insights`, `update_latest_test_run_insights`, `get_latest_test_run_insights` and `list_triggers` in `LoadTestRunClient` to work with actionable insights.
+    - Added methods `begin_generate_test_run_insights`, `update_latest_test_run_insights` and `get_latest_test_run_insights` in `LoadTestRunClient` to work with actionable insights.
 - Support for generating test plan recommendations
     - Added method `begin_generate_test_plan_recommendations` in `LoadTestAdministrationClient` which generates test plan recommendations.
 - Support for Cloning load test

@@ -239,152 +239,152 @@ class TestLoadTestAdministrationOperations(LoadTestingAsyncTest):
 
         await self.close_admin_client()
 
-    # # Trigger CRUD Tests
-    # @LoadTestingPreparer()
-    # @recorded_by_proxy_async
-    # @pytest.mark.asyncio
-    # async def test_create_or_update_trigger(
-    #     self, loadtesting_endpoint, loadtesting_test_id
-    # ):
-    #     set_bodiless_matcher()
+    # Trigger CRUD Tests
+    @LoadTestingPreparer()
+    @recorded_by_proxy_async
+    @pytest.mark.asyncio
+    async def test_create_or_update_trigger(
+        self, loadtesting_endpoint, loadtesting_test_id
+    ):
+        set_bodiless_matcher()
 
-    #     client = self.create_administration_client(loadtesting_endpoint)
-    #     trigger_id = "tests-schedule-trigger-id-async"
-    #     result = await client.create_or_update_trigger(
-    #         trigger_id,
-    #         {
-    #             "displayName": "Test Trigger",
-    #             "description": "Test trigger for pytest",
-    #             "kind": "ScheduleTestsTrigger",
-    #             "testIds": [loadtesting_test_id],
-    #             "recurrence": {
-    #                 "frequency": "Daily",
-    #                 "interval": 1,
-    #             },
-    #             "startDateTime": "2026-03-04T05:42:51.038Z",
-    #         },
-    #     )
+        client = self.create_administration_client(loadtesting_endpoint)
+        trigger_id = "test-schedule-trigger-id-async"
+        result = await client.create_or_update_trigger(
+            trigger_id,
+            {
+                "displayName": "Test Trigger",
+                "description": "Test trigger for pytest",
+                "kind": "ScheduleTestsTrigger",
+                "testIds": [loadtesting_test_id],
+                "recurrence": {
+                    "frequency": "Daily",
+                    "interval": 1,
+                },
+                "startDateTime": "2026-03-04T05:42:51.038Z",
+            },
+        )
 
-    #     assert result is not None
+        assert result is not None
 
-    #     await self.close_admin_client()
+        await self.close_admin_client()
 
-    # @LoadTestingPreparer()
-    # @recorded_by_proxy_async
-    # @pytest.mark.asyncio
-    # async def test_get_trigger(self, loadtesting_endpoint):
-    #     set_bodiless_matcher()
+    @LoadTestingPreparer()
+    @recorded_by_proxy_async
+    @pytest.mark.asyncio
+    async def test_get_trigger(self, loadtesting_endpoint):
+        set_bodiless_matcher()
 
-    #     client = self.create_administration_client(loadtesting_endpoint)
-    #     trigger_id = "tests-schedule-trigger-id-async"
-    #     result = await client.get_trigger(trigger_id)
-    #     assert result is not None
+        client = self.create_administration_client(loadtesting_endpoint)
+        trigger_id = "test-schedule-trigger-id-async"
+        result = await client.get_trigger(trigger_id)
+        assert result is not None
 
-    #     await self.close_admin_client()
+        await self.close_admin_client()
 
-    # @LoadTestingPreparer()
-    # @recorded_by_proxy_async
-    # @pytest.mark.asyncio
-    # async def test_list_triggers(self, loadtesting_endpoint):
-    #     set_bodiless_matcher()
+    @LoadTestingPreparer()
+    @recorded_by_proxy_async
+    @pytest.mark.asyncio
+    async def test_list_triggers(self, loadtesting_endpoint):
+        set_bodiless_matcher()
 
-    #     client = self.create_administration_client(loadtesting_endpoint)
-    #     result = client.list_triggers()
-    #     assert result is not None
-    #     items = [r async for r in result]
-    #     assert len(items) >= 0
+        client = self.create_administration_client(loadtesting_endpoint)
+        result = client.list_triggers()
+        assert result is not None
+        items = [r async for r in result]
+        assert len(items) >= 0
 
-    #     await self.close_admin_client()
+        await self.close_admin_client()
 
-    # @LoadTestingPreparer()
-    # @recorded_by_proxy_async
-    # @pytest.mark.asyncio
-    # async def test_delete_trigger(self, loadtesting_endpoint):
-    #     set_bodiless_matcher()
+    @LoadTestingPreparer()
+    @recorded_by_proxy_async
+    @pytest.mark.asyncio
+    async def test_delete_trigger(self, loadtesting_endpoint):
+        set_bodiless_matcher()
 
-    #     client = self.create_administration_client(loadtesting_endpoint)
-    #     trigger_id = "tests-schedule-trigger-id-async"
-    #     result = await client.delete_trigger(trigger_id)
-    #     assert result is None
+        client = self.create_administration_client(loadtesting_endpoint)
+        trigger_id = "test-schedule-trigger-id-async"
+        result = await client.delete_trigger(trigger_id)
+        assert result is None
 
-    #     await self.close_admin_client()
+        await self.close_admin_client()
 
-    # # Notification Rule CRUD Tests
-    # @LoadTestingPreparer()
-    # @recorded_by_proxy_async
-    # @pytest.mark.asyncio
-    # async def test_create_or_update_notification_rule(
-    #     self, loadtesting_endpoint, loadtesting_test_id
-    # ):
-    #     set_bodiless_matcher()
+    # Notification Rule CRUD Tests
+    @LoadTestingPreparer()
+    @recorded_by_proxy_async
+    @pytest.mark.asyncio
+    async def test_create_or_update_notification_rule(
+        self, loadtesting_endpoint, loadtesting_test_id, loadtesting_action_group_id
+    ):
+        set_bodiless_matcher()
 
-    #     client = self.create_administration_client(loadtesting_endpoint)
-    #     notification_rule_id = "tests-notification-id-async"
-    #     result = await client.create_or_update_notification_rule(
-    #         notification_rule_id,
-    #         {
-    #             "displayName": "Test Notification Rule",
-    #             "scope": "Tests",
-    #             "testIds": [loadtesting_test_id],
-    #             "actionGroupIds": [
-    #                 "/subscriptions/7c71b563-0dc0-4bc0-bcf6-06f8f0516c7a/resourcegroups/nikita-canary-rg/providers/microsoft.insights/actiongroups/nikita-canary"
-    #             ],
-    #             "eventFilters": {
-    #                 "testRunEnded": {
-    #                     "kind": "TestRunEnded",
-    #                     "condition": {
-    #                         "testRunStatuses": ["DONE", "FAILED"],
-    #                         "testRunResults": ["PASSED", "FAILED"],
-    #                     },
-    #                 },
-    #             },
-    #         },
-    #     )
+        client = self.create_administration_client(loadtesting_endpoint)
+        notification_rule_id = "test-notification-id-async"
+        result = await client.create_or_update_notification_rule(
+            notification_rule_id,
+            {
+                "displayName": "Test Notification Rule",
+                "scope": "Tests",
+                "testIds": [loadtesting_test_id],
+                "actionGroupIds": [
+                    loadtesting_action_group_id,
+                ],
+                "eventFilters": {
+                    "testRunEnded": {
+                        "kind": "TestRunEnded",
+                        "condition": {
+                            "testRunStatuses": ["DONE", "FAILED"],
+                            "testRunResults": ["PASSED", "FAILED"],
+                        },
+                    },
+                },
+            },
+        )
 
-    #     assert result is not None
+        assert result is not None
 
-    #     await self.close_admin_client()
+        await self.close_admin_client()
 
-    # @LoadTestingPreparer()
-    # @recorded_by_proxy_async
-    # @pytest.mark.asyncio
-    # async def test_get_notification_rule(self, loadtesting_endpoint):
-    #     set_bodiless_matcher()
+    @LoadTestingPreparer()
+    @recorded_by_proxy_async
+    @pytest.mark.asyncio
+    async def test_get_notification_rule(self, loadtesting_endpoint):
+        set_bodiless_matcher()
 
-    #     client = self.create_administration_client(loadtesting_endpoint)
-    #     notification_rule_id = "tests-notification-id-async"
-    #     result = await client.get_notification_rule(notification_rule_id)
-    #     assert result is not None
+        client = self.create_administration_client(loadtesting_endpoint)
+        notification_rule_id = "test-notification-id-async"
+        result = await client.get_notification_rule(notification_rule_id)
+        assert result is not None
 
-    #     await self.close_admin_client()
+        await self.close_admin_client()
 
-    # # Test Plan Recommendations Test
-    # @LoadTestingPreparer()
-    # @recorded_by_proxy_async
-    # @pytest.mark.asyncio
-    # async def test_list_notification_rules(self, loadtesting_endpoint):
-    #     set_bodiless_matcher()
+    # Test Plan Recommendations Test
+    @LoadTestingPreparer()
+    @recorded_by_proxy_async
+    @pytest.mark.asyncio
+    async def test_list_notification_rules(self, loadtesting_endpoint):
+        set_bodiless_matcher()
 
-    #     client = self.create_administration_client(loadtesting_endpoint)
-    #     result = client.list_notification_rules()
-    #     assert result is not None
-    #     items = [r async for r in result]
-    #     assert len(items) >= 0
+        client = self.create_administration_client(loadtesting_endpoint)
+        result = client.list_notification_rules()
+        assert result is not None
+        items = [r async for r in result]
+        assert len(items) >= 0
 
-    #     await self.close_admin_client()
+        await self.close_admin_client()
 
-    # @LoadTestingPreparer()
-    # @recorded_by_proxy_async
-    # @pytest.mark.asyncio
-    # async def test_delete_notification_rule(self, loadtesting_endpoint):
-    #     set_bodiless_matcher()
+    @LoadTestingPreparer()
+    @recorded_by_proxy_async
+    @pytest.mark.asyncio
+    async def test_delete_notification_rule(self, loadtesting_endpoint):
+        set_bodiless_matcher()
 
-    #     client = self.create_administration_client(loadtesting_endpoint)
-    #     notification_rule_id = "tests-notification-id-async"
-    #     result = await client.delete_notification_rule(notification_rule_id)
-    #     assert result is None
+        client = self.create_administration_client(loadtesting_endpoint)
+        notification_rule_id = "test-notification-id-async"
+        result = await client.delete_notification_rule(notification_rule_id)
+        assert result is None
 
-    #     await self.close_admin_client()
+        await self.close_admin_client()
 
     # Test Plan Recommendations Test
     @LoadTestingPreparer()
@@ -410,7 +410,7 @@ class TestLoadTestAdministrationOperations(LoadTestingAsyncTest):
         set_bodiless_matcher()
 
         client = self.create_administration_client(loadtesting_endpoint)
-        new_test_id = "clone-test-id-async"
+        new_test_id = "new-clone-test-id-async"
         
         poller = await client.begin_clone_test(
             loadtesting_test_id,
@@ -422,6 +422,15 @@ class TestLoadTestAdministrationOperations(LoadTestingAsyncTest):
         result = await poller.result()
         assert result is not None
         assert poller.done() is True
+
+        # Get the cloned test to verify it was created successfully
+        cloned_test = await client.get_test(new_test_id)
+        assert cloned_test is not None
+        assert cloned_test.display_name == "Cloned Test"
+
+        # Clean up cloned test
+        result = await client.delete_test(new_test_id)
+        await self.close_admin_client()
     
     @LoadTestingPreparer()
     @recorded_by_proxy_async

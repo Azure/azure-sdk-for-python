@@ -202,7 +202,7 @@ class TestLoadTestAdministrationOperations(LoadTestingTest):
         set_bodiless_matcher()
 
         client = self.create_administration_client(loadtesting_endpoint)
-        trigger_id = "tests-schedule-trigger-id-sync"
+        trigger_id = "test-schedule-trigger-id-sync"
         result = client.create_or_update_trigger(
             trigger_id,
             {
@@ -226,7 +226,7 @@ class TestLoadTestAdministrationOperations(LoadTestingTest):
         set_bodiless_matcher()
 
         client = self.create_administration_client(loadtesting_endpoint)
-        trigger_id = "tests-schedule-trigger-id-sync"
+        trigger_id = "test-schedule-trigger-id-sync"
         result = client.get_trigger(trigger_id)
         assert result is not None
 
@@ -247,27 +247,25 @@ class TestLoadTestAdministrationOperations(LoadTestingTest):
         set_bodiless_matcher()
 
         client = self.create_administration_client(loadtesting_endpoint)
-        trigger_id = "tests-schedule-trigger-id-sync"
+        trigger_id = "test-schedule-trigger-id-sync"
         result = client.delete_trigger(trigger_id)
         assert result is None
 
     # Notification Rule CRUD Tests
     @LoadTestingPreparer()
     @recorded_by_proxy
-    def test_create_or_update_notification_rule(self, loadtesting_endpoint, loadtesting_test_id):
+    def test_create_or_update_notification_rule(self, loadtesting_endpoint, loadtesting_test_id, loadtesting_action_group_id):
         set_bodiless_matcher()
 
         client = self.create_administration_client(loadtesting_endpoint)
-        notification_rule_id = "tests-notification-id-sync"
+        notification_rule_id = "test-notification-id-sync"
         result = client.create_or_update_notification_rule(
             notification_rule_id,
             {
                 "displayName": "Test Notification Rule",
                 "scope": "Tests",
                 "testIds": [loadtesting_test_id],
-                "actionGroupIds": [
-                    "/subscriptions/7c71b563-0dc0-4bc0-bcf6-06f8f0516c7a/resourcegroups/nikita-canary-rg/providers/microsoft.insights/actiongroups/nikita-canary"
-                ],
+                "actionGroupIds": [loadtesting_action_group_id],
                 "eventFilters": {
                     "testRunEnded": {
                         "kind": "TestRunEnded",
@@ -288,7 +286,7 @@ class TestLoadTestAdministrationOperations(LoadTestingTest):
         set_bodiless_matcher()
 
         client = self.create_administration_client(loadtesting_endpoint)
-        notification_rule_id = "tests-notification-id-sync"
+        notification_rule_id = "test-notification-id-sync"
         result = client.get_notification_rule(notification_rule_id)
         assert result is not None
 
@@ -309,7 +307,7 @@ class TestLoadTestAdministrationOperations(LoadTestingTest):
         set_bodiless_matcher()
 
         client = self.create_administration_client(loadtesting_endpoint)
-        notification_rule_id = "tests-notification-id-sync"
+        notification_rule_id = "test-notification-id-sync"
         result = client.delete_notification_rule(notification_rule_id)
         assert result is None
 
@@ -329,7 +327,7 @@ class TestLoadTestAdministrationOperations(LoadTestingTest):
         set_bodiless_matcher()
 
         client = self.create_administration_client(loadtesting_endpoint)
-        new_test_id = "clone-test-id-sync"
+        new_test_id = "new-clone-test-id-sync"
         
         poller = client.begin_clone_test(
             loadtesting_test_id,
@@ -341,6 +339,15 @@ class TestLoadTestAdministrationOperations(LoadTestingTest):
         result = poller.result()
         assert result is not None
         assert poller.done() is True
+
+        # Get the cloned test to verify it was created successfully
+        cloned_test = client.get_test(new_test_id)
+        assert cloned_test is not None
+        assert cloned_test.display_name == "Cloned Test"
+
+        # Clean up cloned test
+        result = client.delete_test(new_test_id)
+        assert result is None
 
     @LoadTestingPreparer()
     @recorded_by_proxy
