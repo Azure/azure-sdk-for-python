@@ -37,6 +37,7 @@ from ._response_metadata import (
     build_foundry_agents_metadata_headers,
     try_attach_foundry_metadata_to_event,
 )
+from .common.agent_invoke_context import AgentInvokeContext
 from .common.agent_run_context import AgentRunContext
 from ..constants import Constants
 from ..logger import APPINSIGHT_CONNSTR_ENV_NAME, get_logger, get_project_endpoint, request_context
@@ -199,11 +200,33 @@ class FoundryCBAgent:
             result = await self.agent_readiness(request)
             return _to_response(result)
 
+        async def invoke_endpoint(request):
+            headers = dict(request.headers)
+            try:
+                payload = await request.json()
+            except Exception as e:
+                logger.error(f"Invalid JSON payload for /invoke: {e}")
+                return JSONResponse({"error": f"Invalid JSON payload: {e}"}, status_code=400)
+            context = AgentInvokeContext(headers, payload)
+            try:
+                return await self.agent_invoke(context)
+            except Exception as e:
+                logger.error(f"Error processing /invoke request: {e}", exc_info=True)
+                return JSONResponse({"error": _format_error(e)}, status_code=500)
+
+        async def invoke_openapi_endpoint(request):
+            spec = self.agent_openapi_spec()
+            if spec is None:
+                return JSONResponse({"error": "OpenAPI spec not available"}, status_code=404)
+            return JSONResponse(spec)
+
         routes = [
             Route("/runs", runs_endpoint, methods=["POST"], name="agent_run"),
             Route("/responses", runs_endpoint, methods=["POST"], name="agent_response"),
             Route("/liveness", liveness_endpoint, methods=["GET"], name="agent_liveness"),
             Route("/readiness", readiness_endpoint, methods=["GET"], name="agent_readiness"),
+            Route("/invoke", invoke_endpoint, methods=["POST"], name="agent_invoke"),
+            Route("/invoke/docs/openapi.json", invoke_openapi_endpoint, methods=["GET"], name="agent_invoke_openapi"),
         ]
 
         @contextlib.asynccontextmanager
@@ -443,6 +466,24 @@ class FoundryCBAgent:
     ) -> Union[OpenAIResponse, Generator[ResponseStreamEvent, Any, Any], AsyncGenerator[ResponseStreamEvent, Any]]:
         raise NotImplementedError
 
+    async def agent_invoke(self, context: AgentInvokeContext) -> dict:
+        """Handle a synchronous invocation request from the ``/invoke`` endpoint.
+
+        The default implementation raises :class:`NotImplementedError`. Override this method
+        in a subclass to provide custom invocation logic.
+
+        :param context: The invocation context containing the HTTP request headers and
+            parsed JSON payload.
+        :type context: AgentInvokeContext
+        :return: A plain :class:`dict` that will be serialised as the JSON response body.
+        :rtype: dict
+        :raises NotImplementedError: Always, unless overridden by a subclass.
+        """
+        raise NotImplementedError(
+            f"{type(self).__name__} does not implement agent_invoke. "
+            "Override this method to handle /invoke requests."
+        )
+
     async def respond_with_oauth_consent(self, context, error) -> project_models.Response:
         """Generate a response indicating that OAuth consent is required.
 
@@ -556,6 +597,19 @@ class FoundryCBAgent:
             "output": output,
         })
         yield project_models.ResponseCompletedEvent(sequence_number=sequence_number, response=response)
+
+    def agent_openapi_spec(self) -> Optional[dict]:
+        """Return the OpenAPI specification for the ``/invoke`` endpoint.
+
+        The default implementation returns ``None``, which causes the
+        ``GET /invoke/docs/openapi.json`` endpoint to respond with HTTP 404.
+        Override this method in a subclass to expose an OpenAPI document.
+
+        :return: A dict representing the OpenAPI specification, or ``None`` if
+            no specification is available.
+        :rtype: Optional[dict]
+        """
+        return None
 
     async def agent_liveness(self, request) -> Union[Response, dict]:
         return Response(status_code=200)

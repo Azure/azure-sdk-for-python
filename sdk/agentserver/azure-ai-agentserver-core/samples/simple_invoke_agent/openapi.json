@@ -1,0 +1,66 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "SimpleInvokeAgent",
+    "description": "A minimal agent that handles POST /invoke with optional SSE streaming. Pass Content-Type: text/event-stream to receive a streaming SSE response; any other Content-Type returns a single JSON object.",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/invoke": {
+      "post": {
+        "summary": "Invoke the agent",
+        "description": "Send a message to the agent. Set Content-Type to 'text/event-stream' for an SSE streaming response, or 'application/json' for a single JSON response.",
+        "operationId": "invokeAgent",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "message": {
+                    "type": "string",
+                    "description": "The message to echo back.",
+                    "example": "Hello world"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response. Returns a JSON object when Content-Type is application/json, or an SSE stream when Content-Type is text/event-stream.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "ok"
+                    },
+                    "mode": {
+                      "type": "string",
+                      "example": "non-stream"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Hello world"
+                    }
+                  }
+                }
+              },
+              "text/event-stream": {
+                "schema": {
+                  "type": "string",
+                  "description": "SSE stream. Each event has the form 'data: {\"delta\": \"<word> \"}'. The stream ends with 'data: [DONE]'."
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
