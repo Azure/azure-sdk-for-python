@@ -1,6 +1,7 @@
 import abc
 import os
 import argparse
+import re
 import traceback
 import sys
 import shutil
@@ -313,3 +314,24 @@ class Check(abc.ABC):
     def _build_pytest_args(self, package_dir: str, args: argparse.Namespace) -> List[str]:
         """Build pytest args for a package directory."""
         return self._build_pytest_args_base(package_dir, args)
+
+    def get_check_version(self, executable: str, module_name: str) -> Optional[str]:
+        """Get the version of a tool installed in the virtual environment.
+
+        Runs ``<executable> -m <module_name> --version`` and extracts the first
+        semver-style version string from the output.
+
+        :param executable: Path to the Python executable in the target venv.
+        :param module_name: The module to query (e.g. "pylint", "mypy").
+        :returns: The version string, or None if it could not be determined.
+        """
+        try:
+            result = subprocess.run(
+                [executable, "-m", module_name, "--version"],
+                capture_output=True,
+            )
+            version_output = result.stdout.rstrip().decode("utf-8")
+            matches = re.findall(r"(\d+\.\d+\.\d+)", version_output)
+            return matches[0] if matches else None
+        except Exception:
+            return None

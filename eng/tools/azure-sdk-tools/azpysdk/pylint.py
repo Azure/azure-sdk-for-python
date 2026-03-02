@@ -1,10 +1,9 @@
 import argparse
 import os
-import re
 import sys
 
 from typing import Optional, List
-from subprocess import CalledProcessError, check_call, run as subprocess_run
+from subprocess import CalledProcessError, check_call
 
 from .Check import Check
 from ci_tools.functions import install_into_venv
@@ -221,18 +220,7 @@ class pylint(Check):
                 if package_failed:
                     from gh_tools.vnext_issue_creator import create_vnext_issue
 
-                    # Get version from the internal venv where pylint is installed
-                    check_version = None
-                    try:
-                        version_result = subprocess_run(
-                            [executable, "-m", "pylint", "--version"],
-                            capture_output=True,
-                        )
-                        version_output = version_result.stdout.rstrip().decode("utf-8")
-                        matches = re.findall(r"(\d+\.\d+\.\d+)", version_output)
-                        check_version = matches[0] if matches else None
-                    except Exception:
-                        pass
+                    check_version = self.get_check_version(executable, "pylint")
                     create_vnext_issue(package_dir, "pylint", check_version)
                 else:
                     from gh_tools.vnext_issue_creator import close_vnext_issue

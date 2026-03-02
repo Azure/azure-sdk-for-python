@@ -1,11 +1,10 @@
 import argparse
 import json
 import os
-import re
 import sys
 
 from typing import Optional, List
-from subprocess import CalledProcessError, run as subprocess_run
+from subprocess import CalledProcessError
 
 from .Check import Check
 from ci_tools.functions import install_into_venv
@@ -150,18 +149,7 @@ class pyright(Check):
                 ):
                     from gh_tools.vnext_issue_creator import create_vnext_issue
 
-                    # Get version from the internal venv where pyright is installed
-                    check_version = None
-                    try:
-                        version_result = subprocess_run(
-                            [executable, "-m", "pyright", "--version"],
-                            capture_output=True,
-                        )
-                        version_output = version_result.stdout.rstrip().decode("utf-8")
-                        matches = re.findall(r"(\d+\.\d+\.\d+)", version_output)
-                        check_version = matches[0] if matches else None
-                    except Exception:
-                        pass
+                    check_version = self.get_check_version(executable, "pyright")
                     create_vnext_issue(package_dir, "pyright", check_version)
 
                 print("See https://aka.ms/python/typing-guide for information.\n\n")

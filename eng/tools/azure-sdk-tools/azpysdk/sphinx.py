@@ -1,6 +1,5 @@
 import argparse
 import os
-import re
 import sys
 import shutil
 import glob
@@ -8,7 +7,7 @@ import zipfile
 import tarfile
 
 from typing import Optional, List
-from subprocess import CalledProcessError, check_call, run as subprocess_run
+from subprocess import CalledProcessError, check_call
 from pathlib import Path
 
 from .Check import Check
@@ -337,18 +336,7 @@ class sphinx(Check):
             if in_analyze_weekly():
                 from gh_tools.vnext_issue_creator import create_vnext_issue
 
-                # Get version from the internal venv where sphinx is installed
-                check_version = None
-                try:
-                    version_result = subprocess_run(
-                        [executable, "-m", "sphinx", "--version"],
-                        capture_output=True,
-                    )
-                    version_output = version_result.stdout.rstrip().decode("utf-8")
-                    matches = re.findall(r"(\d+\.\d+\.\d+)", version_output)
-                    check_version = matches[0] if matches else None
-                except Exception:
-                    pass
+                check_version = self.get_check_version(executable, "sphinx")
                 create_vnext_issue(package_dir, "sphinx", check_version)
             return 1
         return 0
