@@ -76,7 +76,7 @@ it should have one of two forms. It could have this form:
 foundry_features: Optional[Union[str, _models.AgentDefinitionOptInKeys]] = None,
 
 in which case the local argument that you should define is the following:
-_foundry_features: Optional[str] = _get_agent_definition_opt_in_keys if self._config._allow_preview else None  # type: ignore
+_foundry_features: Optional[str] = _get_agent_definition_opt_in_keys if self._config.allow_preview else None  # type: ignore
 
 Or it can have the form:
 
@@ -85,7 +85,7 @@ foundry_features: Optional[Literal[FoundryFeaturesOptInKeys.SOME_VALUE]] = None,
 where "SOME_VALUE" is one of the enum values on FoundryFeaturesOptInKeys.
 in which case the local argument that you should define is the following:
 
-_foundry_features: Optional[Literal[FoundryFeaturesOptInKeys.SOME_VALUE]] = FoundryFeaturesOptInKeys.SOME_VALUE if self._config._allow_preview else None  # type: ignore
+_foundry_features: Optional[Literal[FoundryFeaturesOptInKeys.SOME_VALUE]] = FoundryFeaturesOptInKeys.SOME_VALUE if self._config.allow_preview else None  # type: ignore
 
 Step 4:
 For each one of the methods you found, look for the line "foundry_features=foundry_features" 

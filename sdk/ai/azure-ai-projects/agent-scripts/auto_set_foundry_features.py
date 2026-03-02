@@ -56,12 +56,12 @@ def make_local_var(ff_type: str, value, indent: str = "        ") -> str:
     if ff_type == "agent_opt_in":
         return (
             f"{indent}_foundry_features: Optional[str] = "
-            f"_get_agent_definition_opt_in_keys if self._config._allow_preview else None  # type: ignore\n"
+            f"_get_agent_definition_opt_in_keys if self._config.allow_preview else None  # type: ignore\n"
         )
     elif ff_type == "optional_literal":
         return (
             f"{indent}_foundry_features: Optional[Literal[FoundryFeaturesOptInKeys.{value}]] = "
-            f"FoundryFeaturesOptInKeys.{value} if self._config._allow_preview else None  # type: ignore\n"
+            f"FoundryFeaturesOptInKeys.{value} if self._config.allow_preview else None  # type: ignore\n"
         )
     elif ff_type == "required_literal":
         return (
