@@ -6,7 +6,7 @@
 import json
 import pytest
 from testcase import AppConfigTestCase
-from preparers import app_config_decorator
+from preparers import AppConfigPreparer
 from devtools_testutils import recorded_by_proxy, set_custom_default_matcher
 from azure.appconfiguration import (
     FeatureFlagConfigurationSetting,
@@ -15,7 +15,7 @@ from azure.appconfiguration import (
 
 
 class TestAppConfigurationConsistency(AppConfigTestCase):
-    @app_config_decorator
+    @AppConfigPreparer()
     @recorded_by_proxy
     def test_update_json_by_value(self, appconfiguration_connection_string):
         # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
@@ -53,7 +53,7 @@ class TestAppConfigurationConsistency(AppConfigTestCase):
 
         client.delete_configuration_setting(set_flag)
 
-    @app_config_decorator
+    @AppConfigPreparer()
     @recorded_by_proxy
     def test_feature_flag_invalid_json(self, appconfiguration_connection_string):
         # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
@@ -69,7 +69,7 @@ class TestAppConfigurationConsistency(AppConfigTestCase):
 
         client.delete_configuration_setting(feature_flag)
 
-    @app_config_decorator
+    @AppConfigPreparer()
     @recorded_by_proxy
     def test_feature_flag_invalid_json_string(self, appconfiguration_connection_string):
         # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
@@ -85,7 +85,7 @@ class TestAppConfigurationConsistency(AppConfigTestCase):
         assert isinstance(received, FeatureFlagConfigurationSetting)
         client.delete_configuration_setting(set_flag)
 
-    @app_config_decorator
+    @AppConfigPreparer()
     @recorded_by_proxy
     def test_feature_flag_invalid_json_access_properties(self, appconfiguration_connection_string):
         # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.

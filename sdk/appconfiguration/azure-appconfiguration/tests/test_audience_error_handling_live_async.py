@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 from asynctestcase import AsyncAppConfigTestCase
-from async_preparers import app_config_aad_decorator_async
+from preparers import AppConfigPreparer
 from devtools_testutils.aio import recorded_by_proxy_async
 from azure.appconfiguration._audience_error_handling_policy import (
     AudienceErrorHandlingPolicy,
@@ -23,7 +23,7 @@ INCORRECT_AUDIENCE = "https://login.sovcloud-identity2.fr"
 class TestAudienceErrorHandlingLiveAsync(AsyncAppConfigTestCase):
     """Async live and recorded tests for audience error handling with the Azure App Configuration client."""
 
-    @app_config_aad_decorator_async
+    @AppConfigPreparer()
     @recorded_by_proxy_async
     async def test_async_client_has_audience_policy_with_no_audience(self, appconfiguration_endpoint_string):
         """Test that async client created without audience has policy with has_audience=False."""
@@ -45,7 +45,7 @@ class TestAudienceErrorHandlingLiveAsync(AsyncAppConfigTestCase):
 
         await client.close()
 
-    @app_config_aad_decorator_async
+    @AppConfigPreparer()
     @recorded_by_proxy_async
     async def test_async_client_has_audience_policy_with_audience(self, appconfiguration_endpoint_string):
         """Test that async client created with audience has policy with has_audience=True."""
