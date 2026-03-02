@@ -73,4 +73,7 @@ def _deserialize_create_response(payload: dict) -> CreateResponse:
 def _deserialize_agent_reference(payload: dict) -> AgentReference:
     if not payload:
         return None   # type: ignore
-    return AgentReference(**payload)
+    # Filter to known fields to avoid unexpected keyword argument errors
+    known_fields = {"type", "name", "version", "id"}
+    filtered = {k: v for k, v in payload.items() if k in known_fields}
+    return AgentReference(**filtered)
