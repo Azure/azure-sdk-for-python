@@ -435,7 +435,7 @@ def transform_ops_content_part1(content: str, is_sync: bool) -> str:
         old_import = "from ..models._enums import FoundryFeaturesOptInKeys\n"
         new_import = (
             "from ..models._enums import FoundryFeaturesOptInKeys\n"
-            '_get_agent_definition_opt_in_keys: str = ",".join([key.value for key in _models.AgentDefinitionOptInKeys])\n'
+            '_get_agent_definition_opt_in_keys: str = ",".join([_AgentDefinitionOptInKeys.HOSTED_AGENTS_V1_PREVIEW.value, _AgentDefinitionOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW.value])\n'
         )
         content = content.replace(old_import, new_import, 1)
 

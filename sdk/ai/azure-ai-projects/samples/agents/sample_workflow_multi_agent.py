@@ -153,7 +153,6 @@ trigger:
         extra_body={"agent_reference": {"name": workflow.name, "type": "agent_reference"}},
         input="1 + 1 = ?",
         stream=True,
-        # REMOVE ME? metadata={"x-ms-debug-mode-enabled": "1"},
     )
 
     for event in stream:
@@ -166,9 +165,8 @@ trigger:
                 end="",
             )
         elif event.type == "response.completed":
-            response = event.response
-            response = openai_client.responses.retrieve(response.id)
-            print(f"Final Response: {response}", end="")
+            response = openai_client.responses.retrieve(event.response.id)
+            print(f": Final Response: {response}", end="")
         print("", flush=True)
 
     openai_client.conversations.delete(conversation_id=conversation.id)

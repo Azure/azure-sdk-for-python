@@ -39,7 +39,12 @@ from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserial
 from .._utils.serialization import Deserializer, Serializer
 from ..models._enums import _AgentDefinitionOptInKeys, _FoundryFeaturesOptInKeys
 
-_get_agent_definition_opt_in_keys: str = ",".join([key.value for key in _AgentDefinitionOptInKeys])
+_get_agent_definition_opt_in_keys: str = ",".join(
+    [
+        _AgentDefinitionOptInKeys.HOSTED_AGENTS_V1_PREVIEW.value,
+        _AgentDefinitionOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW.value,
+    ]
+)
 
 JSON = MutableMapping[str, Any]
 _Unset: Any = object()

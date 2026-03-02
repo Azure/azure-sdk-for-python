@@ -37,6 +37,7 @@ from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deseria
 from ..._utils.serialization import Deserializer, Serializer
 from ...models._enums import _AgentDefinitionOptInKeys, _FoundryFeaturesOptInKeys
 from ...operations._operations import (
+    _get_agent_definition_opt_in_keys,
     build_agents_create_agent_from_manifest_request,
     build_agents_create_agent_request,
     build_agents_create_version_from_manifest_request,
@@ -109,6 +110,9 @@ _Unset: Any = object()
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 List = list
+
+_SERIALIZER = Serializer()
+_SERIALIZER.client_side_validation = False
 
 
 class BetaOperations:
