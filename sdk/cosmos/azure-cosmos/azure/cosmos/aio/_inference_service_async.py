@@ -27,7 +27,7 @@ from urllib.parse import urlparse
 from urllib3.util.retry import Retry
 
 from azure.core import AsyncPipelineClient
-from azure.core.exceptions import DecodeError
+from azure.core.exceptions import DecodeError, ServiceRequestError
 from azure.core.pipeline.policies import (AsyncHTTPPolicy, ContentDecodePolicy,
                                           DistributedTracingPolicy, HeadersPolicy,
                                           NetworkTraceLoggingPolicy, ProxyPolicy, UserAgentPolicy)
@@ -55,7 +55,6 @@ class _InferenceService:
     RETRY_AFTER_STATUS_CODES = frozenset([429, 500])
     RETRY_BACKOFF_FACTOR = 0.8
     inference_service_default_scope = Constants.INFERENCE_SERVICE_DEFAULT_SCOPE
-    semantic_reranking_inference_endpoint = os.environ.get(Constants.SEMANTIC_RERANKER_INFERENCE_ENDPOINT)
 
     def __init__(self, cosmos_client_connection):
         """Initialize inference service with credentials and endpoint information.
@@ -67,7 +66,9 @@ class _InferenceService:
         self._aad_credentials = self._client_connection.aad_credentials
         self._token_scope = self.inference_service_default_scope
 
-        self._inference_endpoint = f"{self.semantic_reranking_inference_endpoint}/inference/semanticReranking"
+        semantic_reranking_inference_endpoint = os.environ.get(Constants.SEMANTIC_RERANKER_INFERENCE_ENDPOINT)
+        self._inference_endpoint = f"{semantic_reranking_inference_endpoint}/inference/semanticReranking"
+        self._inference_request_timeout = self._client_connection.connection_policy.InferenceRequestTimeout
         self._inference_pipeline_client = self._create_inference_pipeline_client()
 
     def _create_inference_pipeline_client(self) -> AsyncPipelineClient:
@@ -219,7 +220,9 @@ class _InferenceService:
             # Send request through the inference-specific pipeline
             pipeline_response = await self._inference_pipeline_client._pipeline.run(
                 request,
-                connection_verify=is_ssl_enabled
+                connection_verify=is_ssl_enabled,
+                connection_timeout=self._inference_request_timeout,
+                read_timeout=self._inference_request_timeout,
             )
             response = pipeline_response.http_response
             response_headers = cast(CaseInsensitiveDict, response.headers)
@@ -243,6 +246,12 @@ class _InferenceService:
 
             return CosmosDict(result, response_headers=response_headers)
 
+        except ServiceRequestError as e:
+            raise exceptions.CosmosHttpResponseError(
+                status_code=408,
+                message="Inference Service Request Timeout",
+                response=None
+            ) from e
         except Exception as e:
             if isinstance(e, (exceptions.CosmosHttpResponseError, exceptions.CosmosResourceNotFoundError)):
                 raise
