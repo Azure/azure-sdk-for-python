@@ -1,11 +1,11 @@
 # Release History
 
 
-## 1.0.0b15 (2026-02-27)
+## 1.0.0b15 (2026-03-02)
 
 ### Other Changes
 
-- Pin starlette<1.0.0.
+- Upgraded starlette>=1.0.0rc1.
 
 
 ## 1.0.0b14 (2026-02-24)

@@ -4,6 +4,7 @@
 # pylint: disable=broad-exception-caught,unused-argument,logging-fstring-interpolation,too-many-statements,too-many-return-statements
 # mypy: ignore-errors
 import asyncio  # pylint: disable=C4763
+import contextlib
 import inspect
 import json
 import os
@@ -205,19 +206,8 @@ class FoundryCBAgent:
             Route("/readiness", readiness_endpoint, methods=["GET"], name="agent_readiness"),
         ]
 
-        self.app = Starlette(routes=routes)
-        UserInfoContextMiddleware.install(self.app)
-        self.app.add_middleware(
-            CORSMiddleware,
-            allow_origins=["*"],
-            allow_credentials=True,
-            allow_methods=["*"],
-            allow_headers=["*"],
-        )
-        self.app.add_middleware(AgentRunContextMiddleware, agent=self)
-
-        @self.app.on_event("startup")
-        async def on_startup():
+        @contextlib.asynccontextmanager
+        async def _lifespan(app):
             import logging
 
             # Log server started successfully
@@ -232,6 +222,19 @@ class FoundryCBAgent:
                         uv_logger.addHandler(handler)
                         uv_logger.setLevel(logger.level)
                         uv_logger.propagate = False
+
+            yield
+
+        self.app = Starlette(routes=routes, lifespan=_lifespan)
+        UserInfoContextMiddleware.install(self.app)
+        self.app.add_middleware(
+            CORSMiddleware,
+            allow_origins=["*"],
+            allow_credentials=True,
+            allow_methods=["*"],
+            allow_headers=["*"],
+        )
+        self.app.add_middleware(AgentRunContextMiddleware, agent=self)
 
         self.tracer = None
 
