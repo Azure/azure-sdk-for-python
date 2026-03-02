@@ -1,11 +1,5 @@
 # Release History
 
-## 1.15.1 (Unreleased)
-
-### Bugs Fixed
-
-- Fixed 404 Not Found error when using Azure OpenAI Graders by reverting API version from `2025-04-01-preview` to `2024-12-01-preview`. The newer API version had specification issues that prevented the `evals.create` endpoint from working correctly.
-
 ## 1.15.0 (2026-02-03)
 
 ### Bugs Fixed
