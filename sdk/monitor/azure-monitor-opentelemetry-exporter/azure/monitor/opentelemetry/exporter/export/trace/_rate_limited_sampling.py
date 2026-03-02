@@ -2,6 +2,7 @@
 # Licensed under the MIT License.
 
 import math
+import os
 import threading
 import time
 from typing import Optional, Sequence
@@ -15,6 +16,10 @@ from opentelemetry.sdk.trace.sampling import (
 )
 from opentelemetry.trace.span import TraceState
 from opentelemetry.util.types import Attributes
+
+from opentelemetry.sdk.environment_variables import (
+    OTEL_TRACES_SAMPLER_ARG,
+)
 
 from azure.monitor.opentelemetry.exporter._constants import _SAMPLE_RATE_KEY
 
@@ -33,13 +38,13 @@ class _State:
 
 
 class RateLimitedSamplingPercentage:
-    def __init__(self, target_spans_per_second_limit: float, round_to_nearest: bool = True):
-        if target_spans_per_second_limit < 0.0:
+    def __init__(self, traces_per_second: float, round_to_nearest: bool = True):
+        if traces_per_second < 0.0:
             raise ValueError("Limit for sampled spans per second must be nonnegative!")
         # Hardcoded adaptation time of 0.1 seconds for adjusting to sudden changes in telemetry volumes
         adaptation_time_seconds = 0.1
         self._inverse_adaptation_time_nanoseconds = 1e-9 / adaptation_time_seconds
-        self._target_spans_per_nanosecond_limit = 1e-9 * target_spans_per_second_limit
+        self._target_spans_per_nanosecond_limit = 1e-9 * traces_per_second
         initial_nano_time = int(time.time_ns())
         self._state = _State(0.0, 0.0, initial_nano_time)
         self._lock = threading.Lock()
@@ -82,9 +87,13 @@ class RateLimitedSamplingPercentage:
 
 
 class RateLimitedSampler(Sampler):
-    def __init__(self, target_spans_per_second_limit: float):
-        self._sampling_percentage_generator = RateLimitedSamplingPercentage(target_spans_per_second_limit)
-        self._description = f"RateLimitedSampler{{{target_spans_per_second_limit}}}"
+    def __init__(self, traces_per_second: float = 5.0):
+        env_sampling_traces_per_second = os.environ.get(OTEL_TRACES_SAMPLER_ARG)
+        if env_sampling_traces_per_second is not None:
+            traces_per_second = float(env_sampling_traces_per_second)
+
+        self._sampling_percentage_generator = RateLimitedSamplingPercentage(traces_per_second)
+        self._description = f"RateLimitedSampler{{{traces_per_second}}}"
 
     def should_sample(
         self,

@@ -1,5 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+import os
 from typing import Optional, Sequence
 
 from opentelemetry.context import Context
@@ -12,6 +13,10 @@ from opentelemetry.sdk.trace.sampling import (
 )
 from opentelemetry.trace.span import TraceState
 from opentelemetry.util.types import Attributes
+
+from opentelemetry.sdk.environment_variables import (
+    OTEL_TRACES_SAMPLER_ARG,
+)
 
 from azure.monitor.opentelemetry.exporter.export.trace._utils import _get_DJB2_sample_score
 
@@ -28,6 +33,9 @@ class ApplicationInsightsSampler(Sampler):
 
     # sampling_ratio must take a value in the range [0,1]
     def __init__(self, sampling_ratio: float = 1.0):
+        env_sampling_ratio = os.environ.get(OTEL_TRACES_SAMPLER_ARG)
+        if env_sampling_ratio is not None:
+            sampling_ratio = float(env_sampling_ratio)
         if not 0.0 <= sampling_ratio <= 1.0:
             raise ValueError("sampling_ratio must be in the range [0,1]")
         self._ratio = sampling_ratio
