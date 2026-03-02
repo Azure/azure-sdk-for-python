@@ -7,7 +7,10 @@ import pytest
 from azure.mgmt.discovery import DiscoveryClient
 from devtools_testutils import recorded_by_proxy
 
-from .testcase import DiscoveryMgmtTestCase, AZURE_RESOURCE_GROUP
+from .testcase import DiscoveryMgmtTestCase
+
+# Resource group that contains storage containers
+STORAGE_CONTAINER_RESOURCE_GROUP = "deray-private-test"
 
 
 class TestStorageContainers(DiscoveryMgmtTestCase):
@@ -15,16 +18,14 @@ class TestStorageContainers(DiscoveryMgmtTestCase):
 
     def setup_method(self, method):
         self.client = self.create_discovery_client(DiscoveryClient)
-        self.resource_group = AZURE_RESOURCE_GROUP
+        self.resource_group = STORAGE_CONTAINER_RESOURCE_GROUP
 
-    @pytest.mark.skip(reason="Backend unstable - centraluseuap region doesn't consistently support 2026-02-01-preview")
     @recorded_by_proxy
     def test_list_storage_containers_by_resource_group(self):
         """Test listing storage containers in a resource group."""
         containers = list(self.client.storage_containers.list_by_resource_group(self.resource_group))
         assert isinstance(containers, list)
 
-    @pytest.mark.skip(reason="Backend unstable - centraluseuap region doesn't consistently support 2026-02-01-preview")
     @recorded_by_proxy
     def test_list_storage_containers_by_subscription(self):
         """Test listing storage containers in the subscription."""

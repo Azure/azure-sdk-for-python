@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://Sanitized.management.azure.com/subscriptions/31b0b6a5-2647-47eb-8a38-7d12047ee8ec/resourceGroups/alchocro-test-copilotsandbox/providers/Microsoft.Discovery/supercomputers?api-version=2026-02-01-preview",
+      "RequestUri": "https://Sanitized.management.azure.com/subscriptions/31b0b6a5-2647-47eb-8a38-7d12047ee8ec/resourceGroups/spec1-test/providers/Microsoft.Discovery/supercomputers?api-version=2026-02-01-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -9,30 +9,81 @@
         "User-Agent": "azsdk-python-mgmt-discovery/1.0.0b1 Python/3.11.9 (Windows-10-10.0.26200-SP0)"
       },
       "RequestBody": null,
-      "StatusCode": 400,
+      "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
-        "Content-Length": "251",
-        "Content-Type": "application/json",
-        "Date": "Tue, 03 Feb 2026 22:04:44 GMT",
+        "Content-Length": "1295",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 02 Mar 2026 15:39:19 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Cache": "CONFIG_NOCACHE",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "f701b397-7c94-460f-a09d-e27b7d1dc770",
-        "x-ms-failure-cause": "gateway",
-        "x-ms-providerhub-traffic": "True",
+        "x-ms-correlation-request-id": "20bc3a48-530a-44f3-963e-e671cd53420d",
+        "x-ms-original-request-ids": [
+          "c1d3c33a-590a-4b92-9911-a2c808e65c79",
+          "36eaf4f3-cad0-4bea-927a-c3a21d1c59bf",
+          "e6769823-6de4-4fc4-af38-3d7eeaeb0b07",
+          "2c1137b6-5e5e-4cdc-ac2c-0470c8f5576b",
+          "e90499c8-4711-4337-b8bd-eb2523b8fb03",
+          "84cb1f22-64b0-4264-bd85-2d7c64bdb2f7"
+        ],
         "x-ms-ratelimit-remaining-subscription-reads": "1099",
-        "x-ms-routing-request-id": "EASTUS2EUAP:20260203T220444Z:f701b397-7c94-460f-a09d-e27b7d1dc770",
+        "x-ms-routing-request-id": "EASTUS2EUAP:20260302T153920Z:20bc3a48-530a-44f3-963e-e671cd53420d",
         "x-ms-throttling-version": "v2",
-        "X-MSEdge-Ref": "Ref A: F08A9AA30F26480A83A024FD1323FB17 Ref B: SN4AA2022301021 Ref C: 2026-02-03T22:04:44Z"
+        "X-MSEdge-Ref": "Ref A: A685C25C8D4C4776999339E4B8CF13DE Ref B: SN4AA2022303049 Ref C: 2026-03-02T15:39:19Z"
       },
       "ResponseBody": {
-        "error": {
-          "code": "NoResourceTypeEndpointAvailable",
-          "message": "'Microsoft.Discovery/supercomputers' Resource provider doesn't support api-version 2026-02-01-preview in 'centraluseuap'. Number of endpoints before filtering based on feature flags : 1."
-        }
+        "value": [
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "microsoft.discovery/supercomputers",
+            "location": "uksouth",
+            "tags": {
+              "createdBy": "Sanitized"
+            },
+            "systemData": {
+              "createdBy": "Sanitized",
+              "createdByType": "Application",
+              "createdAt": "2025-11-18T14:01:46.9205594Z",
+              "lastModifiedBy": "Sanitized",
+              "lastModifiedByType": "User",
+              "lastModifiedAt": "2026-02-19T13:40:29.0395037Z"
+            },
+            "properties": {
+              "subnetId": "/subscriptions/31b0b6a5-2647-47eb-8a38-7d12047ee8ec/resourceGroups/fixedrg-dev-uksouth1/providers/Microsoft.Network/virtualNetworks/vnet-dev-uksouth1/subnets/supercomputer-aks",
+              "identities": {
+                "clusterIdentity": {
+                  "id": "Sanitized",
+                  "principalId": "00000000-0000-0000-0000-000000000000",
+                  "clientId": "00000000-0000-0000-0000-000000000000"
+                },
+                "kubeletIdentity": {
+                  "id": "Sanitized",
+                  "principalId": "00000000-0000-0000-0000-000000000000",
+                  "clientId": "00000000-0000-0000-0000-000000000000"
+                },
+                "workloadIdentities": {
+                  "/subscriptions/31b0b6a5-2647-47eb-8a38-7d12047ee8ec/resourcegroups/fixedrg-dev-uksouth1/providers/Microsoft.ManagedIdentity/userAssignedIdentities/dev-uksouth1-uami": {
+                    "principalId": "00000000-0000-0000-0000-000000000000",
+                    "clientId": "00000000-0000-0000-0000-000000000000"
+                  }
+                }
+              },
+              "systemSku": "Standard_D4s_v5",
+              "managedOnBehalfOfConfiguration": {
+                "moboBrokerResources": [
+                  {
+                    "id": "Sanitized"
+                  }
+                ]
+              },
+              "provisioningState": "Failed"
+            }
+          }
+        ]
       }
     }
   ],

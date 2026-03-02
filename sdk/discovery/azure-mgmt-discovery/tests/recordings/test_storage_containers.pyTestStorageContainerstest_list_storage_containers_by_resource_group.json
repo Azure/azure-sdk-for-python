@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://Sanitized.management.azure.com/subscriptions/31b0b6a5-2647-47eb-8a38-7d12047ee8ec/resourceGroups/alchocro-test-copilotsandbox/providers/Microsoft.Discovery/storageContainers?api-version=2026-02-01-preview",
+      "RequestUri": "https://Sanitized.management.azure.com/subscriptions/31b0b6a5-2647-47eb-8a38-7d12047ee8ec/resourceGroups/deray-private-test/providers/Microsoft.Discovery/storageContainers?api-version=2026-02-01-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -9,30 +9,53 @@
         "User-Agent": "azsdk-python-mgmt-discovery/1.0.0b1 Python/3.11.9 (Windows-10-10.0.26200-SP0)"
       },
       "RequestBody": null,
-      "StatusCode": 400,
+      "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
-        "Content-Length": "254",
-        "Content-Type": "application/json",
-        "Date": "Tue, 03 Feb 2026 22:04:50 GMT",
+        "Content-Length": "506",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 02 Mar 2026 15:40:13 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Cache": "CONFIG_NOCACHE",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "738287af-f59e-4ff1-9309-78ad4b49a8ba",
-        "x-ms-failure-cause": "gateway",
-        "x-ms-providerhub-traffic": "True",
+        "x-ms-correlation-request-id": "25a21615-297a-436a-be1e-89614bf011e6",
+        "x-ms-original-request-ids": [
+          "39d4aad2-8d49-45db-afe6-0f4e886f9af0",
+          "c6eeff6d-aa9d-461c-b225-0ef18696b7cb",
+          "6ce596ba-1b66-42b7-9a03-dd5c7a807bc9",
+          "33408eae-4933-4446-be2c-cb9bbbf06dfc",
+          "a2392daa-f880-469e-9559-fc44626ec097",
+          "2014d96f-235f-4f2b-890b-0eb0fe2c4e98"
+        ],
         "x-ms-ratelimit-remaining-subscription-reads": "1098",
-        "x-ms-routing-request-id": "EASTUS2EUAP:20260203T220451Z:738287af-f59e-4ff1-9309-78ad4b49a8ba",
+        "x-ms-routing-request-id": "EASTUS2EUAP:20260302T154013Z:25a21615-297a-436a-be1e-89614bf011e6",
         "x-ms-throttling-version": "v2",
-        "X-MSEdge-Ref": "Ref A: F8A77BE9CB07414F81964D7BB7EBC155 Ref B: SN4AA2022301021 Ref C: 2026-02-03T22:04:50Z"
+        "X-MSEdge-Ref": "Ref A: 1B2C337B09044DCA8E6D41749056B7EF Ref B: SN4AA2022303023 Ref C: 2026-03-02T15:40:13Z"
       },
       "ResponseBody": {
-        "error": {
-          "code": "NoResourceTypeEndpointAvailable",
-          "message": "'Microsoft.Discovery/storageContainers' Resource provider doesn't support api-version 2026-02-01-preview in 'centraluseuap'. Number of endpoints before filtering based on feature flags : 1."
-        }
+        "value": [
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "microsoft.discovery/storagecontainers",
+            "location": "uksouth",
+            "tags": {},
+            "systemData": {
+              "lastModifiedBy": "Sanitized",
+              "lastModifiedByType": "Application",
+              "lastModifiedAt": "2026-02-25T16:37:07.4258986Z"
+            },
+            "properties": {
+              "storageStore": {
+                "storageAccountId": "/subscriptions/31b0b6a5-2647-47eb-8a38-7d12047ee8ec/resourceGroups/deray-private-test/providers/Microsoft.Storage/storageAccounts/derayprstg",
+                "kind": "AzureStorageBlob"
+              },
+              "provisioningState": "Succeeded"
+            }
+          }
+        ]
       }
     }
   ],

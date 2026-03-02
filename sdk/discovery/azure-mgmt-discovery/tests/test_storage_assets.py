@@ -8,7 +8,11 @@ import pytest
 from azure.mgmt.discovery import DiscoveryClient
 from devtools_testutils import recorded_by_proxy
 
-from .testcase import DiscoveryMgmtTestCase, AZURE_RESOURCE_GROUP
+from .testcase import DiscoveryMgmtTestCase
+
+# Resource group and storage container for storage asset tests
+STORAGE_ASSET_RESOURCE_GROUP = "deray-private-test"
+STORAGE_ASSET_CONTAINER_NAME = "testCon"
 
 
 class TestStorageAssets(DiscoveryMgmtTestCase):
@@ -16,15 +20,12 @@ class TestStorageAssets(DiscoveryMgmtTestCase):
 
     def setup_method(self, method):
         self.client = self.create_discovery_client(DiscoveryClient)
-        self.resource_group = AZURE_RESOURCE_GROUP
+        self.resource_group = STORAGE_ASSET_RESOURCE_GROUP
 
-    @pytest.mark.skip(reason="No storage containers exist in test environment")
     @recorded_by_proxy
     def test_list_storage_assets_by_storage_container(self):
         """Test listing storage assets in a storage container."""
-        # TODO: Replace with actual storage container name
-        storage_container_name = "test-storage-container"
-        assets = list(self.client.storage_assets.list_by_storage_container(self.resource_group, storage_container_name))
+        assets = list(self.client.storage_assets.list_by_storage_container(self.resource_group, STORAGE_ASSET_CONTAINER_NAME))
         assert isinstance(assets, list)
 
     @pytest.mark.skip(reason="Requires existing StorageContainer and StorageAsset")

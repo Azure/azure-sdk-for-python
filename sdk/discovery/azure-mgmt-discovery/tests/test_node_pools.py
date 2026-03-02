@@ -7,7 +7,11 @@ import pytest
 from azure.mgmt.discovery import DiscoveryClient
 from devtools_testutils import recorded_by_proxy
 
-from .testcase import DiscoveryMgmtTestCase, AZURE_RESOURCE_GROUP
+from .testcase import DiscoveryMgmtTestCase
+
+# Resource group and supercomputer that contain node pools
+NODE_POOL_RESOURCE_GROUP = "rp114-rg"
+NODE_POOL_SUPERCOMPUTER_NAME = "itsuperp114"
 
 
 class TestNodePools(DiscoveryMgmtTestCase):
@@ -15,17 +19,12 @@ class TestNodePools(DiscoveryMgmtTestCase):
 
     def setup_method(self, method):
         self.client = self.create_discovery_client(DiscoveryClient)
-        self.resource_group = AZURE_RESOURCE_GROUP
+        self.resource_group = NODE_POOL_RESOURCE_GROUP
 
-    @pytest.mark.skip(
-        reason="supercomputers endpoint doesn't support 2026-02-01-preview API yet - needed for node pools"
-    )
     @recorded_by_proxy
     def test_list_node_pools_by_supercomputer(self):
         """Test listing node pools in a supercomputer."""
-        # TODO: Replace with actual supercomputer name
-        supercomputer_name = "test-supercomputer"
-        node_pools = list(self.client.node_pools.list_by_supercomputer(self.resource_group, supercomputer_name))
+        node_pools = list(self.client.node_pools.list_by_supercomputer(self.resource_group, NODE_POOL_SUPERCOMPUTER_NAME))
         assert isinstance(node_pools, list)
 
     @pytest.mark.skip(reason="Requires existing NodePool in the supercomputer")

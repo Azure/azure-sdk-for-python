@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://Sanitized.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Discovery/supercomputers?api-version=2026-02-01-preview",
+      "RequestUri": "https://Sanitized.management.azure.com/subscriptions/31b0b6a5-2647-47eb-8a38-7d12047ee8ec/resourceGroups/rp114-rg/providers/Microsoft.Discovery/supercomputers/itsuperp114/nodePools?api-version=2026-02-01-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -9,27 +9,56 @@
         "User-Agent": "azsdk-python-mgmt-discovery/1.0.0b1 Python/3.11.9 (Windows-10-10.0.26200-SP0)"
       },
       "RequestBody": null,
-      "StatusCode": 404,
+      "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
-        "Content-Length": "236",
+        "Content-Length": "660",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 03 Feb 2026 18:44:52 GMT",
+        "Date": "Mon, 02 Mar 2026 15:40:44 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Cache": "CONFIG_NOCACHE",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "e80791c5-e797-4fc8-a420-0b0a9cbad434",
-        "x-ms-failure-cause": "gateway",
-        "x-ms-routing-request-id": "SOUTHCENTRALUS:20260203T184453Z:e80791c5-e797-4fc8-a420-0b0a9cbad434",
-        "X-MSEdge-Ref": "Ref A: 5BDCC0AF4E3A48F39067FF9EBE9A9B1F Ref B: SN4AA2022301031 Ref C: 2026-02-03T18:44:53Z"
+        "x-ms-correlation-request-id": "bd085dc4-1a43-4236-9291-456d3bfcb2c3",
+        "x-ms-original-request-ids": [
+          "f33a7c16-e0db-4d84-aa70-abc4714ac281",
+          "4ff34f51-c5f8-47e8-90d6-1a12550356e0",
+          "64037399-fb5b-4862-8624-f49768a7efb0",
+          "7bdacbdd-c72e-4870-a182-b5c0587c4769",
+          "f1a6329f-a25e-4b3d-b480-9a78287e8c57",
+          "21131c19-ebab-446b-a948-68fe65f132f0"
+        ],
+        "x-ms-ratelimit-remaining-subscription-reads": "1099",
+        "x-ms-routing-request-id": "EASTUS2EUAP:20260302T154044Z:bd085dc4-1a43-4236-9291-456d3bfcb2c3",
+        "x-ms-throttling-version": "v2",
+        "X-MSEdge-Ref": "Ref A: 5263AED01E924F51895C061BE882D02D Ref B: SN4AA2022304047 Ref C: 2026-03-02T15:40:44Z"
       },
       "ResponseBody": {
-        "error": {
-          "code": "InvalidResourceType",
-          "message": "The resource type 'supercomputers' could not be found in the namespace 'Microsoft.Discovery' for api version '2026-02-01-preview'. The supported api-versions are '2025-07-01-preview'."
-        }
+        "value": [
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "microsoft.discovery/supercomputers/nodepools",
+            "location": "uksouth",
+            "tags": {},
+            "systemData": {
+              "createdBy": "Sanitized",
+              "createdByType": "Application",
+              "createdAt": "2026-01-15T00:33:59.5340715Z",
+              "lastModifiedBy": "Sanitized",
+              "lastModifiedByType": "Application",
+              "lastModifiedAt": "2026-01-15T00:33:59.5340715Z"
+            },
+            "properties": {
+              "subnetId": "/subscriptions/31b0b6a5-2647-47eb-8a38-7d12047ee8ec/resourceGroups/fixedrg-dev-uksouth1/providers/Microsoft.Network/virtualNetworks/vnet-dev-uksouth1/subnets/supercomputer-nodepool",
+              "vmSize": "Standard_D4s_v6",
+              "maxNodeCount": 3,
+              "minNodeCount": 1,
+              "provisioningState": "Succeeded"
+            }
+          }
+        ]
       }
     }
   ],

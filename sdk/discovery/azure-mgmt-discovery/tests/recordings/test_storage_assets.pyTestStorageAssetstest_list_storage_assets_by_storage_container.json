@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://Sanitized.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Discovery/storageContainers?api-version=2026-02-01-preview",
+      "RequestUri": "https://Sanitized.management.azure.com/subscriptions/31b0b6a5-2647-47eb-8a38-7d12047ee8ec/resourceGroups/deray-private-test/providers/Microsoft.Discovery/storageContainers/testCon/storageAssets?api-version=2026-02-01-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -9,27 +9,33 @@
         "User-Agent": "azsdk-python-mgmt-discovery/1.0.0b1 Python/3.11.9 (Windows-10-10.0.26200-SP0)"
       },
       "RequestBody": null,
-      "StatusCode": 404,
+      "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
-        "Content-Length": "166",
+        "Content-Length": "12",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 03 Feb 2026 18:38:21 GMT",
+        "Date": "Mon, 02 Mar 2026 15:40:48 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Cache": "CONFIG_NOCACHE",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "af3d60ab-430a-4455-ab01-5627d4f6a693",
-        "x-ms-failure-cause": "gateway",
-        "x-ms-routing-request-id": "SOUTHCENTRALUS:20260203T183821Z:af3d60ab-430a-4455-ab01-5627d4f6a693",
-        "X-MSEdge-Ref": "Ref A: BB6513F7DBBA4BBA9751F6FDD09AC160 Ref B: SN4AA2022302047 Ref C: 2026-02-03T18:38:21Z"
+        "x-ms-correlation-request-id": "009eaaa4-4d06-4bba-9223-e597146d4939",
+        "x-ms-original-request-ids": [
+          "08478f90-6a50-4960-83d3-e3a80d5a29c2",
+          "4b550fb9-b9b9-4185-9a00-d5149c304ce8",
+          "139f40ed-c4e7-4f59-b02c-dcfaf30902ab",
+          "b5dce4b2-e39b-4fd1-bc2d-57bfeb526580",
+          "35ee17c0-dcdc-4169-963a-85072c82cef3",
+          "4b127254-8bac-4014-9bfc-6bf63f62cb57"
+        ],
+        "x-ms-ratelimit-remaining-subscription-reads": "1099",
+        "x-ms-routing-request-id": "EASTUS2EUAP:20260302T154048Z:009eaaa4-4d06-4bba-9223-e597146d4939",
+        "x-ms-throttling-version": "v2",
+        "X-MSEdge-Ref": "Ref A: DA14A07404F04C328406866FC3F4F4DE Ref B: SN4AA2022304047 Ref C: 2026-03-02T15:40:47Z"
       },
       "ResponseBody": {
-        "error": {
-          "code": "InvalidResourceType",
-          "message": "The resource type could not be found in the namespace 'Microsoft.Discovery' for api version '2026-02-01-preview'."
-        }
+        "value": []
       }
     }
   ],

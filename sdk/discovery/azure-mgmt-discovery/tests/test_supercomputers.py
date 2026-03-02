@@ -7,7 +7,10 @@ import pytest
 from azure.mgmt.discovery import DiscoveryClient
 from devtools_testutils import recorded_by_proxy
 
-from .testcase import DiscoveryMgmtTestCase, AZURE_RESOURCE_GROUP
+from .testcase import DiscoveryMgmtTestCase
+
+# Resource group that contains supercomputers
+SUPERCOMPUTER_RESOURCE_GROUP = "spec1-test"
 
 
 class TestSupercomputers(DiscoveryMgmtTestCase):
@@ -15,16 +18,14 @@ class TestSupercomputers(DiscoveryMgmtTestCase):
 
     def setup_method(self, method):
         self.client = self.create_discovery_client(DiscoveryClient)
-        self.resource_group = AZURE_RESOURCE_GROUP
+        self.resource_group = SUPERCOMPUTER_RESOURCE_GROUP
 
-    @pytest.mark.skip(reason="Backend unstable - centraluseuap region doesn't consistently support 2026-02-01-preview")
     @recorded_by_proxy
     def test_list_supercomputers_by_resource_group(self):
         """Test listing supercomputers in a resource group."""
         supercomputers = list(self.client.supercomputers.list_by_resource_group(self.resource_group))
         assert isinstance(supercomputers, list)
 
-    @pytest.mark.skip(reason="Backend unstable - centraluseuap region doesn't consistently support 2026-02-01-preview")
     @recorded_by_proxy
     def test_list_supercomputers_by_subscription(self):
         """Test listing supercomputers in the subscription."""
