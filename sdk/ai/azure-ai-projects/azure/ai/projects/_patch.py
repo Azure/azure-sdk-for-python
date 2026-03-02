@@ -48,6 +48,13 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :param allow_preview: Whether to enable preview features. Optional, default is False.
+     Set this to True to create a Hosted Agent (using :class:`~azure.ai.projects.models.HostedAgentDefinition`)
+     or a Workflow Agent (using :class:`~azure.ai.projects.models.WorkflowAgentDefinition`).
+     Set this to True to use human evaluation rule action (class :class:`~azure.ai.projects.models.HumanEvaluationPreviewRuleAction`).
+     Methods on the ".beta" sub-client are all in preview, but do not require setting `allow_preview=True`
+     since it's implied by the sub-client name.
+     When preview features are enabled, the client libraries sends the HTTP request header `Foundry-Features`
+     with the appropriate value in all relevant calls to the service.
     :type allow_preview: bool
     :keyword api_version: The API version to use for this operation. Known values are "v1" and
      None. Default value is "v1". Note that overriding this default value may result in unsupported

@@ -7,7 +7,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import Union, Optional, Any, List, overload, IO, cast, Literal
+from typing import Union, Optional, Any, List, overload, IO, cast
 from openai.types.responses import ResponseInputParam
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.polling import NoPolling
