@@ -7,6 +7,7 @@ import copy
 import json
 import re
 from datetime import datetime, timezone
+import functools
 import pytest
 from consts import (
     KEY,
@@ -16,8 +17,8 @@ from consts import (
     LABEL_RESERVED_CHARS,
     PAGE_SIZE,
     KEY_UUID,
+    APPCONFIGURATION_ENDPOINT_STRING,
 )
-import functools
 from devtools_testutils import EnvironmentVariableLoader, recorded_by_proxy, set_custom_default_matcher
 from testcase import AppConfigTestCase
 from azure.core import MatchConditions
@@ -40,7 +41,7 @@ from azure.appconfiguration import (
 AppConfigPreparer = functools.partial(
     EnvironmentVariableLoader,
     "appconfiguration",
-    appconfiguration_endpoint_string="https://fake_app_config.azconfig-test.io",
+    appconfiguration_endpoint_string=APPCONFIGURATION_ENDPOINT_STRING,
 )
 
 

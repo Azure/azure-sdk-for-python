@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 import functools
 from asynctestcase import AsyncAppConfigTestCase
+from consts import APPCONFIGURATION_ENDPOINT_STRING
 from devtools_testutils import EnvironmentVariableLoader
 from devtools_testutils.aio import recorded_by_proxy_async
 from azure.appconfiguration._audience_error_handling_policy import (
@@ -14,7 +15,7 @@ from azure.appconfiguration._audience_error_handling_policy import (
 AppConfigPreparer = functools.partial(
     EnvironmentVariableLoader,
     "appconfiguration",
-    appconfiguration_endpoint_string="https://fake_app_config.azconfig-test.io",
+    appconfiguration_endpoint_string=APPCONFIGURATION_ENDPOINT_STRING,
 )
 
 # cspell:disable-next-line

@@ -20,6 +20,7 @@ from consts import (
     LABEL_RESERVED_CHARS,
     PAGE_SIZE,
     KEY_UUID,
+    APPCONFIGURATION_CONNECTION_STRING,
 )
 from devtools_testutils import EnvironmentVariableLoader, recorded_by_proxy, set_custom_default_matcher
 from azure.core import MatchConditions
@@ -45,7 +46,7 @@ from azure.appconfiguration import (
 AppConfigPreparer = functools.partial(
     EnvironmentVariableLoader,
     "appconfiguration",
-    appconfiguration_connection_string="Endpoint=https://fake_app_config.azconfig-test.io;Id=0-l4-s0:h5htBaY5Z1LwFz50bIQv;Secret=lamefakesecretlamefakesecretlamefakesecrett=",
+    appconfiguration_connection_string=APPCONFIGURATION_CONNECTION_STRING,
 )
 
 
@@ -1229,7 +1230,6 @@ class TestAppConfigurationClientUnitTest:
     def test_mock_policies(self):
         from azure.core.pipeline.transport import HttpResponse, HttpTransport
         from azure.core.pipeline import PipelineRequest, PipelineResponse
-        from consts import APPCONFIGURATION_CONNECTION_STRING
 
         class MockTransport(HttpTransport):
             def __init__(self):

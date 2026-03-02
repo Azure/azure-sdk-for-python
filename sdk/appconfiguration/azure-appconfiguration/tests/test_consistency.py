@@ -7,6 +7,7 @@ import functools
 import json
 import pytest
 from testcase import AppConfigTestCase
+from consts import APPCONFIGURATION_CONNECTION_STRING
 from devtools_testutils import EnvironmentVariableLoader, recorded_by_proxy, set_custom_default_matcher
 from azure.appconfiguration import (
     FeatureFlagConfigurationSetting,
@@ -16,7 +17,7 @@ from azure.appconfiguration import (
 AppConfigPreparer = functools.partial(
     EnvironmentVariableLoader,
     "appconfiguration",
-    appconfiguration_connection_string="Endpoint=https://fake_app_config.azconfig-test.io;Id=0-l4-s0:h5htBaY5Z1LwFz50bIQv;Secret=lamefakesecretlamefakesecretlamefakesecrett=",
+    appconfiguration_connection_string=APPCONFIGURATION_CONNECTION_STRING,
 )
 
 

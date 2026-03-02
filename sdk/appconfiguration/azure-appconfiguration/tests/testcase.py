@@ -22,6 +22,11 @@ from azure.core.exceptions import ResourceExistsError
 
 
 class AppConfigTestCase(AzureRecordedTestCase):
+
+    def __init__(self, method_name):
+        super().__init__(method_name)
+        self.client = None
+
     def create_aad_client(self, appconfiguration_endpoint_string, audience=None):
         cred = self.get_credential(AzureAppConfigurationClient)
         return AzureAppConfigurationClient(appconfiguration_endpoint_string, cred, audience=audience)
@@ -68,7 +73,7 @@ class AppConfigTestCase(AzureRecordedTestCase):
             for snapshot in snapshots:
                 try:
                     self.client.archive_snapshot(name=snapshot.name)
-                except Exception:
+                except Exception:  # pylint:disable=broad-except
                     pass
 
             # Delete all configuration settings
