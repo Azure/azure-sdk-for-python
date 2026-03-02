@@ -57,7 +57,7 @@ from ._attack_objective_generator import (
 )
 
 # PyRIT imports
-from pyrit.common import initialize_pyrit, DUCK_DB
+from pyrit.memory import CentralMemory, SQLiteMemory
 from pyrit.prompt_target import PromptChatTarget
 
 # Local imports - constants and utilities
@@ -84,10 +84,11 @@ from ._utils.file_utils import create_file_manager
 from ._utils.metric_mapping import get_attack_objective_from_risk_category
 from ._utils.objective_utils import extract_risk_subtype, get_objective_id
 
-from ._orchestrator_manager import OrchestratorManager
+from ._orchestrator_manager import OrchestratorManager, _ORCHESTRATOR_AVAILABLE
 from ._evaluation_processor import EvaluationProcessor
 from ._mlflow_integration import MLflowIntegration
 from ._result_processor import ResultProcessor
+from ._foundry import FoundryExecutionManager, StrategyMapper
 
 
 @experimental
@@ -227,8 +228,8 @@ class RedTeam:
         # keep track of prompt content to risk_sub_type mapping for evaluation
         self.prompt_to_risk_subtype = {}
 
-        # Initialize PyRIT
-        initialize_pyrit(memory_db_type=DUCK_DB)
+        # Initialize PyRIT memory
+        CentralMemory.set_memory_instance(SQLiteMemory())
 
         # Initialize attack objective generator
         self.attack_objective_generator = _AttackObjectiveGenerator(
@@ -1384,40 +1385,62 @@ class RedTeam:
                 self.result_processor.ai_studio_url = self.mlflow_integration.ai_studio_url
 
             # Process strategies and execute scan
-            flattened_attack_strategies = get_flattened_attack_strategies(attack_strategies)
-            self._validate_strategies(flattened_attack_strategies)
+            try:
+                flattened_attack_strategies = get_flattened_attack_strategies(attack_strategies)
+                self._validate_strategies(flattened_attack_strategies)
 
-            # Calculate total tasks and initialize tracking
-            self.total_tasks = len(self.risk_categories) * len(flattened_attack_strategies)
-            tqdm.write(f"📋 Planning {self.total_tasks} total tasks")
-            self._initialize_tracking_dict(flattened_attack_strategies)
+                # Calculate total tasks and initialize tracking
+                self.total_tasks = len(self.risk_categories) * len(flattened_attack_strategies)
+                tqdm.write(f"📋 Planning {self.total_tasks} total tasks")
+                self._initialize_tracking_dict(flattened_attack_strategies)
 
-            # Fetch attack objectives
-            all_objectives = await self._fetch_all_objectives(
-                flattened_attack_strategies,
-                application_scenario,
-                is_agent_target,
-                client_id,
-            )
+                # Fetch attack objectives
+                all_objectives = await self._fetch_all_objectives(
+                    flattened_attack_strategies,
+                    application_scenario,
+                    is_agent_target,
+                    client_id,
+                )
 
-            chat_target = get_chat_target(target, credential=self.credential)
-            self.chat_target = chat_target
+                chat_target = get_chat_target(target, credential=self.credential)
+                self.chat_target = chat_target
 
-            # Execute attacks
-            await self._execute_attacks(
-                flattened_attack_strategies,
-                all_objectives,
-                scan_name,
-                skip_upload,
-                output_path,
-                timeout,
-                skip_evals,
-                parallel_execution,
-                max_parallel_tasks,
-            )
+                # Execute attacks - use Foundry if orchestrator is not available
+                if _ORCHESTRATOR_AVAILABLE:
+                    self.logger.info("Using orchestrator-based execution (legacy PyRIT path)")
+                    self.logger.info("Consider upgrading to PyRIT 0.11+ for improved Foundry-based execution")
+                    await self._execute_attacks(
+                        flattened_attack_strategies,
+                        all_objectives,
+                        scan_name,
+                        skip_upload,
+                        output_path,
+                        timeout,
+                        skip_evals,
+                        parallel_execution,
+                        max_parallel_tasks,
+                    )
+                else:
+                    self.logger.info("Using Foundry-based execution (orchestrator not available)")
+                    await self._execute_attacks_with_foundry(
+                        flattened_attack_strategies,
+                        all_objectives,
+                        chat_target,
+                        timeout,
+                        skip_evals,
+                    )
 
-            # Process and return results
-            return await self._finalize_results(skip_upload, skip_evals, eval_run, output_path, scan_name)
+                # Process and return results
+                return await self._finalize_results(skip_upload, skip_evals, eval_run, output_path, scan_name)
+            except Exception as e:
+                self.logger.error(
+                    f"Red team scan execution failed for run {getattr(eval_run, 'id', 'unknown')}: {str(e)}",
+                    exc_info=True,
+                )
+                # Ensure the run status is updated to Failed if an upload was started
+                if not skip_upload and self.mlflow_integration is not None:
+                    self.mlflow_integration.update_run_status(eval_run, "Failed")
+                raise
 
     def _initialize_scan(self, scan_name: Optional[str], application_scenario: Optional[str]):
         """Initialize scan-specific variables."""
@@ -1669,6 +1692,255 @@ class RedTeam:
                 except Exception as e:
                     self.logger.error(f"Error processing task {i+1}: {str(e)}")
                     continue
+
+    async def _execute_attacks_with_foundry(
+        self,
+        flattened_attack_strategies: List,
+        all_objectives: Dict,
+        chat_target: PromptChatTarget,
+        timeout: int,
+        skip_evals: bool,
+    ):
+        """Execute attacks using Foundry scenario-based approach.
+
+        This method uses PyRIT's Foundry scenario system instead of the legacy
+        orchestrator approach. It batches all strategies per risk category into
+        a single Foundry scenario execution.
+
+        :param flattened_attack_strategies: List of attack strategies to execute
+        :param all_objectives: Dictionary mapping strategy -> risk_category -> objectives
+        :param chat_target: The target to attack
+        :param timeout: Timeout for operations
+        :param skip_evals: Whether to skip evaluations
+        """
+        log_section_header(self.logger, "Starting Foundry-based attack execution")
+
+        # Create progress bar
+        progress_bar = tqdm(
+            total=self.total_tasks,
+            desc="Scanning (Foundry): ",
+            ncols=100,
+            unit="scan",
+            bar_format="{l_bar}{bar}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}, {rate_fmt}{postfix}]",
+        )
+        progress_bar.set_postfix({"current": "initializing"})
+
+        try:
+            # Create Foundry execution manager
+            # Use chat_target as adversarial_chat_target since PyRIT's RedTeamAgent requires one
+            # even for single-turn attacks (it's used for default scoring if not overridden)
+            foundry_manager = FoundryExecutionManager(
+                credential=self.credential,
+                azure_ai_project=self.azure_ai_project,
+                logger=self.logger,
+                output_dir=self.scan_output_dir,
+                adversarial_chat_target=chat_target,
+            )
+
+            # Build objectives by risk category from cached attack_objectives
+            # This ensures we use the same objectives that were fetched, with proper context
+            objectives_by_risk: Dict[str, List[Dict]] = {}
+
+            for risk_category in self.risk_categories:
+                risk_value = risk_category.value
+                objectives_by_risk[risk_value] = []
+
+                # Get baseline objectives for this risk category from cache
+                baseline_key = ((risk_value,), "baseline")
+                self.logger.debug(f"Looking for baseline_key: {baseline_key}")
+                self.logger.debug(f"Available keys in attack_objectives: {list(self.attack_objectives.keys())}")
+                if baseline_key in self.attack_objectives:
+                    cached_data = self.attack_objectives[baseline_key]
+                    selected_objectives = cached_data.get("selected_objectives", [])
+                    self.logger.debug(f"Found {len(selected_objectives)} cached objectives for {risk_value}")
+
+                    for obj in selected_objectives:
+                        # Build objective dict in the expected format
+                        obj_dict = self._build_objective_dict_from_cached(obj, risk_value)
+                        if obj_dict:
+                            objectives_by_risk[risk_value].append(obj_dict)
+                        else:
+                            self.logger.debug(
+                                f"_build_objective_dict_from_cached returned None for obj type: {type(obj)}"
+                            )
+                else:
+                    self.logger.debug(f"baseline_key {baseline_key} NOT found in attack_objectives")
+
+            # Log objectives count
+            for risk_value, objs in objectives_by_risk.items():
+                self.logger.info(f"Prepared {len(objs)} objectives for {risk_value}")
+
+            # Map strategies to Foundry strategies (filtering out special handling strategies)
+            foundry_strategies, special_strategies = StrategyMapper.filter_for_foundry(flattened_attack_strategies)
+            mapped_strategies = StrategyMapper.map_strategies(foundry_strategies)
+
+            self.logger.info(
+                f"Mapped {len(foundry_strategies)} strategies to {len(mapped_strategies)} Foundry strategies "
+                f"({len(special_strategies)} strategies require special handling)"
+            )
+
+            # Execute attacks via Foundry
+            # Pass flattened_attack_strategies (not foundry_strategies) so Baseline detection works
+            progress_bar.set_postfix({"current": "executing"})
+            foundry_results = await foundry_manager.execute_attacks(
+                objective_target=chat_target,
+                risk_categories=self.risk_categories,
+                attack_strategies=flattened_attack_strategies,
+                objectives_by_risk=objectives_by_risk,
+            )
+
+            # Update red_team_info with Foundry results.
+            # The RAIServiceScorer already evaluated each response during attack
+            # execution, so results (attack_success, score) are in the JSONL.
+            # No need for a second evaluation_processor.evaluate() call.
+            for strategy_name, risk_data in foundry_results.items():
+                if strategy_name not in self.red_team_info:
+                    self.red_team_info[strategy_name] = {}
+
+                for risk_value, result_data in risk_data.items():
+                    data_file = result_data.get("data_file", "")
+
+                    self.red_team_info[strategy_name][risk_value] = {
+                        "data_file": data_file,
+                        "evaluation_result_file": "",
+                        "evaluation_result": None,
+                        "status": (
+                            TASK_STATUS["COMPLETED"]
+                            if result_data.get("status") == "completed"
+                            else TASK_STATUS["FAILED"]
+                        ),
+                        "asr": result_data.get("asr", 0.0),
+                    }
+
+                    self.completed_tasks += 1
+                    progress_bar.update(1)
+
+            self.logger.info("Foundry-based attack execution completed")
+
+        except Exception as e:
+            self.logger.error(f"Error in Foundry execution: {str(e)}")
+            import traceback
+
+            self.logger.debug(traceback.format_exc())
+
+            # Mark all tasks as failed
+            for strategy in flattened_attack_strategies:
+                strategy_name = get_strategy_name(strategy)
+                for risk_category in self.risk_categories:
+                    if strategy_name in self.red_team_info and risk_category.value in self.red_team_info[strategy_name]:
+                        self.red_team_info[strategy_name][risk_category.value]["status"] = TASK_STATUS["FAILED"]
+                    progress_bar.update(1)
+            raise
+
+        finally:
+            progress_bar.close()
+
+    def _build_objective_dict_from_cached(self, obj: Any, risk_value: str) -> Optional[Dict]:
+        """Build objective dictionary from cached objective data.
+
+        :param obj: Cached objective (can be dict or other format)
+        :type obj: Any
+        :param risk_value: Risk category value
+        :type risk_value: str
+        :return: Objective dictionary in the expected format
+        :rtype: Optional[Dict]
+        """
+        if not obj:
+            return None
+
+        # Handle AttackObjective objects (from OneDp API)
+        if hasattr(obj, "as_dict"):
+            obj_dict = obj.as_dict()
+        elif isinstance(obj, dict):
+            # Already in dict format
+            obj_dict = obj.copy()
+        else:
+            obj_dict = None
+
+        if obj_dict is None:
+            if isinstance(obj, str):
+                # String content - wrap in expected format
+                return {
+                    "messages": [{"content": obj}],
+                    "metadata": {"risk_category": risk_value},
+                }
+            return None
+
+        # Ensure messages format
+        if "messages" not in obj_dict and "content" in obj_dict:
+            content = obj_dict["content"]
+            context = obj_dict.get("context", "")
+
+            # Build context list if we have context
+            context_items = []
+            if context:
+                if isinstance(context, list):
+                    context_items = context
+                elif isinstance(context, dict):
+                    context_items = [context]
+                elif isinstance(context, str):
+                    context_items = [{"content": context}]
+
+            obj_dict["messages"] = [
+                {
+                    "content": content,
+                    "context": context_items,
+                }
+            ]
+
+        # Add metadata if not present
+        if "metadata" not in obj_dict:
+            obj_dict["metadata"] = {
+                "risk_category": risk_value,
+                "risk_subtype": obj_dict.get("risk_subtype", ""),
+            }
+
+        return obj_dict
+
+    async def _handle_baseline_with_foundry_results(
+        self,
+        objectives_by_risk: Dict[str, List[Dict]],
+        progress_bar: tqdm,
+        skip_evals: bool,
+    ):
+        """Handle Baseline strategy using Foundry-generated results.
+
+        Baseline attacks are essentially the objectives sent without any
+        converter/transformation. Since Foundry includes baseline in its
+        execution, we can extract baseline results from the JSONL files.
+
+        :param objectives_by_risk: Objectives organized by risk category
+        :param progress_bar: Progress bar to update
+        :param skip_evals: Whether to skip evaluations
+        """
+        strategy_name = "baseline"
+
+        if strategy_name not in self.red_team_info:
+            self.red_team_info[strategy_name] = {}
+
+        for risk_category in self.risk_categories:
+            risk_value = risk_category.value
+
+            # Check if we have existing data from Foundry for this risk
+            # Baseline should share the same data file as other strategies
+            existing_data_file = ""
+            for other_strategy, risk_data in self.red_team_info.items():
+                if other_strategy != strategy_name and risk_value in risk_data:
+                    data_file = risk_data[risk_value].get("data_file", "")
+                    if data_file and os.path.exists(data_file):
+                        existing_data_file = data_file
+                        break
+
+            self.red_team_info[strategy_name][risk_value] = {
+                "data_file": existing_data_file,
+                "evaluation_result_file": "",
+                "evaluation_result": None,
+                "status": (TASK_STATUS["COMPLETED"] if existing_data_file else TASK_STATUS["FAILED"]),
+                "asr": 0.0,  # Will be calculated from evaluation
+            }
+
+            self.completed_tasks += 1
+            progress_bar.update(1)
 
     async def _finalize_results(
         self,
