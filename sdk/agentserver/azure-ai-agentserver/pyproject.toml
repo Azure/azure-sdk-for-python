@@ -1,0 +1,72 @@
+[project]
+name = "azure-ai-agentserver"
+dynamic = ["version", "readme"]
+description = "Generic agent server for Azure AI with pluggable protocol heads"
+requires-python = ">=3.10"
+authors = [
+  { name = "Microsoft Corporation", email = "azpysdkhelp@microsoft.com" },
+]
+license = "MIT"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+]
+keywords = ["azure", "azure sdk", "agent", "agentserver"]
+
+dependencies = [
+    "azure-core>=1.35.0",
+    "azure-identity>=1.25.1",
+    "azure-monitor-opentelemetry>=1.5.0",
+    "opentelemetry-api>=1.35",
+    "opentelemetry-exporter-otlp-proto-http",
+    "starlette>=0.45.0",
+    "uvicorn>=0.31.0",
+    "jsonschema>=4.0.0",
+]
+
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project.urls]
+repository = "https://github.com/Azure/azure-sdk-for-python"
+
+[tool.setuptools.packages.find]
+exclude = [
+    "tests*",
+    "samples*",
+    "doc*",
+    "azure",
+    "azure.ai",
+]
+
+[tool.setuptools.dynamic]
+version = { attr = "azure.ai.agentserver._version.VERSION" }
+readme = { file = ["README.md"], content-type = "text/markdown" }
+
+[tool.setuptools.package-data]
+pytyped = ["py.typed"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py310"
+lint.select = ["E", "F", "B", "I"]
+lint.ignore = []
+fix = false
+
+[tool.ruff.lint.isort]
+known-first-party = ["azure.ai.agentserver"]
+combine-as-imports = true
+
+[tool.azure-sdk-build]
+breaking = false
+pyright = false
+verifytypes = false
+latestdependency = false
+dependencies = false
