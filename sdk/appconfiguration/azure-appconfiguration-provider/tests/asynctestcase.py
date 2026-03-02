@@ -6,8 +6,9 @@
 # --------------------------------------------------------------------------
 from devtools_testutils import AzureRecordedTestCase
 from testcase import get_configs
-from azure.appconfiguration.aio import load, AzureAppConfigurationClient
+from azure.appconfiguration.aio import AzureAppConfigurationClient
 from azure.appconfiguration.provider import AzureAppConfigurationKeyVaultOptions
+from azure.appconfiguration.provider.aio import load
 
 
 class AppConfigTestCase(AzureRecordedTestCase):
