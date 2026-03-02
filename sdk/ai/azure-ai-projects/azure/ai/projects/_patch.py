@@ -91,9 +91,8 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
         self._kwargs = kwargs.copy()
         self._custom_user_agent = self._kwargs.get("user_agent", None)
 
-        super().__init__(endpoint=endpoint, credential=credential, **kwargs)
+        super().__init__(endpoint=endpoint, credential=credential, allow_preview=allow_preview, **kwargs)
 
-        self._config._allow_preview = allow_preview  # type: ignore[attr-defined]
         self.telemetry = TelemetryOperations(self)  # type: ignore
 
     @distributed_trace
