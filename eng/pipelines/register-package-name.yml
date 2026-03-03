@@ -77,47 +77,24 @@ steps:
           return
       }
 
-      # Step 3: Trigger pipeline 8013 for each unregistered package
-      Write-Host "`n=== Step 3: Triggering name reservation pipeline ==="
-      $pipelineUrl = "https://dev.azure.com/azure-sdk/internal/_apis/pipelines/8013/runs?api-version=7.1"
-      $headers = @{
-          "Authorization" = "Bearer $(System.AccessToken)"
-          "Content-Type"  = "application/json"
-      }
-
-      $failures = @()
-      $successes = @()
-
+      # Step 3: Log unregistered packages (pipeline trigger disabled for testing)
+      Write-Host "`n=== Step 3: Unregistered packages that would be submitted for name reservation ==="
       foreach ($pkg in $unregisteredPackages) {
-          $body = @{
-              templateParameters = @{
-                  NameForReservation = $pkg
-              }
-          } | ConvertTo-Json -Depth 5
-
-          Write-Host "  Triggering pipeline for: $pkg"
-          try {
-              $result = Invoke-RestMethod -Uri $pipelineUrl -Method Post -Headers $headers -Body $body
-              $successes += $pkg
-              Write-Host "    Success: Run ID $($result.id)"
-          } catch {
-              $failures += @{ Package = $pkg; Error = $_.Exception.Message }
-              Write-Host "    FAILED: $($_.Exception.Message)"
-          }
+          Write-Host "  - $pkg"
       }
 
-      # Summary
-      Write-Host "`n=== Summary ==="
-      Write-Host "Successfully triggered: $($successes.Count)"
-      Write-Host "Failed: $($failures.Count)"
-
-      if ($failures.Count -gt 0) {
-          Write-Host "`nFailed packages:"
-          foreach ($f in $failures) {
-              Write-Host "  - $($f.Package): $($f.Error)"
-          }
-          Write-Error "Some pipeline triggers failed. See details above."
-      }
-    displayName: Register unregistered azure-mgmt-* package names
-    env:
-      SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+      # TODO: Enable pipeline trigger for name reservation
+      # $pipelineUrl = "https://dev.azure.com/azure-sdk/internal/_apis/pipelines/8013/runs?api-version=7.1"
+      # $headers = @{
+      #     "Authorization" = "Bearer $(System.AccessToken)"
+      #     "Content-Type"  = "application/json"
+      # }
+      # foreach ($pkg in $unregisteredPackages) {
+      #     $body = @{
+      #         templateParameters = @{
+      #             NameForReservation = $pkg
+      #         }
+      #     } | ConvertTo-Json -Depth 5
+      #     Invoke-RestMethod -Uri $pipelineUrl -Method Post -Headers $headers -Body $body
+      # }
+    displayName: Find unregistered azure-mgmt-* package names
