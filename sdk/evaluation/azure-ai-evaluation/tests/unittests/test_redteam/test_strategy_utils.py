@@ -446,3 +446,61 @@ class TestHttpxTimeoutConfiguration:
 
         call_kwargs = mock_openai_chat_target.call_args[1]
         assert call_kwargs["httpx_client_kwargs"] == {"timeout": PYRIT_HTTP_TIMEOUT}
+
+    @patch("azure.ai.evaluation.red_team._utils.strategy_utils.OpenAIChatTarget")
+    def test_httpx_timeout_credential_auth_path(self, mock_openai_chat_target):
+        """Verify httpx timeout is set in the TokenCredential auth path."""
+        mock_openai_chat_target.return_value = MagicMock()
+        mock_credential = MagicMock()
+        mock_credential.get_token.return_value = MagicMock(token="tok")
+
+        config = {
+            "azure_deployment": "gpt-4",
+            "azure_endpoint": "https://example.openai.azure.com",
+            "credential": mock_credential,
+        }
+        get_chat_target(config)
+
+        call_kwargs = mock_openai_chat_target.call_args[1]
+        assert "httpx_client_kwargs" in call_kwargs
+        assert call_kwargs["httpx_client_kwargs"] == {"timeout": PYRIT_HTTP_TIMEOUT}
+
+    def test_invalid_http_timeout_string(self):
+        """Verify ValueError for non-numeric http_timeout."""
+        config = {
+            "azure_deployment": "gpt-4",
+            "azure_endpoint": "https://example.openai.azure.com",
+            "api_key": "test-key",
+        }
+        with pytest.raises(ValueError, match="positive number of seconds"):
+            get_chat_target(config, http_timeout="300")
+
+    def test_invalid_http_timeout_negative(self):
+        """Verify ValueError for negative http_timeout."""
+        config = {
+            "azure_deployment": "gpt-4",
+            "azure_endpoint": "https://example.openai.azure.com",
+            "api_key": "test-key",
+        }
+        with pytest.raises(ValueError, match="greater than 0"):
+            get_chat_target(config, http_timeout=-1)
+
+    def test_invalid_http_timeout_zero(self):
+        """Verify ValueError for zero http_timeout."""
+        config = {
+            "azure_deployment": "gpt-4",
+            "azure_endpoint": "https://example.openai.azure.com",
+            "api_key": "test-key",
+        }
+        with pytest.raises(ValueError, match="greater than 0"):
+            get_chat_target(config, http_timeout=0)
+
+    def test_invalid_http_timeout_bool(self):
+        """Verify ValueError for boolean http_timeout."""
+        config = {
+            "azure_deployment": "gpt-4",
+            "azure_endpoint": "https://example.openai.azure.com",
+            "api_key": "test-key",
+        }
+        with pytest.raises(ValueError, match="positive number of seconds"):
+            get_chat_target(config, http_timeout=True)

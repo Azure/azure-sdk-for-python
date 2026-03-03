@@ -178,6 +178,16 @@ def get_chat_target(
     import inspect
 
     timeout_value = http_timeout if http_timeout is not None else PYRIT_HTTP_TIMEOUT
+    if not isinstance(timeout_value, (int, float)) or isinstance(timeout_value, bool):
+        raise ValueError(
+            "http_timeout must be a positive number of seconds (int or float). "
+            f"Received value: {timeout_value!r} of type {type(timeout_value).__name__}."
+        )
+    if timeout_value <= 0:
+        raise ValueError(
+            "http_timeout must be greater than 0 seconds. "
+            f"Received value: {timeout_value!r}."
+        )
 
     # Helper function for message conversion
     def _message_to_dict(message):

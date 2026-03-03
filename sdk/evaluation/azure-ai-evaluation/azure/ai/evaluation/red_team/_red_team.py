@@ -1291,6 +1291,9 @@ class RedTeam:
         :type timeout: int
         :param skip_evals: Whether to skip the evaluation process
         :type skip_evals: bool
+        :keyword _http_timeout: Internal. HTTP timeout in seconds for the underlying httpx client
+            used by PyRIT's OpenAIChatTarget. Must be a positive int or float. Defaults to 180.
+        :paramtype _http_timeout: Optional[Union[int, float]]
         :return: The output from the red team scan
         :rtype: RedTeamResult
         """
