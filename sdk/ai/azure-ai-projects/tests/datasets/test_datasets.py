@@ -12,7 +12,6 @@ from test_base import TestBase, servicePreparer
 from devtools_testutils import recorded_by_proxy, is_live_and_not_recording
 from azure.core.exceptions import HttpResponseError
 
-
 # Construct the paths to the data folder and data file used in this test
 script_dir = os.path.dirname(os.path.abspath(__file__))
 data_folder = os.environ.get("DATA_FOLDER", os.path.join(script_dir, "../test_data/datasets"))

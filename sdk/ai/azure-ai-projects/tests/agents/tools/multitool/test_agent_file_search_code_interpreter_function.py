@@ -22,7 +22,7 @@ from azure.ai.projects.models import (
     PromptAgentDefinition,
     FileSearchTool,
     CodeInterpreterTool,
-    CodeInterpreterContainerAuto,
+    AutoCodeInterpreterToolParam,
     FunctionTool,
 )
 from openai.types.responses.response_input_param import FunctionCallOutput, ResponseInputParam
@@ -109,7 +109,7 @@ Please analyze this data for the quarterly review.
                 instructions="You are a data analyst. Use file search to find data files, code interpreter to calculate statistics, and ALWAYS save your analysis using the save_analysis function.",
                 tools=[
                     FileSearchTool(vector_store_ids=[vector_store.id]),
-                    CodeInterpreterTool(container=CodeInterpreterContainerAuto()),
+                    CodeInterpreterTool(container=AutoCodeInterpreterToolParam()),
                     func_tool,
                 ],
             ),

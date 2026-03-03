@@ -7,6 +7,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+
 from typing import Optional, Any, Union
 from azure.core.tracing.decorator import distributed_trace
 from ._operations import ConnectionsOperations as ConnectionsOperationsGenerated
