@@ -1,0 +1,27 @@
+name: shared-apiview-feedback-resolution-eval
+description: Evaluation suite for APIView feedback resolution skill.
+skill: shared-apiview-feedback-resolution
+version: "1.0"
+config:
+  trials_per_task: 1
+  timeout_seconds: 300
+  parallel: false
+  executor: copilot-sdk
+  model: claude-sonnet-4.6
+graders:
+  - type: keyword
+    name: mentions_apiview
+    config:
+      keywords: ["APIView", "feedback", "comment"]
+      must_include_all: false
+  - type: regex
+    name: references_tools
+    config:
+      pattern: "(?i)(azsdk_apiview_get_comments|azsdk_typespec_delegate_apiview_feedback|APIView)"
+  - type: code
+    name: has_substantive_output
+    config:
+      assertions:
+        - "len(output) > 50"
+tasks:
+  - "tasks/*.yaml"
