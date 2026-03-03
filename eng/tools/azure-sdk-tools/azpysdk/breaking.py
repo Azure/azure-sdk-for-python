@@ -28,6 +28,61 @@ class breaking(Check):
         p = subparsers.add_parser("breaking", parents=parents, help="Run the breaking change check")
         p.set_defaults(func=self.run)
 
+        p.add_argument(
+            "-m",
+            "--module",
+            dest="target_module",
+            help="The target module. The target module passed will be the top most module in the package.",
+            default=None,
+        )
+        p.add_argument(
+            "--in-venv",
+            dest="in_venv",
+            help="Check if we are in the newly created venv.",
+            default=False,
+        )
+        p.add_argument(
+            "-s",
+            "--stable-version",
+            dest="stable_version",
+            help="The stable version of the target package, if it exists on PyPi.",
+            default=None,
+        )
+        p.add_argument(
+            "-c",
+            "--changelog",
+            dest="changelog",
+            help="Output changes listed in changelog format.",
+            action="store_true",
+            default=False,
+        )
+        p.add_argument(
+            "--code-report",
+            dest="code_report",
+            help="Output a code report for a package.",
+            action="store_true",
+            default=False,
+        )
+        p.add_argument(
+            "--source-report",
+            dest="source_report",
+            help="Path to the code report for the previous package version.",
+            default=None,
+        )
+        p.add_argument(
+            "--target-report",
+            dest="target_report",
+            help="Path to the code report for the new package version.",
+            default=None,
+        )
+        p.add_argument(
+            "--latest-pypi-version",
+            dest="latest_pypi_version",
+            help="Use the latest package version on PyPi (can be preview or stable).",
+            action="store_true",
+            default=False,
+        )
+
     def run(self, args: argparse.Namespace) -> int:
         """Run the breaking change check command."""
         logger.info("Running breaking check...")
@@ -80,6 +135,22 @@ class breaking(Check):
                     "--target",
                     package_dir,
                 ]
+                if getattr(args, "target_module", None):
+                    cmd.extend(["--module", args.target_module])
+                if getattr(args, "in_venv", False):
+                    cmd.extend(["--in-venv", str(args.in_venv)])
+                if getattr(args, "stable_version", None):
+                    cmd.extend(["--stable_version", args.stable_version])
+                if getattr(args, "changelog", False):
+                    cmd.append("--changelog")
+                if getattr(args, "code_report", False):
+                    cmd.append("--code-report")
+                if getattr(args, "source_report", None):
+                    cmd.extend(["--source-report", args.source_report])
+                if getattr(args, "target_report", None):
+                    cmd.extend(["--target-report", args.target_report])
+                if getattr(args, "latest_pypi_version", False):
+                    cmd.append("--latest-pypi-version")
                 check_call(cmd)
             except CalledProcessError as e:
                 logger.error(f"Breaking check failed for {package_name}: {e}")
