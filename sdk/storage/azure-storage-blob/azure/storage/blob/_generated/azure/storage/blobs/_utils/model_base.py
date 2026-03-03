@@ -515,15 +515,13 @@ class _MyMutableMapping(MutableMapping[str, typing.Any]):
         return self._data.setdefault(key, default)
 
     def __eq__(self, other: typing.Any) -> bool:
-        """Compare objects by comparing all attributes.
-
-        :param object other: The object to compare
-        :returns: True if objects are equal
-        :rtype: bool
-        """
-        if isinstance(other, self.__class__):
-            return self.__dict__ == other.__dict__
-        return False
+        if isinstance(other, _MyMutableMapping):
+            return self._data == other._data
+        try:
+            other_model = self.__class__(other)
+        except Exception:
+            return False
+        return self._data == other_model._data
 
     def __repr__(self) -> str:
         return str(self._data)
@@ -632,8 +630,6 @@ class Model(_MyMutableMapping):
                         if len(items) > 0:
                             existed_attr_keys.append(xml_name)
                             dict_to_pass[rf._rest_name] = _deserialize(rf._type, items)
-                        else: ## EHHH????
-                            dict_to_pass[rf._rest_name] = []
                         continue
 
                     # text element is primitive type

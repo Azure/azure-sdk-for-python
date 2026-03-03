@@ -259,9 +259,6 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
         self._validate_content = validate_content
         self._encryption_options = encryption_options or {}
         self._progress_hook = kwargs.pop('progress_hook', None)
-        # Pop decompress to prevent it from being passed to the generated download method
-        # which would forward it to _pipeline.run() and ultimately Session.request()
-        self._decompress = kwargs.pop('decompress', None)
         self._request_options = kwargs
         self._response = None
         self._location_mode = None
@@ -296,6 +293,9 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
         # Save current request cls
         download_cls = self._request_options.pop('cls', None)
 
+        # Temporarily removing this for the get properties request
+        decompress = self._request_options.pop('decompress', None)
+
         # Adjust cls for get_properties
         self._request_options['cls'] = deserialize_blob_properties
 
@@ -307,6 +307,10 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
 
         # Restore cls for download
         self._request_options['cls'] = download_cls
+
+        # Decompression does not work with client-side encryption
+        if decompress is not None:
+            self._request_options['decompress'] = decompress
 
     async def _setup(self) -> None:
         if self._encryption_options.get("key") is not None or self._encryption_options.get("resolver") is not None:

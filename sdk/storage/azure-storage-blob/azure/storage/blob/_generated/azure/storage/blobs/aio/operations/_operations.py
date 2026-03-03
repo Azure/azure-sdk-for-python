@@ -240,6 +240,7 @@ class ServiceOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -270,7 +271,7 @@ class ServiceOperations:
         response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize_xml(_models.StorageServiceProperties, response.text())
 
@@ -317,6 +318,7 @@ class ServiceOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -347,7 +349,7 @@ class ServiceOperations:
         response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize_xml(_models.StorageServiceStats, response.text())
 
@@ -424,6 +426,7 @@ class ServiceOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -454,7 +457,7 @@ class ServiceOperations:
         response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize_xml(_models.ListContainersSegmentResponse, response.text())
 
@@ -509,6 +512,7 @@ class ServiceOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -539,7 +543,7 @@ class ServiceOperations:
         response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize_xml(_models.UserDelegationKey, response.text())
 
@@ -666,6 +670,7 @@ class ServiceOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -695,7 +700,7 @@ class ServiceOperations:
         response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.SubmitBatchRequest, response.text())
 
@@ -771,6 +776,7 @@ class ServiceOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -801,7 +807,7 @@ class ServiceOperations:
         response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize_xml(_models.FilterBlobSegment, response.text())
 
@@ -1219,6 +1225,7 @@ class ContainerOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1254,7 +1261,7 @@ class ContainerOperations:
         response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize_xml(_models.SignedIdentifiers, response.text())
 
@@ -1568,6 +1575,7 @@ class ContainerOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1594,7 +1602,7 @@ class ContainerOperations:
         response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.SubmitBatchRequest, response.text())
 
@@ -1670,6 +1678,7 @@ class ContainerOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1700,7 +1709,7 @@ class ContainerOperations:
         response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize_xml(_models.FilterBlobSegment, response.text())
 
@@ -2237,6 +2246,7 @@ class ContainerOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2267,7 +2277,7 @@ class ContainerOperations:
         response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize_xml(_models.ListBlobsResponse, response.text())
 
@@ -2361,6 +2371,7 @@ class ContainerOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2391,7 +2402,7 @@ class ContainerOperations:
         response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize_xml(_models.ListBlobsHierarchySegmentResponse, response.text())
 
@@ -2617,6 +2628,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", True)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2811,7 +2823,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
             response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -2945,6 +2957,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
+        response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
         response_headers["x-ms-meta"] = self._deserialize("{str}", response.headers.get("x-ms-meta"))
         response_headers["x-ms-or"] = self._deserialize("{str}", response.headers.get("x-ms-or"))
         response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
@@ -2973,7 +2986,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         response_headers["x-ms-lease-state"] = self._deserialize("str", response.headers.get("x-ms-lease-state"))
         response_headers["x-ms-lease-status"] = self._deserialize("str", response.headers.get("x-ms-lease-status"))
         response_headers["Content-Length"] = self._deserialize("int", response.headers.get("Content-Length"))
-        response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
         response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
         response_headers["Content-MD5"] = self._deserialize("bytearray", response.headers.get("Content-MD5"))
         response_headers["Content-Encoding"] = self._deserialize("str", response.headers.get("Content-Encoding"))
@@ -5287,6 +5299,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -5317,7 +5330,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize_xml(_models.BlobTags, response.text())
 
@@ -7413,6 +7426,7 @@ class BlockBlobOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -7448,7 +7462,7 @@ class BlockBlobOperations:
         response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize_xml(_models.BlockList, response.text())
 
@@ -7570,6 +7584,7 @@ class BlockBlobOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", True)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -7645,7 +7660,7 @@ class BlockBlobOperations:
         )
         response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -8599,6 +8614,7 @@ class PageBlobOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -8634,7 +8650,7 @@ class PageBlobOperations:
         response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize_xml(_models.PageList, response.text())
 
@@ -8764,6 +8780,7 @@ class PageBlobOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -8799,7 +8816,7 @@ class PageBlobOperations:
         response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize_xml(_models.PageList, response.text())
 
