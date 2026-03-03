@@ -138,7 +138,7 @@ class breaking(Check):
                 if getattr(args, "target_module", None):
                     cmd.extend(["--module", args.target_module])
                 if getattr(args, "in_venv", False):
-                    cmd.extend(["--in-venv", str(args.in_venv)])
+                    cmd.extend(["--in-venv", str(args.in_venv).lower()])
                 if getattr(args, "stable_version", None):
                     cmd.extend(["--stable_version", args.stable_version])
                 if getattr(args, "changelog", False):
