@@ -28,14 +28,12 @@
 
 **REFERENCE DOCUMENTATION:**
 - [Official pylint guide](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/pylint_checking.md)
-- [Tox formatting guide](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md#tox)
+- [Tool usage guide](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/tool_usage_guide.md)
 
 **COMMAND:**
 ```bash
-tox -e pylint --c <path_to_tox.ini> --root .
+azpysdk pylint .
 ```
-
-**DEFAULT PATH:** `azure-sdk-for-python/eng/tox/tox.ini`
 
 ### FIXING PYLINT WARNINGS
 
@@ -64,13 +62,13 @@ tox -e pylint --c <path_to_tox.ini> --root .
 ### RUNNING AND FIXING MYPY
 
 **REFERENCE DOCUMENTATION:**
-- [Tox guidance](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md#tox)
+- [Tool usage guide](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/tool_usage_guide.md)
 - [MyPy fixing guide](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/static_type_checking_cheat_sheet.md)
 
 **REQUIREMENTS:**
 - Use Python 3.9 compatible environment
 - Follow official fixing guidelines
-- Use tox mcp tool for running MyPy
+- Run `azpysdk mypy .` from the package directory
 
 ---
 

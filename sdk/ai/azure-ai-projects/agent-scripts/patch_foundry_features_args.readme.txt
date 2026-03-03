@@ -36,7 +36,7 @@ To verify your result, run the mypy tool and make sure there are no errors origi
 from the package source file. This means that when you go to the folder:
 \azure-sdk-for-python\sdk\ai\azure-ai-projects\
 and run:
-tox run -e mypy -c ../../../eng/tox/tox.ini --root
+azpysdk mypy .
 there will be no errors from files under the folder \azure-sdk-for-python\sdk\ai\azure-ai-projects\azure folder.
 
 
