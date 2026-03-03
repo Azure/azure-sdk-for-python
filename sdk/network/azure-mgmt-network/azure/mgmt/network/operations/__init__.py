@@ -128,6 +128,7 @@ from ._operations import SecurityPartnerProvidersOperations  # type: ignore
 from ._operations import BgpServiceCommunitiesOperations  # type: ignore
 from ._operations import ServiceEndpointPoliciesOperations  # type: ignore
 from ._operations import ServiceEndpointPolicyDefinitionsOperations  # type: ignore
+from ._operations import ServiceGatewaysOperations  # type: ignore
 from ._operations import ServiceTagsOperations  # type: ignore
 from ._operations import ServiceTagInformationOperations  # type: ignore
 from ._operations import UsagesOperations  # type: ignore
@@ -136,6 +137,7 @@ from ._operations import SubnetsOperations  # type: ignore
 from ._operations import ResourceNavigationLinksOperations  # type: ignore
 from ._operations import ServiceAssociationLinksOperations  # type: ignore
 from ._operations import VirtualNetworkPeeringsOperations  # type: ignore
+from ._operations import VirtualNetworkAppliancesOperations  # type: ignore
 from ._operations import VirtualNetworkGatewaysOperations  # type: ignore
 from ._operations import VirtualNetworkGatewayConnectionsOperations  # type: ignore
 from ._operations import LocalNetworkGatewaysOperations  # type: ignore
@@ -290,6 +292,7 @@ __all__ = [
     "BgpServiceCommunitiesOperations",
     "ServiceEndpointPoliciesOperations",
     "ServiceEndpointPolicyDefinitionsOperations",
+    "ServiceGatewaysOperations",
     "ServiceTagsOperations",
     "ServiceTagInformationOperations",
     "UsagesOperations",
@@ -298,6 +301,7 @@ __all__ = [
     "ResourceNavigationLinksOperations",
     "ServiceAssociationLinksOperations",
     "VirtualNetworkPeeringsOperations",
+    "VirtualNetworkAppliancesOperations",
     "VirtualNetworkGatewaysOperations",
     "VirtualNetworkGatewayConnectionsOperations",
     "LocalNetworkGatewaysOperations",

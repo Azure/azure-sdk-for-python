@@ -1,6 +1,6 @@
 # Release History
 
-## 1.38.2 (Unreleased)
+## 1.38.3 (Unreleased)
 
 ### Features Added
 
@@ -8,13 +8,21 @@
 
 ### Bugs Fixed
 
+- Fixed `PipelineClient.format_url` to preserve trailing slash in the base URL when the URL template is query-string-only (e.g., `?key=value`). #45365
+
 ### Other Changes
+
+## 1.38.2 (2026-02-18)
+
+### Bugs Fixed
+
+- Fixed `PipelineClient.format_url` to preserve the leading slash when the URL template starts with `/?`. #45218
 
 ## 1.38.1 (2026-02-10)
 
 ### Bugs Fixed
 
-- Fixed `PipelineClient.format_url` to avoid adding trailing slashes when the URL template contains only query parameters.  #45044
+- Fixed `PipelineClient.format_url` to avoid adding trailing slashes when the URL template contains only query parameters. #45044
 
 ## 1.38.0 (2026-01-12)
 

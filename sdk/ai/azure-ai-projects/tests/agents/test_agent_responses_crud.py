@@ -11,10 +11,14 @@ from devtools_testutils import recorded_by_proxy, RecordedTransport
 from azure.ai.projects.models import (
     PromptAgentDefinition,
     TextResponseFormatJsonSchema,
-    PromptAgentDefinitionText,
+    PromptAgentDefinitionTextOptions,
 )
+import pytest
 
 
+@pytest.mark.skip(
+    reason="Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema"
+)
 class TestAgentResponsesCrud(TestBase):
 
     # To run this test:
@@ -69,8 +73,7 @@ class TestAgentResponsesCrud(TestBase):
 
         response = openai_client.responses.create(
             conversation=conversation.id,
-            extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
-            input="",  # TODO: Remove 'input' once service is fixed
+            extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
         )
         print(f"Response id: {response.id}, output text: {response.output_text}")
         assert "5280" in response.output_text or "5,280" in response.output_text
@@ -109,8 +112,7 @@ class TestAgentResponsesCrud(TestBase):
 
         response = openai_client.responses.create(
             conversation=conversation.id,
-            extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
-            input="",  # TODO: Remove 'input' once service is fixed
+            extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
         )
         print(f"Response id: {response.id}, output text: {response.output_text}")
         assert "1609" in response.output_text or "1,609" in response.output_text
@@ -137,7 +139,7 @@ class TestAgentResponsesCrud(TestBase):
 
         # response = openai_client.responses.create(
         #     conversation=conversation.id,
-        #     extra_body={"agent": AgentReference(name=agent.name).as_dict()}
+        #     extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}}
         # )
         # print(f"Response id: {response.id}, output text: {response.output_text}")
 
@@ -175,7 +177,7 @@ class TestAgentResponsesCrud(TestBase):
             agent_name="MyAgent",
             definition=PromptAgentDefinition(
                 model=model,
-                text=PromptAgentDefinitionText(
+                text=PromptAgentDefinitionTextOptions(
                     format=TextResponseFormatJsonSchema(name="CalendarEvent", schema=CalendarEvent.model_json_schema())
                 ),
                 instructions="""
@@ -199,8 +201,7 @@ class TestAgentResponsesCrud(TestBase):
 
         response = openai_client.responses.create(
             conversation=conversation.id,
-            extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
-            input="",  # TODO: Remove 'input' once service is fixed
+            extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
         )
         print(f"Response id: {response.id}, output text: {response.output_text}")
         assert response.output_text == '{"name":"Science Fair","date":"2025-11-07","participants":["Alice","Bob"]}'
