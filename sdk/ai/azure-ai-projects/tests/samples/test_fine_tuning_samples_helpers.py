@@ -13,7 +13,6 @@ from devtools_testutils import add_general_string_sanitizer
 
 from test_samples_helpers import get_sample_env_vars
 
-
 fine_tuning_instructions = """
 We just ran Python code and captured print/log output in an attached log file (TXT).
 Validate whether sample execution/output is correct for a fine-tuning workflow.

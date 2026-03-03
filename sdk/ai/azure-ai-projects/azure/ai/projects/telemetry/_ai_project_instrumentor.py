@@ -57,7 +57,6 @@ from ._utils import (
 )
 from ._responses_instrumentor import _ResponsesInstrumentorPreview
 
-
 _Unset: Any = object()
 
 logger = logging.getLogger(__name__)

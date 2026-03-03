@@ -24,6 +24,7 @@ USAGE:
     4) AI_SEARCH_CONNECTION_NAME - Optional. The name of an existing AI Search connection to use in this sample.
     5) AI_SEARCH_INDEX_NAME - Optional. The name of the AI Search index to use in this sample.
 """
+
 import asyncio
 import os
 from dotenv import load_dotenv

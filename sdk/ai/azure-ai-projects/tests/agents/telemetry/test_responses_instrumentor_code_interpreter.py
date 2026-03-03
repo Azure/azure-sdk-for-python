@@ -6,6 +6,7 @@
 """
 Tests for ResponsesInstrumentor with Code Interpreter tool.
 """
+
 import os
 import pytest
 from io import BytesIO

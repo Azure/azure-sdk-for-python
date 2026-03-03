@@ -4,8 +4,8 @@
 # Licensed under the MIT License.
 # ------------------------------------
 """Shared base code for sample tests - sync dependencies only."""
-from typing import Mapping, Any
 
+from typing import Mapping, Any
 
 agent_tools_instructions = """
 We just ran Python code and captured print/log output in an attached log file (TXT).
