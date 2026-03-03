@@ -315,7 +315,7 @@ class BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
 
             raw_result.http_response.status_code = 202  # type: ignore
             raw_result.http_response.headers["Operation-Location"] = (  # type: ignore
-                f"{self._config.endpoint}/memory_stores/{name}/updates/{raw_result.http_response.json().get('update_id')}?api-version=2025-11-15-preview"  # type: ignore
+                f"{self._config.endpoint}/memory_stores/{name}/updates/{raw_result.http_response.json().get('update_id')}?api-version=v1"  # type: ignore
             )
 
         kwargs.pop("error_map", None)
