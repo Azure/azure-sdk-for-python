@@ -153,6 +153,12 @@ class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         :return: The evaluation result.
         :rtype: Dict
         """
+        # Import helper functions from base class module
+        from azure.ai.evaluation._evaluators._common._base_prompty_eval import (
+            _is_intermediate_response,
+            _preprocess_messages,
+        )
+
         # we override the _do_eval method as we want the output to be a dictionary,
         # which is a different schema than _base_prompty_eval.py
         if "query" not in eval_input or "response" not in eval_input:
@@ -163,6 +169,20 @@ class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 category=ErrorCategory.MISSING_FIELD,
                 target=ErrorTarget.TASK_ADHERENCE_EVALUATOR,
             )
+
+        # Check for intermediate response
+        if _is_intermediate_response(eval_input.get("response")):
+            return self._not_applicable_result(
+                "Intermediate response. Please provide the agent's final response for evaluation.",
+                self._threshold,
+                has_details=True,
+            )
+
+        # Preprocess messages if they are lists
+        if isinstance(eval_input.get("response"), list):
+            eval_input["response"] = _preprocess_messages(eval_input["response"])
+        if isinstance(eval_input.get("query"), list):
+            eval_input["query"] = _preprocess_messages(eval_input["query"])
 
         # Reformat conversation history and extract system message
         query_messages = reformat_conversation_history(eval_input["query"], logger, include_system_messages=True)
@@ -218,7 +238,7 @@ class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         }
 
         prompty_output_dict = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **prompty_input)
-        llm_output = prompty_output_dict["llm_output"]
+        llm_output = prompty_output_dict.get("llm_output", prompty_output_dict)
 
         if isinstance(llm_output, dict):
             flagged = llm_output.get("flagged", False)
@@ -230,6 +250,7 @@ class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             return {
                 f"{self._result_key}": score,
                 f"{self._result_key}_result": score_result,
+                f"{self._result_key}_threshold": self._threshold,
                 f"{self._result_key}_reason": reasoning,
                 f"{self._result_key}_details": llm_output.get("details", ""),
                 f"{self._result_key}_prompt_tokens": prompty_output_dict.get("input_token_count", 0),
@@ -241,7 +262,9 @@ class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 f"{self._result_key}_sample_output": prompty_output_dict.get("sample_output", ""),
             }
 
-        if logger:
-            logger.warning("LLM output is not a dictionary, returning 0 for the success.")
-
-        return {self._result_key: 0}
+        raise EvaluationException(
+            message="Evaluator returned invalid output.",
+            blame=ErrorBlame.SYSTEM_ERROR,
+            category=ErrorCategory.FAILED_EXECUTION,
+            target=ErrorTarget.EVALUATE,
+        )

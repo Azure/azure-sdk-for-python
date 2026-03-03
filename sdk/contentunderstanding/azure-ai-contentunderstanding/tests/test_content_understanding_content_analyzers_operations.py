@@ -15,7 +15,7 @@ from testpreparer import ContentUnderstandingPreparer
 from testpreparer import ContentUnderstandingClientTestBase
 from azure.ai.contentunderstanding.models import ContentAnalyzer
 from azure.ai.contentunderstanding import ContentUnderstandingClient
-from azure.ai.contentunderstanding.models import AnalyzeInput
+from azure.ai.contentunderstanding.models import AnalysisInput
 from test_helpers import (
     generate_analyzer_id,
     new_simple_content_analyzer_object,
@@ -216,9 +216,7 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
-    def test_content_analyzers_begin_create_with_content_analyzer(
-        self, contentunderstanding_endpoint: str
-    ) -> None:
+    def test_content_analyzers_begin_create_with_content_analyzer(self, contentunderstanding_endpoint: str) -> None:
         """
         Test Summary:
         - Create analyzer using ContentAnalyzer object
@@ -424,7 +422,7 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
             print(f"Starting URL analysis with analyzer {analyzer_id}")
 
             # Begin analysis operation with URL
-            analysis_poller = client.begin_analyze(analyzer_id=analyzer_id, inputs=[AnalyzeInput(url=invoice_url)])
+            analysis_poller = client.begin_analyze(analyzer_id=analyzer_id, inputs=[AnalysisInput(url=invoice_url)])
             assert_poller_properties(analysis_poller, "Analysis poller")
 
             # Wait for the analysis to complete
@@ -542,7 +540,7 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
             print(f"Starting video analysis to get operation ID")
 
             # Begin video analysis operation using URL
-            analysis_poller = client.begin_analyze(analyzer_id=analyzer_id, inputs=[AnalyzeInput(url=video_file_url)])
+            analysis_poller = client.begin_analyze(analyzer_id=analyzer_id, inputs=[AnalysisInput(url=video_file_url)])
             assert_poller_properties(analysis_poller, "Video analysis poller")
 
             # Wait for the analysis to complete
@@ -844,7 +842,7 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
         print("\nStarting analysis operation...")
         poller = client.begin_analyze(
             analyzer_id="prebuilt-invoice",
-            inputs=[AnalyzeInput(url=document_url)],
+            inputs=[AnalysisInput(url=document_url)],
         )
 
         # Wait for completion

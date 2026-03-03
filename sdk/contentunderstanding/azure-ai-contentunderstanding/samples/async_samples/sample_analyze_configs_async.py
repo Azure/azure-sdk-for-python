@@ -54,7 +54,7 @@ import os
 from dotenv import load_dotenv
 from azure.ai.contentunderstanding.aio import ContentUnderstandingClient
 from azure.ai.contentunderstanding.models import (
-    AnalyzeResult,
+    AnalysisResult,
     DocumentContent,
     DocumentChartFigure,
     DocumentAnnotation,
@@ -86,7 +86,7 @@ async def main() -> None:
             analyzer_id="prebuilt-documentSearch",
             binary_input=pdf_bytes,
         )
-        result: AnalyzeResult = await poller.result()
+        result: AnalysisResult = await poller.result()
         # [END analyze_with_configs]
 
         # [START extract_charts]
