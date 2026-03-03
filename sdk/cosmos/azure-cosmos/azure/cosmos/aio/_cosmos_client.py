@@ -126,7 +126,6 @@ def _build_connection_policy(kwargs: dict[str, Any]) -> ConnectionPolicy:
     policy.ConnectionRetryConfiguration = connection_retry
     policy.ResponsePayloadOnWriteDisabled = kwargs.pop('no_response_on_write', False)
     policy.RetryNonIdempotentWrites = kwargs.pop(Constants.Kwargs.RETRY_WRITE, False)
-    policy.InferenceRequestTimeout = kwargs.pop('inference_request_timeout', policy.InferenceRequestTimeout)
     return policy
 
 
@@ -179,8 +178,6 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
     :keyword bool no_response_on_write: Indicates whether service should be instructed to skip sending 
         response payloads for write operations on items by default unless specified differently per operation.
     :keyword int throughput_bucket: The desired throughput bucket for the client
-    :keyword int inference_request_timeout: The HTTP request timeout in seconds for inference service
-        requests (e.g., semantic reranking). Default is 5 seconds.
     :keyword str user_agent_suffix: Allows user agent suffix to be specified when creating client
     :keyword Union[bool, dict[str, Any]] availability_strategy:
         Enables an availability strategy by using cross-region request hedging.
