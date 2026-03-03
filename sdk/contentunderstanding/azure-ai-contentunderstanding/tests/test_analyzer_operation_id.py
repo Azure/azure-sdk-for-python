@@ -16,7 +16,7 @@ from azure.ai.contentunderstanding.models._patch import (
     AnalyzeLROPoller,
     _parse_operation_id,
 )
-from azure.ai.contentunderstanding.models import AnalyzeInput
+from azure.ai.contentunderstanding.models import AnalysisInput
 from azure.ai.contentunderstanding import ContentUnderstandingClient
 
 

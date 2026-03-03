@@ -14,9 +14,9 @@ DESCRIPTION:
     ## About analyzing documents from binary data
 
     One of the key values of Content Understanding is taking a content file and extracting the content
-    for you in one call. The service returns an AnalyzeResult that contains an array of MediaContent
-    items in AnalyzeResult.contents. This sample starts with a document file, so each item is a
-    DocumentContent (a subtype of MediaContent) that exposes markdown plus detailed structure such
+    for you in one call. The service returns an AnalysisResult that contains an array of AnalysisContent
+    items in AnalysisResult.contents. This sample starts with a document file, so each item is a
+    DocumentContent (a subtype of AnalysisContent) that exposes markdown plus detailed structure such
     as pages, tables, figures, and paragraphs.
 
     This sample focuses on document analysis. For prebuilt RAG analyzers covering images, audio, and
@@ -57,7 +57,7 @@ import os
 from dotenv import load_dotenv
 from azure.ai.contentunderstanding.aio import ContentUnderstandingClient
 from azure.ai.contentunderstanding.models import (
-    AnalyzeResult,
+    AnalysisResult,
     DocumentContent,
 )
 from azure.core.credentials import AzureKeyCredential
@@ -84,7 +84,7 @@ async def main() -> None:
             analyzer_id="prebuilt-documentSearch",
             binary_input=file_bytes,
         )
-        result: AnalyzeResult = await poller.result()
+        result: AnalysisResult = await poller.result()
         # [END analyze_document_from_binary]
 
         # [START extract_markdown]
