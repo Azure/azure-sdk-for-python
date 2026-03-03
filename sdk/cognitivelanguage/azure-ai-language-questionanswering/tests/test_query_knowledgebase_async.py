@@ -1,7 +1,7 @@
 # pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # -------------------------------------------------------------------------
-# Runtime async tests: knowledge base querying (authoring removed)
+# Inference async tests: knowledge base querying (authoring removed)
 # -------------------------------------------------------------------------
 import pytest
 
@@ -20,34 +20,49 @@ from azure.core.credentials import AzureKeyCredential
 
 class TestQueryKnowledgeBaseAsync(QuestionAnsweringTestCase):
     @pytest.mark.asyncio
-    async def test_query_knowledgebase_basic(self, recorded_test, qna_creds): # pylint: disable=unused-argument
+    async def test_query_knowledgebase_basic(self, recorded_test, qna_creds, qna_seeded_project): # pylint: disable=unused-argument
         client = QuestionAnsweringClient(qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]))
         params = AnswersOptions(
             question="Ports and connectors",
             top=3,
-            answer_context=KnowledgeBaseAnswerContext(previous_question="Meet Surface Pro 4", previous_qna_id=4),
+            answer_context=KnowledgeBaseAnswerContext(
+                previous_question=qna_seeded_project["previous_question"],
+                previous_qna_id=qna_seeded_project["previous_qna_id"],
+            ),
         )
         async with client:
-            output = await client.get_answers(params, project_name=qna_creds["qna_project"], deployment_name="production")
+            output = await client.get_answers(
+                params,
+                project_name=qna_seeded_project["project_name"],
+                deployment_name="production",
+            )
         assert output.answers
         for answer in output.answers:
             assert answer.answer
             assert answer.confidence is not None
             assert answer.qna_id is not None
-            assert answer.source
+            if answer.qna_id != -1:
+                assert answer.source
             assert answer.metadata is not None
 
     @pytest.mark.asyncio
-    async def test_query_knowledgebase_with_short_answer(self, recorded_test, qna_creds): # pylint: disable=unused-argument
+    async def test_query_knowledgebase_with_short_answer(self, recorded_test, qna_creds, qna_seeded_project): # pylint: disable=unused-argument
         client = QuestionAnsweringClient(qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]))
         params = AnswersOptions(
             question="Ports and connectors",
             top=3,
-            answer_context=KnowledgeBaseAnswerContext(previous_question="Meet Surface Pro 4", previous_qna_id=4),
+            answer_context=KnowledgeBaseAnswerContext(
+                previous_question=qna_seeded_project["previous_question"],
+                previous_qna_id=qna_seeded_project["previous_qna_id"],
+            ),
             short_answer_options=ShortAnswerOptions(enable=True, confidence_threshold=0.1, top=2),
         )
         async with client:
-            output = await client.get_answers(params, project_name=qna_creds["qna_project"], deployment_name="test")
+            output = await client.get_answers(
+                params,
+                project_name=qna_seeded_project["project_name"],
+                deployment_name="production",
+            )
         assert output.answers
         for answer in output.answers:
             if answer.short_answer:
@@ -55,7 +70,7 @@ class TestQueryKnowledgeBaseAsync(QuestionAnsweringTestCase):
                 assert answer.short_answer.confidence is not None
 
     @pytest.mark.asyncio
-    async def test_query_knowledgebase_filter(self, recorded_test, qna_creds): # pylint: disable=unused-argument
+    async def test_query_knowledgebase_filter(self, recorded_test, qna_creds, qna_seeded_project): # pylint: disable=unused-argument
         deployment_name = "production"
         filters = QueryFilters(
             metadata_filter=MetadataFilter(
@@ -76,10 +91,12 @@ class TestQueryKnowledgeBaseAsync(QuestionAnsweringTestCase):
             )
             response = await client.get_answers(
                 params,
-                project_name=qna_creds["qna_project"],
+                project_name=qna_seeded_project["project_name"],
                 deployment_name=deployment_name,
             )
             assert response.answers
+            expected_values = {"check the battery level", "make your battery last"}
+            assert any((a.metadata or {}).get("explicitlytaggedheading") in expected_values for a in response.answers)
 
     @pytest.mark.asyncio
     async def test_query_knowledgebase_overload_errors(self):  # negative parameter validation

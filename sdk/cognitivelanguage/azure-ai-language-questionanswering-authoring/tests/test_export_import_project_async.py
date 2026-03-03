@@ -6,6 +6,7 @@ from testcase import QuestionAnsweringAuthoringTestCase
 
 from azure.ai.language.questionanswering.authoring import models as _models
 from azure.core.credentials import AzureKeyCredential
+from azure.core.exceptions import ResourceExistsError
 from azure.ai.language.questionanswering.authoring.aio import QuestionAnsweringAuthoringClient
 
 
@@ -15,12 +16,15 @@ class TestExportAndImportAsync(QuestionAnsweringAuthoringTestCase):
         client = QuestionAnsweringAuthoringClient(
             qna_authoring_creds["endpoint"], AzureKeyCredential(qna_authoring_creds["key"])
         )
-        project_name = "IsaacNewton"
+        project_name = qna_authoring_creds["project"]
         polling_interval = self.kwargs_for_polling.get("polling_interval")
         async with client:
-            await AuthoringAsyncTestHelper.create_test_project(
-                client, project_name=project_name, polling_interval=polling_interval
-            )
+            try:
+                await AuthoringAsyncTestHelper.create_test_project(
+                    client, project_name=project_name, polling_interval=polling_interval
+                )
+            except ResourceExistsError:
+                pass
             poller = await client.begin_export(
                 project_name=project_name, file_format="json", polling_interval=polling_interval
             )
@@ -32,17 +36,20 @@ class TestExportAndImportAsync(QuestionAnsweringAuthoringTestCase):
         client = QuestionAnsweringAuthoringClient(
             qna_authoring_creds["endpoint"], AzureKeyCredential(qna_authoring_creds["key"])
         )
-        project_name = "IsaacNewton"
+        project_name = qna_authoring_creds["project"]
         polling_interval = self.kwargs_for_polling.get("polling_interval")
         async with client:
             # For import, ensure project exists; do NOT delete it beforehand to avoid 404.
-            await AuthoringAsyncTestHelper.create_test_project(
-                client,
-                project_name=project_name,
-                get_export_url=False,
-                delete_old_project=False,
-                polling_interval=polling_interval,
-            )
+            try:
+                await AuthoringAsyncTestHelper.create_test_project(
+                    client,
+                    project_name=project_name,
+                    get_export_url=False,
+                    delete_old_project=False,
+                    polling_interval=polling_interval,
+                )
+            except ResourceExistsError:
+                pass
             # Wait for project to be observable (eventual consistency) before import.
             project_visible = False
             for _ in range(5):

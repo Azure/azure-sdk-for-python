@@ -4,6 +4,7 @@ from helpers import AuthoringTestHelper
 from testcase import QuestionAnsweringAuthoringTestCase
 
 from azure.core.credentials import AzureKeyCredential
+from azure.core.exceptions import ResourceExistsError
 from azure.ai.language.questionanswering.authoring import QuestionAnsweringAuthoringClient
 from azure.ai.language.questionanswering.authoring import models as _models
 
@@ -13,9 +14,12 @@ class TestSourcesQnasSynonyms(QuestionAnsweringAuthoringTestCase):
         client = QuestionAnsweringAuthoringClient(
             qna_authoring_creds["endpoint"], AzureKeyCredential(qna_authoring_creds["key"])
         )
-        project_name = "IsaacNewton"
-        AuthoringTestHelper.create_test_project(client, project_name=project_name)
-        source_display_name = "SurfaceBookUserGuide"
+        project_name = qna_authoring_creds["project"]
+        try:
+            AuthoringTestHelper.create_test_project(client, project_name=project_name)
+        except ResourceExistsError:
+            pass
+        source_display_name = "surface-book-user-guide-EN"
         update_source_ops = [
             _models.UpdateSourceRecord(
                 {
@@ -44,8 +48,11 @@ class TestSourcesQnasSynonyms(QuestionAnsweringAuthoringTestCase):
         client = QuestionAnsweringAuthoringClient(
             qna_authoring_creds["endpoint"], AzureKeyCredential(qna_authoring_creds["key"])
         )
-        project_name = "IsaacNewton"
-        AuthoringTestHelper.create_test_project(client, project_name=project_name)
+        project_name = qna_authoring_creds["project"]
+        try:
+            AuthoringTestHelper.create_test_project(client, project_name=project_name)
+        except ResourceExistsError:
+            pass
         question = "What is the easiest way to use azure services in my .NET project?"
         answer = "Using Microsoft's Azure SDKs"
         update_qna_ops = [
@@ -76,8 +83,11 @@ class TestSourcesQnasSynonyms(QuestionAnsweringAuthoringTestCase):
         client = QuestionAnsweringAuthoringClient(
             qna_authoring_creds["endpoint"], AzureKeyCredential(qna_authoring_creds["key"])
         )
-        project_name = "IsaacNewton"
-        AuthoringTestHelper.create_test_project(client, project_name=project_name)
+        project_name = qna_authoring_creds["project"]
+        try:
+            AuthoringTestHelper.create_test_project(client, project_name=project_name)
+        except ResourceExistsError:
+            pass
         synonyms_model = _models.SynonymAssets(
             value=[
                 _models.WordAlterations(alterations=["qnamaker", "qna maker"]),
@@ -97,8 +107,11 @@ class TestSourcesQnasSynonyms(QuestionAnsweringAuthoringTestCase):
         client = QuestionAnsweringAuthoringClient(
             qna_authoring_creds["endpoint"], AzureKeyCredential(qna_authoring_creds["key"])
         )
-        project_name = "IsaacNewton"
-        AuthoringTestHelper.create_test_project(client, project_name=project_name)
+        project_name = qna_authoring_creds["project"]
+        try:
+            AuthoringTestHelper.create_test_project(client, project_name=project_name)
+        except ResourceExistsError:
+            pass
         update_qna_ops = [
             _models.UpdateQnaRecord(
                 {

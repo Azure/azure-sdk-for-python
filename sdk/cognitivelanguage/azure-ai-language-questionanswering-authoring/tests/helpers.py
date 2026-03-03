@@ -1,6 +1,9 @@
 class AuthoringTestHelper:
     """Utility helper for creating and exporting authoring test projects."""
 
+    _SURFACE_BOOK_GUIDE_URL = "https://download.microsoft.com/download/7/B/1/7B10C82E-F520-4080-8516-5CF0D803EEE0/surface-book-user-guide-EN.pdf"
+    _SURFACE_BOOK_GUIDE_DISPLAY_NAME = "surface-book-user-guide-EN"
+
     @staticmethod
     def create_test_project(
         client,
@@ -39,9 +42,12 @@ class AuthoringTestHelper:
                 {
                     "op": "add",
                     "value": {
-                        "displayName": "Isaac Newton Bio",
-                        "sourceUri": "https://wikipedia.org/wiki/Isaac_Newton",
+                        "displayName": AuthoringTestHelper._SURFACE_BOOK_GUIDE_DISPLAY_NAME,
+                        "source": AuthoringTestHelper._SURFACE_BOOK_GUIDE_URL,
+                        "sourceUri": AuthoringTestHelper._SURFACE_BOOK_GUIDE_URL,
                         "sourceKind": "url",
+                        "contentStructureKind": "unstructured",
+                        "refresh": False,
                     },
                 }
             ],
@@ -62,6 +68,9 @@ class AuthoringTestHelper:
 
 class AuthoringAsyncTestHelper:
     """Async utility helper for creating and exporting authoring test projects."""
+
+    _SURFACE_BOOK_GUIDE_URL = AuthoringTestHelper._SURFACE_BOOK_GUIDE_URL
+    _SURFACE_BOOK_GUIDE_DISPLAY_NAME = AuthoringTestHelper._SURFACE_BOOK_GUIDE_DISPLAY_NAME
 
     @staticmethod
     async def create_test_project(
@@ -99,9 +108,12 @@ class AuthoringAsyncTestHelper:
                 {
                     "op": "add",
                     "value": {
-                        "displayName": "Isaac Newton Bio",
-                        "sourceUri": "https://wikipedia.org/wiki/Isaac_Newton",
+                        "displayName": AuthoringAsyncTestHelper._SURFACE_BOOK_GUIDE_DISPLAY_NAME,
+                        "source": AuthoringAsyncTestHelper._SURFACE_BOOK_GUIDE_URL,
+                        "sourceUri": AuthoringAsyncTestHelper._SURFACE_BOOK_GUIDE_URL,
                         "sourceKind": "url",
+                        "contentStructureKind": "unstructured",
+                        "refresh": False,
                     },
                 }
             ],

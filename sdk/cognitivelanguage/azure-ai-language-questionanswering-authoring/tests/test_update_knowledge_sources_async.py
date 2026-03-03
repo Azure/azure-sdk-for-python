@@ -4,6 +4,7 @@ from helpers import AuthoringAsyncTestHelper
 from testcase import QuestionAnsweringAuthoringTestCase
 
 from azure.core.credentials import AzureKeyCredential
+from azure.core.exceptions import ResourceExistsError
 from azure.ai.language.questionanswering.authoring.aio import QuestionAnsweringAuthoringClient
 from azure.ai.language.questionanswering.authoring import models as _models
 
@@ -15,12 +16,15 @@ class TestSourcesQnasSynonymsAsync(QuestionAnsweringAuthoringTestCase):
         client = QuestionAnsweringAuthoringClient(
             qna_authoring_creds["endpoint"], AzureKeyCredential(qna_authoring_creds["key"])
         )
-        project_name = "IsaacNewton"
+        project_name = qna_authoring_creds["project"]
         async with client:
-            await AuthoringAsyncTestHelper.create_test_project(
-                client, project_name=project_name, polling_interval=0 if self.is_playback else None # pylint: disable=using-constant-test
-            )
-            source_display_name = "SurfaceBookUserGuide"
+            try:
+                await AuthoringAsyncTestHelper.create_test_project(
+                    client, project_name=project_name, polling_interval=0 if self.is_playback else None # pylint: disable=using-constant-test
+                )
+            except ResourceExistsError:
+                pass
+            source_display_name = "surface-book-user-guide-EN"
             update_source_ops = [
                 _models.UpdateSourceRecord(
                     {
@@ -54,11 +58,14 @@ class TestSourcesQnasSynonymsAsync(QuestionAnsweringAuthoringTestCase):
         client = QuestionAnsweringAuthoringClient(
             qna_authoring_creds["endpoint"], AzureKeyCredential(qna_authoring_creds["key"])
         )
-        project_name = "IsaacNewton"
+        project_name = qna_authoring_creds["project"]
         async with client:
-            await AuthoringAsyncTestHelper.create_test_project(
-                client, project_name=project_name, polling_interval=0 if self.is_playback else None # pylint: disable=using-constant-test
-            )
+            try:
+                await AuthoringAsyncTestHelper.create_test_project(
+                    client, project_name=project_name, polling_interval=0 if self.is_playback else None # pylint: disable=using-constant-test
+                )
+            except ResourceExistsError:
+                pass
             question = "What is the easiest way to use azure services in my .NET project?"
             answer = "Using Microsoft's Azure SDKs"
             update_qna_ops = [
@@ -91,11 +98,14 @@ class TestSourcesQnasSynonymsAsync(QuestionAnsweringAuthoringTestCase):
         client = QuestionAnsweringAuthoringClient(
             qna_authoring_creds["endpoint"], AzureKeyCredential(qna_authoring_creds["key"])
         )
-        project_name = "IsaacNewton"
+        project_name = qna_authoring_creds["project"]
         async with client:
-            await AuthoringAsyncTestHelper.create_test_project(
-                client, project_name=project_name, polling_interval=0 if self.is_playback else None # pylint: disable=using-constant-test
-            )
+            try:
+                await AuthoringAsyncTestHelper.create_test_project(
+                    client, project_name=project_name, polling_interval=0 if self.is_playback else None # pylint: disable=using-constant-test
+                )
+            except ResourceExistsError:
+                pass
             synonyms_model = _models.SynonymAssets(
                 value=[
                     _models.WordAlterations(alterations=["qnamaker", "qna maker"]),
@@ -117,11 +127,14 @@ class TestSourcesQnasSynonymsAsync(QuestionAnsweringAuthoringTestCase):
         client = QuestionAnsweringAuthoringClient(
             qna_authoring_creds["endpoint"], AzureKeyCredential(qna_authoring_creds["key"])
         )
-        project_name = "IsaacNewton"
+        project_name = qna_authoring_creds["project"]
         async with client:
-            await AuthoringAsyncTestHelper.create_test_project(
-                client, project_name=project_name, polling_interval=0 if self.is_playback else None # pylint: disable=using-constant-test
-            )
+            try:
+                await AuthoringAsyncTestHelper.create_test_project(
+                    client, project_name=project_name, polling_interval=0 if self.is_playback else None # pylint: disable=using-constant-test
+                )
+            except ResourceExistsError:
+                pass
             update_qna_ops = [
                 _models.UpdateQnaRecord(
                     {

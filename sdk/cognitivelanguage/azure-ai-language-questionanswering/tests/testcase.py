@@ -1,6 +1,6 @@
 # coding: utf-8
 # -------------------------------------------------------------------------
-# Base test case for runtime Question Answering tests
+# Base test case for inference Question Answering tests
 # -------------------------------------------------------------------------
 from devtools_testutils import AzureRecordedTestCase
 
