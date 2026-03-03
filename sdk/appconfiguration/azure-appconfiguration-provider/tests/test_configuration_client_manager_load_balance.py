@@ -23,8 +23,7 @@ class MockClient:
 class TestConfigurationClientManagerLoadBalance(unittest.TestCase):
 
     @patch("azure.appconfiguration.provider._client_manager.find_auto_failover_endpoints")
-    @patch("azure.appconfiguration.provider._client_manager.AzureAppConfigurationClient.from_connection_string")
-    def test_find_active_clients(self, mock_client, mock_find_auto_failover_endpoints):
+    def test_find_active_clients(self, mock_find_auto_failover_endpoints):
         # Single endpoint test no load balancing
         endpoint = "https://fake.endpoint"
         connection_string = "Endpoint=https://fake.endpoint/;Id=fake_id;Secret=fake_secret"
@@ -92,8 +91,7 @@ class TestConfigurationClientManagerLoadBalance(unittest.TestCase):
         manager.close()
 
     @patch("azure.appconfiguration.provider._client_manager.find_auto_failover_endpoints")
-    @patch("azure.appconfiguration.provider._client_manager.AzureAppConfigurationClient")
-    def test_find_active_clients_entra_id(self, mock_client, mock_find_auto_failover_endpoints):
+    def test_find_active_clients_entra_id(self, mock_find_auto_failover_endpoints):
         # Single endpoint test no load balancing
         endpoint = "https://fake.endpoint"
 

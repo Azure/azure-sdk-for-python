@@ -189,7 +189,7 @@ class TestResolveSnapshotReference:
 
         result = wrapper.resolve_snapshot_reference(setting)
 
-        assert result == []
+        assert not result  # Should be empty list
         mock_app_config_client.get_snapshot.assert_called_once_with("non-existent-snapshot")
 
     def test_resolve_snapshot_reference_non_404_error_raises(self):

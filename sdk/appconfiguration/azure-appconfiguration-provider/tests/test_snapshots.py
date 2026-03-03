@@ -6,6 +6,8 @@
 import functools
 import time
 import pytest
+from devtools_testutils import EnvironmentVariableLoader, recorded_by_proxy
+from testcase import AppConfigTestCase, cleanup_test_resources, set_test_settings, create_snapshot
 from azure.appconfiguration.provider._models import SettingSelector
 from azure.appconfiguration.provider._constants import NULL_CHAR, FEATURE_MANAGEMENT_KEY, FEATURE_FLAG_KEY
 from azure.appconfiguration.provider import WatchKey
@@ -13,8 +15,6 @@ from azure.appconfiguration import (
     ConfigurationSetting,
     FeatureFlagConfigurationSetting,
 )
-from devtools_testutils import EnvironmentVariableLoader, recorded_by_proxy
-from testcase import AppConfigTestCase, cleanup_test_resources, set_test_settings, create_snapshot
 
 AppConfigProviderPreparer = functools.partial(
     EnvironmentVariableLoader,

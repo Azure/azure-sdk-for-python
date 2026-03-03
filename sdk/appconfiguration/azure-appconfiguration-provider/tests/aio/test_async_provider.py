@@ -124,9 +124,7 @@ class TestAppConfigurationProvider(AppConfigTestCase):
         ) as client:
             assert client["secret"] == "Resolver Value"
 
-    @AppConfigProviderPreparer()
-    @recorded_by_proxy_async
-    async def test_process_key_value_content_type(self, appconfiguration_connection_string):
+    async def test_process_key_value_content_type(self):
         with patch(
             "azure.appconfiguration.provider.aio._azureappconfigurationproviderasync.ConfigurationClientManager"
         ) as MockClientManager:
@@ -261,5 +259,5 @@ class TestAppConfigurationProvider(AppConfigTestCase):
             assert client["feature_management"]["feature_flags"][0]["id"] == "Alpha"
 
 
-async def secret_resolver(secret_id):
+async def secret_resolver(_):
     return "Resolver Value"

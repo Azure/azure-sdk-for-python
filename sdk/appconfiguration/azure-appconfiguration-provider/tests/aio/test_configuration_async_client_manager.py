@@ -325,8 +325,7 @@ class TestAsyncConfigurationClientManager:
         mock_client.assert_not_called()
 
     @patch("azure.appconfiguration.provider.aio._async_client_manager.find_auto_failover_endpoints")
-    @patch("azure.appconfiguration.provider.aio._async_client_manager._AsyncConfigurationClientWrapper.from_credential")
-    def test_calculate_backoff(self, mock_client, mock_update_failover_endpoints):
+    def test_calculate_backoff(self, mock_update_failover_endpoints):
         endpoint = "https://fake.endpoint"
         mock_update_failover_endpoints.return_value = []
         manager = AsyncConfigurationClientManager(None, endpoint, "fake-credential", "", 0, 0, True, 30, 600, False)

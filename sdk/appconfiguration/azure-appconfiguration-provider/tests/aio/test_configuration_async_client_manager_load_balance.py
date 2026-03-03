@@ -23,10 +23,7 @@ class TestConfigurationAsyncClientManagerLoadBalance:
 
     @pytest.mark.asyncio
     @patch("azure.appconfiguration.provider.aio._async_client_manager.find_auto_failover_endpoints")
-    @patch(
-        "azure.appconfiguration.provider.aio._async_client_manager.AzureAppConfigurationClient.from_connection_string"
-    )
-    async def test_find_active_clients(self, mock_client, mock_find_auto_failover_endpoints):
+    async def test_find_active_clients(self, mock_find_auto_failover_endpoints):
         # Single endpoint test no load balancing
         endpoint = "https://fake.endpoint"
         connection_string = "Endpoint=https://fake.endpoint/;Id=fake_id;Secret=fake_secret"
@@ -93,8 +90,7 @@ class TestConfigurationAsyncClientManagerLoadBalance:
 
     @pytest.mark.asyncio
     @patch("azure.appconfiguration.provider.aio._async_client_manager.find_auto_failover_endpoints")
-    @patch("azure.appconfiguration.provider.aio._async_client_manager.AzureAppConfigurationClient")
-    async def test_find_active_clients_entra_id(self, mock_client, mock_find_auto_failover_endpoints):
+    async def test_find_active_clients_entra_id(self, mock_find_auto_failover_endpoints):
         # Single endpoint test no load balancing
         endpoint = "https://fake.endpoint"
 

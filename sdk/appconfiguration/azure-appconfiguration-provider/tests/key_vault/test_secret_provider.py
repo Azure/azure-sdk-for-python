@@ -23,6 +23,12 @@ AppConfigProviderPreparer = functools.partial(
     appconfiguration_keyvault_secret_url="https://Sanitized.vault.azure.net/secrets/fake-secret/",
 )
 
+SecretPreparer = functools.partial(
+    EnvironmentVariableLoader,
+    "appconfiguration",
+    appconfiguration_keyvault_secret_url="https://Sanitized.vault.azure.net/secrets/fake-secret/",
+)
+
 
 class TestSecretProvider(AppConfigTestCase, unittest.TestCase):
 
@@ -396,9 +402,9 @@ class TestSecretProvider(AppConfigTestCase, unittest.TestCase):
                     # Verify the result
                     self.assertEqual(result, "secret-value")
 
-    @AppConfigProviderPreparer()
+    @SecretPreparer()
     @recorded_by_proxy
-    def test_integration_with_keyvault(self, appconfiguration_endpoint_string, appconfiguration_keyvault_secret_url):
+    def test_integration_with_keyvault(self, appconfiguration_keyvault_secret_url):
         """Test integration with Key Vault."""
         if not appconfiguration_keyvault_secret_url:
             self.skipTest("No Key Vault secret URL provided")

@@ -3,23 +3,23 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import functools
 import time
 import pytest
+from asynctestcase import (
+    AppConfigTestCase,
+    cleanup_test_resources_async,
+    set_test_settings_async,
+    create_snapshot_async,
+)
+from devtools_testutils import EnvironmentVariableLoader
+from devtools_testutils.aio import recorded_by_proxy_async
 from azure.appconfiguration.provider._models import SettingSelector
 from azure.appconfiguration.provider._constants import NULL_CHAR, FEATURE_MANAGEMENT_KEY, FEATURE_FLAG_KEY
 from azure.appconfiguration.provider import WatchKey
 from azure.appconfiguration import (
     ConfigurationSetting,
     FeatureFlagConfigurationSetting,
-)
-import functools
-from devtools_testutils import EnvironmentVariableLoader
-from devtools_testutils.aio import recorded_by_proxy_async
-from asynctestcase import (
-    AppConfigTestCase,
-    cleanup_test_resources_async,
-    set_test_settings_async,
-    create_snapshot_async,
 )
 
 AppConfigProviderPreparer = functools.partial(

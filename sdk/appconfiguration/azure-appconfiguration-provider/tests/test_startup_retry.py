@@ -183,11 +183,9 @@ class TestLoadAllRetryBehavior(unittest.TestCase):
     def setUp(self):
         """Set up test fixtures."""
         # We'll use mocking to test the retry behavior
-        pass
 
-    @patch("azure.appconfiguration.provider._azureappconfigurationprovider.time.sleep")
     @patch("azure.appconfiguration.provider._azureappconfigurationprovider.datetime")
-    def test_load_all_timeout_raises_timeout_error(self, mock_datetime, mock_sleep):
+    def test_load_all_timeout_raises_timeout_error(self, mock_datetime):
         """Test that _load_all raises TimeoutError when startup_timeout is exceeded."""
         from azure.appconfiguration.provider._azureappconfigurationprovider import AzureAppConfigurationProvider
         from azure.appconfiguration.provider._azureappconfigurationproviderbase import AzureAppConfigurationProviderBase
@@ -239,7 +237,7 @@ class TestLoadAllRetryBehavior(unittest.TestCase):
             # First attempt fails, second succeeds
             attempt_count = [0]
 
-            def mock_try_initialize(startup_exceptions, **kwargs):
+            def mock_try_initialize(startup_exceptions):
                 attempt_count[0] += 1
                 if attempt_count[0] == 1:
                     startup_exceptions.append(ConnectionError("Connection failed"))

@@ -134,5 +134,5 @@ class TestAppConfigurationProvider(AppConfigTestCase):
             assert "message" not in client
 
 
-async def secret_resolver(secret_id):
+async def secret_resolver(_):
     return "Resolver Value"

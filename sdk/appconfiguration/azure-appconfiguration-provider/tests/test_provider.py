@@ -23,6 +23,12 @@ AppConfigProviderPreparer = functools.partial(
     appconfiguration_keyvault_secret_url="https://Sanitized.vault.azure.net/secrets/fake-secret/",
 )
 
+AppConfigProviderNoSecretPreparer = functools.partial(
+    EnvironmentVariableLoader,
+    "appconfiguration",
+    appconfiguration_connection_string="Endpoint=https://Sanitized.azconfig.io;Id=0-l4-s0:h5htBaY5Z1LwFz50bIQv;Secret=lamefakesecretlamefakesecretlamefakesecrett=",
+)
+
 
 def sleep(seconds):
     assert isinstance(seconds, float)
@@ -235,10 +241,10 @@ class TestAppConfigurationProvider(AppConfigTestCase):
         assert has_feature_flag(client, "TaggedFeatureFlag")
         assert "message" not in client
 
-    @AppConfigProviderPreparer()
+    @AppConfigProviderNoSecretPreparer()
     @recorded_by_proxy
     def test_provider_special_chars_tag_filters(
-        self, appconfiguration_connection_string, appconfiguration_keyvault_secret_url
+        self, appconfiguration_connection_string
     ):
         selects = {SettingSelector(key_filter="*", tag_filters=["Special:Tag=Value:With:Colons"])}
         client = self.create_client(
@@ -321,5 +327,5 @@ class TestAppConfigurationProvider(AppConfigTestCase):
         assert client["feature_management"]["feature_flags"][0]["id"] == "Alpha"
 
 
-def secret_resolver(secret_id):
+def secret_resolver(_):
     return "Resolver Value"
