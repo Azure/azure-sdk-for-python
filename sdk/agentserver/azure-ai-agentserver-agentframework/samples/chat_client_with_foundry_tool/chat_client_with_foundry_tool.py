@@ -14,7 +14,7 @@ from agent_framework.azure import AzureOpenAIChatClient
 from azure.identity import AzureCliCredential
 from dotenv import load_dotenv
 
-from azure.ai.agentserver.agentframework import FoundryToolsChatMiddleware, from_agent_framework
+from azure.ai.agentserver.agentframework import FoundryToolsContextProvider, from_agent_framework
 
 load_dotenv()
 
@@ -25,8 +25,8 @@ def main():
         client=AzureOpenAIChatClient(
             credential=AzureCliCredential(),
         ),
-        middleware=[
-            FoundryToolsChatMiddleware(
+        context_providers=[
+            FoundryToolsContextProvider(
                 tools=[{"type": "web_search_preview"}, {"type": "mcp", "project_connection_id": tool_connection_id}]
             )
         ],

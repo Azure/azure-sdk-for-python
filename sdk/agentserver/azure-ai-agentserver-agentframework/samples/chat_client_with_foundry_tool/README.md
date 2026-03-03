@@ -1,6 +1,6 @@
 # Chat Client With Foundry Tools
 
-This sample demonstrates how to attach `FoundryToolsChatMiddleware` to an Agent Framework chat client so that:
+This sample demonstrates how to attach `FoundryToolsContextProvider` to an Agent Framework chat client so that:
 
 - Foundry tools configured in your Azure AI Project are converted into Agent Framework `AIFunction` tools.
 - The tools are injected automatically for each agent run.
@@ -10,7 +10,7 @@ This sample demonstrates how to attach `FoundryToolsChatMiddleware` to an Agent 
 The script creates an Agent Framework agent using:
 
 - `AzureOpenAIChatClient` for model inference
-- `FoundryToolsChatMiddleware` to resolve and inject Foundry tools
+- `FoundryToolsContextProvider` to resolve and inject Foundry tools
 - `from_agent_framework(agent).run()` to start an AgentServer-compatible HTTP server
 
 ## Prerequisites
@@ -59,10 +59,10 @@ The core pattern used by this sample:
 agent = Agent(
     client=AzureOpenAIChatClient(
         credential=AzureCliCredential(),
-        middleware=FoundryToolsChatMiddleware(
-            tools=[{"type": "web_search_preview"}, {"type": "mcp", "project_connection_id": tool_connection_id}],
-        ),
     ),
+    context_providers=[FoundryToolsContextProvider(
+        tools=[{"type": "web_search_preview"}, {"type": "mcp", "project_connection_id": tool_connection_id}],
+    )],
     name="FoundryToolAgent",
     instructions="You are a helpful assistant with access to various tools.",
 )

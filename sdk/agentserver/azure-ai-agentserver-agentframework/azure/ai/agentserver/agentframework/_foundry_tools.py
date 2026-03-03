@@ -6,9 +6,9 @@
 from __future__ import annotations
 
 import inspect
-from typing import Any, Awaitable, Callable, Dict, List, Optional, Sequence
+from typing import Any, Dict, List, Optional, Sequence
 
-from agent_framework import ChatContext, ChatMiddleware, ChatOptions, FunctionTool
+from agent_framework import AgentSession, BaseContextProvider, FunctionTool, SessionContext, SupportsAgentRun
 from pydantic import Field, create_model
 
 from azure.ai.agentserver.core import AgentServerContext
@@ -112,31 +112,28 @@ class FoundryToolClient:
         )
 
 
-class FoundryToolsChatMiddleware(ChatMiddleware):
-    """Chat middleware to inject Foundry tools into ChatOptions on each call."""
+class FoundryToolsContextProvider(BaseContextProvider):
+    """Context provider to inject Foundry tools into an agent run."""
+
+    DEFAULT_SOURCE_ID = "foundry_tools"
 
     def __init__(
-            self,
-            tools: Sequence[FoundryToolLike]) -> None:
+        self,
+        tools: Sequence[FoundryToolLike],
+        *,
+        source_id: Optional[str] = None,
+    ) -> None:
+        super().__init__(source_id or self.DEFAULT_SOURCE_ID)
         self._foundry_tool_client = FoundryToolClient(tools=tools)
 
-    async def process(
+    async def before_run(
         self,
-        context: ChatContext,
-        call_next: Callable[[], Awaitable[None]],
+        *,
+        agent: SupportsAgentRun,
+        session: AgentSession,
+        context: SessionContext,
+        state: Dict[str, Any],
     ) -> None:
         tools = await self._foundry_tool_client.list_tools()
-        base_chat_options = context.chat_options
-        if not base_chat_options:
-            logger.debug("No existing ChatOptions found, creating new one with Foundry tools.")
-            context.chat_options = ChatOptions(tools=tools)
-        else:
-            logger.debug("Adding Foundry tools to existing ChatOptions.")
-            if isinstance(base_chat_options, dict):
-                base_tools = base_chat_options.get("tools") or []
-                base_chat_options["tools"] = base_tools + tools
-                context.chat_options = base_chat_options
-            else:
-                base_tools = base_chat_options.tools or []
-                context.chat_options.tools = base_tools + tools
-        await call_next()
+        if tools:
+            context.extend_tools(self.source_id, tools)

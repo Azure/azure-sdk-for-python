@@ -10,7 +10,7 @@ from typing import Any, Optional
 from unittest.mock import AsyncMock
 
 import pytest
-from agent_framework import ChatOptions, FunctionTool
+from agent_framework import AgentSession, FunctionTool, SessionContext
 
 # Import schema models directly from client._models to avoid heavy azure.identity import
 # chain triggered by azure.ai.agentserver.core.__init__.py
@@ -38,6 +38,7 @@ sys.modules["_foundry_tools"] = foundry_tools_module
 spec.loader.exec_module(foundry_tools_module)
 
 FoundryToolClient = foundry_tools_module.FoundryToolClient
+FoundryToolsContextProvider = foundry_tools_module.FoundryToolsContextProvider
 FoundryToolsChatMiddleware = foundry_tools_module.FoundryToolsChatMiddleware
 _attach_signature_from_pydantic_model = foundry_tools_module._attach_signature_from_pydantic_model
 
@@ -147,48 +148,46 @@ async def test_list_tools_uses_catalog_and_converts(monkeypatch: pytest.MonkeyPa
 
 @pytest.mark.unit
 @pytest.mark.asyncio
-async def test_middleware_process_creates_chat_options_when_missing(monkeypatch: pytest.MonkeyPatch) -> None:
-	middleware = FoundryToolsChatMiddleware(tools=[])
+async def test_context_provider_before_run_injects_tools(monkeypatch: pytest.MonkeyPatch) -> None:
+	provider = FoundryToolsContextProvider(tools=[])
 
 	async def dummy_tool(**kwargs):
 		return kwargs
 
 	DummyInput = create_model("DummyInput")
 	injected = [FunctionTool(name="t", description="d", func=dummy_tool, input_model=DummyInput)]
-	monkeypatch.setattr(middleware._foundry_tool_client, "list_tools", AsyncMock(return_value=injected))
+	monkeypatch.setattr(provider._foundry_tool_client, "list_tools", AsyncMock(return_value=injected))
 
-	context = SimpleNamespace(chat_options=None)
-	next_fn = AsyncMock()
+	context = SessionContext(input_messages=[])
+	session = AgentSession()
+	agent = SimpleNamespace()
 
-	await middleware.process(context, next_fn)
+	await provider.before_run(agent=agent, session=session, context=context, state={})
 
-	assert isinstance(context.chat_options, dict)
-	assert context.chat_options.get("tools") == injected
-	next_fn.assert_awaited_once_with()
+	assert context.tools == injected
 
 
 @pytest.mark.unit
 @pytest.mark.asyncio
-async def test_middleware_process_appends_to_existing_chat_options(monkeypatch: pytest.MonkeyPatch) -> None:
-	middleware = FoundryToolsChatMiddleware(tools=[])
+async def test_context_provider_before_run_appends_tools(monkeypatch: pytest.MonkeyPatch) -> None:
+	provider = FoundryToolsContextProvider(tools=[])
 
 	async def dummy_tool(**kwargs):
 		return kwargs
 
 	DummyInput = create_model("DummyInput")
 	injected = [FunctionTool(name="t2", description="d2", func=dummy_tool, input_model=DummyInput)]
-	monkeypatch.setattr(middleware._foundry_tool_client, "list_tools", AsyncMock(return_value=injected))
+	monkeypatch.setattr(provider._foundry_tool_client, "list_tools", AsyncMock(return_value=injected))
 
-	# Existing ChatOptions with no tools should become injected
-	context = SimpleNamespace(chat_options=ChatOptions())
-	next_fn = AsyncMock()
-	await middleware.process(context, next_fn)
-	assert context.chat_options.get("tools") == injected
-
-	# Existing ChatOptions with tools should be appended
 	existing = [FunctionTool(name="t1", description="d1", func=dummy_tool, input_model=DummyInput)]
-	context = SimpleNamespace(chat_options=ChatOptions(tools=existing))
-	next_fn = AsyncMock()
-	await middleware.process(context, next_fn)
-	assert context.chat_options.get("tools") == existing + injected
-	assert next_fn.await_count == 1
+	context = SessionContext(input_messages=[], tools=existing.copy())
+	session = AgentSession()
+	agent = SimpleNamespace()
+
+	await provider.before_run(agent=agent, session=session, context=context, state={})
+	assert context.tools == existing + injected
+
+
+@pytest.mark.unit
+def test_middleware_name_is_back_compat_alias() -> None:
+	assert issubclass(FoundryToolsChatMiddleware, FoundryToolsContextProvider)

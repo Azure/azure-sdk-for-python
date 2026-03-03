@@ -15,7 +15,7 @@ from azure.ai.agentserver.core.application import (  # pylint: disable=import-er
 from azure.core.credentials import TokenCredential
 from azure.core.credentials_async import AsyncTokenCredential
 
-from ._foundry_tools import FoundryToolsChatMiddleware
+from ._foundry_tools import FoundryToolsContextProvider
 from ._version import VERSION
 from .persistence import AgentSessionRepository, CheckpointRepository
 
@@ -139,7 +139,7 @@ def from_agent_framework(
 
 __all__ = [
     "from_agent_framework",
-    "FoundryToolsChatMiddleware",
+    "FoundryToolsContextProvider",
 ]
 __version__ = VERSION
 
