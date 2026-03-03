@@ -60,7 +60,7 @@ jobs:
 
         # import env variable
         export AZURESDK_BOT_TOKEN=$(azuresdk-github-pat)
-        export PIPELINE_TOKEN=$(PIPELINE-TOKEN)
+        export PIPELINE_TOKEN=$(System.AccessToken)
         export LANGUAGE=$(RUN_LANGUAGE)
         export SPEC_REPO=$(pwd)/azure-rest-api-specs/specification
         export TYPESPEC_JSON=$(pwd)/file-storage/data/typespec.json
