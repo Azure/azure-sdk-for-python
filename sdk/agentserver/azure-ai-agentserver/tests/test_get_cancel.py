@@ -58,8 +58,8 @@ async def test_get_after_cancel_returns_404(async_storage_client):
 
 
 @pytest.mark.asyncio
-async def test_get_invocation_error_returns_400():
-    """GET /invocations/{id} returns 400 when customer code raises an error."""
+async def test_get_invocation_error_returns_500():
+    """GET /invocations/{id} returns 500 when customer code raises an error."""
     import httpx
     from azure.ai.agentserver import AgentServer, InvokeRequest
 
@@ -72,15 +72,14 @@ async def test_get_invocation_error_returns_400():
 
     agent = BuggyGetAgent()
     transport = httpx.ASGITransport(app=agent.app)
-    client = httpx.AsyncClient(transport=transport, base_url="http://testserver")
-    resp = await client.get("/invocations/some-id")
-    assert resp.status_code == 400
-    assert "storage unavailable" in resp.json()["error"]
+    async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as client:
+        resp = await client.get("/invocations/some-id")
+    assert resp.status_code == 500
 
 
 @pytest.mark.asyncio
-async def test_cancel_invocation_error_returns_400():
-    """POST /invocations/{id}/cancel returns 400 when customer code raises an error."""
+async def test_cancel_invocation_error_returns_500():
+    """POST /invocations/{id}/cancel returns 500 when customer code raises an error."""
     import httpx
     from azure.ai.agentserver import AgentServer, InvokeRequest
     from typing import Optional
@@ -98,7 +97,6 @@ async def test_cancel_invocation_error_returns_400():
 
     agent = BuggyCancelAgent()
     transport = httpx.ASGITransport(app=agent.app)
-    client = httpx.AsyncClient(transport=transport, base_url="http://testserver")
-    resp = await client.post("/invocations/some-id/cancel")
-    assert resp.status_code == 400
-    assert "cancel failed" in resp.json()["error"]
+    async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as client:
+        resp = await client.post("/invocations/some-id/cancel")
+    assert resp.status_code == 500

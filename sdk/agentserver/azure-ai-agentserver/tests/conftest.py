@@ -135,19 +135,21 @@ class FailingAgent(AgentServer):
 
 
 @pytest.fixture
-def echo_client():
+async def echo_client():
     """httpx.AsyncClient wired to EchoAgent's ASGI app."""
     agent = EchoAgent()
     transport = httpx.ASGITransport(app=agent.app)
-    return httpx.AsyncClient(transport=transport, base_url="http://testserver")
+    async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as client:
+        yield client
 
 
 @pytest.fixture
-def streaming_client():
+async def streaming_client():
     """httpx.AsyncClient wired to StreamingAgent's ASGI app."""
     agent = StreamingAgent()
     transport = httpx.ASGITransport(app=agent.app)
-    return httpx.AsyncClient(transport=transport, base_url="http://testserver")
+    async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as client:
+        yield client
 
 
 @pytest.fixture
@@ -157,39 +159,44 @@ def async_storage_agent():
 
 
 @pytest.fixture
-def async_storage_client(async_storage_agent):
+async def async_storage_client(async_storage_agent):
     """httpx.AsyncClient wired to AsyncStorageAgent's ASGI app."""
     transport = httpx.ASGITransport(app=async_storage_agent.app)
-    return httpx.AsyncClient(transport=transport, base_url="http://testserver")
+    async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as client:
+        yield client
 
 
 @pytest.fixture
-def validated_client():
+async def validated_client():
     """httpx.AsyncClient wired to ValidatedAgent's ASGI app."""
     agent = ValidatedAgent()
     transport = httpx.ASGITransport(app=agent.app)
-    return httpx.AsyncClient(transport=transport, base_url="http://testserver")
+    async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as client:
+        yield client
 
 
 @pytest.fixture
-def bad_response_client():
+async def bad_response_client():
     """httpx.AsyncClient wired to BadResponseAgent's ASGI app."""
     agent = BadResponseAgent()
     transport = httpx.ASGITransport(app=agent.app)
-    return httpx.AsyncClient(transport=transport, base_url="http://testserver")
+    async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as client:
+        yield client
 
 
 @pytest.fixture
-def no_spec_client():
+async def no_spec_client():
     """httpx.AsyncClient wired to EchoAgent (no OpenAPI spec)."""
     agent = EchoAgent()
     transport = httpx.ASGITransport(app=agent.app)
-    return httpx.AsyncClient(transport=transport, base_url="http://testserver")
+    async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as client:
+        yield client
 
 
 @pytest.fixture
-def failing_client():
+async def failing_client():
     """httpx.AsyncClient wired to FailingAgent's ASGI app."""
     agent = FailingAgent()
     transport = httpx.ASGITransport(app=agent.app)
-    return httpx.AsyncClient(transport=transport, base_url="http://testserver")
+    async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as client:
+        yield client

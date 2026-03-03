@@ -87,11 +87,10 @@ async def test_invoke_empty_body(echo_client):
 
 
 @pytest.mark.asyncio
-async def test_invoke_error_returns_400(failing_client):
-    """When invoke() raises, server returns 400 with error message and invocation id."""
+async def test_invoke_error_returns_500(failing_client):
+    """When invoke() raises, server returns 500 with error message and invocation id."""
     resp = await failing_client.post("/invocations", content=b'{"key":"value"}')
-    assert resp.status_code == 400
+    assert resp.status_code == 500
     data = resp.json()
     assert "error" in data
-    assert "something went wrong" in data["error"]
     assert resp.headers.get("x-agent-invocation-id") is not None

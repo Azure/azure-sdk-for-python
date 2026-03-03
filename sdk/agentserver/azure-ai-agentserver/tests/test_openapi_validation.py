@@ -50,13 +50,16 @@ async def test_invalid_request_wrong_type_returns_400(validated_client):
 @pytest.mark.asyncio
 async def test_response_validation_logs_warning(bad_response_client, caplog):
     """Invalid response body logs warning but still returns 200 (non-blocking)."""
-    resp = await bad_response_client.post(
-        "/invocations",
-        content=json.dumps({"name": "World"}).encode(),
-        headers={"Content-Type": "application/json"},
-    )
+    import logging
+    with caplog.at_level(logging.WARNING, logger="azure.ai.agentserver"):
+        resp = await bad_response_client.post(
+            "/invocations",
+            content=json.dumps({"name": "World"}).encode(),
+            headers={"Content-Type": "application/json"},
+        )
     # Response should still be returned (validation is non-blocking)
     assert resp.status_code == 200
+    assert any("Response validation warnings" in r.message for r in caplog.records)
 
 
 @pytest.mark.asyncio
@@ -113,11 +116,11 @@ async def test_non_json_body_skips_validation(no_spec_client):
 
     agent = PlainTextEchoAgent()
     transport = httpx.ASGITransport(app=agent.app)
-    client = httpx.AsyncClient(transport=transport, base_url="http://testserver")
-    resp = await client.post(
-        "/invocations",
-        content=b"plain text body",
-        headers={"Content-Type": "text/plain"},
-    )
+    async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as client:
+        resp = await client.post(
+            "/invocations",
+            content=b"plain text body",
+            headers={"Content-Type": "text/plain"},
+        )
     # Should not fail validation since content-type is not JSON
     assert resp.status_code == 200

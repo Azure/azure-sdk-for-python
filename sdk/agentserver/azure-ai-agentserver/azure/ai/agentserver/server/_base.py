@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import contextlib
-import json
+import inspect
 import os
 import uuid
 from abc import abstractmethod
@@ -243,13 +243,14 @@ class AgentServer:
                 result = self.invoke(invoke_request)
                 # If invoke() is a coroutine (non-streaming), await it.
                 # If it's an async generator (streaming), use it directly.
-                if not isinstance(result, AsyncGenerator) and hasattr(result, "__await__"):
+                if not inspect.isasyncgen(result) and inspect.isawaitable(result):
                     result = await result
             except Exception as exc:
                 logger.error("Error processing invocation %s: %s", invocation_id, exc, exc_info=True)
+                error_message = str(exc) if os.environ.get(Constants.AGENT_DEBUG_ERRORS) else "Internal server error"
                 return JSONResponse(
-                    {"error": str(exc)},
-                    status_code=400,
+                    {"error": error_message},
+                    status_code=500,
                     headers={"x-agent-invocation-id": invocation_id},
                 )
 
@@ -258,7 +259,7 @@ class AgentServer:
         if isinstance(result, bytes):
             # Non-streaming: optionally validate response
             if self._validator is not None:
-                content_type = headers.get("accept", "application/json")
+                content_type = "application/json"
                 resp_errors = self._validator.validate_response(result, content_type)
                 if resp_errors:
                     logger.warning(
@@ -266,7 +267,7 @@ class AgentServer:
                         invocation_id,
                         resp_errors,
                     )
-            return Response(content=result, headers=response_headers)
+            return Response(content=result, media_type="application/json", headers=response_headers)
 
         # Streaming: result is an AsyncGenerator
         return StreamingResponse(result, headers=response_headers)
@@ -290,9 +291,10 @@ class AgentServer:
             )
         except Exception as exc:
             logger.error("Error in get_invocation %s: %s", invocation_id, exc, exc_info=True)
+            error_message = str(exc) if os.environ.get(Constants.AGENT_DEBUG_ERRORS) else "Internal server error"
             return JSONResponse(
-                {"error": str(exc)},
-                status_code=400,
+                {"error": error_message},
+                status_code=500,
             )
 
     async def _cancel_invocation_endpoint(self, request: Request) -> Response:
@@ -316,9 +318,10 @@ class AgentServer:
             )
         except Exception as exc:
             logger.error("Error in cancel_invocation %s: %s", invocation_id, exc, exc_info=True)
+            error_message = str(exc) if os.environ.get(Constants.AGENT_DEBUG_ERRORS) else "Internal server error"
             return JSONResponse(
-                {"error": str(exc)},
-                status_code=400,
+                {"error": error_message},
+                status_code=500,
             )
 
     async def _liveness_endpoint(self, request: Request) -> Response:

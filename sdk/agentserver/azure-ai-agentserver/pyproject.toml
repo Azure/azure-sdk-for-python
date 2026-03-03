@@ -21,8 +21,6 @@ keywords = ["azure", "azure sdk", "agent", "agentserver"]
 
 dependencies = [
     "azure-core>=1.35.0",
-    "azure-identity>=1.25.1",
-    "azure-monitor-opentelemetry>=1.5.0",
     "opentelemetry-api>=1.35",
     "opentelemetry-exporter-otlp-proto-http",
     "starlette>=0.45.0",

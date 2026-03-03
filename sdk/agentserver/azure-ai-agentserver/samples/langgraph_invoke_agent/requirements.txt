@@ -1,4 +1,4 @@
-azure-ai-agentserver>=1.0.0b1
+azure-ai-agentserver
 langgraph>=1.0.0
 langchain-openai>=1.0.0
 python-dotenv>=1.0.0
