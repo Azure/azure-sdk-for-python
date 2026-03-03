@@ -77,14 +77,6 @@ steps:
           return
       }
 
-      # [TEST] Step 3 is temporarily skipped for testing. Remove the "return" below to enable.
-      Write-Host "`n=== Step 3: Unregistered packages found ==="
-      foreach ($pkg in $unregisteredPackages) {
-          Write-Host "  - $pkg"
-      }
-      return
-      # [/TEST]
-
       # Step 3: Trigger pipeline 8013 for each unregistered package
       Write-Host "`n=== Step 3: Triggering name reservation pipeline ==="
       $pipelineUrl = "https://dev.azure.com/azure-sdk/internal/_apis/pipelines/8013/runs?api-version=7.1"
