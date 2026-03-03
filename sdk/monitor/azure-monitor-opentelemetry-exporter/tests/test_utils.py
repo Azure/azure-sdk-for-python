@@ -54,12 +54,12 @@ class TestUtils(unittest.TestCase):
         self.assertNotIn("k" * 151, filtered)
 
     def test_filter_custom_properties_preserves_large_values_after_disable_limit(self):
-        # Ensure values larger than 64KiB are not truncated for all valid truthy env variable values
-        truth_values = ["true", "True", "TRUE", "TrUE", "  true  "]
+        # Ensure values larger than 64KiB are not truncated when the env variable is set to true
+        enable_values = ["true", "True", "TRUE", "TrUE", "  true  "]
         large_value = "x" * (64 * 1024 + 1000)
         properties = {"large_key": large_value}
 
-        for env_value in truth_values:
+        for env_value in enable_values:
             with self.subTest(env_value=env_value):
                 with patch.dict(
                     "azure.monitor.opentelemetry.exporter._utils.environ",
@@ -71,7 +71,7 @@ class TestUtils(unittest.TestCase):
                     self.assertEqual(len(filtered["large_key"]), 64 * 1024 + 1000)
 
     def test_filter_custom_properties_preserves_large_values_after_enable_limit(self):
-        # Ensure values larger than 64KiB are not truncated for all valid/invalid  env variable values
+        # Ensure values larger than 64KiB are not truncated when the env variable is set to false/empty/invalid
         disable_values = ["", "False", "truthy", "89", "fALSE", " "]
         large_value = "x" * (64 * 1024 + 1000)
         max_length = 64 * 1024
