@@ -1040,9 +1040,6 @@ class AccessPolicy(GenAccessPolicy):
         kwargs['expiry'] = expiry
         kwargs['permission'] = permission
         super(AccessPolicy, self).__init__(**kwargs)
-        self.start = start
-        self.expiry = expiry
-        self.permission = permission
 
 
 class BlobSasPermissions(object):
