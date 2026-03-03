@@ -30,7 +30,7 @@ You can also trigger it manually from [Azure DevOps](https://dev.azure.com/azure
 The "Update Conda Files" step of the pipeline runs a script to update Conda files. It logs changes made, and outputs packages that may need manual adjustments. It may output:
 - **Deprecated packages**: 
    - Packages with existing Conda metadata that were missing from the CSV will be flagged. 
-   - Check if these are really deprecated. If so, related package metadata should be kept until the package is retired, and then it can fully deleted.
+   - Check if these are really deprecated. If so, related package metadata should be kept until the package is retired, and then it can be fully deleted.
 - **Unknown bundle packages**: 
    - Packages need to specify if they are released individually or as a bundle to Conda, in their `pyproject.toml`. Packages without this metadata will be flagged.
 - **Other**: 
@@ -73,7 +73,7 @@ The auto-generated PR includes:
 
    Log in to [Anaconda.org](https://anaconda.org/) and navigate to the package page:
 
-   a. **Delete placeholder:** Go to the package settings and remove the dummy placeholder library (version 0.0.0) created in step 2.
+   a. **Delete placeholder:** Go to the package settings and remove the dummy placeholder library (version 0.0.0) created in step 3.
 
    b. **Make public:** In the package settings, change the visibility from private to public.
 
