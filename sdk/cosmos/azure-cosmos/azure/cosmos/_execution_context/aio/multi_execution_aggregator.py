@@ -89,7 +89,7 @@ class _MultiExecutionContextAggregator(_QueryExecutionContextBase):
 
         # Parallelization settings
         self._max_degree_of_parallelism = options.get("maxDegreeOfParallelism", 0)
-        self._max_buffered_item_count = options.get("maxBufferedItemCount", 0)
+
 
     async def __anext__(self):
         """Returns the next result

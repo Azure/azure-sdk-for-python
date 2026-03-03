@@ -181,7 +181,7 @@ class PrefetchQueue:
     with result consumption. Background worker tasks pull items from document
     producers and push them into the queue, while __anext__ pulls from the queue.
 
-    :param int max_buffered: Maximum number of items to buffer. 0 means unbounded.
+    :param int max_buffered: Maximum number of items to buffer. A non-positive value creates an unbounded internal queue.
     :param int max_concurrency: Maximum number of concurrent fetch tasks.
     """
 

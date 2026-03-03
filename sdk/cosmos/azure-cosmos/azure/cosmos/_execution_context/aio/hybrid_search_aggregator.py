@@ -30,38 +30,10 @@ async def _drain_and_coalesce_results(document_producers_to_drain, effective_con
     all_results = []
     is_singleton = True
 
-    if effective_concurrency > 0 and len(document_producers_to_drain) > 1:
-        # Parallel drain: drain all producers concurrently
-        semaphore = asyncio.Semaphore(effective_concurrency)
-        lock = asyncio.Lock()
-
-        async def _drain_one(dp):
-            local_results = []
-            async with semaphore:
-                try:
-                    local_results.append(await dp.peek())
-                    local_results.extend(dp._ex_context._buffer)
-                    dp._ex_context._buffer.clear()
-                except StopAsyncIteration:
-                    pass
-            async with lock:
-                all_results.extend(local_results)
-
-        tasks = [asyncio.create_task(_drain_one(dp)) for dp in document_producers_to_drain]
-        try:
-            await asyncio.gather(*tasks)
-        except Exception:
-            for t in tasks:
-                if not t.done():
-                    t.cancel()
-            await asyncio.gather(*tasks, return_exceptions=True)
-            raise
-    else:
-        # Serial drain (original behavior)
-        for dp in document_producers_to_drain:
-            all_results.append(await dp.peek())
-            all_results.extend(dp._ex_context._buffer)
-
+    # Serial drain (original behavior)
+    for dp in document_producers_to_drain:
+        all_results.append(await dp.peek())
+        all_results.extend(dp._ex_context._buffer)
     if len(document_producers_to_drain) > 1:
         all_results = _coalesce_duplicate_rids(all_results)
         is_singleton = False
@@ -105,7 +77,7 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: dis
 
         # Parallelization settings
         self._max_degree_of_parallelism = options.get("maxDegreeOfParallelism", 0)
-        self._max_buffered_item_count = options.get("maxBufferedItemCount", 0)
+
 
     async def _run_hybrid_search(self):  # pylint: disable=too-many-branches, too-many-statements
         effective_concurrency = _resolve_max_degree(self._max_degree_of_parallelism, 1)

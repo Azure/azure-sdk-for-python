@@ -14,7 +14,7 @@ Set environment variables:
     COSMOS_ENDPOINT, COSMOS_KEY, COSMOS_DATABASE, COSMOS_CONTAINER
 """
 
-import asyncio
+
 import os
 import time
 import uuid

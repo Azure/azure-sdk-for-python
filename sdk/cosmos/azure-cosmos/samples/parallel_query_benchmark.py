@@ -29,12 +29,7 @@ import argparse
 import asyncio
 import os
 import statistics
-import sys
 import time
-
-# Add the parent directory to sys.path for development
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
-
 from azure.cosmos.aio import CosmosClient  # noqa: E402
 
 
