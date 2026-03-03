@@ -9,7 +9,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 import os
 import logging
-from typing import List, Any, Optional
+from typing import List, Any
 import httpx
 from openai import AsyncOpenAI
 from azure.core.tracing.decorator import distributed_trace
@@ -63,7 +63,7 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
     """
 
     def __init__(
-        self, endpoint: str, credential: AsyncTokenCredential, *, allow_preview: Optional[bool] = False, **kwargs: Any
+        self, endpoint: str, credential: AsyncTokenCredential, *, allow_preview: bool = False, **kwargs: Any
     ) -> None:
 
         self._allow_preview = allow_preview
