@@ -20,7 +20,7 @@ steps:
   - pwsh: |
       # Step 1: Find azure-mgmt-* packages with version 1.0.0b1
       Write-Host "=== Step 1: Scanning for azure-mgmt-* packages with version 1.0.0b1 ==="
-      $versionFiles = Get-ChildItem -Path "sdk/*/azure-mgmt-*/**/_version.py" -Recurse -File
+      $versionFiles = Get-ChildItem -Path "sdk/*/azure-mgmt-*" -Directory | ForEach-Object { Get-ChildItem -Path $_.FullName -Recurse -Filter "_version.py" }
       $candidatePackages = @()
 
       foreach ($file in $versionFiles) {
