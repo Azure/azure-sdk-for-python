@@ -38,6 +38,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2024-11-01-preview/PrivateEndpointConnections_Approve.json
+# x-ms-original-file: 2025-08-01/PrivateEndpointConnections_Approve.json
 if __name__ == "__main__":
     main()

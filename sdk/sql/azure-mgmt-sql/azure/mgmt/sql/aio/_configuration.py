@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, TYPE_CHECKING
+from typing import Any, Optional, TYPE_CHECKING
 
 from azure.core.pipeline import policies
 from azure.mgmt.core.policies import ARMHttpLoggingPolicy, AsyncARMChallengeAuthenticationPolicy
@@ -14,6 +14,7 @@ from azure.mgmt.core.policies import ARMHttpLoggingPolicy, AsyncARMChallengeAuth
 from .._version import VERSION
 
 if TYPE_CHECKING:
+    from azure.core import AzureClouds
     from azure.core.credentials_async import AsyncTokenCredential
 
 
@@ -27,14 +28,18 @@ class SqlManagementClientConfiguration:  # pylint: disable=too-many-instance-att
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The subscription ID that identifies an Azure subscription. Required.
     :type subscription_id: str
-    :keyword api_version: Api Version. Default value is "2024-11-01-preview". Note that overriding
-     this default value may result in unsupported behavior.
-    :paramtype api_version: str
+    :param cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
+     None.
+    :type cloud_setting: ~azure.core.AzureClouds
     """
 
-    def __init__(self, credential: "AsyncTokenCredential", subscription_id: str, **kwargs: Any) -> None:
-        api_version: str = kwargs.pop("api_version", "2024-11-01-preview")
-
+    def __init__(
+        self,
+        credential: "AsyncTokenCredential",
+        subscription_id: str,
+        cloud_setting: Optional["AzureClouds"] = None,
+        **kwargs: Any
+    ) -> None:
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
         if subscription_id is None:
@@ -42,7 +47,7 @@ class SqlManagementClientConfiguration:  # pylint: disable=too-many-instance-att
 
         self.credential = credential
         self.subscription_id = subscription_id
-        self.api_version = api_version
+        self.cloud_setting = cloud_setting
         self.credential_scopes = kwargs.pop("credential_scopes", ["https://management.azure.com/.default"])
         kwargs.setdefault("sdk_moniker", "mgmt-sql/{}".format(VERSION))
         self.polling_interval = kwargs.get("polling_interval", 30)

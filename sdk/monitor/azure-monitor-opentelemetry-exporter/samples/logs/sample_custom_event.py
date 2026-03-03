@@ -32,10 +32,13 @@ logger.addHandler(handler)
 logger.setLevel(logging.INFO)
 
 # You can send `customEvent`` telemetry using a special `microsoft` attribute key through logging
-# The name of the `customEvent` will correspond to the value of the attribute` 
+# The name of the `customEvent` will correspond to the value of the attribute`
 logger.info("Hello World!", extra={"microsoft.custom_event.name": "test-event-name", "additional_attrs": "val1"})
 
 # You can also populate fields like client_Ip with attribute `client.address`
-logger.info("This entry will have a custom client_Ip", extra={"microsoft.custom_event.name": "test_event", "client.address": "192.168.1.1"})
+logger.info(
+    "This entry will have a custom client_Ip",
+    extra={"microsoft.custom_event.name": "test_event", "client.address": "192.168.1.1"},
+)
 
 input()

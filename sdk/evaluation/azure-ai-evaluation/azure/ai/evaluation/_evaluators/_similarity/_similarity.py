@@ -8,6 +8,7 @@ from typing import Dict
 from typing_extensions import overload, override
 
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
+from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
 
 
 class SimilarityEvaluator(PromptyEvaluatorBase):
@@ -30,6 +31,11 @@ class SimilarityEvaluator(PromptyEvaluatorBase):
         ~azure.ai.evaluation.OpenAIModelConfiguration]
     :param threshold: The threshold for the similarity evaluator. Default is 3.
     :type threshold: int
+    :param credential: The credential for authenticating to Azure AI service.
+    :type credential: ~azure.core.credentials.TokenCredential
+    :keyword is_reasoning_model: If True, the evaluator will use reasoning model configuration (o1/o3 models).
+        This will adjust parameters like max_completion_tokens and remove unsupported parameters. Default is False.
+    :paramtype is_reasoning_model: bool
 
     .. admonition:: Example:
 
@@ -75,7 +81,7 @@ class SimilarityEvaluator(PromptyEvaluatorBase):
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     @override
-    def __init__(self, model_config, *, threshold=3, credential=None):
+    def __init__(self, model_config, *, threshold=3, credential=None, **kwargs):
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
         self._threshold = threshold
@@ -87,6 +93,7 @@ class SimilarityEvaluator(PromptyEvaluatorBase):
             threshold=threshold,
             credential=credential,
             _higher_is_better=self._higher_is_better,
+            **kwargs,
         )
 
     # Ignoring a mypy error about having only 1 overload function.
@@ -128,3 +135,41 @@ class SimilarityEvaluator(PromptyEvaluatorBase):
         :rtype: Dict[str, float]
         """
         return super().__call__(*args, **kwargs)
+
+    @override
+    def _convert_kwargs_to_eval_input(self, **kwargs):
+        """Convert keyword arguments to evaluation input, with validation."""
+        conversation = kwargs.get("conversation")
+        if conversation is not None:
+            return super()._convert_kwargs_to_eval_input(**kwargs)
+
+        query = kwargs.get("query")
+        response = kwargs.get("response")
+        ground_truth = kwargs.get("ground_truth")
+
+        # Validate required fields are not None
+        if query is None:
+            raise EvaluationException(
+                message="Either 'conversation' or individual inputs must be provided. 'query' is missing.",
+                blame=ErrorBlame.USER_ERROR,
+                category=ErrorCategory.MISSING_FIELD,
+                target=ErrorTarget.SIMILARITY_EVALUATOR,
+            )
+
+        if response is None:
+            raise EvaluationException(
+                message="Either 'conversation' or individual inputs must be provided. 'response' is missing.",
+                blame=ErrorBlame.USER_ERROR,
+                category=ErrorCategory.MISSING_FIELD,
+                target=ErrorTarget.SIMILARITY_EVALUATOR,
+            )
+
+        if ground_truth is None:
+            raise EvaluationException(
+                message="Either 'conversation' or individual inputs must be provided. 'ground_truth' is missing.",
+                blame=ErrorBlame.USER_ERROR,
+                category=ErrorCategory.MISSING_FIELD,
+                target=ErrorTarget.SIMILARITY_EVALUATOR,
+            )
+
+        return super()._convert_kwargs_to_eval_input(**kwargs)

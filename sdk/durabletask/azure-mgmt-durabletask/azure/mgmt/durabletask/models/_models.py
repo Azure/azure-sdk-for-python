@@ -9,16 +9,15 @@
 # pylint: disable=useless-super-delegation
 
 import datetime
-from typing import Any, Dict, List, Mapping, Optional, TYPE_CHECKING, Union, overload
+from typing import Any, Mapping, Optional, TYPE_CHECKING, Union, overload
 
-from .. import _model_base
-from .._model_base import rest_field
+from .._utils.model_base import Model as _Model, rest_field
 
 if TYPE_CHECKING:
     from .. import models as _models
 
 
-class ErrorAdditionalInfo(_model_base.Model):
+class ErrorAdditionalInfo(_Model):
     """The resource management error additional info.
 
     :ivar type: The additional info type.
@@ -33,7 +32,7 @@ class ErrorAdditionalInfo(_model_base.Model):
     """The additional info."""
 
 
-class ErrorDetail(_model_base.Model):
+class ErrorDetail(_Model):
     """The error detail.
 
     :ivar code: The error code.
@@ -54,17 +53,16 @@ class ErrorDetail(_model_base.Model):
     """The error message."""
     target: Optional[str] = rest_field(visibility=["read"])
     """The error target."""
-    details: Optional[List["_models.ErrorDetail"]] = rest_field(visibility=["read"])
+    details: Optional[list["_models.ErrorDetail"]] = rest_field(visibility=["read"])
     """The error details."""
-    additional_info: Optional[List["_models.ErrorAdditionalInfo"]] = rest_field(
+    additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = rest_field(
         name="additionalInfo", visibility=["read"]
     )
     """The error additional info."""
 
 
-class ErrorResponse(_model_base.Model):
-    """Common error response for all Azure Resource Manager APIs to return error details for failed
-    operations.
+class ErrorResponse(_Model):
+    """Error response.
 
     :ivar error: The error object.
     :vartype error: ~azure.mgmt.durabletask.models.ErrorDetail
@@ -91,8 +89,8 @@ class ErrorResponse(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class Operation(_model_base.Model):
-    """Details of a REST API operation, returned from the Resource Provider Operations API.
+class Operation(_Model):
+    """REST API Operation.
 
     :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
      "Microsoft.Compute/virtualMachines/write", "Microsoft.Compute/virtualMachines/capture/action".
@@ -148,7 +146,7 @@ class Operation(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class OperationDisplay(_model_base.Model):
+class OperationDisplay(_Model):
     """Localized display information for and operation.
 
     :ivar provider: The localized friendly form of the resource provider name, e.g. "Microsoft
@@ -179,8 +177,8 @@ class OperationDisplay(_model_base.Model):
      views."""
 
 
-class Resource(_model_base.Model):
-    """Common fields that are returned in the response for all Azure Resource Manager resources.
+class Resource(_Model):
+    """Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
@@ -208,8 +206,7 @@ class Resource(_model_base.Model):
 
 
 class ProxyResource(Resource):
-    """The resource model definition for a Azure Resource Manager proxy resource. It will not have
-    tags and a location.
+    """Proxy Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
@@ -266,7 +263,7 @@ class RetentionPolicy(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class RetentionPolicyDetails(_model_base.Model):
+class RetentionPolicyDetails(_Model):
     """The properties of a retention policy.
 
     :ivar retention_period_in_days: The retention period in days after which the orchestration will
@@ -309,7 +306,7 @@ class RetentionPolicyDetails(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class RetentionPolicyProperties(_model_base.Model):
+class RetentionPolicyProperties(_Model):
     """The retention policy settings for the resource.
 
     :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
@@ -324,7 +321,7 @@ class RetentionPolicyProperties(_model_base.Model):
     )
     """The status of the last operation. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
      \"Provisioning\", \"Updating\", \"Deleting\", and \"Accepted\"."""
-    retention_policies: Optional[List["_models.RetentionPolicyDetails"]] = rest_field(
+    retention_policies: Optional[list["_models.RetentionPolicyDetails"]] = rest_field(
         name="retentionPolicies", visibility=["read", "create", "update", "delete", "query"]
     )
     """The orchestration retention policies."""
@@ -333,7 +330,7 @@ class RetentionPolicyProperties(_model_base.Model):
     def __init__(
         self,
         *,
-        retention_policies: Optional[List["_models.RetentionPolicyDetails"]] = None,
+        retention_policies: Optional[list["_models.RetentionPolicyDetails"]] = None,
     ) -> None: ...
 
     @overload
@@ -348,8 +345,7 @@ class RetentionPolicyProperties(_model_base.Model):
 
 
 class TrackedResource(Resource):
-    """The resource model definition for an Azure Resource Manager tracked top level resource which
-    has 'tags' and a 'location'.
+    """Tracked Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
@@ -368,7 +364,7 @@ class TrackedResource(Resource):
     :vartype location: str
     """
 
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource tags."""
     location: str = rest_field(visibility=["read", "create"])
     """The geo-location where the resource lives. Required."""
@@ -378,7 +374,7 @@ class TrackedResource(Resource):
         self,
         *,
         location: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
     ) -> None: ...
 
     @overload
@@ -424,7 +420,7 @@ class Scheduler(TrackedResource):
         self,
         *,
         location: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.SchedulerProperties"] = None,
     ) -> None: ...
 
@@ -439,7 +435,7 @@ class Scheduler(TrackedResource):
         super().__init__(*args, **kwargs)
 
 
-class SchedulerProperties(_model_base.Model):
+class SchedulerProperties(_Model):
     """Details of the Scheduler.
 
     :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
@@ -461,7 +457,7 @@ class SchedulerProperties(_model_base.Model):
      \"Provisioning\", \"Updating\", \"Deleting\", and \"Accepted\"."""
     endpoint: Optional[str] = rest_field(visibility=["read"])
     """URL of the durable task scheduler."""
-    ip_allowlist: List[str] = rest_field(name="ipAllowlist", visibility=["read", "create", "update", "delete", "query"])
+    ip_allowlist: list[str] = rest_field(name="ipAllowlist", visibility=["read", "create", "update", "delete", "query"])
     """IP allow list for durable task scheduler. Values can be IPv4, IPv6 or CIDR. Required."""
     sku: "_models.SchedulerSku" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """SKU of the durable task scheduler. Required."""
@@ -470,7 +466,7 @@ class SchedulerProperties(_model_base.Model):
     def __init__(
         self,
         *,
-        ip_allowlist: List[str],
+        ip_allowlist: list[str],
         sku: "_models.SchedulerSku",
     ) -> None: ...
 
@@ -485,7 +481,7 @@ class SchedulerProperties(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class SchedulerPropertiesUpdate(_model_base.Model):
+class SchedulerPropertiesUpdate(_Model):
     """The Scheduler resource properties to be updated.
 
     :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
@@ -506,7 +502,7 @@ class SchedulerPropertiesUpdate(_model_base.Model):
      \"Provisioning\", \"Updating\", \"Deleting\", and \"Accepted\"."""
     endpoint: Optional[str] = rest_field(visibility=["read"])
     """URL of the durable task scheduler."""
-    ip_allowlist: Optional[List[str]] = rest_field(
+    ip_allowlist: Optional[list[str]] = rest_field(
         name="ipAllowlist", visibility=["read", "create", "update", "delete", "query"]
     )
     """IP allow list for durable task scheduler. Values can be IPv4, IPv6 or CIDR."""
@@ -517,7 +513,7 @@ class SchedulerPropertiesUpdate(_model_base.Model):
     def __init__(
         self,
         *,
-        ip_allowlist: Optional[List[str]] = None,
+        ip_allowlist: Optional[list[str]] = None,
         sku: Optional["_models.SchedulerSkuUpdate"] = None,
     ) -> None: ...
 
@@ -532,11 +528,11 @@ class SchedulerPropertiesUpdate(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class SchedulerSku(_model_base.Model):
+class SchedulerSku(_Model):
     """The SKU (Stock Keeping Unit) assigned to this durable task scheduler.
 
-    :ivar name: The name of the SKU. Required.
-    :vartype name: str
+    :ivar name: The name of the SKU. Required. Known values are: "Dedicated" and "Consumption".
+    :vartype name: str or ~azure.mgmt.durabletask.models.SchedulerSkuName
     :ivar capacity: The SKU capacity. This allows scale out/in for the resource and impacts zone
      redundancy.
     :vartype capacity: int
@@ -545,8 +541,10 @@ class SchedulerSku(_model_base.Model):
     :vartype redundancy_state: str or ~azure.mgmt.durabletask.models.RedundancyState
     """
 
-    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The name of the SKU. Required."""
+    name: Union[str, "_models.SchedulerSkuName"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The name of the SKU. Required. Known values are: \"Dedicated\" and \"Consumption\"."""
     capacity: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The SKU capacity. This allows scale out/in for the resource and impacts zone redundancy."""
     redundancy_state: Optional[Union[str, "_models.RedundancyState"]] = rest_field(
@@ -559,7 +557,7 @@ class SchedulerSku(_model_base.Model):
     def __init__(
         self,
         *,
-        name: str,
+        name: Union[str, "_models.SchedulerSkuName"],
         capacity: Optional[int] = None,
     ) -> None: ...
 
@@ -574,11 +572,11 @@ class SchedulerSku(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class SchedulerSkuUpdate(_model_base.Model):
+class SchedulerSkuUpdate(_Model):
     """The SKU (Stock Keeping Unit) properties to be updated.
 
-    :ivar name: The name of the SKU.
-    :vartype name: str
+    :ivar name: The name of the SKU. Known values are: "Dedicated" and "Consumption".
+    :vartype name: str or ~azure.mgmt.durabletask.models.SchedulerSkuName
     :ivar capacity: The SKU capacity. This allows scale out/in for the resource and impacts zone
      redundancy.
     :vartype capacity: int
@@ -587,8 +585,10 @@ class SchedulerSkuUpdate(_model_base.Model):
     :vartype redundancy_state: str or ~azure.mgmt.durabletask.models.RedundancyState
     """
 
-    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The name of the SKU."""
+    name: Optional[Union[str, "_models.SchedulerSkuName"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The name of the SKU. Known values are: \"Dedicated\" and \"Consumption\"."""
     capacity: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The SKU capacity. This allows scale out/in for the resource and impacts zone redundancy."""
     redundancy_state: Optional[Union[str, "_models.RedundancyState"]] = rest_field(
@@ -601,7 +601,7 @@ class SchedulerSkuUpdate(_model_base.Model):
     def __init__(
         self,
         *,
-        name: Optional[str] = None,
+        name: Optional[Union[str, "_models.SchedulerSkuName"]] = None,
         capacity: Optional[int] = None,
     ) -> None: ...
 
@@ -616,7 +616,7 @@ class SchedulerSkuUpdate(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class SchedulerUpdate(_model_base.Model):
+class SchedulerUpdate(_Model):
     """The update request model for the Scheduler resource.
 
     :ivar properties: The resource-specific properties for this resource.
@@ -629,7 +629,7 @@ class SchedulerUpdate(_model_base.Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The resource-specific properties for this resource."""
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource tags."""
 
     @overload
@@ -637,7 +637,7 @@ class SchedulerUpdate(_model_base.Model):
         self,
         *,
         properties: Optional["_models.SchedulerPropertiesUpdate"] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
     ) -> None: ...
 
     @overload
@@ -651,7 +651,7 @@ class SchedulerUpdate(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class SystemData(_model_base.Model):
+class SystemData(_Model):
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
@@ -759,7 +759,7 @@ class TaskHub(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class TaskHubProperties(_model_base.Model):
+class TaskHubProperties(_Model):
     """The properties of Task Hub.
 
     :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",

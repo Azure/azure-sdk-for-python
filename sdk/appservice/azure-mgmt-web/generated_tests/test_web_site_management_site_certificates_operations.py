@@ -24,7 +24,7 @@ class TestWebSiteManagementSiteCertificatesOperations(AzureMgmtRecordedTestCase)
         response = self.client.site_certificates.list(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestWebSiteManagementSiteCertificatesOperations(AzureMgmtRecordedTestCase)
             resource_group_name=resource_group.name,
             name="str",
             certificate_name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -79,7 +79,7 @@ class TestWebSiteManagementSiteCertificatesOperations(AzureMgmtRecordedTestCase)
                 "type": "str",
                 "valid": bool,
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -92,7 +92,7 @@ class TestWebSiteManagementSiteCertificatesOperations(AzureMgmtRecordedTestCase)
             resource_group_name=resource_group.name,
             name="str",
             certificate_name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -132,7 +132,7 @@ class TestWebSiteManagementSiteCertificatesOperations(AzureMgmtRecordedTestCase)
                 "type": "str",
                 "valid": bool,
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -145,7 +145,7 @@ class TestWebSiteManagementSiteCertificatesOperations(AzureMgmtRecordedTestCase)
             resource_group_name=resource_group.name,
             name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -159,7 +159,7 @@ class TestWebSiteManagementSiteCertificatesOperations(AzureMgmtRecordedTestCase)
             name="str",
             slot="str",
             certificate_name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -202,7 +202,7 @@ class TestWebSiteManagementSiteCertificatesOperations(AzureMgmtRecordedTestCase)
                 "type": "str",
                 "valid": bool,
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -216,7 +216,7 @@ class TestWebSiteManagementSiteCertificatesOperations(AzureMgmtRecordedTestCase)
             name="str",
             slot="str",
             certificate_name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -257,7 +257,7 @@ class TestWebSiteManagementSiteCertificatesOperations(AzureMgmtRecordedTestCase)
                 "type": "str",
                 "valid": bool,
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself

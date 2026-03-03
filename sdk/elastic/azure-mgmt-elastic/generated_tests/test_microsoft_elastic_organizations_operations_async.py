@@ -21,9 +21,9 @@ class TestMicrosoftElasticOrganizationsOperationsAsync(AzureMgmtRecordedTestCase
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get_api_key(self, resource_group):
+    async def test_organizations_get_api_key(self, resource_group):
         response = await self.client.organizations.get_api_key(
-            api_version="2024-06-15-preview",
+            api_version="2025-06-01",
         )
 
         # please add some check logic here by yourself
@@ -31,9 +31,9 @@ class TestMicrosoftElasticOrganizationsOperationsAsync(AzureMgmtRecordedTestCase
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get_elastic_to_azure_subscription_mapping(self, resource_group):
+    async def test_organizations_get_elastic_to_azure_subscription_mapping(self, resource_group):
         response = await self.client.organizations.get_elastic_to_azure_subscription_mapping(
-            api_version="2024-06-15-preview",
+            api_version="2025-06-01",
         )
 
         # please add some check logic here by yourself
@@ -41,12 +41,12 @@ class TestMicrosoftElasticOrganizationsOperationsAsync(AzureMgmtRecordedTestCase
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_resubscribe(self, resource_group):
+    async def test_organizations_begin_resubscribe(self, resource_group):
         response = await (
             await self.client.organizations.begin_resubscribe(
                 resource_group_name=resource_group.name,
                 monitor_name="str",
-                api_version="2024-06-15-preview",
+                api_version="2025-06-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 

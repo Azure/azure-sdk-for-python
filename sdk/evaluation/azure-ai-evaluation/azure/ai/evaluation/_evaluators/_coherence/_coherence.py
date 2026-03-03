@@ -7,6 +7,8 @@ from typing import Dict, Union, List
 from typing_extensions import overload, override
 
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
+from azure.ai.evaluation._evaluators._common._validators import ConversationValidator, ValidatorInterface
+from azure.ai.evaluation._exceptions import ErrorTarget
 from azure.ai.evaluation._model_configurations import Conversation
 
 
@@ -23,6 +25,11 @@ class CoherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         ~azure.ai.evaluation.OpenAIModelConfiguration]
     :param threshold: The threshold for the coherence evaluator. Default is 3.
     :type threshold: int
+    :param credential: The credential for authenticating to Azure AI service.
+    :type credential: ~azure.core.credentials.TokenCredential
+    :keyword is_reasoning_model: If True, the evaluator will use reasoning model configuration (o1/o3 models).
+        This will adjust parameters like max_completion_tokens and remove unsupported parameters. Default is False.
+    :paramtype is_reasoning_model: bool
 
     .. admonition:: Example:
 
@@ -62,15 +69,21 @@ class CoherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     _PROMPTY_FILE = "coherence.prompty"
     _RESULT_KEY = "coherence"
 
+    _validator: ValidatorInterface
+
     id = "azureai://built-in/evaluators/coherence"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     @override
-    def __init__(self, model_config, *, threshold=3, credential=None):
+    def __init__(self, model_config, *, threshold=3, credential=None, **kwargs):
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
         self._threshold = threshold
         self._higher_is_better = True
+
+        # Initialize input validator
+        self._validator = ConversationValidator(error_target=ErrorTarget.COHERENCE_EVALUATOR)
+
         super().__init__(
             model_config=model_config,
             prompty_file=prompty_path,
@@ -78,6 +91,7 @@ class CoherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             threshold=threshold,
             credential=credential,
             _higher_is_better=self._higher_is_better,
+            **kwargs,
         )
 
     @overload
@@ -135,3 +149,17 @@ class CoherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         :rtype: Union[Dict[str, float], Dict[str, Union[float, Dict[str, List[float]]]]]
         """
         return super().__call__(*args, **kwargs)
+
+    @override
+    async def _real_call(self, **kwargs):
+        """The asynchronous call where real end-to-end evaluation logic is performed.
+
+        :keyword kwargs: The inputs to evaluate.
+        :type kwargs: Dict
+        :return: The evaluation result.
+        :rtype: Union[DoEvalResult[T_EvalValue], AggregateResult[T_EvalValue]]
+        """
+        # Validate input before processing
+        self._validator.validate_eval_input(kwargs)
+
+        return await super()._real_call(**kwargs)

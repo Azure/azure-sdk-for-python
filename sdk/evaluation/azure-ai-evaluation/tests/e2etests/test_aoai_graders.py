@@ -3,11 +3,14 @@
 # ---------------------------------------------------------
 import os
 import pathlib
+from typing import Callable
+
 import pandas as pd
 import pytest
 from devtools_testutils import is_live
 
 from openai.types.graders import StringCheckGrader
+from azure.core.credentials import TokenCredential
 from azure.ai.evaluation import (
     F1ScoreEvaluator,
     evaluate,
@@ -15,13 +18,14 @@ from azure.ai.evaluation import (
     AzureOpenAILabelGrader,
     AzureOpenAIStringCheckGrader,
     AzureOpenAITextSimilarityGrader,
+    AzureOpenAIScoreModelGrader,
+    AzureOpenAIPythonGrader,
 )
 
 
 @pytest.fixture
-def data_file():
-    data_path = os.path.join(pathlib.Path(__file__).parent.resolve(), "data")
-    return os.path.join(data_path, "evaluate_test_data.jsonl")
+def data_file() -> pathlib.Path:
+    return pathlib.Path(__file__).parent.resolve() / "data" / "evaluate_test_data.jsonl"
 
 
 @pytest.mark.usefixtures("recording_injection", "recorded_test")
@@ -287,3 +291,122 @@ class TestAoaiEvaluation:
 
         finally:
             os.unlink(temp_file)
+
+    @pytest.mark.skipif(not is_live(), reason="AOAI recordings have bad recording scrubbing")
+    @pytest.mark.parametrize(
+        "grader_factory",
+        [
+            lambda model_config, credential: AzureOpenAILabelGrader(
+                model_config=model_config,
+                input=[{"content": "{{item.query}}", "role": "user"}],
+                labels=["too short", "just right", "too long"],
+                passing_labels=["just right"],
+                model="gpt-4.1",
+                name="label",
+                credential=credential,
+            ),
+            lambda model_config, credential: AzureOpenAIStringCheckGrader(
+                model_config=model_config,
+                input="{{item.query}}",
+                name="starts with what is",
+                operation="like",
+                reference="What is",
+                credential=credential,
+            ),
+            lambda model_config, credential: AzureOpenAITextSimilarityGrader(
+                model_config=model_config,
+                evaluation_metric="fuzzy_match",
+                input="{{item.query}}",
+                name="similarity",
+                pass_threshold=1,
+                reference="{{item.query}}",
+                credential=credential,
+            ),
+            lambda model_config, credential: AzureOpenAIScoreModelGrader(
+                model_config=model_config,
+                name="Conversation Quality Assessment",
+                model="gpt-4.1",
+                input=[
+                    {
+                        "role": "system",
+                        "content": (
+                            "You are an expert conversation quality evaluator. "
+                            "Assess the quality of AI assistant responses based on "
+                            "helpfulness, completeness, accuracy, and "
+                            "appropriateness. Return a score between 0.0 (very "
+                            "poor) and 1.0 (excellent)."
+                        ),
+                    },
+                    {
+                        "role": "user",
+                        "content": (
+                            "Evaluate this conversation:\n"
+                            "Message: {{ item.query }}\n\n"
+                            "Provide a quality score from 0.0 to 1.0."
+                        ),
+                    },
+                ],
+                range=[0.0, 1.0],
+                sampling_params={"temperature": 0.0},
+                credential=credential,
+            ),
+            lambda model_config, credential: AzureOpenAIPythonGrader(
+                model_config=model_config,
+                name="custom_accuracy",
+                image_tag="2025-05-08",
+                pass_threshold=0.8,  # 80% threshold for passing
+                source="""def grade(sample: dict, item: dict) -> float:
+            \"\"\"
+            Custom grading logic that compares model output to expected label.
+
+            Args:
+                sample: Dictionary that is typically empty in Azure AI Evaluation
+                item: Dictionary containing ALL the data including model output and ground truth
+
+            Returns:
+                Float score between 0.0 and 1.0
+            \"\"\"
+            # Important: In Azure AI Evaluation, all data is in 'item', not 'sample'
+            # The 'sample' parameter is typically an empty dictionary
+
+            # Get the model's response/output from item
+            output = item.get("response", "") or item.get("output", "") or item.get("output_text", "")
+            output = output.lower()
+
+            # Get the expected label/ground truth from item
+            label = item.get("ground_truth", "") or item.get("label", "") or item.get("expected", "")
+            label = label.lower()
+
+            # Handle empty cases
+            if not output or not label:
+                return 0.0
+
+            # Exact match gets full score
+            if output == label:
+                return 1.0
+
+            # Partial match logic (customize as needed)
+            if output in label or label in output:
+                return 0.5
+
+            return 0.0
+        """,
+                credential=credential,
+            ),
+        ],
+    )
+    def test_evaluate_aoai_grader_with_credential(
+        self,
+        data_file: pathlib.Path,
+        model_config: dict,
+        grader_factory: Callable[[dict, TokenCredential], AzureOpenAIGrader],
+        azure_cred: TokenCredential,
+    ) -> None:
+        """Validate that prompty based evaluators support passing custom credentials"""
+        config = {**model_config}
+        # ensure that we aren't using an api_key for auth
+        config.pop("api_key", None)
+
+        grader = grader_factory(config, azure_cred)
+
+        result = evaluate(data=data_file, evaluators={"grader": grader})

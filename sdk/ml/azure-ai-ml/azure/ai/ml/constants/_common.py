@@ -245,6 +245,8 @@ class AzureMLResourceType:
     """Online deployment resource type."""
     DEPLOYMENT = "deployments"
     """Deployment resource type."""
+    DEPLOYMENT_TEMPLATE = "deployment_template"
+    """Deployment template resource type."""
     BATCH_DEPLOYMENT = "batch_deployments"
     """Batch deployment resource type."""
     ENVIRONMENT = "environments"
@@ -530,6 +532,7 @@ class YAMLRefDocLinks:
     FEATURE_STORE_ENTITY = "https://aka.ms/ml-cli-v2-featurestore-entity-yaml-reference"
     HUB = "https://aka.ms/ml-cli-v2-workspace-hub-entity-yaml-reference"
     CAPABILITY_HOST = "https://aka.ms/ml-cli-v2-capability-host-yaml-reference"
+    DEPLOYMENT_TEMPLATE = "https://aka.ms/ml-cli-v2-deployment-template-yaml-reference"
 
 
 class YAMLRefDocSchemaNames:
@@ -586,6 +589,8 @@ class YAMLRefDocSchemaNames:
     """Job Schedule."""
     CAPABILITY_HOST = "CapabilityHost"
     """Capability host."""
+    DEPLOYMENT_TEMPLATE = "DeploymentTemplate"
+    """Deployment template."""
 
 
 class DockerTypes:

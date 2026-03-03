@@ -20,26 +20,11 @@ class TestSqlManagementDataMaskingRulesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_data_masking_rules_list_by_database(self, resource_group):
-        response = self.client.data_masking_rules.list_by_database(
-            resource_group_name=resource_group.name,
-            server_name="str",
-            database_name="str",
-            data_masking_policy_name="str",
-            api_version="2024-11-01-preview",
-        )
-        result = [r for r in response]
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
     def test_data_masking_rules_create_or_update(self, resource_group):
         response = self.client.data_masking_rules.create_or_update(
             resource_group_name=resource_group.name,
             server_name="str",
             database_name="str",
-            data_masking_policy_name="str",
             data_masking_rule_name="str",
             parameters={
                 "aliasName": "str",
@@ -59,8 +44,23 @@ class TestSqlManagementDataMaskingRulesOperations(AzureMgmtRecordedTestCase):
                 "tableName": "str",
                 "type": "str",
             },
-            api_version="2024-11-01-preview",
+            api_version="2014-04-01",
+            data_masking_policy_name="Default",
         )
 
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_data_masking_rules_list_by_database(self, resource_group):
+        response = self.client.data_masking_rules.list_by_database(
+            resource_group_name=resource_group.name,
+            server_name="str",
+            database_name="str",
+            api_version="2014-04-01",
+            data_masking_policy_name="Default",
+        )
+        result = [r for r in response]
         # please add some check logic here by yourself
         # ...

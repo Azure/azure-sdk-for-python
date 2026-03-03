@@ -1,22 +1,23 @@
+import copy
+import json
+import sys
+
 import pytest
 import yaml
-import json
-import copy
 from test_utilities.utils import verify_entity_load_and_dump
-from azure.ai.ml._restclient.v2022_02_01_preview.models import (
-    OnlineEndpointData,
-    EndpointAuthKeys as RestEndpointAuthKeys,
-    EndpointAuthToken as RestEndpointAuthToken,
-)
-from azure.ai.ml._restclient.v2023_10_01.models import BatchEndpoint as BatchEndpointData
+
 from azure.ai.ml import load_batch_endpoint, load_online_endpoint
+from azure.ai.ml._restclient.v2022_02_01_preview.models import EndpointAuthKeys as RestEndpointAuthKeys
+from azure.ai.ml._restclient.v2022_02_01_preview.models import EndpointAuthToken as RestEndpointAuthToken
+from azure.ai.ml._restclient.v2022_02_01_preview.models import OnlineEndpointData
+from azure.ai.ml._restclient.v2023_10_01.models import BatchEndpoint as BatchEndpointData
 from azure.ai.ml.entities import (
     BatchEndpoint,
-    ManagedOnlineEndpoint,
-    KubernetesOnlineEndpoint,
-    OnlineEndpoint,
     EndpointAuthKeys,
     EndpointAuthToken,
+    KubernetesOnlineEndpoint,
+    ManagedOnlineEndpoint,
+    OnlineEndpoint,
 )
 from azure.ai.ml.exceptions import ValidationException
 
@@ -335,8 +336,8 @@ class TestManagedOnlineEndpoint:
         online_endpoint = load_online_endpoint(TestManagedOnlineEndpoint.ONLINE_ENDPOINT)
         batch_online_endpoint = load_batch_endpoint(TestManagedOnlineEndpoint.BATCH_ENDPOINT_WITH_BLUE)
 
-        assert online_endpoint.__eq__(None)
-        assert online_endpoint.__eq__(batch_online_endpoint)
+        assert online_endpoint.__eq__(None) is NotImplemented
+        assert online_endpoint.__eq__(batch_online_endpoint) is NotImplemented
 
         other_online_endpoint = copy.deepcopy(online_endpoint)
         assert online_endpoint == other_online_endpoint

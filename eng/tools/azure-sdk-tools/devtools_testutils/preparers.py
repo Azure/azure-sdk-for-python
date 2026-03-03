@@ -6,6 +6,7 @@
 import contextlib
 import functools
 import logging
+import inspect
 from collections import namedtuple
 from threading import Lock
 
@@ -145,7 +146,7 @@ You must specify use_cache=True in the preparer decorator""".format(
                 except ImportError:
                     fn(test_class_instance, **trimmed_kwargs)
                 else:
-                    if asyncio.iscoroutinefunction(fn):
+                    if inspect.iscoroutinefunction(fn):
                         asyncio.run(fn(test_class_instance, **trimmed_kwargs))
                     else:
                         fn(test_class_instance, **trimmed_kwargs)

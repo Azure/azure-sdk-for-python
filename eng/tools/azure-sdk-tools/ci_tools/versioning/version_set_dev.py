@@ -21,6 +21,7 @@ from ci_tools.versioning.version_shared import (
 from ci_tools.variables import discover_repo_root
 from ci_tools.functions import process_requires
 from ci_tools.parsing import ParsedSetup
+from ci_tools.logging import logger, configure_logging
 
 from typing import List
 
@@ -82,12 +83,16 @@ def version_set_dev_main() -> None:
     )
 
     args = parser.parse_args()
+
+    configure_logging(args)
+
     root_dir = args.repo or discover_repo_root()
 
     target_packages = get_packages(args, root_dir=root_dir)
     build_id = format_build_id(args.build_id)
 
     set_dev_version(target_packages, build_id)
+
 
 def set_dev_version(target_packages: List[ParsedSetup], build_id: str):
     if not target_packages:
@@ -101,5 +106,10 @@ def set_dev_version(target_packages: List[ParsedSetup], build_id: str):
             set_version_py(target_package.setup_filename, new_version)
             set_dev_classifier(target_package.setup_filename, new_version)
             print("{0}: {1} -> {2}".format(target_package.name, target_package.version, new_version))
-        except:
+        except Exception as e:
             print("Could not set dev version for package: {0}".format(target_package.name))
+            logger.error(str(e))
+
+
+if __name__ == "__main__":
+    version_set_dev_main()

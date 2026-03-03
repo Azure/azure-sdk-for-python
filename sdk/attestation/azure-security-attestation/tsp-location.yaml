@@ -1,0 +1,4 @@
+directory: specification/attestation/data-plane/Attestation
+commit: c5601446fc65494f18157aecbcc79cebcfbab1fb
+repo: Azure/azure-rest-api-specs
+additionalDirectories: 

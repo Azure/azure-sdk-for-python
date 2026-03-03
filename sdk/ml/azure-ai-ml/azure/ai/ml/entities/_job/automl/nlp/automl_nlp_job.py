@@ -100,7 +100,7 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
         return self._training_parameters
 
     @training_parameters.setter
-    def training_parameters(self, value: Union[Dict, NlpFixedParameters]) -> None:
+    def training_parameters(self, value: Optional[Union[Dict, NlpFixedParameters]]) -> None:
         if value is None:
             self._training_parameters = None
         elif isinstance(value, NlpFixedParameters):

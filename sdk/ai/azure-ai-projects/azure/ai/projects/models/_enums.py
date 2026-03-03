@@ -10,6 +10,43 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
+class AgentKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of AgentKind."""
+
+    PROMPT = "prompt"
+    """PROMPT."""
+    HOSTED = "hosted"
+    """HOSTED."""
+    CONTAINER_APP = "container_app"
+    """CONTAINER_APP."""
+    WORKFLOW = "workflow"
+    """WORKFLOW."""
+
+
+class AgentObjectType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of AgentObjectType."""
+
+    AGENT = "agent"
+    """AGENT."""
+    AGENT_VERSION = "agent.version"
+    """AGENT_VERSION."""
+    AGENT_DELETED = "agent.deleted"
+    """AGENT_DELETED."""
+    AGENT_VERSION_DELETED = "agent.version.deleted"
+    """AGENT_VERSION_DELETED."""
+    AGENT_CONTAINER = "agent.container"
+    """AGENT_CONTAINER."""
+
+
+class AgentProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of AgentProtocol."""
+
+    ACTIVITY_PROTOCOL = "activity_protocol"
+    """ACTIVITY_PROTOCOL."""
+    RESPONSES = "responses"
+    """RESPONSES."""
+
+
 class AttackStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Strategies for attacks."""
 
@@ -43,7 +80,7 @@ class AttackStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     JAILBREAK = "jailbreak"
     """Injects specially crafted prompts to bypass AI safeguards, known as User Injected Prompt
     Attacks (UPIA)."""
-    ANSII_ATTACK = "ansii_attack"
+    ANSI_ATTACK = "ansi_attack"
     """Utilizes ANSI escape sequences to manipulate text appearance and behavior."""
     CHARACTER_SWAP = "character_swap"
     """Swaps characters within text to create variations or obfuscate the original content."""
@@ -71,44 +108,108 @@ class AttackStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     BASELINE = "baseline"
     """Represents the baseline direct adversarial probing, which is used by attack strategies as the
     attack objective."""
+    INDIRECT_JAILBREAK = "indirect_jailbreak"
+    """Represents indirect jailbreak attacks that use complex methods to bypass AI safeguards."""
+    TENSE = "tense"
+    """Alters the tense of the text, changing its temporal context."""
+    MULTI_TURN = "multi_turn"
+    """Creates multi-turn conversations to simulate extended interactions."""
+    CRESCENDO = "crescendo"
+    """Gradually increases the intensity or complexity of the attack over time."""
+
+
+class AzureAISearchQueryType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Available query types for Azure AI Search tool."""
+
+    SIMPLE = "simple"
+    """Query type ``simple``."""
+    SEMANTIC = "semantic"
+    """Query type ``semantic``."""
+    VECTOR = "vector"
+    """Query type ``vector``."""
+    VECTOR_SIMPLE_HYBRID = "vector_simple_hybrid"
+    """Query type ``vector_simple_hybrid``."""
+    VECTOR_SEMANTIC_HYBRID = "vector_semantic_hybrid"
+    """Query type ``vector_semantic_hybrid``."""
+
+
+class ComputerEnvironment(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of ComputerEnvironment."""
+
+    WINDOWS = "windows"
+    """WINDOWS."""
+    MAC = "mac"
+    """MAC."""
+    LINUX = "linux"
+    """LINUX."""
+    UBUNTU = "ubuntu"
+    """UBUNTU."""
+    BROWSER = "browser"
+    """BROWSER."""
 
 
 class ConnectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The Type (or category) of the connection."""
 
     AZURE_OPEN_AI = "AzureOpenAI"
-    """Azure OpenAI Service"""
+    """Azure OpenAI Service."""
     AZURE_BLOB_STORAGE = "AzureBlob"
-    """Azure Blob Storage, with specified container"""
+    """Azure Blob Storage, with specified container."""
     AZURE_STORAGE_ACCOUNT = "AzureStorageAccount"
-    """Azure Blob Storage, with container not specified (used by Agents)"""
+    """Azure Blob Storage, with container not specified (used by Agents)."""
     AZURE_AI_SEARCH = "CognitiveSearch"
-    """Azure AI Search"""
+    """Azure AI Search."""
     COSMOS_DB = "CosmosDB"
-    """CosmosDB"""
+    """CosmosDB."""
     API_KEY = "ApiKey"
-    """Generic connection that uses API Key authentication"""
+    """Generic connection that uses API Key authentication."""
     APPLICATION_CONFIGURATION = "AppConfig"
-    """Application Configuration"""
+    """Application Configuration."""
     APPLICATION_INSIGHTS = "AppInsights"
-    """Application Insights"""
+    """Application Insights."""
     CUSTOM = "CustomKeys"
-    """Custom Keys"""
+    """Custom Keys."""
+    REMOTE_TOOL = "RemoteTool_Preview"
+    """Remote tool."""
+
+
+class ContainerMemoryLimit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of ContainerMemoryLimit."""
+
+    MEMORY_1GB = "1g"
+    """MEMORY_1GB."""
+    MEMORY_4GB = "4g"
+    """MEMORY_4GB."""
+    MEMORY_16GB = "16g"
+    """MEMORY_16GB."""
+    MEMORY_64GB = "64g"
+    """MEMORY_64GB."""
 
 
 class CredentialType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The credential type used by the connection."""
 
     API_KEY = "ApiKey"
-    """API Key credential"""
+    """API Key credential."""
     ENTRA_ID = "AAD"
-    """Entra ID credential (formerly known as AAD)"""
+    """Entra ID credential (formerly known as AAD)."""
     SAS = "SAS"
-    """Shared Access Signature (SAS) credential"""
+    """Shared Access Signature (SAS) credential."""
     CUSTOM = "CustomKeys"
-    """Custom credential"""
+    """Custom credential."""
     NONE = "None"
-    """No credential"""
+    """No credential."""
+    AGENTIC_IDENTITY_PREVIEW = "AgenticIdentityToken_Preview"
+    """Agentic identity credential."""
+
+
+class CustomToolParamFormatType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of CustomToolParamFormatType."""
+
+    TEXT = "text"
+    """TEXT."""
+    GRAMMAR = "grammar"
+    """GRAMMAR."""
 
 
 class DatasetType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -120,29 +221,273 @@ class DatasetType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """URI folder."""
 
 
+class DayOfWeek(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Days of the week for recurrence schedule."""
+
+    SUNDAY = "Sunday"
+    """Sunday."""
+    MONDAY = "Monday"
+    """Monday."""
+    TUESDAY = "Tuesday"
+    """Tuesday."""
+    WEDNESDAY = "Wednesday"
+    """Wednesday."""
+    THURSDAY = "Thursday"
+    """Thursday."""
+    FRIDAY = "Friday"
+    """Friday."""
+    SATURDAY = "Saturday"
+    """Saturday."""
+
+
 class DeploymentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of DeploymentType."""
 
     MODEL_DEPLOYMENT = "ModelDeployment"
-    """Model deployment"""
+    """Model deployment."""
 
 
-class EvaluationTargetType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Allowed types of evaluation targets."""
+class EvaluationRuleActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of the evaluation action."""
 
-    MODEL_RESPONSE_GENERATION = "modelResponseGeneration"
-    """Evaluation target that uses a model for response generation."""
+    CONTINUOUS_EVALUATION = "continuousEvaluation"
+    """Continuous evaluation."""
+    HUMAN_EVALUATION_PREVIEW = "humanEvaluationPreview"
+    """Human evaluation preview."""
+
+
+class EvaluationRuleEventType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of the evaluation rule event."""
+
+    RESPONSE_COMPLETED = "responseCompleted"
+    """Response completed."""
+    MANUAL = "manual"
+    """Manual trigger."""
+
+
+class EvaluationTaxonomyInputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of the evaluation taxonomy input."""
+
+    AGENT = "agent"
+    """Agent."""
+    POLICY = "policy"
+    """Policy."""
+
+
+class EvaluatorCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The category of the evaluator."""
+
+    QUALITY = "quality"
+    """Quality."""
+    SAFETY = "safety"
+    """Risk & Safety."""
+    AGENTS = "agents"
+    """Agents."""
+
+
+class EvaluatorDefinitionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of evaluator definition."""
+
+    PROMPT = "prompt"
+    """Prompt-based definition."""
+    CODE = "code"
+    """Code-based definition."""
+    PROMPT_AND_CODE = "prompt_and_code"
+    """Prompt & Code Based definition."""
+    SERVICE = "service"
+    """Service-based evaluator."""
+    OPENAI_GRADERS = "openai_graders"
+    """OpenAI graders."""
+
+
+class EvaluatorMetricDirection(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The direction of the metric indicating whether a higher value is better, a lower value is
+    better, or neutral.
+    """
+
+    INCREASE = "increase"
+    """It indicates a higher value is better for this metric."""
+    DECREASE = "decrease"
+    """It indicates a lower value is better for this metric."""
+    NEUTRAL = "neutral"
+    """It indicates no preference for this metric direction."""
+
+
+class EvaluatorMetricType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of the evaluator."""
+
+    ORDINAL = "ordinal"
+    """Ordinal metric representing categories that can be ordered or ranked."""
+    CONTINUOUS = "continuous"
+    """Continuous metric representing values in a continuous range."""
+    BOOLEAN = "boolean"
+    """Boolean metric representing true/false values."""
+
+
+class EvaluatorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of the evaluator."""
+
+    BUILT_IN = "builtin"
+    """Built-in evaluator (Microsoft provided)."""
+    CUSTOM = "custom"
+    """Custom evaluator."""
+
+
+class FoundryFeaturesOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of FoundryFeaturesOptInKeys."""
+
+    CONTAINER_AGENTS_V1_PREVIEW = "ContainerAgents=V1Preview"
+    """CONTAINER_AGENTS_V1_PREVIEW."""
+    HOSTED_AGENTS_V1_PREVIEW = "HostedAgents=V1Preview"
+    """HOSTED_AGENTS_V1_PREVIEW."""
+    WORKFLOW_AGENTS_V1_PREVIEW = "WorkflowAgents=V1Preview"
+    """WORKFLOW_AGENTS_V1_PREVIEW."""
+    EVALUATIONS_V1_PREVIEW = "Evaluations=V1Preview"
+    """EVALUATIONS_V1_PREVIEW."""
+    SCHEDULES_V1_PREVIEW = "Schedules=V1Preview"
+    """SCHEDULES_V1_PREVIEW."""
+    RED_TEAMS_V1_PREVIEW = "RedTeams=V1Preview"
+    """RED_TEAMS_V1_PREVIEW."""
+    INSIGHTS_V1_PREVIEW = "Insights=V1Preview"
+    """INSIGHTS_V1_PREVIEW."""
+    MEMORY_STORES_V1_PREVIEW = "MemoryStores=V1Preview"
+    """MEMORY_STORES_V1_PREVIEW."""
+
+
+class GrammarSyntax1(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of GrammarSyntax1."""
+
+    LARK = "lark"
+    """LARK."""
+    REGEX = "regex"
+    """REGEX."""
 
 
 class IndexType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of IndexType."""
 
     AZURE_SEARCH = "AzureSearch"
-    """Azure search"""
+    """Azure search."""
     COSMOS_DB = "CosmosDBNoSqlVectorStore"
-    """CosmosDB"""
+    """CosmosDB."""
     MANAGED_AZURE_SEARCH = "ManagedAzureSearch"
-    """Managed Azure Search"""
+    """Managed Azure Search."""
+
+
+class InputFidelity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Control how much effort the model will exert to match the style and features, especially facial
+    features, of input images. This parameter is only supported for ``gpt-image-1``. Unsupported
+    for ``gpt-image-1-mini``. Supports ``high`` and ``low``. Defaults to ``low``.
+    """
+
+    HIGH = "high"
+    """HIGH."""
+    LOW = "low"
+    """LOW."""
+
+
+class InsightType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The request of the insights."""
+
+    EVALUATION_RUN_CLUSTER_INSIGHT = "EvaluationRunClusterInsight"
+    """Insights on an Evaluation run result."""
+    AGENT_CLUSTER_INSIGHT = "AgentClusterInsight"
+    """Cluster Insight on an Agent."""
+    EVALUATION_COMPARISON = "EvaluationComparison"
+    """Evaluation Comparison."""
+
+
+class MemoryItemKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Memory item kind."""
+
+    USER_PROFILE = "user_profile"
+    """User profile information extracted from conversations."""
+    CHAT_SUMMARY = "chat_summary"
+    """Summary of chat conversations."""
+
+
+class MemoryOperationKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Memory operation kind."""
+
+    CREATE = "create"
+    """Create a new memory item."""
+    UPDATE = "update"
+    """Update an existing memory item."""
+    DELETE = "delete"
+    """Delete an existing memory item."""
+
+
+class MemoryStoreKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of memory store implementation to use."""
+
+    DEFAULT = "default"
+    """The default memory store implementation."""
+
+
+class MemoryStoreObjectType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of MemoryStoreObjectType."""
+
+    MEMORY_STORE = "memory_store"
+    """MEMORY_STORE."""
+    MEMORY_STORE_DELETED = "memory_store.deleted"
+    """MEMORY_STORE_DELETED."""
+    MEMORY_STORE_SCOPE_DELETED = "memory_store.scope.deleted"
+    """MEMORY_STORE_SCOPE_DELETED."""
+
+
+class MemoryStoreUpdateStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Status of a memory store update operation."""
+
+    QUEUED = "queued"
+    """QUEUED."""
+    IN_PROGRESS = "in_progress"
+    """IN_PROGRESS."""
+    COMPLETED = "completed"
+    """COMPLETED."""
+    FAILED = "failed"
+    """FAILED."""
+    SUPERSEDED = "superseded"
+    """SUPERSEDED."""
+
+
+class OpenApiAuthType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Authentication type for OpenApi endpoint. Allowed types are:
+
+    * Anonymous (no authentication required)
+    * Project Connection (requires project_connection_id to endpoint, as setup in AI Foundry)
+    * Managed_Identity (requires audience for identity based auth).
+    """
+
+    ANONYMOUS = "anonymous"
+    """ANONYMOUS."""
+    PROJECT_CONNECTION = "project_connection"
+    """PROJECT_CONNECTION."""
+    MANAGED_IDENTITY = "managed_identity"
+    """MANAGED_IDENTITY."""
+
+
+class OperationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum describing allowed operation states."""
+
+    NOT_STARTED = "NotStarted"
+    """The operation has not started."""
+    RUNNING = "Running"
+    """The operation is in progress."""
+    SUCCEEDED = "Succeeded"
+    """The operation has completed successfully."""
+    FAILED = "Failed"
+    """The operation has failed."""
+    CANCELED = "Canceled"
+    """The operation has been canceled by the user."""
+
+
+class PageOrder(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of PageOrder."""
+
+    ASC = "asc"
+    """ASC."""
+    DESC = "desc"
+    """DESC."""
 
 
 class PendingUploadType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -152,6 +497,28 @@ class PendingUploadType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """No pending upload."""
     BLOB_REFERENCE = "BlobReference"
     """Blob Reference is the only supported type."""
+
+
+class RankerVersionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of RankerVersionType."""
+
+    AUTO = "auto"
+    """AUTO."""
+    DEFAULT2024_11_15 = "default-2024-11-15"
+    """DEFAULT2024_11_15."""
+
+
+class RecurrenceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Recurrence type."""
+
+    HOURLY = "Hourly"
+    """Hourly recurrence pattern."""
+    DAILY = "Daily"
+    """Daily recurrence pattern."""
+    WEEKLY = "Weekly"
+    """Weekly recurrence pattern."""
+    MONTHLY = "Monthly"
+    """Monthly recurrence pattern."""
 
 
 class RiskCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -165,3 +532,174 @@ class RiskCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Represents content of a sexual nature."""
     SELF_HARM = "SelfHarm"
     """Represents content related to self-harm."""
+    PROTECTED_MATERIAL = "ProtectedMaterial"
+    """Represents content that involves illegal activities."""
+    CODE_VULNERABILITY = "CodeVulnerability"
+    """Represents content that contains vulnerabilities in code."""
+    UNGROUNDED_ATTRIBUTES = "UngroundedAttributes"
+    """Represents content that lacks a solid grounding in fact."""
+    PROHIBITED_ACTIONS = "ProhibitedActions"
+    """Represents content that involves prohibited actions."""
+    SENSITIVE_DATA_LEAKAGE = "SensitiveDataLeakage"
+    """Represents content that involves sensitive data leakage."""
+    TASK_ADHERENCE = "TaskAdherence"
+    """Represents content that involves task adherence."""
+
+
+class SampleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of sample used in the analysis."""
+
+    EVALUATION_RESULT_SAMPLE = "EvaluationResultSample"
+    """A sample from the evaluation result."""
+
+
+class ScheduleProvisioningStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Schedule provisioning status."""
+
+    CREATING = "Creating"
+    """Represents the creation status of the schedule."""
+    UPDATING = "Updating"
+    """Represents the updating status of the schedule."""
+    DELETING = "Deleting"
+    """Represents the deleting status of the schedule."""
+    SUCCEEDED = "Succeeded"
+    """Represents the succeeded status of the schedule."""
+    FAILED = "Failed"
+    """Represents the failed status of the schedule."""
+
+
+class ScheduleTaskType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of the task."""
+
+    EVALUATION = "Evaluation"
+    """Evaluation task."""
+    INSIGHT = "Insight"
+    """Insight task."""
+
+
+class SearchContextSize(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of SearchContextSize."""
+
+    LOW = "low"
+    """LOW."""
+    MEDIUM = "medium"
+    """MEDIUM."""
+    HIGH = "high"
+    """HIGH."""
+
+
+class TextResponseFormatConfigurationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of TextResponseFormatConfigurationType."""
+
+    TEXT = "text"
+    """TEXT."""
+    JSON_SCHEMA = "json_schema"
+    """JSON_SCHEMA."""
+    JSON_OBJECT = "json_object"
+    """JSON_OBJECT."""
+
+
+class ToolChoiceParamType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of ToolChoiceParamType."""
+
+    ALLOWED_TOOLS = "allowed_tools"
+    """ALLOWED_TOOLS."""
+    FUNCTION = "function"
+    """FUNCTION."""
+    MCP = "mcp"
+    """MCP."""
+    CUSTOM = "custom"
+    """CUSTOM."""
+    APPLY_PATCH = "apply_patch"
+    """APPLY_PATCH."""
+    SHELL = "shell"
+    """SHELL."""
+    FILE_SEARCH = "file_search"
+    """FILE_SEARCH."""
+    WEB_SEARCH_PREVIEW = "web_search_preview"
+    """WEB_SEARCH_PREVIEW."""
+    COMPUTER_USE_PREVIEW = "computer_use_preview"
+    """COMPUTER_USE_PREVIEW."""
+    WEB_SEARCH_PREVIEW2025_03_11 = "web_search_preview_2025_03_11"
+    """WEB_SEARCH_PREVIEW2025_03_11."""
+    IMAGE_GENERATION = "image_generation"
+    """IMAGE_GENERATION."""
+    CODE_INTERPRETER = "code_interpreter"
+    """CODE_INTERPRETER."""
+
+
+class ToolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of ToolType."""
+
+    FUNCTION = "function"
+    """FUNCTION."""
+    FILE_SEARCH = "file_search"
+    """FILE_SEARCH."""
+    COMPUTER_USE_PREVIEW = "computer_use_preview"
+    """COMPUTER_USE_PREVIEW."""
+    WEB_SEARCH = "web_search"
+    """WEB_SEARCH."""
+    MCP = "mcp"
+    """MCP."""
+    CODE_INTERPRETER = "code_interpreter"
+    """CODE_INTERPRETER."""
+    IMAGE_GENERATION = "image_generation"
+    """IMAGE_GENERATION."""
+    LOCAL_SHELL = "local_shell"
+    """LOCAL_SHELL."""
+    SHELL = "shell"
+    """SHELL."""
+    CUSTOM = "custom"
+    """CUSTOM."""
+    WEB_SEARCH_PREVIEW = "web_search_preview"
+    """WEB_SEARCH_PREVIEW."""
+    APPLY_PATCH = "apply_patch"
+    """APPLY_PATCH."""
+    A2A_PREVIEW = "a2a_preview"
+    """A2A_PREVIEW."""
+    BING_CUSTOM_SEARCH_PREVIEW = "bing_custom_search_preview"
+    """BING_CUSTOM_SEARCH_PREVIEW."""
+    BROWSER_AUTOMATION_PREVIEW = "browser_automation_preview"
+    """BROWSER_AUTOMATION_PREVIEW."""
+    FABRIC_DATAAGENT_PREVIEW = "fabric_dataagent_preview"
+    """FABRIC_DATAAGENT_PREVIEW."""
+    SHAREPOINT_GROUNDING_PREVIEW = "sharepoint_grounding_preview"
+    """SHAREPOINT_GROUNDING_PREVIEW."""
+    MEMORY_SEARCH_PREVIEW = "memory_search_preview"
+    """MEMORY_SEARCH_PREVIEW."""
+    AZURE_AI_SEARCH = "azure_ai_search"
+    """AZURE_AI_SEARCH."""
+    AZURE_FUNCTION = "azure_function"
+    """AZURE_FUNCTION."""
+    BING_GROUNDING = "bing_grounding"
+    """BING_GROUNDING."""
+    CAPTURE_STRUCTURED_OUTPUTS = "capture_structured_outputs"
+    """CAPTURE_STRUCTURED_OUTPUTS."""
+    OPENAPI = "openapi"
+    """OPENAPI."""
+
+
+class TreatmentEffectType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Treatment Effect Type."""
+
+    TOO_FEW_SAMPLES = "TooFewSamples"
+    """Not enough samples to determine treatment effect."""
+    INCONCLUSIVE = "Inconclusive"
+    """No significant difference between treatment and baseline."""
+    CHANGED = "Changed"
+    """Indicates the metric changed with statistical significance, but the direction is neutral."""
+    IMPROVED = "Improved"
+    """Indicates the treatment significantly improved the metric compared to baseline."""
+    DEGRADED = "Degraded"
+    """Indicates the treatment significantly degraded the metric compared to baseline."""
+
+
+class TriggerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of the trigger."""
+
+    CRON = "Cron"
+    """Cron based trigger."""
+    RECURRENCE = "Recurrence"
+    """Recurrence based trigger."""
+    ONE_TIME = "OneTime"
+    """One-time trigger."""

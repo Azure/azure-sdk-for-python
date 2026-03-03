@@ -28,7 +28,6 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T
 
 
 class AzureMonitorClientOperationsMixin:
-
     async def track(self, body: List["_models.TelemetryItem"], **kwargs: Any) -> "_models.TrackResponse":
         """Track telemetry events.
 

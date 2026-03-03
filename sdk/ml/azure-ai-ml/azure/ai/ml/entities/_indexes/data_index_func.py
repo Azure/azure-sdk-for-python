@@ -9,16 +9,15 @@ import re
 from typing import Any, Dict, Optional, Union
 
 from azure.ai.ml._utils._experimental import experimental
-from azure.ai.ml.constants._common import AssetTypes, LegacyAssetTypes
+from azure.ai.ml.constants._common import AssetTypes, DataIndexTypes, LegacyAssetTypes
+from azure.ai.ml.constants._component import LLMRAGComponentUri
 from azure.ai.ml.entities import PipelineJob
 from azure.ai.ml.entities._builders.base_node import pipeline_node_decorator
 from azure.ai.ml.entities._credentials import ManagedIdentityConfiguration, UserIdentityConfiguration
+from azure.ai.ml.entities._indexes.entities.data_index import DataIndex
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
-from azure.ai.ml.constants._common import DataIndexTypes
-from azure.ai.ml.constants._component import LLMRAGComponentUri
-from azure.ai.ml.entities._indexes.entities.data_index import DataIndex
 
 SUPPORTED_INPUTS = [
     LegacyAssetTypes.PATH,
@@ -745,4 +744,4 @@ def _resolve_connection_id(ml_client, connection: Optional[str] = None) -> Optio
         connection = ml_client.connections.get(connection_name)
         if connection is None:
             return None
-    return connection.id  # type: ignore [attr-defined]
+    return connection.id  # type: ignore[attr-defined, union-attr]

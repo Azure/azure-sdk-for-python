@@ -7,6 +7,7 @@
 import hashlib
 import base64
 import hmac
+from urllib.parse import urlparse
 from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline.policies import HTTPPolicy
 from ._utils import get_current_utc_time
@@ -18,14 +19,15 @@ class AppConfigRequestsCredentialsPolicy(HTTPPolicy):
     def __init__(self, credential: AzureKeyCredential, endpoint: str, id_credential: str):
         super(AppConfigRequestsCredentialsPolicy, self).__init__()
         self._credential = credential
-        self._host = str(endpoint[8:])
+        self._endpoint = endpoint
         self._id_credential = id_credential
 
     def _signed_request(self, request):
         verb = request.http_request.method.upper()
 
-        # Get the path and query from url, which looks like https://host/path/query
-        query_url = str(request.http_request.url[len(self._host) + 8 :])
+        parsed_url = urlparse(self._endpoint)
+        # Get the path, query and hash fragment from url, which looks like https://host/path?query#fragment
+        query_url = str(request.http_request.url[len(parsed_url.geturl()) :])
         # Need URL() to get a correct encoded key value, from "%2A" to "*", when transport is in type AioHttpTransport.
         # There's a similar scenario in azure-storage-blob, the check logic is from there.
         try:
@@ -53,7 +55,7 @@ class AppConfigRequestsCredentialsPolicy(HTTPPolicy):
         content_digest = hashlib.sha256((request.http_request.body.encode("utf-8"))).digest()
         content_hash = base64.b64encode(content_digest).decode("utf-8")
 
-        string_to_sign = verb + "\n" + query_url + "\n" + utc_now + ";" + self._host + ";" + content_hash
+        string_to_sign = verb + "\n" + query_url + "\n" + utc_now + ";" + parsed_url.netloc + ";" + content_hash
 
         decoded_secret = base64.b64decode(self._credential.key)
         digest = hmac.new(decoded_secret, string_to_sign.encode("utf-8"), hashlib.sha256).digest()

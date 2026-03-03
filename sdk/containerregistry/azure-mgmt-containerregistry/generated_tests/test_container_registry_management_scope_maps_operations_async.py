@@ -25,7 +25,7 @@ class TestContainerRegistryManagementScopeMapsOperationsAsync(AzureMgmtRecordedT
         response = self.client.scope_maps.list(
             resource_group_name=resource_group.name,
             registry_name="str",
-            api_version="2025-05-01-preview",
+            api_version="2025-11-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestContainerRegistryManagementScopeMapsOperationsAsync(AzureMgmtRecordedT
             resource_group_name=resource_group.name,
             registry_name="str",
             scope_map_name="str",
-            api_version="2025-05-01-preview",
+            api_version="2025-11-01",
         )
 
         # please add some check logic here by yourself
@@ -69,22 +69,7 @@ class TestContainerRegistryManagementScopeMapsOperationsAsync(AzureMgmtRecordedT
                     },
                     "type": "str",
                 },
-                api_version="2025-05-01-preview",
-            )
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_scope_maps_begin_delete(self, resource_group):
-        response = await (
-            await self.client.scope_maps.begin_delete(
-                resource_group_name=resource_group.name,
-                registry_name="str",
-                scope_map_name="str",
-                api_version="2025-05-01-preview",
+                api_version="2025-11-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -100,7 +85,22 @@ class TestContainerRegistryManagementScopeMapsOperationsAsync(AzureMgmtRecordedT
                 registry_name="str",
                 scope_map_name="str",
                 scope_map_update_parameters={"actions": ["str"], "description": "str"},
-                api_version="2025-05-01-preview",
+                api_version="2025-11-01",
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_scope_maps_begin_delete(self, resource_group):
+        response = await (
+            await self.client.scope_maps.begin_delete(
+                resource_group_name=resource_group.name,
+                registry_name="str",
+                scope_map_name="str",
+                api_version="2025-11-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 

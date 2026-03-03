@@ -25,7 +25,7 @@ class TestCognitiveServicesManagementDefenderForAISettingsOperationsAsync(AzureM
         response = self.client.defender_for_ai_settings.list(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2025-06-01",
+            api_version="2025-09-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestCognitiveServicesManagementDefenderForAISettingsOperationsAsync(AzureM
             resource_group_name=resource_group.name,
             account_name="str",
             defender_for_ai_setting_name="str",
-            api_version="2025-06-01",
+            api_version="2025-09-01",
         )
 
         # please add some check logic here by yourself
@@ -67,7 +67,7 @@ class TestCognitiveServicesManagementDefenderForAISettingsOperationsAsync(AzureM
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2025-06-01",
+            api_version="2025-09-01",
         )
 
         # please add some check logic here by yourself
@@ -96,7 +96,7 @@ class TestCognitiveServicesManagementDefenderForAISettingsOperationsAsync(AzureM
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2025-06-01",
+            api_version="2025-09-01",
         )
 
         # please add some check logic here by yourself

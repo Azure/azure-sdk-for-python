@@ -116,7 +116,7 @@ class TestSearchClientIndexDocument(AzureRecordedTestCase):
             time.sleep(TIME_TO_SLEEP)
 
         test = client.get_document_count()
-        assert client.get_document_count() == doc_count
+        assert test == doc_count
 
         result = client.get_document(key="5")
         assert result["rating"] == 1

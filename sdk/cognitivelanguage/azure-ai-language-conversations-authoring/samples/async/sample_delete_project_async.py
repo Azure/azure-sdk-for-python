@@ -29,7 +29,7 @@ OPTIONAL ENV VARS:
 # [START conversation_authoring_delete_project_async]
 import os
 import asyncio
-from azure.identity import DefaultAzureCredential
+from azure.identity.aio import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
 from azure.ai.language.conversations.authoring.aio import ConversationAuthoringClient
 
@@ -53,7 +53,9 @@ async def sample_delete_project_async():
             print(f"Operation failed: {e.message}")
             print(e.error)
 
+
 # [END conversation_authoring_delete_project_async]
+
 
 async def main():
     await sample_delete_project_async()

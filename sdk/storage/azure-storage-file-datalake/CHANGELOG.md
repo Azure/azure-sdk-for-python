@@ -1,8 +1,61 @@
 # Release History
 
-## 12.23.0b1 (Unreleased)
+## 12.25.0b1 (Unreleased)
 
 ### Features Added
+
+## 12.24.0b1 (2026-01-27)
+
+### Features Added
+- Added support for service version 2026-04-06.
+- Added support for the keyword `user_delegation_tid` to `DataLakeServiceClient.get_user_delegation_key` 
+API, which can be used in `generate_file_system_sas`, `generate_directory_sas`, and `generate_file_sas` 
+to specify the Tenant ID that is authorized to use the generated SAS URL. Note that `user_delegation_tid` 
+must be used together with `user_delegation_oid`.
+- Added support for the keyword `request_headers` to `generate_file_system_sas`, `generate_directory_sas`, 
+and `generate_file_sas` which specifies a set of headers and their corresponding values that 
+must be present in the request header when using the generated SAS.
+- Added support for the keyword `request_query_params` to `generate_file_system_sas`, `generate_directory_sas`, 
+and `generate_file_sas` which specifies a set of query parameters and their corresponding values that 
+must be present in the request URL when using the generated SAS.
+
+### Other Changes
+- Bumped minimum `azure-core` dependency to 1.37.0.
+
+## 12.23.0 (2026-01-06)
+
+### Features Added
+- Stable release of features from 12.23.0b1
+
+### Other Changes
+- Changed the default `connection_data_block_size` for all clients from 4 KiB to 256 KiB. This should result in
+significantly better throughput on large file downloads for most environments.
+
+## 12.23.0b1 (2025-12-04)
+
+### Features Added
+- Added support for service version 2026-02-06.
+- Added support for the keyword `start_from` for `DataLakeServiceClient`'s `get_paths` and
+`DataLakeDirectoryClient`'s `get_paths` APIs, which specifies the full path to start listing paths from.
+- Added support for the keyword `user_delegation_oid` to `generate_file_system_sas`, `generate_directory_sas`, and
+`generate_file_sas`, which specifies the Entra ID of the user that is authorized to use the generated SAS URL.
+- Added support for `UseDevelopmentStorage=true;` as a valid connection string for Azurite.
+- Added the ability to skip auto decompression on `DataLakeFileClient.download_file` via the `decompress` keyword.
+
+### Other Changes
+- Migrated any previously documented `kwarg` arguments to be named keywords. 
+Some public types may have been adjusted if they were previously erroneous or incomplete.
+- Removed `__enter__` and `__exit__` attributes for all asynchronous client objects for raising explicit `TypeError`, 
+and let the `AttributeError` raise directly.
+
+## 12.22.0 (2025-10-15)
+
+### Features Added
+- Stable release of features from 12.22.0b1
+
+### Other Changes
+- Removed `__enter__` and `__exit__` attributes for all asynchronous client objects for raising explicit `TypeError`, 
+and let the `AttributeError` raise directly.
 
 ## 12.21.0 (2025-07-16)
 

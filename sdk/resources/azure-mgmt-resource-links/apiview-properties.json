@@ -1,0 +1,24 @@
+{
+    "CrossLanguagePackageId": null,
+    "CrossLanguageDefinitionId": {
+        "azure.mgmt.resource.links.models.Operation": null,
+        "azure.mgmt.resource.links.models.OperationDisplay": null,
+        "azure.mgmt.resource.links.models.OperationListResult": null,
+        "azure.mgmt.resource.links.models.ResourceLink": null,
+        "azure.mgmt.resource.links.models.ResourceLinkFilter": null,
+        "azure.mgmt.resource.links.models.ResourceLinkProperties": null,
+        "azure.mgmt.resource.links.models.ResourceLinkResult": null,
+        "azure.mgmt.resource.links.operations.Operations.list": null,
+        "azure.mgmt.resource.links.aio.operations.Operations.list": null,
+        "azure.mgmt.resource.links.operations.ResourceLinksOperations.delete": null,
+        "azure.mgmt.resource.links.aio.operations.ResourceLinksOperations.delete": null,
+        "azure.mgmt.resource.links.operations.ResourceLinksOperations.create_or_update": null,
+        "azure.mgmt.resource.links.aio.operations.ResourceLinksOperations.create_or_update": null,
+        "azure.mgmt.resource.links.operations.ResourceLinksOperations.get": null,
+        "azure.mgmt.resource.links.aio.operations.ResourceLinksOperations.get": null,
+        "azure.mgmt.resource.links.operations.ResourceLinksOperations.list_at_subscription": null,
+        "azure.mgmt.resource.links.aio.operations.ResourceLinksOperations.list_at_subscription": null,
+        "azure.mgmt.resource.links.operations.ResourceLinksOperations.list_at_source_scope": null,
+        "azure.mgmt.resource.links.aio.operations.ResourceLinksOperations.list_at_source_scope": null
+    }
+}

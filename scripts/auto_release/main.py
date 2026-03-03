@@ -71,7 +71,8 @@ class CodegenTestPR:
 
     def __init__(self):
         self.issue_link = os.getenv("ISSUE_LINK", "")
-        self.pipeline_link = os.getenv("PIPELINE_LINK", "")
+        self.release_pipeline_link = os.getenv("PIPELINE_LINK", "")
+        self.triggered_pipeline_link = os.getenv("TRIGGERED_PIPELINE_LINK", "")
         self.bot_token = os.getenv("BOT_TOKEN")
         self.spec_readme = os.getenv("SPEC_README", "")
         self.spec_repo = os.getenv("SPEC_REPO", "")
@@ -87,7 +88,6 @@ class CodegenTestPR:
         self.next_version = ""
         self.test_result = ""
         self.pr_number = 0
-        self.tag_is_stable = False
         self.has_test = False
         self.version_suggestion = ""  # if can't calculate next version, give a suggestion
 
@@ -147,7 +147,6 @@ class CodegenTestPR:
             "specFolder": self.spec_repo,
             file_name: [self.readme_local_folder()],
             "targetReleaseDate": self.target_release_date,
-            "allowInvalidNextVersion": True,
             "runMode": "auto-release",
         }
         log(str(input_data))
@@ -161,12 +160,9 @@ class CodegenTestPR:
             json.dump(input_data, file)
 
         # generate code(be careful about the order)
-        print_exec("python scripts/dev_setup.py -p azure-core")
-        print_check(f"python -m packaging_tools.sdk_generator {self.autorest_result} {self.autorest_result}")
+        print_check(f"sdk_generator {self.autorest_result} {self.autorest_result}")
 
         generate_result = self.get_autorest_result()
-        self.tag_is_stable = generate_result["packages"][0]["tagIsStable"]
-        log(f"tag_is_stable is {self.tag_is_stable}")
 
     def get_package_name_with_autorest_result(self):
         generate_result = self.get_autorest_result()
@@ -220,6 +216,18 @@ class CodegenTestPR:
             "azure-mgmt-resource-templatespecs",
             "azure-mgmt-resource-deploymentscripts",
             "azure-mgmt-resource-deployments",
+            "azure-mgmt-recoveryservicesbackup-passivestamp",
+            "azure-mgmt-certificateregistration",
+            "azure-mgmt-domainregistration",
+            "azure-mgmt-resource-changes",
+            "azure-mgmt-resource-databoundaries",
+            "azure-mgmt-resource-features",
+            "azure-mgmt-resource-links",
+            "azure-mgmt-resource-locks",
+            "azure-mgmt-resource-managedapplications",
+            "azure-mgmt-resource-policy",
+            "azure-mgmt-resource-privatelinks",
+            "azure-mgmt-resource-subscriptions",
         ]:
             return
         if self.from_swagger:
@@ -321,9 +329,16 @@ class CodegenTestPR:
         pr_title = "[AutoRelease] {}(can only be merged by SDK owner)".format(self.new_branch)
         pr_head = "{}:{}".format(os.getenv("USR_NAME"), self.new_branch)
         pr_base = "main"
-        pr_body = "{} \n{} \n{}".format(self.issue_link, self.test_result, self.pipeline_link)
+        pr_body = "PR for release issue {}".format(self.issue_link)
+        if self.release_pipeline_link:
+            pr_body += " \n After PR merged, trigger [release pipeline]({}) to release".format(
+                self.release_pipeline_link
+            )
         if self.has_multi_packages:
             pr_body += f"\nBuildTargetingString\n  {self.whole_package_name}\nSkip.CreateApiReview"
+        pr_body += "\n\n (Just to record: this PR was created by this [pipeline]({}))".format(
+            self.triggered_pipeline_link
+        )
         res_create = api.pulls.create(pr_title, pr_head, pr_base, pr_body)
 
         # Add issue link on PR

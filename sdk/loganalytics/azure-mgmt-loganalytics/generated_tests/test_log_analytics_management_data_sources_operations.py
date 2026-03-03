@@ -20,7 +20,7 @@ class TestLogAnalyticsManagementDataSourcesOperations(AzureMgmtRecordedTestCase)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_create_or_update(self, resource_group):
+    def test_data_sources_create_or_update(self, resource_group):
         response = self.client.data_sources.create_or_update(
             resource_group_name=resource_group.name,
             workspace_name="str",
@@ -34,7 +34,7 @@ class TestLogAnalyticsManagementDataSourcesOperations(AzureMgmtRecordedTestCase)
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2020-08-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -42,12 +42,12 @@ class TestLogAnalyticsManagementDataSourcesOperations(AzureMgmtRecordedTestCase)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_delete(self, resource_group):
+    def test_data_sources_delete(self, resource_group):
         response = self.client.data_sources.delete(
             resource_group_name=resource_group.name,
             workspace_name="str",
             data_source_name="str",
-            api_version="2020-08-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -55,12 +55,12 @@ class TestLogAnalyticsManagementDataSourcesOperations(AzureMgmtRecordedTestCase)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_data_sources_get(self, resource_group):
         response = self.client.data_sources.get(
             resource_group_name=resource_group.name,
             workspace_name="str",
             data_source_name="str",
-            api_version="2020-08-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -68,12 +68,12 @@ class TestLogAnalyticsManagementDataSourcesOperations(AzureMgmtRecordedTestCase)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_workspace(self, resource_group):
+    def test_data_sources_list_by_workspace(self, resource_group):
         response = self.client.data_sources.list_by_workspace(
             resource_group_name=resource_group.name,
             workspace_name="str",
             filter="str",
-            api_version="2020-08-01",
+            api_version="2025-07-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

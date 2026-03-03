@@ -108,7 +108,9 @@ async def _start_tests(index, test_class, num_tests, args, test_stages, results,
                 print(f"Failed to close tests: {e}")
 
 
-async def _run_tests(duration: int, args, tests, results, status, *, with_profiler: bool = False, warmup: bool = False) -> None:
+async def _run_tests(
+    duration: int, args, tests, results, status, *, with_profiler: bool = False, warmup: bool = False
+) -> None:
     """Run the listed tests either in parallel asynchronously or in a thread pool."""
     # Kick of a status monitoring thread.
     stop_status = threading.Event()

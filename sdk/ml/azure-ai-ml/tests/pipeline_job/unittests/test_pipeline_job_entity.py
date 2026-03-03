@@ -1,4 +1,5 @@
 import json
+import platform
 from pathlib import Path
 
 import pydash
@@ -2020,6 +2021,10 @@ class TestPipelineJobEntity:
             },
         }
 
+    @pytest.mark.skipif(
+        platform.python_implementation() == "PyPy",
+        reason="Relies on CPython bytecode optimization; PyPy does not support required opcodes",
+    )
     def test_pipeline_parameter_with_empty_value(self, client: MLClient) -> None:
         input_types_func = load_component(source="./tests/test_configs/components/input_types_component.yml")
 
@@ -2057,6 +2062,10 @@ class TestPipelineJobEntity:
         assert "number" in rest_obj.properties.inputs
         assert "str_param" in rest_obj.properties.inputs
 
+    @pytest.mark.skipif(
+        platform.python_implementation() == "PyPy",
+        reason="Relies on CPython bytecode optimization; PyPy does not support required opcodes",
+    )
     def test_pipeline_input_as_runsettings_value(self, client: MLClient) -> None:
         input_types_func = load_component(source="./tests/test_configs/components/input_types_component.yml")
 
@@ -2103,6 +2112,10 @@ class TestPipelineJobEntity:
         rest_obj = pipeline_job._to_rest_object()
         assert rest_obj.properties.jobs["text_ner_node"]["queue_settings"] == {"job_tier": "spot"}
 
+    @pytest.mark.skipif(
+        platform.python_implementation() == "PyPy",
+        reason="Relies on CPython bytecode optimization; PyPy does not support required opcodes",
+    )
     def test_pipeline_with_duplicate_output(self) -> None:
         component_path = "./tests/test_configs/components/helloworld_component.yml"
         comp_func = load_component(source=component_path)
@@ -2195,6 +2208,10 @@ class TestPipelineJobEntity:
             "runtime_version": "3.4.0",
         }
 
+    @pytest.mark.skipif(
+        platform.python_implementation() == "PyPy",
+        reason="Relies on CPython bytecode optimization; PyPy does not support required opcodes",
+    )
     def test_local_input_in_pipeline_job(self, client: MLClient, tmp_path: Path):
         file_path = tmp_path / "mock_input_file"
         file_path.touch(exist_ok=True)

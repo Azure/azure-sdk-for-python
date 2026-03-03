@@ -108,11 +108,9 @@ class TestCognitiveServicesManagementAccountsOperationsAsync(AzureMgmtRecordedTe
                                 {"id": "str", "ignoreMissingVnetServiceEndpoint": bool, "state": "str"}
                             ],
                         },
-                        "networkInjections": {
-                            "scenario": "str",
-                            "subnetArmId": "str",
-                            "useMicrosoftManagedNetwork": bool,
-                        },
+                        "networkInjections": [
+                            {"scenario": "str", "subnetArmId": "str", "useMicrosoftManagedNetwork": bool}
+                        ],
                         "privateEndpointConnections": [
                             {
                                 "etag": "str",
@@ -165,6 +163,7 @@ class TestCognitiveServicesManagementAccountsOperationsAsync(AzureMgmtRecordedTe
                             "countOfUpgradesAfterDowngrades": 0.0,
                             "lastChangeDate": "str",
                         },
+                        "storedCompletionsDisabled": bool,
                         "userOwnedStorage": [{"identityClientId": "str", "resourceId": "str"}],
                     },
                     "sku": {"name": "str", "capacity": 0, "family": "str", "size": "str", "tier": "str"},
@@ -179,7 +178,7 @@ class TestCognitiveServicesManagementAccountsOperationsAsync(AzureMgmtRecordedTe
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2025-06-01",
+                api_version="2025-09-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -275,11 +274,9 @@ class TestCognitiveServicesManagementAccountsOperationsAsync(AzureMgmtRecordedTe
                                 {"id": "str", "ignoreMissingVnetServiceEndpoint": bool, "state": "str"}
                             ],
                         },
-                        "networkInjections": {
-                            "scenario": "str",
-                            "subnetArmId": "str",
-                            "useMicrosoftManagedNetwork": bool,
-                        },
+                        "networkInjections": [
+                            {"scenario": "str", "subnetArmId": "str", "useMicrosoftManagedNetwork": bool}
+                        ],
                         "privateEndpointConnections": [
                             {
                                 "etag": "str",
@@ -332,6 +329,7 @@ class TestCognitiveServicesManagementAccountsOperationsAsync(AzureMgmtRecordedTe
                             "countOfUpgradesAfterDowngrades": 0.0,
                             "lastChangeDate": "str",
                         },
+                        "storedCompletionsDisabled": bool,
                         "userOwnedStorage": [{"identityClientId": "str", "resourceId": "str"}],
                     },
                     "sku": {"name": "str", "capacity": 0, "family": "str", "size": "str", "tier": "str"},
@@ -346,7 +344,7 @@ class TestCognitiveServicesManagementAccountsOperationsAsync(AzureMgmtRecordedTe
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2025-06-01",
+                api_version="2025-09-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -360,7 +358,7 @@ class TestCognitiveServicesManagementAccountsOperationsAsync(AzureMgmtRecordedTe
             await self.client.accounts.begin_delete(
                 resource_group_name=resource_group.name,
                 account_name="str",
-                api_version="2025-06-01",
+                api_version="2025-09-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -373,7 +371,7 @@ class TestCognitiveServicesManagementAccountsOperationsAsync(AzureMgmtRecordedTe
         response = await self.client.accounts.get(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2025-06-01",
+            api_version="2025-09-01",
         )
 
         # please add some check logic here by yourself
@@ -384,7 +382,7 @@ class TestCognitiveServicesManagementAccountsOperationsAsync(AzureMgmtRecordedTe
     async def test_accounts_list_by_resource_group(self, resource_group):
         response = self.client.accounts.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2025-06-01",
+            api_version="2025-09-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -394,7 +392,7 @@ class TestCognitiveServicesManagementAccountsOperationsAsync(AzureMgmtRecordedTe
     @recorded_by_proxy_async
     async def test_accounts_list(self, resource_group):
         response = self.client.accounts.list(
-            api_version="2025-06-01",
+            api_version="2025-09-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -406,7 +404,7 @@ class TestCognitiveServicesManagementAccountsOperationsAsync(AzureMgmtRecordedTe
         response = await self.client.accounts.list_keys(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2025-06-01",
+            api_version="2025-09-01",
         )
 
         # please add some check logic here by yourself
@@ -419,7 +417,7 @@ class TestCognitiveServicesManagementAccountsOperationsAsync(AzureMgmtRecordedTe
             resource_group_name=resource_group.name,
             account_name="str",
             key_name="str",
-            api_version="2025-06-01",
+            api_version="2025-09-01",
         )
 
         # please add some check logic here by yourself
@@ -431,7 +429,7 @@ class TestCognitiveServicesManagementAccountsOperationsAsync(AzureMgmtRecordedTe
         response = await self.client.accounts.list_skus(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2025-06-01",
+            api_version="2025-09-01",
         )
 
         # please add some check logic here by yourself
@@ -443,7 +441,7 @@ class TestCognitiveServicesManagementAccountsOperationsAsync(AzureMgmtRecordedTe
         response = await self.client.accounts.list_usages(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2025-06-01",
+            api_version="2025-09-01",
         )
 
         # please add some check logic here by yourself
@@ -455,7 +453,7 @@ class TestCognitiveServicesManagementAccountsOperationsAsync(AzureMgmtRecordedTe
         response = self.client.accounts.list_models(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2025-06-01",
+            api_version="2025-09-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

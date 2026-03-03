@@ -24,9 +24,12 @@
 #
 # --------------------------------------------------------------------------
 from __future__ import annotations
+from functools import cache
 import sys
 from typing import (
     Any,
+    Callable,
+    NoReturn,
     Optional,
     AsyncIterator as AsyncIteratorType,
     TYPE_CHECKING,
@@ -35,6 +38,7 @@ from typing import (
     Union,
     Type,
     MutableMapping,
+    Mapping,
 )
 from types import TracebackType
 from collections.abc import AsyncIterator
@@ -86,6 +90,31 @@ try:
 except ImportError:
 
     class ConnectionTimeoutError(Exception): ...  # type: ignore[no-redef]
+
+
+@cache
+def _get_detect() -> Callable[[bytes], Mapping[str, Any]]:
+    try:
+        from cchardet import detect
+
+        return detect
+    except ImportError:  # pragma: no cover
+        try:
+            from chardet import detect
+
+            return detect
+        except ImportError:  # pragma: no cover
+            try:
+                from charset_normalizer import detect
+
+                return detect
+            except ImportError as e:  # pragma: no cover
+                charset_import_err = e
+
+                def error_detect(_: bytes) -> NoReturn:
+                    raise charset_import_err
+
+                return error_detect
 
 
 class AioHttpTransport(AsyncHttpTransport):
@@ -445,7 +474,7 @@ class AioHttpStreamDownloadGenerator(AsyncIterator):
         except aiohttp.client_exceptions.ClientResponseError as err:
             raise ServiceResponseError(err, error=err) from err
         except asyncio.TimeoutError as err:
-            raise ServiceResponseError(err, error=err) from err
+            raise ServiceResponseTimeoutError(err, error=err) from err
         except aiohttp.client_exceptions.ClientError as err:
             raise ServiceRequestError(err, error=err) from err
         except Exception as err:
@@ -525,16 +554,7 @@ class AioHttpTransportResponse(AsyncHttpResponse):
             elif body is None:
                 raise RuntimeError("Cannot guess the encoding of a not yet read body")
             else:
-                try:
-                    import cchardet as chardet
-                except ImportError:  # pragma: no cover
-                    try:
-                        import chardet  # type: ignore
-                    except ImportError:  # pragma: no cover
-                        import charset_normalizer as chardet  # type: ignore[no-redef]
-                # While "detect" can return a dict of float, in this context this won't happen
-                # The cast is for pyright to be happy
-                encoding = cast(Optional[str], chardet.detect(body)["encoding"])
+                encoding = _get_detect()(body)["encoding"]
         if encoding == "utf-8" or encoding is None:
             encoding = "utf-8-sig"
 
@@ -551,7 +571,7 @@ class AioHttpTransportResponse(AsyncHttpResponse):
         except aiohttp.client_exceptions.ClientResponseError as err:
             raise ServiceResponseError(err, error=err) from err
         except asyncio.TimeoutError as err:
-            raise ServiceResponseError(err, error=err) from err
+            raise ServiceResponseTimeoutError(err, error=err) from err
         except aiohttp.client_exceptions.ClientError as err:
             raise ServiceRequestError(err, error=err) from err
 

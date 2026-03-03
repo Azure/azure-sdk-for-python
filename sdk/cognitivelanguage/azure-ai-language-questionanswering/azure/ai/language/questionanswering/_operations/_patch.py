@@ -1,7 +1,9 @@
-# ------------------------------------
-# Copyright (c) Microsoft Corporation.
-# Licensed under the MIT License.
-# ------------------------------------
+# pylint: disable=line-too-long,useless-suppression
+# coding=utf-8
+# --------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for license information.
+# --------------------------------------------------------------------------
 """Customize generated code here.
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
@@ -10,7 +12,7 @@ from typing import Any, List, overload, Optional, Union, Tuple, cast, MutableMap
 import copy
 from azure.core.tracing.decorator import distributed_trace
 
-from ._operations import QuestionAnsweringClientOperationsMixin as QuestionAnsweringClientOperationsMixinGenerated
+from ._operations import _QuestionAnsweringClientOperationsMixin as QuestionAnsweringClientOperationsMixinGenerated
 from ..models import (
     AnswersOptions,
     AnswersFromTextOptions,
@@ -90,12 +92,23 @@ def _handle_metadata_filter_conversion(options_input):
         in_class = False
     if not metadata_input:
         return options
-    try:
-        if any(t for t in metadata_input if len(t) != 2):
-            raise ValueError("'metadata' must be a sequence of key-value tuples.")
-    except TypeError as exc:
-        raise ValueError("'metadata' must be a sequence of key-value tuples.") from exc
-    metadata_modified = [{"key": m[0], "value": m[1]} for m in metadata_input]
+
+    # Handle both MetadataRecord objects and tuples
+    metadata_modified = []
+    for m in metadata_input:
+        if hasattr(m, "key") and hasattr(m, "value"):
+            # MetadataRecord object
+            metadata_modified.append({"key": m.key, "value": m.value})
+        else:
+            # Assume it's a tuple or sequence
+            try:
+                if len(m) != 2:
+                    raise ValueError("'metadata' must be a sequence of key-value tuples.")
+                metadata_modified.append({"key": m[0], "value": m[1]})
+            except (TypeError, AttributeError) as exc:
+                raise ValueError(
+                    "'metadata' must be a sequence of key-value tuples or MetadataRecord objects."
+                ) from exc
     if in_class:
         filters.metadata_filter.metadata = metadata_modified
     else:
@@ -142,15 +155,17 @@ def _get_answers_from_text_prepare_options(
     return options, kwargs
 
 
-class QuestionAnsweringClientOperationsMixin(QuestionAnsweringClientOperationsMixinGenerated):
+class _QuestionAnsweringClientOperationsMixin(QuestionAnsweringClientOperationsMixinGenerated):
     @overload  # type: ignore # https://github.com/Azure/azure-sdk-for-python/issues/26621
+    # pylint: disable=arguments-renamed
     def get_answers(
         self, options: AnswersOptions, *, project_name: str, deployment_name: str, **kwargs: Any
     ) -> AnswersResult:
         """Answers the specified question using your knowledge base.
 
-        :param options: Positional only. POST body of the request. Provide either `options`, OR
-         individual keyword arguments. If both are provided, only the options object will be used.
+        :param options: Positional only. POST body of the request. Provide either
+         `options`, OR individual keyword arguments. If both are provided, only the
+         options object will be used.
         :type options: ~azure.ai.language.questionanswering.models.AnswersOptions
         :keyword project_name: The name of the knowledge base project to use.
         :paramtype project_name: str
@@ -214,12 +229,10 @@ class QuestionAnsweringClientOperationsMixin(QuestionAnsweringClientOperationsMi
         """
 
     # pylint ignore b/c with overloads we need to doc ALL the params in the impl for them to show up in docs
-    # pylint: disable=docstring-keyword-should-match-keyword-only,docstring-missing-param,docstring-should-be-keyword
+    # pylint: disable=docstring-keyword-should-match-keyword-only,docstring-missing-param,docstring-should-be-keyword,arguments-renamed
     @distributed_trace
     def get_answers(  # pyright: ignore[reportIncompatibleMethodOverride]
-        self,
-        *args: AnswersOptions,
-        **kwargs: Any
+        self, *args: AnswersOptions, **kwargs: Any
     ) -> AnswersResult:
         """Answers the specified question using your knowledge base.
 
@@ -296,20 +309,18 @@ class QuestionAnsweringClientOperationsMixin(QuestionAnsweringClientOperationsMi
         :paramtype question: str
         :keyword text_documents: Text records to be searched for given question.
         :paramtype text_documents: list[str or ~azure.ai.language.questionanswering.models.TextDocument]
-        :keyword language: Language of the text records. This is BCP-47 representation of a language.
-         For example, use "en" for English; "es" for Spanish etc. If not set, use "en" for English as
-         default.
+        :keyword language: BCP-47 language tag (e.g. "en", "es"). If omitted, the client does not set a
+         value and the service will apply its own default (currently English).
         :paramtype language: str
         :return: AnswersFromTextResult
         :rtype: ~azure.ai.language.questionanswering.models.AnswersFromTextResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
+    # pylint: disable=arguments-renamed
     @distributed_trace
     def get_answers_from_text(  # pyright: ignore[reportIncompatibleMethodOverride]
-        self,
-        *args: AnswersFromTextOptions,
-        **kwargs: Any
+        self, *args: AnswersFromTextOptions, **kwargs: Any
     ) -> AnswersFromTextResult:
         """Answers the specified question using the provided text in the body.
 
@@ -337,14 +348,16 @@ class QuestionAnsweringClientOperationsMixin(QuestionAnsweringClientOperationsMi
                 :dedent: 4
                 :caption: Answers the specified question using the provided text.
         """
+        # Use only explicit user-provided language (if any); no hidden default attribute
+        _explicit_language = kwargs.pop("language", None)
         options, kwargs = _get_answers_from_text_prepare_options(
-            *args, language=kwargs.pop("language", self._default_language), **kwargs  # type: ignore
+            *args, language=_explicit_language, **kwargs  # type: ignore
         )
         return super().get_answers_from_text(options, **kwargs)  # type: ignore
 
 
 __all__: List[str] = [
-    "QuestionAnsweringClientOperationsMixin"
+    "_QuestionAnsweringClientOperationsMixin"
 ]  # Add all objects you want publicly available to users at this package level
 
 

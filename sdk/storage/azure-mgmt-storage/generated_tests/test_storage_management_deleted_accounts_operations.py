@@ -22,7 +22,7 @@ class TestStorageManagementDeletedAccountsOperations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_deleted_accounts_list(self, resource_group):
         response = self.client.deleted_accounts.list(
-            api_version="2024-01-01",
+            api_version="2025-06-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -34,7 +34,7 @@ class TestStorageManagementDeletedAccountsOperations(AzureMgmtRecordedTestCase):
         response = self.client.deleted_accounts.get(
             deleted_account_name="str",
             location="str",
-            api_version="2024-01-01",
+            api_version="2025-06-01",
         )
 
         # please add some check logic here by yourself

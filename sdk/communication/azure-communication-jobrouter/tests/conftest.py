@@ -36,6 +36,7 @@ from devtools_testutils import (
     add_uri_regex_sanitizer,
     add_body_key_sanitizer,
     remove_batch_sanitizers,
+    set_custom_default_matcher
 )
 from router_test_constants import SANITIZED, FAKE_FUNCTION_URI, FAKE_ENDPOINT, FAKE_CONNECTION_STRING
 from azure.communication.jobrouter._shared.utils import parse_connection_str
@@ -48,6 +49,12 @@ from azure.communication.jobrouter._shared.utils import parse_connection_str
 @pytest.fixture(scope="session", autouse=True)
 def start_proxy(test_proxy):
     set_default_session_settings()
+
+    # On python 3.14, azure-core sends an additional 'Accept-Encoding' header value that causes playback issues.
+    # By ignoring it, we can avoid really wonky mismatch errors, while still validating the other headers
+    if sys.version_info >= (3, 14):
+        headers_to_ignore = "Accept-Encoding"
+        set_custom_default_matcher(ignored_headers=headers_to_ignore)
 
     communication_connection_string = os.getenv(
         "COMMUNICATION_LIVETEST_DYNAMIC_CONNECTION_STRING", FAKE_CONNECTION_STRING

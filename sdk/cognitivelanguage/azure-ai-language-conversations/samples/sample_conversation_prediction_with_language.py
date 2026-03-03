@@ -45,7 +45,7 @@ from azure.ai.language.conversations.models import (
 )
 
 
-def sample_conversation_prediction_with_language():
+def sample_conv_prediction_language():
     # settings
     endpoint = os.environ["AZURE_CONVERSATIONS_ENDPOINT"]
     project_name = os.environ["AZURE_CONVERSATIONS_PROJECT_NAME"]
@@ -106,11 +106,13 @@ def sample_conversation_prediction_with_language():
                 print()
     else:
         print("Unexpected result type from analyze_conversation.")
+
+
 # [END conversation_prediction_with_language]
 
 
 def main():
-    sample_conversation_prediction_with_language()
+    sample_conv_prediction_language()
 
 
 if __name__ == "__main__":

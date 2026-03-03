@@ -32,19 +32,23 @@ _diagnostic_file_logger.setLevel(logging.DEBUG)
 _DIAGNOSTIC_LOG_PATH = _get_log_path()
 
 _DISTRO_DETECTS_ATTACH = "4100"
-_INFO = "4101"
 _INSTRUMENTATION_SKIPPED = "4101"
+_INFO = "4102"
 
 _ATTACH_SUCCESS_DISTRO = "4200"
 _ATTACH_SUCCESS_CONFIGURATOR = "4201"
 _INSTRUMENTATION_SUCCEEDED = "4202"
 
 _DEPENDENCY_OVERLAP = "4300"
+_BACKOFF_EXPORTER = "4301"
+_BACKOFF_CONFLICT = "4302"
+_BACKOFF_UNSUPPORTED_PYTHON_VERSION = "4303"
 
 _ATTACH_FAILURE_DISTRO = "4400"
 _ATTACH_FAILURE_CONFIGURATOR = "4401"
 _ATTACH_DETECTS_SDK = "4402"
 _INSTRUMENTATION_FAILED = "4403"
+_EXCEPTION = "4404"
 
 
 class AzureDiagnosticLogging:
@@ -95,7 +99,9 @@ class AzureDiagnosticLogging:
                         _diagnostic_file_logger.addHandler(f_handler)
                         cls._initialized = True
                     except Exception as e:  # pylint: disable=broad-except
-                        _logger.error("Failed to initialize Azure Monitor diagnostic logging: %s", e)
+                        _logger.error(
+                            "Failed to initialize Azure Monitor diagnostic logging: %s", e
+                        )  # pylint: disable=do-not-log-exceptions-if-not-debug
                         cls._initialized = False
 
     @classmethod

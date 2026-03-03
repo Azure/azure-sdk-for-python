@@ -1,8 +1,70 @@
 # Release History
 
-## 12.28.0b1 (Unreleased)
+## 12.30.0b1 (Unreleased)
 
 ### Features Added
+
+## 12.29.0b1 (2026-01-27)
+
+### Features Added
+- Added support for service version 2026-04-06.
+- Added support for error code `INCREMENTAL_COPY_OF_EARLIER_SNAPSHOT_NOT_ALLOWED`. 
+This replaces `INCREMENTAL_COPY_OF_EARLIER_VERSION_SNAPSHOT_NOT_ALLOWED` which has been deprecated.
+- Added support for the keywords `access_tier_if_modified_since` and `access_tier_if_unmodified_since` to
+conditionally perform `BlobClient.delete_blob` operation.
+- Added support for the keyword `source_cpk` for `BlobClient`'s `upload_blob_from_url`, 
+`stage_block_from_url`, `upload_pages_from_url`, and `append_block_from_url` APIs
+to re-encrypt data automatically by the service through a `CustomerProvidedEncryptionKey`.
+- Added support for the keyword `user_delegation_tid` to `BlobServiceClient.get_user_delegation_key` API, which
+can be used in `generate_blob_sas` and `generate_container_sas` to specify the Tenant ID that is authorized
+to use the generated SAS URL. Note that `user_delegation_tid` must be used together with `user_delegation_oid`.
+- Added support for the keyword `request_headers` to `generate_blob_sas` and `generate_container_sas`, 
+which specifies a set of headers and their corresponding values that must be 
+present in the request header when using the generated SAS.
+- Added support for the keyword `request_query_params` to `generate_blob_sas` and `generate_container_sas`, 
+which specifies a set of query parameters and their corresponding values that must be 
+present in the request URL when using the generated SAS.
+
+### Other Changes
+- Bumped minimum `azure-core` dependency to 1.37.0.
+
+## 12.28.0 (2026-01-06)
+
+### Features Added
+- Stable release of features from 12.28.0b1
+
+### Other Changes
+- Changed the default `connection_data_block_size` for all clients from 4 KiB to 256 KiB. This should result in
+significantly better throughput on large file downloads for most environments.
+
+## 12.28.0b1 (2025-12-04)
+
+### Features Added
+- Added support for service version 2026-02-06.
+- Added support for the keywords `if_modified_since`, `if_unmodified_since`, `etag`, and `match_condition` to 
+conditionally perform `BlobClient`'s `set_blob_tags` and `get_blob_tags` operations.
+- Added support for the keyword `start_from` in `ContainerClient`'s `list_blobs`, `list_blob_names`, and `walk_blobs`
+APIs, which specifies the full path to start listing paths from.
+- Added support for the keyword `user_delegation_oid` to `generate_blob_sas` and `generate_container_sas`, which
+specifies the Entra ID of the user that is authorized to use the generated SAS URL.
+- Added support for `UseDevelopmentStorage=true;` as a valid connection string for Azurite.
+- Added the ability to skip auto decompression on `BlobClient.download_blob` via the `decompress` keyword.
+
+## 12.27.1 (2025-10-29)
+
+### Bugs Fixed
+- Fixed MyPy `attr-defined` errors for `BlobClient`.
+
+## 12.27.0 (2025-10-15)
+
+### Features Added
+- Stable release of features from 12.27.0b1
+
+### Other Changes
+- Migrated any previously documented `kwarg` arguments to be named keywords. 
+Some public types may have been adjusted if they were previously erroneous or incomplete.
+- Removed `__enter__` and `__exit__` attributes for all asynchronous client objects for raising explicit `TypeError`, 
+and let the `AttributeError` raise directly.
 
 ## 12.26.0 (2025-07-16)
 

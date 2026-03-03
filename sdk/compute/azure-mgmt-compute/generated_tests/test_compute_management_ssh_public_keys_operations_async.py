@@ -23,7 +23,7 @@ class TestComputeManagementSshPublicKeysOperationsAsync(AzureMgmtRecordedTestCas
     @recorded_by_proxy_async
     async def test_ssh_public_keys_list_by_subscription(self, resource_group):
         response = self.client.ssh_public_keys.list_by_subscription(
-            api_version="2024-11-01",
+            api_version="2025-04-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -34,7 +34,7 @@ class TestComputeManagementSshPublicKeysOperationsAsync(AzureMgmtRecordedTestCas
     async def test_ssh_public_keys_list_by_resource_group(self, resource_group):
         response = self.client.ssh_public_keys.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2024-11-01",
+            api_version="2025-04-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -46,7 +46,7 @@ class TestComputeManagementSshPublicKeysOperationsAsync(AzureMgmtRecordedTestCas
         response = await self.client.ssh_public_keys.get(
             resource_group_name=resource_group.name,
             ssh_public_key_name="str",
-            api_version="2024-11-01",
+            api_version="2025-04-01",
         )
 
         # please add some check logic here by yourself
@@ -74,7 +74,7 @@ class TestComputeManagementSshPublicKeysOperationsAsync(AzureMgmtRecordedTestCas
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2024-11-01",
+            api_version="2025-04-01",
         )
 
         # please add some check logic here by yourself
@@ -87,7 +87,7 @@ class TestComputeManagementSshPublicKeysOperationsAsync(AzureMgmtRecordedTestCas
             resource_group_name=resource_group.name,
             ssh_public_key_name="str",
             parameters={"publicKey": "str", "tags": {"str": "str"}},
-            api_version="2024-11-01",
+            api_version="2025-04-01",
         )
 
         # please add some check logic here by yourself
@@ -99,7 +99,7 @@ class TestComputeManagementSshPublicKeysOperationsAsync(AzureMgmtRecordedTestCas
         response = await self.client.ssh_public_keys.delete(
             resource_group_name=resource_group.name,
             ssh_public_key_name="str",
-            api_version="2024-11-01",
+            api_version="2025-04-01",
         )
 
         # please add some check logic here by yourself
@@ -111,7 +111,7 @@ class TestComputeManagementSshPublicKeysOperationsAsync(AzureMgmtRecordedTestCas
         response = await self.client.ssh_public_keys.generate_key_pair(
             resource_group_name=resource_group.name,
             ssh_public_key_name="str",
-            api_version="2024-11-01",
+            api_version="2025-04-01",
         )
 
         # please add some check logic here by yourself

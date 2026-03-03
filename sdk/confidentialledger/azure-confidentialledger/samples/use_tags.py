@@ -41,8 +41,7 @@ def main():
         ledger_endpoint = os.environ["CONFIDENTIALLEDGER_ENDPOINT"]
     except KeyError:
         LOG.error(
-            "Missing environment variable 'CONFIDENTIALLEDGER_ENDPOINT' - "
-            "please set it before running the example"
+            "Missing environment variable 'CONFIDENTIALLEDGER_ENDPOINT' - " "please set it before running the example"
         )
         sys.exit(1)
 
@@ -87,78 +86,77 @@ def main():
             {"contents": "Hello from Alice!"},
             {"contents": "Hi from Bob!"},
             {"contents": "Bye from Alice!"},
-            {"contents": "Bye from Bob!"}
+            {"contents": "Bye from Bob!"},
         ]
-        
+
         print("Here are the entries being written to the 'messages' collection:")
-        write_result = ledger_client.create_ledger_entry(collection_id="messages", entry=transactions[0], tags="alice,greeting")
+        write_result = ledger_client.create_ledger_entry(
+            collection_id="messages", entry=transactions[0], tags="alice,greeting"
+        )
         print(f"Transaction ID for Alice's greeting: {write_result['transactionId']}")
-        write_result = ledger_client.create_ledger_entry(collection_id="messages", entry=transactions[1], tags="bob,greeting")
-        print(f"Transaction ID for Bob's greeting: {write_result['transactionId']}")    
-        write_result = ledger_client.create_ledger_entry(collection_id="messages", entry=transactions[2], tags="alice,goodbye")
+        write_result = ledger_client.create_ledger_entry(
+            collection_id="messages", entry=transactions[1], tags="bob,greeting"
+        )
+        print(f"Transaction ID for Bob's greeting: {write_result['transactionId']}")
+        write_result = ledger_client.create_ledger_entry(
+            collection_id="messages", entry=transactions[2], tags="alice,goodbye"
+        )
         print(f"Transaction ID for Alice's goodbye: {write_result['transactionId']}")
-        write_result = ledger_client.create_ledger_entry(collection_id="messages", entry=transactions[3], tags="bob,goodbye")
+        write_result = ledger_client.create_ledger_entry(
+            collection_id="messages", entry=transactions[3], tags="bob,goodbye"
+        )
         print(f"Transaction ID for Bob's goodbye: {write_result['transactionId']}")
 
         # Lets retrieve all the entries in the collection
-        list_result = ledger_client.list_ledger_entries(
-            collection_id="messages"
-        )
+        list_result = ledger_client.list_ledger_entries(collection_id="messages")
         print("Here are the entries in the 'messages' collection:")
         for entry in list_result:
             print(f"Transaction ID: {entry['transactionId']}")
             print(f"Contents: {entry['contents']}")
-            if 'tags' in entry:
+            if "tags" in entry:
                 print(f"Tags: {entry['tags']}")
-            print("-" * 30)     
-        
+            print("-" * 30)
+
         # Now lets retrieve all the entries in the collection that are a "greeting"
-        list_result = ledger_client.list_ledger_entries(
-            collection_id="messages", tag="greeting"
-        )
+        list_result = ledger_client.list_ledger_entries(collection_id="messages", tag="greeting")
         print("Here are the entries in the 'messages' collection with tag 'greeting':")
         for entry in list_result:
             print(f"Transaction ID: {entry['transactionId']}")
             print(f"Contents: {entry['contents']}")
-            if 'tags' in entry:
+            if "tags" in entry:
                 print(f"Tags: {entry['tags']}")
             print("-" * 30)
 
         # Let's retrieve all the goodbyes
-        list_result = ledger_client.list_ledger_entries(
-            collection_id="messages", tag="goodbye"
-        )           
+        list_result = ledger_client.list_ledger_entries(collection_id="messages", tag="goodbye")
         print("Here are the entries in the 'messages' collection with tag 'goodbye':")
         for entry in list_result:
             print(f"Transaction ID: {entry['transactionId']}")
             print(f"Contents: {entry['contents']}")
-            if 'tags' in entry:
+            if "tags" in entry:
                 print(f"Tags: {entry['tags']}")
             print("-" * 30)
 
         # Lets retrieve all the entries in the collection that are from Alice
-        list_result = ledger_client.list_ledger_entries(
-            collection_id="messages", tag="alice"
-        )
+        list_result = ledger_client.list_ledger_entries(collection_id="messages", tag="alice")
         print("Here are the entries in the 'messages' collection with tag 'alice':")
         for entry in list_result:
             print(f"Transaction ID: {entry['transactionId']}")
             print(f"Contents: {entry['contents']}")
-            if 'tags' in entry:
+            if "tags" in entry:
                 print(f"Tags: {entry['tags']}")
             print("-" * 30)
 
         # Lets retrieve all the entries in the collection that are from Bob
-        list_result = ledger_client.list_ledger_entries(
-            collection_id="messages", tag="bob"
-        )   
+        list_result = ledger_client.list_ledger_entries(collection_id="messages", tag="bob")
         print("Here are the entries in the 'messages' collection with tag 'bob':")
         for entry in list_result:
             print(f"Transaction ID: {entry['transactionId']}")
             print(f"Contents: {entry['contents']}")
-            if 'tags' in entry:
+            if "tags" in entry:
                 print(f"Tags: {entry['tags']}")
             print("-" * 30)
+
 
 if __name__ == "__main__":
     main()

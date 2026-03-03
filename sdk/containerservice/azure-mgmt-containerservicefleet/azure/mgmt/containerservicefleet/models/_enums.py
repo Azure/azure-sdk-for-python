@@ -19,6 +19,17 @@ class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Actions are for internal-only APIs."""
 
 
+class AdoptionPolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Action if the Namespace with the same name already exists."""
+
+    NEVER = "Never"
+    """If the Namespace already exists, do not take over the existing Namespace to be managed by ARM."""
+    IF_IDENTICAL = "IfIdentical"
+    """If there is an identical Namespace, take over the existing Namespace to be managed by ARM."""
+    ALWAYS = "Always"
+    """Always take over the existing Namespace to be managed by ARM, even if it is not identical."""
+
+
 class AutoUpgradeLastTriggerStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """AutoUpgradeLastTriggerStatus is the status of the last AutoUpgrade trigger (attempt to
     automatically create and start UpdateRun when there are new released versions) of an auto
@@ -71,6 +82,32 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The entity was created by a managed identity."""
     KEY = "Key"
     """The entity was created by a key."""
+
+
+class DeletePolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Delete options for the ARM managed namespace."""
+
+    KEEP = "Keep"
+    """Delete the ARM resource but keep the Namespace."""
+    DELETE = "Delete"
+    """Delete both ARM resource and Namespace."""
+
+
+class FleetManagedNamespaceProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The provisioning state of the fleet managed namespace resource."""
+
+    SUCCEEDED = "Succeeded"
+    """Resource has been created."""
+    FAILED = "Failed"
+    """Resource creation failed."""
+    CANCELED = "Canceled"
+    """Resource creation was canceled."""
+    CREATING = "Creating"
+    """The provisioning state of a fleet managed namespace being created."""
+    UPDATING = "Updating"
+    """The provisioning state of a fleet managed namespace being updated."""
+    DELETING = "Deleting"
+    """The provisioning state of a fleet managed namespace being deleted."""
 
 
 class FleetMemberProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -147,6 +184,19 @@ class GateType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """An approval gate is completed by setting its state to be Completed."""
 
 
+class LabelSelectorOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """A label selector operator is the set of operators that can be used in a selector requirement."""
+
+    IN = "In"
+    """Label Selector Operator In"""
+    NOT_IN = "NotIn"
+    """Label Selector Operator NotIn"""
+    EXISTS = "Exists"
+    """Label Selector Operator Exists"""
+    DOES_NOT_EXIST = "DoesNotExist"
+    """Label Selector Operator DoesNotExist"""
+
+
 class ManagedClusterUpgradeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of upgrade to perform when targeting ManagedClusters."""
 
@@ -212,6 +262,65 @@ class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Indicates the operation is initiated by a user or system."""
 
 
+class PlacementType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """PlacementType identifies the type of placement."""
+
+    PICK_ALL = "PickAll"
+    """PickAll picks all clusters that satisfy the rules."""
+    PICK_FIXED = "PickFixed"
+    """PickFixed picks a fixed set of clusters."""
+
+
+class PolicyRule(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The possible values representing different network policy rules."""
+
+    ALLOW_ALL = "AllowAll"
+    """Allow all network traffic."""
+    DENY_ALL = "DenyAll"
+    """Deny all network traffic."""
+    ALLOW_SAME_NAMESPACE = "AllowSameNamespace"
+    """Allow traffic within the same namespace."""
+
+
+class PropagationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """How the namespace will be provisioned among the fleet members."""
+
+    PLACEMENT = "Placement"
+    """Using ClusterResourcePlacement."""
+
+
+class PropertySelectorOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """PropertySelectorOperator is the operator that can be used with PropertySelectorRequirements."""
+
+    GT = "Gt"
+    """Gt dictates Fleet to select cluster if its observed value of a given property is greater than
+    the value specified in the requirement."""
+    GE = "Ge"
+    """Ge dictates Fleet to select cluster if its observed value of a given property is greater than
+    or equal to the value specified in the requirement."""
+    EQ = "Eq"
+    """Eq dictates Fleet to select cluster if its observed value of a given property is equal to the
+    values specified in the requirement."""
+    NE = "Ne"
+    """Ne dictates Fleet to select cluster if its observed value of a given property is not equal to
+    the values specified in the requirement."""
+    LT = "Lt"
+    """Lt dictates Fleet to select cluster if its observed value of a given property is less than the
+    value specified in the requirement."""
+    LE = "Le"
+    """Le dictates Fleet to select cluster if its observed value of a given property is less than or
+    equal to the value specified in the requirement."""
+
+
+class TaintEffect(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """TaintEffect."""
+
+    NO_SCHEDULE = "NoSchedule"
+    """Do not allow new pods to schedule onto the node unless they tolerate the taint, but allow all
+    pods submitted to Kubelet without going through the scheduler to start, and allow all
+    already-running pods to continue running. Enforced by the scheduler."""
+
+
 class TargetType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The target type of a skip request."""
 
@@ -232,6 +341,15 @@ class Timing(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The Gate is before the target."""
     AFTER = "After"
     """The Gate is after the target."""
+
+
+class TolerationOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """A toleration operator is the set of operators that can be used in a toleration."""
+
+    EXISTS = "Exists"
+    """Toleration Operator Exists"""
+    EQUAL = "Equal"
+    """Toleration Operator Equal"""
 
 
 class UpdateRunProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):

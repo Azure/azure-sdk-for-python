@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -27,35 +28,31 @@ class TestSearchBatchingClientAsync:
     @await_prepared_test
     async def test_batch_queue(self):
         async with SearchIndexingBufferedSender("endpoint", "index name", CREDENTIAL, auto_flush=False) as client:
-            assert client._index_documents_batch
-            await client.upload_documents(["upload1"])
-            await client.delete_documents(["delete1", "delete2"])
-            await client.merge_documents(["merge1", "merge2", "merge3"])
-            await client.merge_or_upload_documents(["merge_or_upload1"])
+            assert not (client._index_documents_batch is None)
+            await client.upload_documents([{"upload1": "doc"}])
+            await client.delete_documents([{"delete1": "doc"}, {"delete2": "doc"}])
+            await client.merge_documents([{"merge1": "doc"}, {"merge2": "doc"}, {"merge3": "doc"}])
+            await client.merge_or_upload_documents([{"merge_or_upload1": "doc"}])
             assert len(client.actions) == 7
-            actions = await client._index_documents_batch.dequeue_actions()
+            actions = client._index_documents_batch.dequeue_actions()
             assert len(client.actions) == 0
-            await client._index_documents_batch.enqueue_actions(actions)
+            client._index_documents_batch.enqueue_actions(actions)
             assert len(client.actions) == 7
 
     @await_prepared_test
-    @mock.patch(
-        "azure.search.documents.aio._search_indexing_buffered_sender_async.SearchIndexingBufferedSender._process_if_needed"
-    )
+    @mock.patch("azure.search.documents.aio._patch.SearchIndexingBufferedSender._process_if_needed")
     async def test_process_if_needed(self, mock_process_if_needed):
         async with SearchIndexingBufferedSender("endpoint", "index name", CREDENTIAL) as client:
-            await client.upload_documents(["upload1"])
-            await client.delete_documents(["delete1", "delete2"])
+            await client.upload_documents([{"upload1": "doc"}])
+            await client.delete_documents([{"delete1": "doc"}, {"delete2": "doc"}])
         assert mock_process_if_needed.called
 
     @await_prepared_test
-    @mock.patch(
-        "azure.search.documents.aio._search_indexing_buffered_sender_async.SearchIndexingBufferedSender._cleanup"
-    )
+    @mock.patch("azure.search.documents.aio._patch.SearchIndexingBufferedSender._cleanup")
     async def test_context_manager(self, mock_cleanup):
         async with SearchIndexingBufferedSender("endpoint", "index name", CREDENTIAL, auto_flush=False) as client:
-            await client.upload_documents(["upload1"])
-            await client.delete_documents(["delete1", "delete2"])
+            await client.upload_documents([{"upload1": "doc"}])
+            await client.delete_documents([{"delete1": "doc"}, {"delete2": "doc"}])
         assert mock_cleanup.called
 
     @await_prepared_test
@@ -84,7 +81,7 @@ class TestSearchBatchingClientAsync:
         async with SearchIndexingBufferedSender(
             "endpoint", "index name", CREDENTIAL, auto_flush=False, on_new=on_new
         ) as client:
-            await client.upload_documents(["upload1"])
+            await client.upload_documents([{"upload1": "doc"}])
             assert on_new.called
 
     @await_prepared_test
@@ -92,10 +89,9 @@ class TestSearchBatchingClientAsync:
         async def mock_fail_index_documents(actions, timeout=86400):
             if len(actions) > 0:
                 result = IndexingResult()
-                result.key = actions[0].additional_properties.get("id")
+                result.key = actions[0].get("id")
                 result.status_code = 400
                 result.succeeded = False
-                self.uploaded = self.uploaded + len(actions) - 1
                 return [result]
 
         on_error = mock.AsyncMock()
@@ -104,7 +100,7 @@ class TestSearchBatchingClientAsync:
         ) as client:
             client._index_documents_actions = mock_fail_index_documents
             client._index_key = "id"
-            await client.upload_documents({"id": 0})
+            await client.upload_documents([{"id": 0}])
             await client.flush()
             assert on_error.called
 
@@ -113,10 +109,9 @@ class TestSearchBatchingClientAsync:
         async def mock_fail_index_documents(actions, timeout=86400):
             if len(actions) > 0:
                 result = IndexingResult()
-                result.key = actions[0].additional_properties.get("id")
+                result.key = actions[0].get("id")
                 result.status_code = 400
                 result.succeeded = False
-                self.uploaded = self.uploaded + len(actions) - 1
                 time.sleep(1)
                 return [result]
 
@@ -136,7 +131,7 @@ class TestSearchBatchingClientAsync:
         async def mock_successful_index_documents(actions, timeout=86400):
             if len(actions) > 0:
                 result = IndexingResult()
-                result.key = actions[0].additional_properties.get("id")
+                result.key = actions[0].get("id")
                 result.status_code = 200
                 result.succeeded = True
                 return [result]
@@ -153,7 +148,7 @@ class TestSearchBatchingClientAsync:
         ) as client:
             client._index_documents_actions = mock_successful_index_documents
             client._index_key = "id"
-            await client.upload_documents({"id": 0})
+            await client.upload_documents([{"id": 0}])
             await client.flush()
             assert on_progress.called
             assert on_remove.called

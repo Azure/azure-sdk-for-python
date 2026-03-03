@@ -3,13 +3,14 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
+import os
 import uuid
 
 from devtools_testutils.perfstress_tests import PerfStressTest
 from azure.storage.blob import BlobServiceClient as SyncBlobServiceClient
 from azure.storage.blob.aio import BlobServiceClient as AsyncBlobServiceClient
-from azure.identity import ClientSecretCredential as SyncClientSecretCredential
-from azure.identity.aio import ClientSecretCredential as AsyncClientSecretCredential
+from azure.identity import ManagedIdentityCredential as SyncManagedIdentityCredential
+from azure.identity.aio import ManagedIdentityCredential as AsyncManagedIdentityCredential
 
 from .key_wrapper import KeyWrapper
 
@@ -17,14 +18,23 @@ from .key_wrapper import KeyWrapper
 class _ServiceTest(PerfStressTest):
     service_client = None
     async_service_client = None
+    sync_token_credential = None
+    async_token_credential = None
 
     def __init__(self, arguments):
         super().__init__(arguments)
         if self.args.test_proxies:
             self._client_kwargs['_additional_pipeline_policies'] = self._client_kwargs['per_retry_policies']
-        self._client_kwargs['max_single_put_size'] = self.args.max_put_size
-        self._client_kwargs['max_block_size'] = self.args.max_block_size
-        self._client_kwargs['min_large_block_upload_threshold'] = self.args.buffer_threshold
+        if self.args.max_put_size is not None:
+            self._client_kwargs['max_single_put_size'] = self.args.max_put_size
+        if self.args.max_block_size is not None:
+            self._client_kwargs['max_block_size'] = self.args.max_block_size
+        if self.args.max_get_size is not None:
+            self._client_kwargs['max_single_get_size'] = self.args.max_get_size
+        if self.args.buffer_threshold is not None:
+            self._client_kwargs['min_large_block_upload_threshold'] = self.args.buffer_threshold
+        if self.args.data_block_size is not None:
+            self._client_kwargs['connection_data_block_size'] = self.args.data_block_size
         if self.args.client_encryption:
             self.key_encryption_key = KeyWrapper()
             self._client_kwargs['require_encryption'] = True
@@ -33,21 +43,24 @@ class _ServiceTest(PerfStressTest):
         # self._client_kwargs['api_version'] = '2019-02-02'  # Used only for comparison with T1 legacy tests
 
         if not _ServiceTest.service_client or self.args.no_client_share:
-            if self.args.use_entra_id:
+            use_managed_identity = os.environ.get("AZURE_STORAGE_USE_MANAGED_IDENTITY", "false").lower() == "true"
+            if self.args.use_entra_id or use_managed_identity:
                 account_name = self.get_from_env("AZURE_STORAGE_ACCOUNT_NAME")
-                sync_token_credential = self.get_credential(is_async=False)
-                async_token_credential = self.get_credential(is_async=True)
+                _ServiceTest.sync_token_credential = SyncManagedIdentityCredential() if use_managed_identity else self.get_credential(is_async=False)
+                _ServiceTest.async_token_credential = AsyncManagedIdentityCredential() if use_managed_identity else self.get_credential(is_async=True)
 
                 # We assume these tests will only be run on the Azure public cloud for now.
                 url = f"https://{account_name}.blob.core.windows.net"
-                _ServiceTest.service_client = SyncBlobServiceClient(account_url=url, credential=sync_token_credential, **self._client_kwargs)
-                _ServiceTest.async_service_client = AsyncBlobServiceClient(account_url=url, credential=async_token_credential, **self._client_kwargs)
+                _ServiceTest.service_client = SyncBlobServiceClient(account_url=url, credential=_ServiceTest.sync_token_credential, **self._client_kwargs)
+                _ServiceTest.async_service_client = AsyncBlobServiceClient(account_url=url, credential=_ServiceTest.async_token_credential, **self._client_kwargs)
             else:
                 connection_string = self.get_from_env("AZURE_STORAGE_CONNECTION_STRING")
                 _ServiceTest.service_client = SyncBlobServiceClient.from_connection_string(conn_str=connection_string, **self._client_kwargs)
                 _ServiceTest.async_service_client = AsyncBlobServiceClient.from_connection_string(conn_str=connection_string, **self._client_kwargs)
         self.service_client = _ServiceTest.service_client
         self.async_service_client = _ServiceTest.async_service_client
+        self.sync_token_credential = _ServiceTest.sync_token_credential
+        self.async_token_credential = _ServiceTest.async_token_credential
 
     async def close(self):
         await self.async_service_client.close()
@@ -56,9 +69,11 @@ class _ServiceTest(PerfStressTest):
     @staticmethod
     def add_arguments(parser):
         super(_ServiceTest, _ServiceTest).add_arguments(parser)
-        parser.add_argument('--max-put-size', nargs='?', type=int, help='Maximum size of data uploading in single HTTP PUT. Defaults to 64*1024*1024', default=64*1024*1024)
-        parser.add_argument('--max-block-size', nargs='?', type=int, help='Maximum size of data in a block within a blob. Defaults to 4*1024*1024', default=4*1024*1024)
-        parser.add_argument('--buffer-threshold', nargs='?', type=int, help='Minimum block size to prevent full block buffering. Defaults to 4*1024*1024+1', default=4*1024*1024+1)
+        parser.add_argument('--max-put-size', nargs='?', type=int, help='Maximum size of data uploading in single HTTP PUT. Defaults to SDK default.', default=None)
+        parser.add_argument('--max-block-size', nargs='?', type=int, help='Maximum size of data in a block within a blob. Defaults to SDK default.', default=None)
+        parser.add_argument('--max-get-size', nargs='?', type=int, help='Initial chunk size of a Blob download. Defaults to SDK default.', default=None)
+        parser.add_argument('--buffer-threshold', nargs='?', type=int, help='Minimum block size to prevent full block buffering. Defaults to SDK default.', default=None)
+        parser.add_argument('--data-block-size', nargs='?', type=int, help='The chunk size used when reading from the network stream. Defaults to SDK default.', default=None)
         parser.add_argument('--client-encryption', nargs='?', type=str, help='The version of client-side encryption to use. Leave out for no encryption.', default=None)
         parser.add_argument('--max-concurrency', nargs='?', type=int, help='Maximum number of concurrent threads used for data transfer. Defaults to 1', default=1)
         parser.add_argument('-s', '--size', nargs='?', type=int, help='Size of data to transfer.  Default is 10240.', default=10240)

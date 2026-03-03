@@ -1,0 +1,7 @@
+{
+  "apiVersion": "2025-10-01",
+  "commit": "b562b95b6429f78f6c8629d5751bfeef1be7cacd",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/deviceregistry/DeviceRegistry.Management",
+  "emitterVersion": "0.52.1"
+}

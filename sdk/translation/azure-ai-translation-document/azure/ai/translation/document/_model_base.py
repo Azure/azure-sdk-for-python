@@ -633,7 +633,7 @@ class Model(_MyMutableMapping):
                 discriminator_value = data.find(xml_name).text  # pyright: ignore
         else:
             discriminator_value = data.get(discriminator._rest_name)
-        mapped_cls = cls.__mapping__.get(discriminator_value, cls)  # pyright: ignore
+        mapped_cls = cls.__mapping__.get(discriminator_value, cls)  # pyright: ignore # pylint: disable=no-member
         return mapped_cls._deserialize(data, exist_discriminators)
 
     def as_dict(self, *, exclude_readonly: bool = False) -> typing.Dict[str, typing.Any]:

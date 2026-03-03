@@ -40,6 +40,7 @@ MUST_RUN_ENVS = ["bandit"]
 # all of our checks default to ON, other than the below
 CHECK_DEFAULTS = {"black": False}
 
+
 def is_check_enabled(package_path: str, check: str, default: Any = True) -> bool:
     """
     Single-use function to evaluate whether or not a given check should run against a package.

@@ -111,7 +111,9 @@ def _get_span_document(data: Union[_DependencyData, _RequestData]) -> Union[Remo
 
 
 # mypy: disable-error-code="assignment"
-def _get_log_record_document(data: Union[_ExceptionData, _TraceData], exc_type: Optional[str] = None) -> Union[ExceptionDocument, TraceDocument]:  # pylint: disable=C0301
+def _get_log_record_document(
+    data: Union[_ExceptionData, _TraceData], exc_type: Optional[str] = None
+) -> Union[ExceptionDocument, TraceDocument]:  # pylint: disable=C0301
     if isinstance(data, _ExceptionData):
         document = ExceptionDocument(
             document_type=DocumentType.EXCEPTION,
@@ -147,6 +149,7 @@ def _get_metrics_from_projections() -> List[Tuple[str, float]]:
 
 
 # Time
+
 
 def _ms_to_iso8601_string(ms: float) -> str:
     seconds, ms = divmod(ms, 1000)

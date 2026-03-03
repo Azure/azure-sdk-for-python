@@ -58,7 +58,7 @@ def record_dep(dependencies: Dict[str, Dict[str, Any]], req_name: str, spec: str
 def get_lib_deps(base_dir: str) -> Tuple[Dict[str, Dict[str, Any]], Dict[str, Dict[str, Any]]]:
     packages = {}
     dependencies = {}
-    for lib_dir in discover_targeted_packages("azure*", base_dir):
+    for lib_dir in discover_targeted_packages("azure*", base_dir, compatibility_filter=False):
         try:
             parsed = ParsedSetup.from_path(lib_dir)
             lib_name, version, requires = parsed.name, parsed.version, parsed.requires

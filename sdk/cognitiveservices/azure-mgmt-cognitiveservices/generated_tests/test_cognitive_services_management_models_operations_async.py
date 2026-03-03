@@ -24,7 +24,7 @@ class TestCognitiveServicesManagementModelsOperationsAsync(AzureMgmtRecordedTest
     async def test_models_list(self, resource_group):
         response = self.client.models.list(
             location="str",
-            api_version="2025-06-01",
+            api_version="2025-09-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

@@ -1,11 +1,11 @@
 {
-  "commit": "b779af6e5cc22be1c221bd650631af63a6c3eeb9",
+  "commit": "1653285537c3f05521c480112d2a36645878c274",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "autorest": "3.10.2",
   "use": [
-    "@autorest/python@6.37.1",
+    "@autorest/python@6.42.0",
     "@autorest/modelerfour@4.27.0"
   ],
-  "autorest_command": "autorest specification/monitor/resource-manager//readme.md --generate-sample=True --generate-test=True --include-x-ms-examples-original-file=True --python --python-sdks-folder=/mnt/vss/_work/1/azure-sdk-for-python/sdk --tag=package-python-sdk-for-cli-only --use=@autorest/python@6.37.1 --use=@autorest/modelerfour@4.27.0 --version=3.10.2 --version-tolerant=False",
-  "readme": "specification/monitor/resource-manager//readme.md"
+  "autorest_command": "autorest specification/monitor/resource-manager/readme.md --generate-sample=True --generate-test=True --include-x-ms-examples-original-file=True --package-mode=azure-mgmt --python --python-sdks-folder=/mnt/vss/_work/1/azure-sdk-for-python/sdk --tag=package-python-sdk-for-cli-only --use=@autorest/python@6.42.0 --use=@autorest/modelerfour@4.27.0 --version=3.10.2 --version-tolerant=False",
+  "readme": "specification/monitor/resource-manager/readme.md"
 }

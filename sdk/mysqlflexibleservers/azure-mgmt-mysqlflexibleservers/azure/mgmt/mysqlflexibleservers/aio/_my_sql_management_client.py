@@ -7,16 +7,18 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Awaitable, TYPE_CHECKING
+from typing import Any, Awaitable, Optional, TYPE_CHECKING, cast
 from typing_extensions import Self
 
 from azure.core.pipeline import policies
 from azure.core.rest import AsyncHttpResponse, HttpRequest
+from azure.core.settings import settings
 from azure.mgmt.core import AsyncARMPipelineClient
 from azure.mgmt.core.policies import AsyncARMAutoResourceProviderRegistrationPolicy
+from azure.mgmt.core.tools import get_arm_endpoints
 
 from .. import models as _models
-from .._serialization import Deserializer, Serializer
+from .._utils.serialization import Deserializer, Serializer
 from ._configuration import MySQLManagementClientConfiguration
 from .operations import (
     AdvancedThreatProtectionSettingsOperations,
@@ -39,90 +41,104 @@ from .operations import (
     OperationProgressOperations,
     OperationResultsOperations,
     Operations,
+    PrivateEndpointConnectionsOperations,
+    PrivateLinkResourcesOperations,
     ReplicasOperations,
     ServersMigrationOperations,
     ServersOperations,
 )
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
+    from azure.core import AzureClouds
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class MySQLManagementClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
+class MySQLManagementClient:  # pylint: disable=too-many-instance-attributes
     """The Microsoft Azure management API provides create, read, update, and delete functionality for
     Azure MySQL resources including servers, databases, firewall rules, VNET rules, log files and
     configurations with new business model.
 
-    :ivar azure_ad_administrators: AzureADAdministratorsOperations operations
-    :vartype azure_ad_administrators:
-     azure.mgmt.mysqlflexibleservers.aio.operations.AzureADAdministratorsOperations
-    :ivar backups: BackupsOperations operations
-    :vartype backups: azure.mgmt.mysqlflexibleservers.aio.operations.BackupsOperations
-    :ivar backup_and_export: BackupAndExportOperations operations
-    :vartype backup_and_export:
-     azure.mgmt.mysqlflexibleservers.aio.operations.BackupAndExportOperations
-    :ivar long_running_backup: LongRunningBackupOperations operations
-    :vartype long_running_backup:
-     azure.mgmt.mysqlflexibleservers.aio.operations.LongRunningBackupOperations
-    :ivar long_running_backups: LongRunningBackupsOperations operations
-    :vartype long_running_backups:
-     azure.mgmt.mysqlflexibleservers.aio.operations.LongRunningBackupsOperations
-    :ivar configurations: ConfigurationsOperations operations
-    :vartype configurations:
-     azure.mgmt.mysqlflexibleservers.aio.operations.ConfigurationsOperations
-    :ivar databases: DatabasesOperations operations
-    :vartype databases: azure.mgmt.mysqlflexibleservers.aio.operations.DatabasesOperations
-    :ivar firewall_rules: FirewallRulesOperations operations
-    :vartype firewall_rules: azure.mgmt.mysqlflexibleservers.aio.operations.FirewallRulesOperations
+    :ivar get_private_dns_zone_suffix: GetPrivateDnsZoneSuffixOperations operations
+    :vartype get_private_dns_zone_suffix:
+     azure.mgmt.mysqlflexibleservers.aio.operations.GetPrivateDnsZoneSuffixOperations
+    :ivar operations: Operations operations
+    :vartype operations: azure.mgmt.mysqlflexibleservers.aio.operations.Operations
+    :ivar check_name_availability_without_location: CheckNameAvailabilityWithoutLocationOperations
+     operations
+    :vartype check_name_availability_without_location:
+     azure.mgmt.mysqlflexibleservers.aio.operations.CheckNameAvailabilityWithoutLocationOperations
     :ivar servers: ServersOperations operations
     :vartype servers: azure.mgmt.mysqlflexibleservers.aio.operations.ServersOperations
-    :ivar replicas: ReplicasOperations operations
-    :vartype replicas: azure.mgmt.mysqlflexibleservers.aio.operations.ReplicasOperations
-    :ivar servers_migration: ServersMigrationOperations operations
-    :vartype servers_migration:
-     azure.mgmt.mysqlflexibleservers.aio.operations.ServersMigrationOperations
-    :ivar advanced_threat_protection_settings: AdvancedThreatProtectionSettingsOperations
-     operations
-    :vartype advanced_threat_protection_settings:
-     azure.mgmt.mysqlflexibleservers.aio.operations.AdvancedThreatProtectionSettingsOperations
-    :ivar log_files: LogFilesOperations operations
-    :vartype log_files: azure.mgmt.mysqlflexibleservers.aio.operations.LogFilesOperations
     :ivar location_based_capabilities: LocationBasedCapabilitiesOperations operations
     :vartype location_based_capabilities:
      azure.mgmt.mysqlflexibleservers.aio.operations.LocationBasedCapabilitiesOperations
     :ivar location_based_capability_set: LocationBasedCapabilitySetOperations operations
     :vartype location_based_capability_set:
      azure.mgmt.mysqlflexibleservers.aio.operations.LocationBasedCapabilitySetOperations
-    :ivar check_virtual_network_subnet_usage: CheckVirtualNetworkSubnetUsageOperations operations
-    :vartype check_virtual_network_subnet_usage:
-     azure.mgmt.mysqlflexibleservers.aio.operations.CheckVirtualNetworkSubnetUsageOperations
     :ivar check_name_availability: CheckNameAvailabilityOperations operations
     :vartype check_name_availability:
      azure.mgmt.mysqlflexibleservers.aio.operations.CheckNameAvailabilityOperations
-    :ivar check_name_availability_without_location: CheckNameAvailabilityWithoutLocationOperations
-     operations
-    :vartype check_name_availability_without_location:
-     azure.mgmt.mysqlflexibleservers.aio.operations.CheckNameAvailabilityWithoutLocationOperations
-    :ivar operation_results: OperationResultsOperations operations
-    :vartype operation_results:
-     azure.mgmt.mysqlflexibleservers.aio.operations.OperationResultsOperations
+    :ivar check_virtual_network_subnet_usage: CheckVirtualNetworkSubnetUsageOperations operations
+    :vartype check_virtual_network_subnet_usage:
+     azure.mgmt.mysqlflexibleservers.aio.operations.CheckVirtualNetworkSubnetUsageOperations
     :ivar operation_progress: OperationProgressOperations operations
     :vartype operation_progress:
      azure.mgmt.mysqlflexibleservers.aio.operations.OperationProgressOperations
-    :ivar get_private_dns_zone_suffix: GetPrivateDnsZoneSuffixOperations operations
-    :vartype get_private_dns_zone_suffix:
-     azure.mgmt.mysqlflexibleservers.aio.operations.GetPrivateDnsZoneSuffixOperations
-    :ivar operations: Operations operations
-    :vartype operations: azure.mgmt.mysqlflexibleservers.aio.operations.Operations
+    :ivar operation_results: OperationResultsOperations operations
+    :vartype operation_results:
+     azure.mgmt.mysqlflexibleservers.aio.operations.OperationResultsOperations
+    :ivar azure_ad_administrators: AzureADAdministratorsOperations operations
+    :vartype azure_ad_administrators:
+     azure.mgmt.mysqlflexibleservers.aio.operations.AzureADAdministratorsOperations
+    :ivar advanced_threat_protection_settings: AdvancedThreatProtectionSettingsOperations
+     operations
+    :vartype advanced_threat_protection_settings:
+     azure.mgmt.mysqlflexibleservers.aio.operations.AdvancedThreatProtectionSettingsOperations
+    :ivar backup_and_export: BackupAndExportOperations operations
+    :vartype backup_and_export:
+     azure.mgmt.mysqlflexibleservers.aio.operations.BackupAndExportOperations
+    :ivar backups: BackupsOperations operations
+    :vartype backups: azure.mgmt.mysqlflexibleservers.aio.operations.BackupsOperations
+    :ivar long_running_backups: LongRunningBackupsOperations operations
+    :vartype long_running_backups:
+     azure.mgmt.mysqlflexibleservers.aio.operations.LongRunningBackupsOperations
+    :ivar long_running_backup: LongRunningBackupOperations operations
+    :vartype long_running_backup:
+     azure.mgmt.mysqlflexibleservers.aio.operations.LongRunningBackupOperations
+    :ivar configurations: ConfigurationsOperations operations
+    :vartype configurations:
+     azure.mgmt.mysqlflexibleservers.aio.operations.ConfigurationsOperations
+    :ivar servers_migration: ServersMigrationOperations operations
+    :vartype servers_migration:
+     azure.mgmt.mysqlflexibleservers.aio.operations.ServersMigrationOperations
+    :ivar databases: DatabasesOperations operations
+    :vartype databases: azure.mgmt.mysqlflexibleservers.aio.operations.DatabasesOperations
+    :ivar firewall_rules: FirewallRulesOperations operations
+    :vartype firewall_rules: azure.mgmt.mysqlflexibleservers.aio.operations.FirewallRulesOperations
+    :ivar log_files: LogFilesOperations operations
+    :vartype log_files: azure.mgmt.mysqlflexibleservers.aio.operations.LogFilesOperations
     :ivar maintenances: MaintenancesOperations operations
     :vartype maintenances: azure.mgmt.mysqlflexibleservers.aio.operations.MaintenancesOperations
+    :ivar private_endpoint_connections: PrivateEndpointConnectionsOperations operations
+    :vartype private_endpoint_connections:
+     azure.mgmt.mysqlflexibleservers.aio.operations.PrivateEndpointConnectionsOperations
+    :ivar private_link_resources: PrivateLinkResourcesOperations operations
+    :vartype private_link_resources:
+     azure.mgmt.mysqlflexibleservers.aio.operations.PrivateLinkResourcesOperations
+    :ivar replicas: ReplicasOperations operations
+    :vartype replicas: azure.mgmt.mysqlflexibleservers.aio.operations.ReplicasOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
     :type subscription_id: str
-    :param base_url: Service URL. Default value is "https://management.azure.com".
+    :param base_url: Service URL. Default value is None.
     :type base_url: str
+    :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
+     None.
+    :paramtype cloud_setting: ~azure.core.AzureClouds
+    :keyword api_version: Api Version. Default value is "2025-06-01-preview". Note that overriding
+     this default value may result in unsupported behavior.
+    :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
     """
@@ -131,12 +147,24 @@ class MySQLManagementClient:  # pylint: disable=client-accepts-api-version-keywo
         self,
         credential: "AsyncTokenCredential",
         subscription_id: str,
-        base_url: str = "https://management.azure.com",
+        base_url: Optional[str] = None,
+        *,
+        cloud_setting: Optional["AzureClouds"] = None,
         **kwargs: Any
     ) -> None:
+        _cloud = cloud_setting or settings.current.azure_cloud  # type: ignore
+        _endpoints = get_arm_endpoints(_cloud)
+        if not base_url:
+            base_url = _endpoints["resource_manager"]
+        credential_scopes = kwargs.pop("credential_scopes", _endpoints["credential_scopes"])
         self._config = MySQLManagementClientConfiguration(
-            credential=credential, subscription_id=subscription_id, **kwargs
+            credential=credential,
+            subscription_id=subscription_id,
+            cloud_setting=cloud_setting,
+            credential_scopes=credential_scopes,
+            **kwargs
         )
+
         _policies = kwargs.pop("policies", None)
         if _policies is None:
             _policies = [
@@ -155,63 +183,71 @@ class MySQLManagementClient:  # pylint: disable=client-accepts-api-version-keywo
                 policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
                 self._config.http_logging_policy,
             ]
-        self._client: AsyncARMPipelineClient = AsyncARMPipelineClient(base_url=base_url, policies=_policies, **kwargs)
+        self._client: AsyncARMPipelineClient = AsyncARMPipelineClient(
+            base_url=cast(str, base_url), policies=_policies, **kwargs
+        )
 
         client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.azure_ad_administrators = AzureADAdministratorsOperations(
+        self.get_private_dns_zone_suffix = GetPrivateDnsZoneSuffixOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.backups = BackupsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.backup_and_export = BackupAndExportOperations(
+        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
+        self.check_name_availability_without_location = CheckNameAvailabilityWithoutLocationOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.long_running_backup = LongRunningBackupOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.long_running_backups = LongRunningBackupsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.configurations = ConfigurationsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.databases = DatabasesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.firewall_rules = FirewallRulesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.servers = ServersOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.replicas = ReplicasOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.servers_migration = ServersMigrationOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.advanced_threat_protection_settings = AdvancedThreatProtectionSettingsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.log_files = LogFilesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.location_based_capabilities = LocationBasedCapabilitiesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.location_based_capability_set = LocationBasedCapabilitySetOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.check_virtual_network_subnet_usage = CheckVirtualNetworkSubnetUsageOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
         self.check_name_availability = CheckNameAvailabilityOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.check_name_availability_without_location = CheckNameAvailabilityWithoutLocationOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.operation_results = OperationResultsOperations(
+        self.check_virtual_network_subnet_usage = CheckVirtualNetworkSubnetUsageOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.operation_progress = OperationProgressOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.get_private_dns_zone_suffix = GetPrivateDnsZoneSuffixOperations(
+        self.operation_results = OperationResultsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
+        self.azure_ad_administrators = AzureADAdministratorsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.advanced_threat_protection_settings = AdvancedThreatProtectionSettingsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.backup_and_export = BackupAndExportOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.backups = BackupsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.long_running_backups = LongRunningBackupsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.long_running_backup = LongRunningBackupOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.configurations = ConfigurationsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.servers_migration = ServersMigrationOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.databases = DatabasesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.firewall_rules = FirewallRulesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.log_files = LogFilesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.maintenances = MaintenancesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.private_link_resources = PrivateLinkResourcesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.replicas = ReplicasOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def _send_request(
         self, request: HttpRequest, *, stream: bool = False, **kwargs: Any

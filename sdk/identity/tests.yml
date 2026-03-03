@@ -15,6 +15,7 @@ extends:
         PEM_CONTENT: $(python-identity-certificate)
         AZURE_TEST_RUN_LIVE: true
         AZURE_SKIP_LIVE_RECORDING: 'True'
+        AZURE_SKIP_SP_LIVE_TESTS: 'True'
       CloudConfig:
         Public:
           SubscriptionConfigurations:

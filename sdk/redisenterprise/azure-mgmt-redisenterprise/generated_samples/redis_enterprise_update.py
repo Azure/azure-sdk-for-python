@@ -35,7 +35,7 @@ def main():
         resource_group_name="rg1",
         cluster_name="cache1",
         parameters={
-            "properties": {"minimumTlsVersion": "1.2"},
+            "properties": {"minimumTlsVersion": "1.2", "publicNetworkAccess": "Enabled"},
             "sku": {"capacity": 9, "name": "EnterpriseFlash_F300"},
             "tags": {"tag1": "value1"},
         },
@@ -43,6 +43,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/redisenterprise/resource-manager/Microsoft.Cache/preview/2025-05-01-preview/examples/RedisEnterpriseUpdate.json
+# x-ms-original-file: specification/redisenterprise/resource-manager/Microsoft.Cache/RedisEnterprise/stable/2025-07-01/examples/RedisEnterpriseUpdate.json
 if __name__ == "__main__":
     main()

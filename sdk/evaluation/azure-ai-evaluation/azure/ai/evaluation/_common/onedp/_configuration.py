@@ -12,34 +12,39 @@ from azure.core.pipeline import policies
 
 from ._version import VERSION
 
+# Import the evaluation SDK version instead of using the onedp version for user agent
+from azure.ai.evaluation._version import VERSION as EVALUATION_VERSION
+
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class AIProjectClientConfiguration:  # pylint: disable=too-many-instance-attributes
-    """Configuration for AIProjectClient.
+class ProjectsClientConfiguration:  # pylint: disable=too-many-instance-attributes
+    """Configuration for ProjectsClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
     :param endpoint: Project endpoint. In the form
-     "https://<your-ai-services-account-name>.services.ai.azure.com/api/projects/_project"
+     "`https://your-ai-services-account-name.services.ai.azure.com/api/projects/_project
+     <https://your-ai-services-account-name.services.ai.azure.com/api/projects/_project>`_"
      if your Foundry Hub has only one Project, or to use the default Project in your Hub. Or in the
      form
-     "https://<your-ai-services-account-name>.services.ai.azure.com/api/projects/<your-project-name>"
+     "`https://your-ai-services-account-name.services.ai.azure.com/api/projects/your-project-name
+     <https://your-ai-services-account-name.services.ai.azure.com/api/projects/your-project-name>`_"
      if you want to explicitly
      specify the Foundry Project name. Required.
     :type endpoint: str
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :keyword api_version: The API version to use for this operation. Default value is
-     "2025-05-15-preview". Note that overriding this default value may result in unsupported
+     "2025-11-15-preview". Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
     """
 
     def __init__(self, endpoint: str, credential: "TokenCredential", **kwargs: Any) -> None:
-        api_version: str = kwargs.pop("api_version", "2025-05-15-preview")
+        api_version: str = kwargs.pop("api_version", "2025-11-15-preview")
 
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")
@@ -50,7 +55,8 @@ class AIProjectClientConfiguration:  # pylint: disable=too-many-instance-attribu
         self.credential = credential
         self.api_version = api_version
         self.credential_scopes = kwargs.pop("credential_scopes", ["https://ai.azure.com/.default"])
-        kwargs.setdefault("sdk_moniker", "ai-projects-onedp/{}".format(VERSION))
+        # Use the evaluation SDK version for the user agent to properly identify the SDK
+        kwargs.setdefault("sdk_moniker", "azure-ai-evaluation/{}".format(EVALUATION_VERSION))
         self.polling_interval = kwargs.get("polling_interval", 30)
         self._configure(**kwargs)
 

@@ -40,13 +40,16 @@ def main():
                 "type": "CustomLocation",
             },
             "location": "location",
-            "properties": {"sizeMiB": 10000},
+            "properties": {
+                "sizeMiB": 1048576,
+                "storageApplianceId": "/subscriptions/123e4567-e89b-12d3-a456-426655440000/resourceGroups/resourceGroupName/providers/Microsoft.NetworkCloud/StorageAppliances/storageApplianceName",
+            },
             "tags": {"key1": "myvalue1", "key2": "myvalue2"},
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/stable/2025-02-01/examples/Volumes_Create.json
+# x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/stable/2025-09-01/examples/Volumes_Create.json
 if __name__ == "__main__":
     main()

@@ -30,7 +30,7 @@ import time
 import os
 import urllib.parse
 from logging import Logger
-from typing import Optional, Union, Dict, TYPE_CHECKING, Set, List, Tuple, Type, Any
+from typing import Optional, Union, TYPE_CHECKING, Set, Tuple, Type, Any
 import types
 
 from azure.core.pipeline import PipelineRequest, PipelineResponse
@@ -60,21 +60,21 @@ HTTPResponseType = Union["LegacyHttpResponse", "HttpResponse", "LegacyAsyncHttpR
 
 # These Helper functions are used to Log Diagnostics for the SDK outside on_request and on_response
 def _populate_logger_attributes(  # type: ignore[attr-defined, union-attr]
-                            logger_attributes: Optional[Dict[str, Any]] = None,
+                            logger_attributes: Optional[dict[str, Any]] = None,
                             request: Optional[Union[PipelineRequest[HTTPRequestType], Any]] = None,
                             exception: Optional[Union[CosmosHttpResponseError,
-                            ServiceRequestError, ServiceResponseError]] = None) -> Dict[str, Any]:
+                            ServiceRequestError, ServiceResponseError]] = None) -> dict[str, Any]:
     """Populates the logger attributes with the request and response details.
 
-    :param logger_attributes: Optional[Dict[str, Any]], The logger attributes to populate.
-    :type logger_attributes: Optional[Dict[str, Any]]
+    :param logger_attributes: Optional[dict[str, Any]], The logger attributes to populate.
+    :type logger_attributes: Optional[dict[str, Any]]
     :param request: Optional[Union[PipelineRequest[HTTPRequestType], Any]], The request object containing HTTP details.
     :type request: Optional[Union[PipelineRequest[HTTPRequestType], Any]]
     :param exception: Optional[Union[CosmosHttpResponseError, ServiceRequestError, ServiceResponseError]],
         The exception object, if any.
     :type exception: Optional[Union[CosmosHttpResponseError, ServiceRequestError, ServiceResponseError]]
     :return: The logger attributes populated with the request and response details.
-    :rtype: Dict[str, Any]
+    :rtype: dict[str, Any]
     """
 
     if not logger_attributes:
@@ -114,9 +114,9 @@ def _populate_logger_attributes(  # type: ignore[attr-defined, union-attr]
 def _log_diagnostics_error(  # type: ignore[attr-defined, union-attr]
                             diagnostics_enabled: bool = False,
                             request: Optional[PipelineRequest[HTTPRequestType]] = None,
-                            response_headers: Optional[Dict] = None, error: Optional[Union[CosmosHttpResponseError,
+                            response_headers: Optional[dict] = None, error: Optional[Union[CosmosHttpResponseError,
                             ServiceRequestError, ServiceResponseError]] = None,
-                            logger_attributes: Optional[Dict] = None,
+                            logger_attributes: Optional[dict] = None,
                             global_endpoint_manager: Optional[_GlobalEndpointManager] = None,
                             logger: Optional[Logger] = None):
     """Logs the request and response error details to the logger.
@@ -126,11 +126,11 @@ def _log_diagnostics_error(  # type: ignore[attr-defined, union-attr]
     :param request: The request object containing HTTP details.
     :type request: Optional[PipelineRequest[HTTPRequestType]]
     :param response_headers: The response headers from the HTTP response.
-    :type response_headers: Optional[Dict[str, Any]]
+    :type response_headers: Optional[dict[str, Any]]
     :param error: The error object, if any.
     :type error: Optional[Union[CosmosHttpResponseError, ServiceRequestError, ServiceResponseError]]
     :param logger_attributes: The logger attributes to populate.
-    :type logger_attributes: Optional[Dict[str, Any]]
+    :type logger_attributes: Optional[dict[str, Any]]
     :param global_endpoint_manager: The global endpoint manager instance.
     :type global_endpoint_manager: Optional[_GlobalEndpointManager]
     :param logger: The logger instance to use.
@@ -180,7 +180,7 @@ def _get_client_settings(global_endpoint_manager: Optional[_GlobalEndpointManage
             gem_client = global_endpoint_manager.client
             if gem_client and gem_client.connection_policy:
                 connection_policy: ConnectionPolicy = gem_client.connection_policy
-                client_preferred_regions = connection_policy.PreferredLocations
+                client_preferred_regions = global_endpoint_manager.location_cache.effective_preferred_locations
                 client_excluded_regions = connection_policy.ExcludedLocations
 
         if global_endpoint_manager.location_cache:
@@ -435,7 +435,7 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
                                                                                         int) and log_data[
                                                                                  "status_code"] >= 400 else ""
             if log_data["url"]:
-                url_parts: List[str] = log_data["url"].split('/')  # type: ignore[union-attr]
+                url_parts: list[str] = log_data["url"].split('/')  # type: ignore[union-attr]
                 if 'dbs' in url_parts:
                     dbs_index = url_parts.index('dbs')
                     if dbs_index + 1 < len(url_parts):
@@ -528,9 +528,9 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
                 bool(current_logger.filters) or any(bool(h.filters) for h in current_logger.handlers)
                 for current_logger in _iter_loggers(logger)
             )
-            logger_attributes: Dict = {}
+            logger_attributes: dict = {}
             duration: Union[float, int, str] = ""
-            context: Dict = {}
+            context: dict = {}
             if request:
                 logger = request.context.setdefault("logger", request.context.options.pop("logger", self.logger))
                 filter_applied = any(

@@ -130,7 +130,7 @@ class TestAoaiIntegrationFeatures:
         # missing api_key in model config should throw an error
         with pytest.raises(Exception) as excinfo:
             AzureOpenAIGrader(model_config=bad_model_config, grader_config=mock_grader_config)
-        assert "Requires an api_key in the supplied model_config." in str(excinfo.value)
+        assert "Requires an api_key in the supplied model_config" in str(excinfo.value)
 
         # Test that validation bypass works to simplify other tests
         AzureOpenAIGrader(model_config=bad_model_config, grader_config=bad_grader_config, validate=False)

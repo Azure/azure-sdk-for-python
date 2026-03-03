@@ -9,7 +9,7 @@
 
 from collections.abc import MutableMapping
 import datetime
-from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Optional, TYPE_CHECKING, Union
 
 from .._utils import serialization as _serialization
 
@@ -117,7 +117,7 @@ class ArrowConfiguration(_serialization.Model):
     }
     _xml_map = {"name": "ArrowConfiguration"}
 
-    def __init__(self, *, schema: List["_models.ArrowField"], **kwargs: Any) -> None:
+    def __init__(self, *, schema: list["_models.ArrowField"], **kwargs: Any) -> None:
         """
         :keyword schema: Required.
         :paramtype schema: list[~azure.storage.blob.models.ArrowField]
@@ -197,7 +197,7 @@ class BlobFlatListSegment(_serialization.Model):
     }
     _xml_map = {"name": "Blobs"}
 
-    def __init__(self, *, blob_items: List["_models.BlobItemInternal"], **kwargs: Any) -> None:
+    def __init__(self, *, blob_items: list["_models.BlobItemInternal"], **kwargs: Any) -> None:
         """
         :keyword blob_items: Required.
         :paramtype blob_items: list[~azure.storage.blob.models.BlobItemInternal]
@@ -230,8 +230,8 @@ class BlobHierarchyListSegment(_serialization.Model):
     def __init__(
         self,
         *,
-        blob_items: List["_models.BlobItemInternal"],
-        blob_prefixes: Optional[List["_models.BlobPrefix"]] = None,
+        blob_items: list["_models.BlobItemInternal"],
+        blob_prefixes: Optional[list["_models.BlobPrefix"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -375,7 +375,7 @@ class BlobItemInternal(_serialization.Model):
         metadata: Optional["_models.BlobMetadata"] = None,
         blob_tags: Optional["_models.BlobTags"] = None,
         has_versions_only: Optional[bool] = None,
-        object_replication_metadata: Optional[Dict[str, str]] = None,
+        object_replication_metadata: Optional[dict[str, str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -430,7 +430,7 @@ class BlobMetadata(_serialization.Model):
     _xml_map = {"name": "Metadata"}
 
     def __init__(
-        self, *, additional_properties: Optional[Dict[str, str]] = None, encrypted: Optional[str] = None, **kwargs: Any
+        self, *, additional_properties: Optional[dict[str, str]] = None, encrypted: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
@@ -442,6 +442,57 @@ class BlobMetadata(_serialization.Model):
         super().__init__(**kwargs)
         self.additional_properties = additional_properties
         self.encrypted = encrypted
+
+
+class BlobModifiedAccessConditions(_serialization.Model):
+    """Parameter group.
+
+    :ivar if_modified_since: Specify this header value to operate only on a blob if it has been
+     modified since the specified date/time.
+    :vartype if_modified_since: ~datetime.datetime
+    :ivar if_unmodified_since: Specify this header value to operate only on a blob if it has not
+     been modified since the specified date/time.
+    :vartype if_unmodified_since: ~datetime.datetime
+    :ivar if_match: Specify an ETag value to operate only on blobs with a matching value.
+    :vartype if_match: str
+    :ivar if_none_match: Specify an ETag value to operate only on blobs without a matching value.
+    :vartype if_none_match: str
+    """
+
+    _attribute_map = {
+        "if_modified_since": {"key": "ifModifiedSince", "type": "rfc-1123"},
+        "if_unmodified_since": {"key": "ifUnmodifiedSince", "type": "rfc-1123"},
+        "if_match": {"key": "ifMatch", "type": "str"},
+        "if_none_match": {"key": "ifNoneMatch", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        if_modified_since: Optional[datetime.datetime] = None,
+        if_unmodified_since: Optional[datetime.datetime] = None,
+        if_match: Optional[str] = None,
+        if_none_match: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword if_modified_since: Specify this header value to operate only on a blob if it has been
+         modified since the specified date/time.
+        :paramtype if_modified_since: ~datetime.datetime
+        :keyword if_unmodified_since: Specify this header value to operate only on a blob if it has not
+         been modified since the specified date/time.
+        :paramtype if_unmodified_since: ~datetime.datetime
+        :keyword if_match: Specify an ETag value to operate only on blobs with a matching value.
+        :paramtype if_match: str
+        :keyword if_none_match: Specify an ETag value to operate only on blobs without a matching
+         value.
+        :paramtype if_none_match: str
+        """
+        super().__init__(**kwargs)
+        self.if_modified_since = if_modified_since
+        self.if_unmodified_since = if_unmodified_since
+        self.if_match = if_match
+        self.if_none_match = if_none_match
 
 
 class BlobName(_serialization.Model):
@@ -869,7 +920,7 @@ class BlobTags(_serialization.Model):
     }
     _xml_map = {"name": "Tags"}
 
-    def __init__(self, *, blob_tag_set: List["_models.BlobTag"], **kwargs: Any) -> None:
+    def __init__(self, *, blob_tag_set: list["_models.BlobTag"], **kwargs: Any) -> None:
         """
         :keyword blob_tag_set: Required.
         :paramtype blob_tag_set: list[~azure.storage.blob.models.BlobTag]
@@ -928,8 +979,8 @@ class BlockList(_serialization.Model):
     def __init__(
         self,
         *,
-        committed_blocks: Optional[List["_models.Block"]] = None,
-        uncommitted_blocks: Optional[List["_models.Block"]] = None,
+        committed_blocks: Optional[list["_models.Block"]] = None,
+        uncommitted_blocks: Optional[list["_models.Block"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -964,9 +1015,9 @@ class BlockLookupList(_serialization.Model):
     def __init__(
         self,
         *,
-        committed: Optional[List[str]] = None,
-        uncommitted: Optional[List[str]] = None,
-        latest: Optional[List[str]] = None,
+        committed: Optional[list[str]] = None,
+        uncommitted: Optional[list[str]] = None,
+        latest: Optional[list[str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1093,7 +1144,7 @@ class ContainerItem(_serialization.Model):
         properties: "_models.ContainerProperties",
         deleted: Optional[bool] = None,
         version: Optional[str] = None,
-        metadata: Optional[Dict[str, str]] = None,
+        metadata: Optional[dict[str, str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1550,7 +1601,7 @@ class FilterBlobSegment(_serialization.Model):
         *,
         service_endpoint: str,
         where: str,
-        blobs: List["_models.FilterBlobItem"],
+        blobs: list["_models.FilterBlobItem"],
         next_marker: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -1646,6 +1697,8 @@ class KeyInfo(_serialization.Model):
     :vartype start: str
     :ivar expiry: The date-time the key expires in ISO 8601 UTC time. Required.
     :vartype expiry: str
+    :ivar delegated_user_tid: The delegated user tenant id in Azure AD.
+    :vartype delegated_user_tid: str
     """
 
     _validation = {
@@ -1656,18 +1709,22 @@ class KeyInfo(_serialization.Model):
     _attribute_map = {
         "start": {"key": "Start", "type": "str"},
         "expiry": {"key": "Expiry", "type": "str"},
+        "delegated_user_tid": {"key": "DelegatedUserTid", "type": "str"},
     }
 
-    def __init__(self, *, start: str, expiry: str, **kwargs: Any) -> None:
+    def __init__(self, *, start: str, expiry: str, delegated_user_tid: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword start: The date-time the key is active in ISO 8601 UTC time. Required.
         :paramtype start: str
         :keyword expiry: The date-time the key expires in ISO 8601 UTC time. Required.
         :paramtype expiry: str
+        :keyword delegated_user_tid: The delegated user tenant id in Azure AD.
+        :paramtype delegated_user_tid: str
         """
         super().__init__(**kwargs)
         self.start = start
         self.expiry = expiry
+        self.delegated_user_tid = delegated_user_tid
 
 
 class LeaseAccessConditions(_serialization.Model):
@@ -1893,7 +1950,7 @@ class ListContainersSegmentResponse(_serialization.Model):
         self,
         *,
         service_endpoint: str,
-        container_items: List["_models.ContainerItem"],
+        container_items: list["_models.ContainerItem"],
         prefix: Optional[str] = None,
         marker: Optional[str] = None,
         max_results: Optional[int] = None,
@@ -2124,8 +2181,8 @@ class PageList(_serialization.Model):
     def __init__(
         self,
         *,
-        page_range: Optional[List["_models.PageRange"]] = None,
-        clear_range: Optional[List["_models.ClearRange"]] = None,
+        page_range: Optional[list["_models.PageRange"]] = None,
+        clear_range: Optional[list["_models.ClearRange"]] = None,
         next_marker: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -2456,6 +2513,54 @@ class SignedIdentifier(_serialization.Model):
         self.access_policy = access_policy
 
 
+class SourceCpkInfo(_serialization.Model):
+    """Parameter group.
+
+    :ivar source_encryption_key: Optional. Specifies the source encryption key to use to encrypt
+     the source data provided in the request.
+    :vartype source_encryption_key: str
+    :ivar source_encryption_key_sha256: The SHA-256 hash of the provided source encryption key.
+     Must be provided if the x-ms-source-encryption-key header is provided.
+    :vartype source_encryption_key_sha256: str
+    :ivar source_encryption_algorithm: The algorithm used to produce the source encryption key
+     hash. Currently, the only accepted value is "AES256". Must be provided if the
+     x-ms-source-encryption-key is provided. Known values are: "None" and "AES256".
+    :vartype source_encryption_algorithm: str or ~azure.storage.blob.models.EncryptionAlgorithmType
+    """
+
+    _attribute_map = {
+        "source_encryption_key": {"key": "sourceEncryptionKey", "type": "str"},
+        "source_encryption_key_sha256": {"key": "sourceEncryptionKeySha256", "type": "str"},
+        "source_encryption_algorithm": {"key": "sourceEncryptionAlgorithm", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        source_encryption_key: Optional[str] = None,
+        source_encryption_key_sha256: Optional[str] = None,
+        source_encryption_algorithm: Optional[Union[str, "_models.EncryptionAlgorithmType"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword source_encryption_key: Optional. Specifies the source encryption key to use to encrypt
+         the source data provided in the request.
+        :paramtype source_encryption_key: str
+        :keyword source_encryption_key_sha256: The SHA-256 hash of the provided source encryption key.
+         Must be provided if the x-ms-source-encryption-key header is provided.
+        :paramtype source_encryption_key_sha256: str
+        :keyword source_encryption_algorithm: The algorithm used to produce the source encryption key
+         hash. Currently, the only accepted value is "AES256". Must be provided if the
+         x-ms-source-encryption-key is provided. Known values are: "None" and "AES256".
+        :paramtype source_encryption_algorithm: str or
+         ~azure.storage.blob.models.EncryptionAlgorithmType
+        """
+        super().__init__(**kwargs)
+        self.source_encryption_key = source_encryption_key
+        self.source_encryption_key_sha256 = source_encryption_key_sha256
+        self.source_encryption_algorithm = source_encryption_algorithm
+
+
 class SourceModifiedAccessConditions(_serialization.Model):
     """Parameter group.
 
@@ -2655,7 +2760,7 @@ class StorageServiceProperties(_serialization.Model):
         logging: Optional["_models.Logging"] = None,
         hour_metrics: Optional["_models.Metrics"] = None,
         minute_metrics: Optional["_models.Metrics"] = None,
-        cors: Optional[List["_models.CorsRule"]] = None,
+        cors: Optional[list["_models.CorsRule"]] = None,
         default_service_version: Optional[str] = None,
         delete_retention_policy: Optional["_models.RetentionPolicy"] = None,
         static_website: Optional["_models.StaticWebsite"] = None,
@@ -2729,6 +2834,9 @@ class UserDelegationKey(_serialization.Model):
     :vartype signed_service: str
     :ivar signed_version: The service version that created the key. Required.
     :vartype signed_version: str
+    :ivar signed_delegated_user_tid: The delegated user tenant id in Azure AD. Return if
+     DelegatedUserTid is specified.
+    :vartype signed_delegated_user_tid: str
     :ivar value: The key as a base64 string. Required.
     :vartype value: str
     """
@@ -2750,6 +2858,7 @@ class UserDelegationKey(_serialization.Model):
         "signed_expiry": {"key": "SignedExpiry", "type": "iso-8601"},
         "signed_service": {"key": "SignedService", "type": "str"},
         "signed_version": {"key": "SignedVersion", "type": "str"},
+        "signed_delegated_user_tid": {"key": "SignedDelegatedUserTid", "type": "str"},
         "value": {"key": "Value", "type": "str"},
     }
 
@@ -2763,6 +2872,7 @@ class UserDelegationKey(_serialization.Model):
         signed_service: str,
         signed_version: str,
         value: str,
+        signed_delegated_user_tid: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -2779,6 +2889,9 @@ class UserDelegationKey(_serialization.Model):
         :paramtype signed_service: str
         :keyword signed_version: The service version that created the key. Required.
         :paramtype signed_version: str
+        :keyword signed_delegated_user_tid: The delegated user tenant id in Azure AD. Return if
+         DelegatedUserTid is specified.
+        :paramtype signed_delegated_user_tid: str
         :keyword value: The key as a base64 string. Required.
         :paramtype value: str
         """
@@ -2789,4 +2902,5 @@ class UserDelegationKey(_serialization.Model):
         self.signed_expiry = signed_expiry
         self.signed_service = signed_service
         self.signed_version = signed_version
+        self.signed_delegated_user_tid = signed_delegated_user_tid
         self.value = value

@@ -35,7 +35,7 @@ class TestConversationsCase(TestConversations):
     @recorded_by_proxy
     def test_create_project(self, authoring_endpoint, authoring_key):
         authoring_client = self.create_client(authoring_endpoint, authoring_key)
-        project_name = "MyPythonProject0820"
+        project_name = "MyPythonProject1110"
 
         # Create the project body
         body = CreateProjectOptions(

@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 import unittest
 import asyncio
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 import pytest
 from azure.core.exceptions import ClientAuthenticationError, ResourceExistsError, ResourceNotFoundError
@@ -35,7 +35,7 @@ class TestStorageDirectoryAsync(AsyncStorageRecordedTestCase):
     async def _setup(self, storage_account_name, storage_account_key):
         url = self.account_url(storage_account_name, "file")
         credential = storage_account_key
-        self.fsc = ShareServiceClient(url, credential=credential)
+        self.fsc = ShareServiceClient(url, credential=credential.secret)
         self.share_name = self.get_resource_name('utshare')
         if not self.is_playback():
             try:
@@ -115,7 +115,7 @@ class TestStorageDirectoryAsync(AsyncStorageRecordedTestCase):
 
         directory_client = share_client.get_directory_client('dir1')
         file_attributes = NTFSAttributes(read_only=True, directory=True)
-        file_creation_time = file_last_write_time = file_change_time = datetime(2022, 3, 10, 10, 14, 30, 500000)
+        file_creation_time = file_last_write_time = file_change_time = datetime(2022, 3, 10, 10, 14, 30, 500000, tzinfo=timezone.utc)
 
         # Act
         await directory_client.create_directory(
@@ -170,7 +170,7 @@ class TestStorageDirectoryAsync(AsyncStorageRecordedTestCase):
         directory_client = ShareDirectoryClient(
             self.account_url(storage_account_name, 'file'),
             share_client.share_name, directory_name + '.',
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             allow_trailing_dot=True)
 
         # Act
@@ -390,7 +390,7 @@ class TestStorageDirectoryAsync(AsyncStorageRecordedTestCase):
         directory = ShareDirectoryClient(
             self.account_url(storage_account_name, 'file'),
             share_client.share_name, 'dir1.',
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             allow_trailing_dot=True)
 
         # Act
@@ -709,7 +709,7 @@ class TestStorageDirectoryAsync(AsyncStorageRecordedTestCase):
         directory_client = ShareDirectoryClient(
             self.account_url(storage_account_name, 'file'),
             share_client.share_name, 'dir1.',
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             allow_trailing_dot=True)
         await directory_client.create_directory()
 
@@ -842,7 +842,7 @@ class TestStorageDirectoryAsync(AsyncStorageRecordedTestCase):
         directory = ShareDirectoryClient(
             self.account_url(storage_account_name, 'file'),
             share_client.share_name, 'dir1.',
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             allow_trailing_dot=True)
         await directory.create_directory()
         await asyncio.gather(
@@ -1081,6 +1081,32 @@ class TestStorageDirectoryAsync(AsyncStorageRecordedTestCase):
 
     @FileSharePreparer()
     @recorded_by_proxy_async
+    async def test_list_pagination_name_starts_with(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        await self._setup(storage_account_name, storage_account_key)
+        share_client = self.fsc.get_share_client(self.share_name)
+        directory_name, prefix = "dir", "samples_"
+        directory = await share_client.create_directory(directory_name)
+
+        for i in range(6):
+            await directory.upload_file(f"{prefix}{i}", "data1")
+            await directory.upload_file(f"not_{i}", "data2")
+
+        list_all = []
+        async for path in share_client.list_directories_and_files(
+            directory_name=directory_name,
+            name_starts_with=prefix,
+            results_per_page=2
+        ):
+            list_all.append(path)
+        assert len(list_all) == 6
+        for i in range(6):
+            assert list_all[i]["name"] == f"{prefix}{i}"
+
+    @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_delete_directory_with_existing_share(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -1137,7 +1163,7 @@ class TestStorageDirectoryAsync(AsyncStorageRecordedTestCase):
         directory = ShareDirectoryClient(
             self.account_url(storage_account_name, 'file'),
             share_client.share_name, 'dir1.',
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             allow_trailing_dot=True)
 
         # Act
@@ -1336,9 +1362,9 @@ class TestStorageDirectoryAsync(AsyncStorageRecordedTestCase):
         source_directory = await share_client.create_directory('dir1')
 
         file_attributes = NTFSAttributes(read_only=True, directory=True)
-        file_creation_time = datetime(2022, 1, 26, 10, 9, 30, 500000)
-        file_last_write_time = datetime(2022, 1, 26, 10, 14, 30, 500000)
-        file_change_time = datetime(2022, 3, 7, 10, 14, 30, 500000)
+        file_creation_time = datetime(2022, 1, 26, 10, 9, 30, 500000, tzinfo=timezone.utc)
+        file_last_write_time = datetime(2022, 1, 26, 10, 14, 30, 500000, tzinfo=timezone.utc)
+        file_change_time = datetime(2022, 3, 7, 10, 14, 30, 500000, tzinfo=timezone.utc)
 
         # Act
         new_directory = await source_directory.rename_directory(
@@ -1427,7 +1453,7 @@ class TestStorageDirectoryAsync(AsyncStorageRecordedTestCase):
         directory_client = ShareDirectoryClient(
             self.account_url(storage_account_name, 'file'),
             share_client.share_name, 'dir1.',
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             allow_trailing_dot=True,
             allow_source_trailing_dot=True)
 
@@ -1450,7 +1476,7 @@ class TestStorageDirectoryAsync(AsyncStorageRecordedTestCase):
         directory_client = ShareDirectoryClient(
             self.account_url(storage_account_name, 'file'),
             share_client.share_name, 'dir1.',
-            credential=storage_account_key
+            credential=storage_account_key.secret
         )
         await directory_client.exists()
 
@@ -1480,7 +1506,7 @@ class TestStorageDirectoryAsync(AsyncStorageRecordedTestCase):
         directory_client = ShareDirectoryClient(
             self.account_url(storage_account_name, 'file'),
             share_client.share_name, 'dir1.',
-            credential=storage_account_key
+            credential=storage_account_key.secret
         )
         await directory_client.exists()
 

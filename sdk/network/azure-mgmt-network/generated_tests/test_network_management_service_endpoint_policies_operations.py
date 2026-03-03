@@ -25,7 +25,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperations(AzureMgmtRecordedTe
         response = self.client.service_endpoint_policies.begin_delete(
             resource_group_name=resource_group.name,
             service_endpoint_policy_name="str",
-            api_version="2024-07-01",
+            api_version="2025-05-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperations(AzureMgmtRecordedTe
         response = self.client.service_endpoint_policies.get(
             resource_group_name=resource_group.name,
             service_endpoint_policy_name="str",
-            api_version="2024-07-01",
+            api_version="2025-05-01",
         )
 
         # please add some check logic here by yourself
@@ -150,6 +150,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperations(AzureMgmtRecordedTe
                                         "publicIpPrefixes": [{"id": "str"}],
                                         "publicIpPrefixesV6": [{"id": "str"}],
                                         "resourceGuid": "str",
+                                        "serviceGateway": {"id": "str"},
                                         "sku": {"name": "str"},
                                         "sourceVirtualNetwork": {"id": "str"},
                                         "subnets": [{"id": "str"}],
@@ -249,6 +250,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperations(AzureMgmtRecordedTe
                                     "location": "str",
                                     "name": "str",
                                     "provisioningState": "str",
+                                    "recordTypes": "str",
                                     "retentionPolicy": {"days": 0, "enabled": False},
                                     "storageId": "str",
                                     "tags": {"str": "str"},
@@ -424,6 +426,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperations(AzureMgmtRecordedTe
                                                     "publicIpPrefixes": [{"id": "str"}],
                                                     "publicIpPrefixesV6": [{"id": "str"}],
                                                     "resourceGuid": "str",
+                                                    "serviceGateway": {"id": "str"},
                                                     "sku": {"name": "str"},
                                                     "sourceVirtualNetwork": {"id": "str"},
                                                     "subnets": [{"id": "str"}],
@@ -503,6 +506,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperations(AzureMgmtRecordedTe
                                                                 "publicIpPrefixes": [{"id": "str"}],
                                                                 "publicIpPrefixesV6": [{"id": "str"}],
                                                                 "resourceGuid": "str",
+                                                                "serviceGateway": {"id": "str"},
                                                                 "sku": {"name": "str"},
                                                                 "sourceVirtualNetwork": {"id": "str"},
                                                                 "subnets": [{"id": "str"}],
@@ -585,6 +589,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperations(AzureMgmtRecordedTe
                                                 "type": "str",
                                             }
                                         ],
+                                        "ipVersionType": "IPv4",
                                         "location": "str",
                                         "manualPrivateLinkServiceConnections": [
                                             {
@@ -628,6 +633,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperations(AzureMgmtRecordedTe
                                         "type": "str",
                                     },
                                     "privateLinkService": {
+                                        "accessMode": "str",
                                         "alias": "str",
                                         "autoApproval": {"subscriptions": ["str"]},
                                         "destinationIPAddress": "str",
@@ -708,6 +714,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperations(AzureMgmtRecordedTe
                                                         "publicIpPrefixes": [{"id": "str"}],
                                                         "publicIpPrefixesV6": [{"id": "str"}],
                                                         "resourceGuid": "str",
+                                                        "serviceGateway": {"id": "str"},
                                                         "sku": {"name": "str"},
                                                         "sourceVirtualNetwork": {"id": "str"},
                                                         "subnets": [{"id": "str"}],
@@ -769,6 +776,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperations(AzureMgmtRecordedTe
                                                             "type": "str",
                                                         }
                                                     ],
+                                                    "ipVersionType": "IPv4",
                                                     "location": "str",
                                                     "manualPrivateLinkServiceConnections": [
                                                         {
@@ -894,6 +902,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperations(AzureMgmtRecordedTe
                                                             "publicIpPrefixes": [{"id": "str"}],
                                                             "publicIpPrefixesV6": [{"id": "str"}],
                                                             "resourceGuid": "str",
+                                                            "serviceGateway": {"id": "str"},
                                                             "sku": {"name": "str"},
                                                             "sourceVirtualNetwork": {"id": "str"},
                                                             "subnets": [{"id": "str"}],
@@ -1066,6 +1075,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperations(AzureMgmtRecordedTe
                                                             "publicIpPrefixes": [{"id": "str"}],
                                                             "publicIpPrefixesV6": [{"id": "str"}],
                                                             "resourceGuid": "str",
+                                                            "serviceGateway": {"id": "str"},
                                                             "sku": {"name": "str"},
                                                             "sourceVirtualNetwork": {"id": "str"},
                                                             "subnets": [{"id": "str"}],
@@ -1189,6 +1199,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperations(AzureMgmtRecordedTe
                                         "type": "str",
                                     }
                                 ],
+                                "ipVersionType": "IPv4",
                                 "location": "str",
                                 "manualPrivateLinkServiceConnections": [
                                     {
@@ -1376,6 +1387,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperations(AzureMgmtRecordedTe
                                                         "publicIpPrefixes": [{"id": "str"}],
                                                         "publicIpPrefixesV6": [{"id": "str"}],
                                                         "resourceGuid": "str",
+                                                        "serviceGateway": {"id": "str"},
                                                         "sku": {"name": "str"},
                                                         "sourceVirtualNetwork": {"id": "str"},
                                                         "subnets": [{"id": "str"}],
@@ -1455,6 +1467,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperations(AzureMgmtRecordedTe
                                                                     "publicIpPrefixes": [{"id": "str"}],
                                                                     "publicIpPrefixesV6": [{"id": "str"}],
                                                                     "resourceGuid": "str",
+                                                                    "serviceGateway": {"id": "str"},
                                                                     "sku": {"name": "str"},
                                                                     "sourceVirtualNetwork": {"id": "str"},
                                                                     "subnets": [{"id": "str"}],
@@ -1581,6 +1594,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperations(AzureMgmtRecordedTe
                                                     "location": "str",
                                                     "name": "str",
                                                     "provisioningState": "str",
+                                                    "recordTypes": "str",
                                                     "retentionPolicy": {"days": 0, "enabled": False},
                                                     "storageId": "str",
                                                     "tags": {"str": "str"},
@@ -1650,6 +1664,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperations(AzureMgmtRecordedTe
                                         "primary": bool,
                                         "privateEndpoint": ...,
                                         "privateLinkService": {
+                                            "accessMode": "str",
                                             "alias": "str",
                                             "autoApproval": {"subscriptions": ["str"]},
                                             "destinationIPAddress": "str",
@@ -1730,6 +1745,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperations(AzureMgmtRecordedTe
                                                             "publicIpPrefixes": [{"id": "str"}],
                                                             "publicIpPrefixesV6": [{"id": "str"}],
                                                             "resourceGuid": "str",
+                                                            "serviceGateway": {"id": "str"},
                                                             "sku": {"name": "str"},
                                                             "sourceVirtualNetwork": {"id": "str"},
                                                             "subnets": [{"id": "str"}],
@@ -1847,6 +1863,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperations(AzureMgmtRecordedTe
                                                                 "publicIpPrefixes": [{"id": "str"}],
                                                                 "publicIpPrefixesV6": [{"id": "str"}],
                                                                 "resourceGuid": "str",
+                                                                "serviceGateway": {"id": "str"},
                                                                 "sku": {"name": "str"},
                                                                 "sourceVirtualNetwork": {"id": "str"},
                                                                 "subnets": [{"id": "str"}],
@@ -2023,6 +2040,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperations(AzureMgmtRecordedTe
                                                                 "publicIpPrefixes": [{"id": "str"}],
                                                                 "publicIpPrefixesV6": [{"id": "str"}],
                                                                 "resourceGuid": "str",
+                                                                "serviceGateway": {"id": "str"},
                                                                 "sku": {"name": "str"},
                                                                 "sourceVirtualNetwork": {"id": "str"},
                                                                 "subnets": [{"id": "str"}],
@@ -2148,6 +2166,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperations(AzureMgmtRecordedTe
                                 "service": "str",
                             }
                         ],
+                        "serviceGateway": {"id": "str"},
                         "sharingScope": "str",
                         "type": "str",
                     }
@@ -2155,7 +2174,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperations(AzureMgmtRecordedTe
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2024-07-01",
+            api_version="2025-05-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -2168,7 +2187,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperations(AzureMgmtRecordedTe
             resource_group_name=resource_group.name,
             service_endpoint_policy_name="str",
             parameters={"tags": {"str": "str"}},
-            api_version="2024-07-01",
+            api_version="2025-05-01",
         )
 
         # please add some check logic here by yourself
@@ -2178,7 +2197,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperations(AzureMgmtRecordedTe
     @recorded_by_proxy
     def test_service_endpoint_policies_list(self, resource_group):
         response = self.client.service_endpoint_policies.list(
-            api_version="2024-07-01",
+            api_version="2025-05-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -2189,7 +2208,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperations(AzureMgmtRecordedTe
     def test_service_endpoint_policies_list_by_resource_group(self, resource_group):
         response = self.client.service_endpoint_policies.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2024-07-01",
+            api_version="2025-05-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

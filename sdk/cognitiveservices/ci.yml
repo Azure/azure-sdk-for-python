@@ -33,3 +33,5 @@ extends:
       safeName: azurecognitiveservicespersonalizer
     - name: azure-mgmt-cognitiveservices
       safeName: azuremgmtcognitiveservices
+    - name: azure-ai-transcription
+      safeName: azureaitranscription

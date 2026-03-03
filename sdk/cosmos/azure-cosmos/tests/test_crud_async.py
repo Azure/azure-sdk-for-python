@@ -12,12 +12,12 @@ import unittest
 import urllib.parse as urllib
 import uuid
 from asyncio import sleep
-
+from unittest import mock
 import pytest
-import requests
+from aiohttp import web
 from azure.core import MatchConditions
-from azure.core.exceptions import AzureError, ServiceResponseError
-from azure.core.pipeline.transport import AsyncioRequestsTransport, AsyncioRequestsTransportResponse
+from azure.core.exceptions import AzureError, ServiceResponseError, ServiceRequestError
+from azure.core.pipeline.transport import AioHttpTransport, AioHttpTransportResponse
 
 import azure.cosmos.documents as documents
 import azure.cosmos.exceptions as exceptions
@@ -27,23 +27,28 @@ from azure.cosmos.http_constants import HttpHeaders, StatusCodes
 from azure.cosmos.partition_key import PartitionKey
 
 
-class TimeoutTransport(AsyncioRequestsTransport):
+class TimeoutTransport(AioHttpTransport):
 
-    def __init__(self, response):
+    def __init__(self, response, passthrough=False):
         self._response = response
-        super(TimeoutTransport, self).__init__()
+        self.passthrough = passthrough
+        super().__init__()
 
-    async def send(self, *args, **kwargs):
-        if kwargs.pop("passthrough", False):
-            return super(TimeoutTransport, self).send(*args, **kwargs)
+    async def send(self, request, **kwargs):
+        if self.passthrough:
+            return await super().send(request, **kwargs)
 
-        time.sleep(5)
+        await asyncio.sleep(5)
         if isinstance(self._response, Exception):
+            # The SDK's retry logic wraps the original error in a ServiceRequestError.
+            # We raise it this way to properly simulate a transport-level timeout.
             raise self._response
-        current_response = await self._response
-        output = requests.Response()
-        output.status_code = current_response
-        response = AsyncioRequestsTransportResponse(None, output)
+
+        # This part of the mock is for simulating successful responses, not used in this specific timeout test.
+        raw_response = web.Response(status=self._response, reason="mock")
+        raw_response.read = mock.AsyncMock(return_value=b"")
+        response = AioHttpTransportResponse(request, raw_response)
+        await response.load_body()
         return response
 
 @pytest.mark.cosmosCircuitBreaker
@@ -885,11 +890,11 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
         if not ('localhost' in self.host or '127.0.0.1' in self.host):
             connection_policy = documents.ConnectionPolicy()
             # making timeout 0 ms to make sure it will throw
-            connection_policy.RequestTimeout = 0.000000000001
+            connection_policy.ReadTimeout = 0.000000000001
             # client does a getDatabaseAccount on initialization, which will not time out because
             # there is a forced timeout for those calls
             async with CosmosClient(self.host, self.masterKey, connection_policy=connection_policy) as client:
-                with self.assertRaises(Exception):
+                with self.assertRaises(ServiceResponseError):
                     databaseForTest = client.get_database_client(self.configs.TEST_DATABASE_ID)
                     container = databaseForTest.get_container_client(self.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
                     item = {'id': str(uuid.uuid4()), 'name': 'sample'}
@@ -901,20 +906,24 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
         connection_policy = documents.ConnectionPolicy()
         # making timeout 0 ms to make sure it will throw
         connection_policy.DBAReadTimeout = 0.000000000001
-        with self.assertRaises(ServiceResponseError):
-            # this will make a get database account call
+        # this will make a get database account call
+        async with CosmosClient(self.host, self.masterKey, connection_policy=connection_policy):
+            print('Async initialization')
+
+        connection_policy.DBAConnectionTimeout = 0.000000000001
+        with self.assertRaises(ServiceRequestError):
             async with CosmosClient(self.host, self.masterKey, connection_policy=connection_policy):
                 print('Async initialization')
 
     async def test_client_request_timeout_when_connection_retry_configuration_specified_async(self):
         connection_policy = documents.ConnectionPolicy()
         # making timeout 0 ms to make sure it will throw
-        connection_policy.RequestTimeout = 0.000000000001
+        connection_policy.ReadTimeout = 0.000000000001
         async with CosmosClient(TestCRUDOperationsAsync.host, TestCRUDOperationsAsync.masterKey,
                                 connection_policy=connection_policy,
                                 retry_total=3, retry_connect=3, retry_read=3, retry_backoff_max=0.3,
                                 retry_on_status_codes=[500, 502, 504]) as client:
-            with self.assertRaises(AzureError):
+            with self.assertRaises(ServiceResponseError):
                 databaseForTest = client.get_database_client(self.configs.TEST_DATABASE_ID)
                 container = databaseForTest.get_container_client(self.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
                 item = {'id': str(uuid.uuid4()), 'name': 'sample'}
@@ -969,52 +978,306 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
                 end_time = time.time()
                 return end_time - start_time
 
-    # TODO: Skipping this test to debug later
-    @unittest.skip
-    async def test_absolute_client_timeout_async(self):
-        with self.assertRaises(exceptions.CosmosClientTimeoutError):
-            async with CosmosClient(
+    async def test_timeout_on_connection_error_async(self):
+        # Connection Refused: This is an active rejection from the target machine's operating system. It receives your
+        # connection request but immediately sends back a response indicating that no process is listening on that port.
+        # This is a fast failure.
+        # Connection Timeout Setting: This occurs when your connection request receives no response at all within a
+        # specified period. The client gives up waiting. This typically happens if the target machine is down,
+        # unreachable due to network configuration, or a firewall is silently dropping the packets.
+        # so in the below test connection_timeout setting has no bearing on the test outcome
+        client = None
+        try:
+            with self.assertRaises((exceptions.CosmosClientTimeoutError, ServiceRequestError)):
+                client = CosmosClient(
                     "https://localhost:9999",
                     TestCRUDOperationsAsync.masterKey,
-                    retry_total=3,
-                    timeout=1) as client:
-                print('Async initialization')
+                    retry_total=10,
+                    connection_timeout=100,
+                    timeout=2)
+                # The __aenter__ call is what triggers the connection attempt.
+                await client.__aenter__()
+        finally:
+            if client:
+                await client.close()
 
+    async def test_timeout_on_read_operation_async(self):
         error_response = ServiceResponseError("Read timeout")
-        timeout_transport = TimeoutTransport(error_response)
-        async with CosmosClient(
-                self.host, self.masterKey, transport=timeout_transport,
-                passthrough=True) as client:
-            print('Async initialization')
+        # Initialize transport with passthrough enabled for client setup
+        timeout_transport = TimeoutTransport(error_response, passthrough=True)
 
+        async with CosmosClient(
+                self.host, self.masterKey, transport=timeout_transport) as client:
+            # Disable passthrough to test the timeout on the next call
+            timeout_transport.passthrough = False
             with self.assertRaises(exceptions.CosmosClientTimeoutError):
                 await client.create_database_if_not_exists("test", timeout=2)
 
-        status_response = 500  # Users connection level retry
-        timeout_transport = TimeoutTransport(status_response)
-        async with CosmosClient(
-                self.host, self.masterKey, transport=timeout_transport,
-                passthrough=True) as client:
-            print('Async initialization')
-            with self.assertRaises(exceptions.CosmosClientTimeoutError):
-                await client.create_database("test", timeout=2)
 
-            databases = client.list_databases(timeout=2)
-            with self.assertRaises(exceptions.CosmosClientTimeoutError):
-                databases = [database async for database in databases]
-
+    async def test_timeout_on_throttling_error_async(self):
+        # Throttling(429): Keeps retrying -> Eventually times out -> CosmosClientTimeoutError
         status_response = 429  # Uses Cosmos custom retry
-        timeout_transport = TimeoutTransport(status_response)
+        timeout_transport = TimeoutTransport(status_response, passthrough=True)
         async with CosmosClient(
-                self.host, self.masterKey, transport=timeout_transport,
-                passthrough=True) as client:
+                self.host, self.masterKey, transport=timeout_transport
+                ) as client:
             print('Async initialization')
+            timeout_transport.passthrough = False
             with self.assertRaises(exceptions.CosmosClientTimeoutError):
-                await client.create_database_if_not_exists("test", timeout=2)
+                await client.create_database_if_not_exists("test", timeout=20)
 
-            databases = client.list_databases(timeout=2)
+            databases = client.list_databases(timeout=12)
             with self.assertRaises(exceptions.CosmosClientTimeoutError):
                 databases = [database async for database in databases]
+
+    async def test_inner_exceptions_on_timeout_async(self):
+        # Throttling(429): Keeps retrying -> Eventually times out -> CosmosClientTimeoutError
+        status_response = 429  # Uses Cosmos custom retry
+        timeout_transport = TimeoutTransport(status_response, passthrough=True)
+        async with CosmosClient(
+                self.host, self.masterKey, transport=timeout_transport
+                ) as client:
+            print('Async initialization')
+            timeout_transport.passthrough = False
+            with self.assertRaises(exceptions.CosmosClientTimeoutError) as cm :
+                await client.create_database_if_not_exists("test", timeout=20)
+
+        # Verify the inner_exception is set and is a 429 error
+        self.assertIsNotNone(cm.exception.inner_exception)
+        self.assertIsInstance(cm.exception.inner_exception, exceptions.CosmosHttpResponseError)
+        self.assertEqual(cm.exception.inner_exception.status_code, 429)
+
+    async def test_timeout_for_read_items_async(self):
+        """Test that timeout is properly maintained across multiple partition requests for a single logical operation
+        read_items is different as the results of this api are not paginated and we present the complete result set
+        """
+
+        # Create a container with multiple partitions
+        created_container = await self.database_for_test.create_container(
+            id='multi_partition_container_' + str(uuid.uuid4()),
+            partition_key=PartitionKey(path="/pk"),
+            offer_throughput=11000
+        )
+        pk_ranges = [
+            pk async for pk in
+            created_container.client_connection._ReadPartitionKeyRanges(created_container.container_link)
+        ]
+        self.assertGreater(len(pk_ranges), 1, "Container should have multiple physical partitions.")
+
+        # 2. Create items across different logical partitions
+        items_to_read = []
+        all_item_ids = set()
+        for i in range(200):
+            doc_id = f"item_{i}_{uuid.uuid4()}"
+            pk = i % 10
+            all_item_ids.add(doc_id)
+            await created_container.create_item({'id': doc_id, 'pk': pk, 'data': i})
+            items_to_read.append((doc_id, pk))
+
+        # Create a custom transport that introduces delays
+        class DelayedTransport(AioHttpTransport):
+            def __init__(self, delay_per_request=2):
+                self.delay_per_request = delay_per_request
+                self.request_count = 0
+                super().__init__()
+
+            async def send(self, request, **kwargs):
+                self.request_count += 1
+                # Delay each request to simulate slow network
+                await asyncio.sleep(self.delay_per_request)  # 2 second delaytime.sleep(self.delay_per_request)
+                return await super().send(request, **kwargs)
+
+        # Verify timeout fails when cumulative time exceeds limit
+        delayed_transport = DelayedTransport(delay_per_request=2)
+
+        async with CosmosClient(
+                self.host, self.masterKey, transport=delayed_transport
+        ) as client_with_delay:
+
+            container_with_delay = client_with_delay.get_database_client(
+                self.database_for_test.id
+            ).get_container_client(created_container.id)
+
+            start_time = time.time()
+
+            with self.assertRaises(exceptions.CosmosClientTimeoutError):
+                # This should timeout because multiple partition requests * 2s delay > 5s timeout
+                await container_with_delay.read_items(
+                    items=items_to_read,
+                    timeout=5  # 5 second total timeout
+                )
+
+        elapsed_time = time.time() - start_time
+        # Should fail close to 5 seconds (not wait for all requests)
+        self.assertLess(elapsed_time, 7)  # Allow some overhead
+        self.assertGreater(elapsed_time, 5)  # Should wait at least close to timeout
+
+
+    async def test_timeout_for_point_operation_async(self):
+        """Test that point operations respect client timeout"""
+
+        # Create a container for testing
+        created_container = await self.database_for_test.create_container(
+            id='point_op_timeout_container_' + str(uuid.uuid4()),
+            partition_key=PartitionKey(path="/pk")
+        )
+
+        # Create a test item
+        test_item = {
+            'id': 'test_item_1',
+            'pk': 'partition1',
+            'data': 'test_data'
+        }
+        await created_container.create_item(test_item)
+
+        # Long timeout should succeed
+        result = await created_container.read_item(
+            item='test_item_1',
+            partition_key='partition1',
+            timeout=1.0  # 1 second timeout
+        )
+        self.assertEqual(result['id'], 'test_item_1')
+
+    async def test_timeout_for_paged_request_async(self):
+        """Test that timeout applies to each individual page request, not cumulatively"""
+
+        # Create container and add items
+        created_container = await self.database_for_test.create_container(
+            id='paged_timeout_container_' + str(uuid.uuid4()),
+            partition_key=PartitionKey(path="/pk")
+        )
+
+        # Create enough items to ensure multiple pages
+        for i in range(100):
+            await created_container.create_item({'id': f'item_{i}', 'pk': i % 10, 'data': 'x' * 1000})
+
+        # Create a transport that delays each request
+        class DelayedTransport(AioHttpTransport):
+            def __init__(self, delay_seconds=1):
+                self.delay_seconds = delay_seconds
+                super().__init__()
+
+            async def send(self, request, **kwargs):
+                await asyncio.sleep(self.delay_seconds)
+                return await super().send(request, **kwargs)
+
+        # Test with delayed transport - reduced delay to 1 second for stability
+        delayed_transport = DelayedTransport(delay_seconds=1)
+        async with CosmosClient(
+                self.host, self.masterKey, transport=delayed_transport
+        ) as client_with_delay:
+            container_with_delay = client_with_delay.get_database_client(
+                self.database_for_test.id
+            ).get_container_client(created_container.id)
+
+            # Test 1: Timeout should apply per page
+            item_pages = container_with_delay.query_items(
+                query="SELECT * FROM c",
+                #enable_cross_partition_query=True,
+                max_item_count=10,  # Small page size
+                timeout=3  # 3s timeout > 1s delay, should succeed
+            ).by_page()
+
+            # First page should succeed with 3s timeout (1s delay < 3s timeout)
+            first_page = [item async for item in await item_pages.__anext__()]
+            self.assertGreater(len(first_page), 0)
+
+            # Second page should also succeed (timeout resets per page)
+            second_page = [item async for item in await item_pages.__anext__()]
+            self.assertGreater(len(second_page), 0)
+
+            # Test 2: Timeout too short should fail
+            item_pages_short_timeout = container_with_delay.query_items(
+                query="SELECT * FROM c",
+                #enable_cross_partition_query=True,
+                max_item_count=10,
+                timeout=0.5  # 0.5s timeout < 1s delay, should fail
+            ).by_page()
+
+            with self.assertRaises(exceptions.CosmosClientTimeoutError):
+                first_page = [item async for item in await item_pages_short_timeout.__anext__()]
+
+        # Cleanup
+        await self.database_for_test.delete_container(created_container.id)
+
+    # TODO: for read timeouts azure-core returns a ServiceResponseError, needs to be fixed in azure-core and then this test can be enabled
+    @unittest.skip
+    async def test_query_operation_single_partition_read_timeout_async(self):
+        """Test that timeout is properly maintained across multiple network requests for a single logical operation
+        """
+        # Create a container with multiple partitions
+        container = await self.database_for_test.create_container(
+            id='single_partition_container_' + str(uuid.uuid4()),
+            partition_key=PartitionKey(path="/pk"),
+        )
+        single_partition_key = 0
+
+        large_string = 'a' * 1000  # 1KB string
+        for i in range(200):  # Insert 500 documents
+            await container.create_item({
+                'id': f'item_{i}',
+                'pk': single_partition_key,
+                'data': large_string,
+                'order_field': i
+            })
+
+        start_time = time.time()
+        with self.assertRaises(exceptions.CosmosClientTimeoutError):
+            async for item in container.query_items(
+                    query="SELECT * FROM c ORDER BY c.order_field ASC",
+                    max_item_count=200,
+                    read_timeout=0.00005,
+                    partition_key=single_partition_key
+            ):
+                pass
+
+        elapsed_time = time.time() - start_time
+        print(f"elapsed time is {elapsed_time}")
+
+    # TODO: for read timeouts azure-core returns a ServiceResponseError, needs to be fixed in azure-core and then this test can be enabled
+    @unittest.skip
+    async def test_query_operation_cross_partition_read_timeout_async(self):
+        """Test that timeout is properly maintained across multiple partition requests for a single logical operation
+        """
+        # Create a container with multiple partitions
+        container = await self.database_for_test.create_container(
+            id='multi_partition_container_' + str(uuid.uuid4()),
+            partition_key=PartitionKey(path="/pk"),
+            offer_throughput=11000
+        )
+
+        # 2. Create large documents to increase payload size
+        large_string = 'a' * 1000  # 1KB string
+        for i in range(1000):  # Insert 500 documents
+            await container.create_item({
+                'id': f'item_{i}',
+                'pk': i % 2,
+                'data': large_string,
+                'order_field': i
+            })
+
+        pk_ranges = [
+            pk async for pk in container.client_connection._ReadPartitionKeyRanges(container.container_link)
+        ]
+
+        self.assertGreater(len(pk_ranges), 1, "Container should have multiple physical partitions.")
+
+        with self.assertRaises(exceptions.CosmosClientTimeoutError):
+            # This should timeout because of multiple partition requests
+            items = [doc async for doc in container.query_items(
+                query="SELECT * FROM c ORDER BY c.order_field ASC",
+                max_item_count=100,
+                read_timeout=0.00005,
+            )]
+        # This shouldn't result in any error because the default 65seconds is respected
+
+        items = [doc async for doc in container.query_items(
+            query="SELECT * FROM c ORDER BY c.order_field ASC",
+            max_item_count=100,
+        )]
+        self.assertEqual(len(items), 1000)
+
+
 
     async def test_query_iterable_functionality_async(self):
 

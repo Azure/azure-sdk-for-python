@@ -23,7 +23,7 @@ class TestWebSiteManagementAsync(AzureMgmtRecordedTestCase):
     @recorded_by_proxy_async
     async def test_get_publishing_user(self, resource_group):
         response = await self.client.get_publishing_user(
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -44,7 +44,7 @@ class TestWebSiteManagementAsync(AzureMgmtRecordedTestCase):
                 "scmUri": "str",
                 "type": "str",
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -54,7 +54,7 @@ class TestWebSiteManagementAsync(AzureMgmtRecordedTestCase):
     @recorded_by_proxy_async
     async def test_list_source_controls(self, resource_group):
         response = self.client.list_source_controls(
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -65,7 +65,7 @@ class TestWebSiteManagementAsync(AzureMgmtRecordedTestCase):
     async def test_get_source_control(self, resource_group):
         response = await self.client.get_source_control(
             source_control_type="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -86,7 +86,7 @@ class TestWebSiteManagementAsync(AzureMgmtRecordedTestCase):
                 "tokenSecret": "str",
                 "type": "str",
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -96,7 +96,7 @@ class TestWebSiteManagementAsync(AzureMgmtRecordedTestCase):
     @recorded_by_proxy_async
     async def test_list_billing_meters(self, resource_group):
         response = self.client.list_billing_meters(
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -108,7 +108,7 @@ class TestWebSiteManagementAsync(AzureMgmtRecordedTestCase):
         response = await self.client.check_name_availability(
             name="str",
             type="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -118,7 +118,7 @@ class TestWebSiteManagementAsync(AzureMgmtRecordedTestCase):
     @recorded_by_proxy_async
     async def test_list_custom_host_name_sites(self, resource_group):
         response = self.client.list_custom_host_name_sites(
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -128,7 +128,7 @@ class TestWebSiteManagementAsync(AzureMgmtRecordedTestCase):
     @recorded_by_proxy_async
     async def test_get_subscription_deployment_locations(self, resource_group):
         response = await self.client.get_subscription_deployment_locations(
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -138,7 +138,7 @@ class TestWebSiteManagementAsync(AzureMgmtRecordedTestCase):
     @recorded_by_proxy_async
     async def test_list_ase_regions(self, resource_group):
         response = self.client.list_ase_regions(
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -148,7 +148,7 @@ class TestWebSiteManagementAsync(AzureMgmtRecordedTestCase):
     @recorded_by_proxy_async
     async def test_list_geo_regions(self, resource_group):
         response = self.client.list_geo_regions(
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -159,7 +159,7 @@ class TestWebSiteManagementAsync(AzureMgmtRecordedTestCase):
     async def test_list_site_identifiers_assigned_to_host_name(self, resource_group):
         response = self.client.list_site_identifiers_assigned_to_host_name(
             name_identifier={"name": "str"},
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -172,7 +172,7 @@ class TestWebSiteManagementAsync(AzureMgmtRecordedTestCase):
             location="str",
             name="str",
             type="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -182,7 +182,7 @@ class TestWebSiteManagementAsync(AzureMgmtRecordedTestCase):
     @recorded_by_proxy_async
     async def test_list_premier_add_on_offers(self, resource_group):
         response = self.client.list_premier_add_on_offers(
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -192,7 +192,7 @@ class TestWebSiteManagementAsync(AzureMgmtRecordedTestCase):
     @recorded_by_proxy_async
     async def test_list_skus(self, resource_group):
         response = await self.client.list_skus(
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -212,7 +212,7 @@ class TestWebSiteManagementAsync(AzureMgmtRecordedTestCase):
                 "vnetResourceGroup": "str",
                 "vnetSubnetName": "str",
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -224,7 +224,7 @@ class TestWebSiteManagementAsync(AzureMgmtRecordedTestCase):
         response = await self.client.move(
             resource_group_name=resource_group.name,
             move_resource_envelope={"resources": ["str"], "targetResourceGroup": "str"},
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -298,7 +298,7 @@ class TestWebSiteManagementAsync(AzureMgmtRecordedTestCase):
                 "serverFarmId": "str",
                 "skuName": "str",
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -310,7 +310,7 @@ class TestWebSiteManagementAsync(AzureMgmtRecordedTestCase):
         response = await self.client.validate_move(
             resource_group_name=resource_group.name,
             move_resource_envelope={"resources": ["str"], "targetResourceGroup": "str"},
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself

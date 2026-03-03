@@ -1,3 +1,9 @@
+# -------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License in the project root for
+# license information.
+# --------------------------------------------------------------------------
+
 from os import environ
 import warnings
 from unittest import TestCase
@@ -10,6 +16,7 @@ from azure.monitor.opentelemetry._autoinstrumentation.distro import (
 from azure.monitor.opentelemetry._diagnostics.diagnostic_logging import _ATTACH_FAILURE_DISTRO, _ATTACH_SUCCESS_DISTRO
 
 
+# pylint: disable=unused-argument
 class TestDistro(TestCase):
     @patch.dict("os.environ", {}, clear=True)
     @patch("azure.monitor.opentelemetry._autoinstrumentation.distro._is_attach_enabled", return_value=True)

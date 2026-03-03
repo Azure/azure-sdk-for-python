@@ -56,6 +56,10 @@ class BlobClient(  # type: ignore[misc]
     StorageAccountHostsMixin,
     StorageEncryptionMixin,
 ):
+    container_name: str
+    blob_name: str
+    snapshot: Optional[str]
+    version_id: Optional[str]
     def __init__(
         self,
         account_url: str,
@@ -154,6 +158,7 @@ class BlobClient(  # type: ignore[misc]
         timeout: Optional[int] = None,
         content_settings: Optional[ContentSettings] = None,
         cpk: Optional[CustomerProvidedEncryptionKey] = None,
+        source_cpk: Optional[CustomerProvidedEncryptionKey] = None,
         encryption_scope: Optional[str] = None,
         standard_blob_tier: Optional[StandardBlobTier] = None,
         source_authorization: Optional[str] = None,
@@ -208,6 +213,7 @@ class BlobClient(  # type: ignore[misc]
         max_concurrency: int = 1,
         encoding: str,
         progress_hook: Optional[Callable[[int, int], Awaitable[None]]] = None,
+        decompress: Optional[bool] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> StorageStreamDownloader[str]: ...
@@ -229,6 +235,7 @@ class BlobClient(  # type: ignore[misc]
         max_concurrency: int = 1,
         encoding: None = None,
         progress_hook: Optional[Callable[[int, int], Awaitable[None]]] = None,
+        decompress: Optional[bool] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> StorageStreamDownloader[bytes]: ...
@@ -250,6 +257,7 @@ class BlobClient(  # type: ignore[misc]
         max_concurrency: int = 1,
         encoding: Optional[str] = None,
         progress_hook: Optional[Callable[[int, int], Awaitable[None]]] = None,
+        decompress: Optional[bool] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> Union[StorageStreamDownloader[str], StorageStreamDownloader[bytes]]: ...
@@ -265,6 +273,8 @@ class BlobClient(  # type: ignore[misc]
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         if_tags_match_condition: Optional[str] = None,
+        access_tier_if_modified_since: Optional[datetime] = None,
+        access_tier_if_unmodified_since: Optional[datetime] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> None: ...
@@ -457,7 +467,7 @@ class BlobClient(  # type: ignore[misc]
     async def stage_block(
         self,
         block_id: str,
-        data: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]],
+        data: Union[bytes, Iterable[bytes], IO[bytes]],
         length: Optional[int] = None,
         *,
         validate_content: Optional[bool] = None,
@@ -479,6 +489,7 @@ class BlobClient(  # type: ignore[misc]
         *,
         lease: Optional[Union[BlobLeaseClient, str]] = None,
         cpk: Optional[CustomerProvidedEncryptionKey] = None,
+        source_cpk: Optional[CustomerProvidedEncryptionKey] = None,
         encryption_scope: Optional[str] = None,
         source_authorization: Optional[str] = None,
         source_token_intent: Optional[Literal["backup"]] = None,
@@ -537,6 +548,10 @@ class BlobClient(  # type: ignore[misc]
         validate_content: Optional[bool] = None,
         if_tags_match_condition: Optional[str] = None,
         lease: Optional[Union[BlobLeaseClient, str]] = None,
+        if_modified_since: Optional[datetime] = None,
+        if_unmodified_since: Optional[datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> Dict[str, Any]: ...
@@ -547,6 +562,10 @@ class BlobClient(  # type: ignore[misc]
         version_id: Optional[str] = None,
         if_tags_match_condition: Optional[str] = None,
         lease: Optional[Union[BlobLeaseClient, str]] = None,
+        if_modified_since: Optional[datetime] = None,
+        if_unmodified_since: Optional[datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> Dict[str, str]: ...
@@ -674,6 +693,7 @@ class BlobClient(  # type: ignore[misc]
         match_condition: Optional[MatchConditions] = None,
         if_tags_match_condition: Optional[str] = None,
         cpk: Optional[CustomerProvidedEncryptionKey] = None,
+        source_cpk: Optional[CustomerProvidedEncryptionKey] = None,
         encryption_scope: Optional[str] = None,
         source_authorization: Optional[str] = None,
         source_token_intent: Optional[Literal["backup"]] = None,
@@ -702,7 +722,7 @@ class BlobClient(  # type: ignore[misc]
     @distributed_trace_async
     async def append_block(
         self,
-        data: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]],
+        data: Union[bytes, Iterable[bytes], IO[bytes]],
         length: Optional[int] = None,
         *,
         validate_content: Optional[bool] = None,
@@ -741,6 +761,7 @@ class BlobClient(  # type: ignore[misc]
         source_etag: Optional[str] = None,
         source_match_condition: Optional[MatchConditions] = None,
         cpk: Optional[CustomerProvidedEncryptionKey] = None,
+        source_cpk: Optional[CustomerProvidedEncryptionKey] = None,
         encryption_scope: Optional[str] = None,
         source_authorization: Optional[str] = None,
         source_token_intent: Optional[Literal["backup"]] = None,

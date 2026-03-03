@@ -32,7 +32,7 @@ class TestStorageLargeBlockBlobAsync(AsyncStorageRecordedTestCase):
         # the tests would take too long to execute
         self.bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=key,
+            credential=key.secret,
             max_single_put_size=32 * 1024,
             max_block_size=2 * 1024 * 1024,
             min_large_block_upload_threshold=1 * 1024 * 1024)

@@ -27,7 +27,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperationsAsync(AzureMgmtRec
             resource_group_name=resource_group.name,
             virtual_hub_name="str",
             ip_config_name="str",
-            api_version="2024-07-01",
+            api_version="2025-05-01",
         )
 
         # please add some check logic here by yourself
@@ -189,6 +189,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperationsAsync(AzureMgmtRec
                                             "location": "str",
                                             "name": "str",
                                             "provisioningState": "str",
+                                            "recordTypes": "str",
                                             "retentionPolicy": {"days": 0, "enabled": False},
                                             "storageId": "str",
                                             "tags": {"str": "str"},
@@ -410,6 +411,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperationsAsync(AzureMgmtRec
                                                         "type": "str",
                                                     }
                                                 ],
+                                                "ipVersionType": "IPv4",
                                                 "location": "str",
                                                 "manualPrivateLinkServiceConnections": [
                                                     {
@@ -453,6 +455,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperationsAsync(AzureMgmtRec
                                                 "type": "str",
                                             },
                                             "privateLinkService": {
+                                                "accessMode": "str",
                                                 "alias": "str",
                                                 "autoApproval": {"subscriptions": ["str"]},
                                                 "destinationIPAddress": "str",
@@ -535,6 +538,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperationsAsync(AzureMgmtRec
                                                                     "type": "str",
                                                                 }
                                                             ],
+                                                            "ipVersionType": "IPv4",
                                                             "location": "str",
                                                             "manualPrivateLinkServiceConnections": [
                                                                 {
@@ -837,6 +841,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperationsAsync(AzureMgmtRec
                                                 "type": "str",
                                             }
                                         ],
+                                        "ipVersionType": "IPv4",
                                         "location": "str",
                                         "manualPrivateLinkServiceConnections": [
                                             {
@@ -1113,6 +1118,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperationsAsync(AzureMgmtRec
                                                             "location": "str",
                                                             "name": "str",
                                                             "provisioningState": "str",
+                                                            "recordTypes": "str",
                                                             "retentionPolicy": {"days": 0, "enabled": False},
                                                             "storageId": "str",
                                                             "tags": {"str": "str"},
@@ -1182,6 +1188,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperationsAsync(AzureMgmtRec
                                                 "primary": bool,
                                                 "privateEndpoint": ...,
                                                 "privateLinkService": {
+                                                    "accessMode": "str",
                                                     "alias": "str",
                                                     "autoApproval": {"subscriptions": ["str"]},
                                                     "destinationIPAddress": "str",
@@ -1524,6 +1531,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperationsAsync(AzureMgmtRec
                                         "service": "str",
                                     }
                                 ],
+                                "serviceGateway": {"id": "str"},
                                 "sharingScope": "str",
                                 "type": "str",
                             },
@@ -1545,6 +1553,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperationsAsync(AzureMgmtRec
                             "publicIpPrefixes": [{"id": "str"}],
                             "publicIpPrefixesV6": [{"id": "str"}],
                             "resourceGuid": "str",
+                            "serviceGateway": {"id": "str"},
                             "sku": {"name": "str"},
                             "sourceVirtualNetwork": {"id": "str"},
                             "subnets": [{"id": "str"}],
@@ -1641,6 +1650,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperationsAsync(AzureMgmtRec
                                         "publicIpPrefixes": [{"id": "str"}],
                                         "publicIpPrefixesV6": [{"id": "str"}],
                                         "resourceGuid": "str",
+                                        "serviceGateway": {"id": "str"},
                                         "sku": {"name": "str"},
                                         "sourceVirtualNetwork": {"id": "str"},
                                         "subnets": [{"id": "str"}],
@@ -1740,6 +1750,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperationsAsync(AzureMgmtRec
                                     "location": "str",
                                     "name": "str",
                                     "provisioningState": "str",
+                                    "recordTypes": "str",
                                     "retentionPolicy": {"days": 0, "enabled": False},
                                     "storageId": "str",
                                     "tags": {"str": "str"},
@@ -1915,6 +1926,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperationsAsync(AzureMgmtRec
                                                     "publicIpPrefixes": [{"id": "str"}],
                                                     "publicIpPrefixesV6": [{"id": "str"}],
                                                     "resourceGuid": "str",
+                                                    "serviceGateway": {"id": "str"},
                                                     "sku": {"name": "str"},
                                                     "sourceVirtualNetwork": {"id": "str"},
                                                     "subnets": [{"id": "str"}],
@@ -1994,6 +2006,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperationsAsync(AzureMgmtRec
                                                                 "publicIpPrefixes": [{"id": "str"}],
                                                                 "publicIpPrefixesV6": [{"id": "str"}],
                                                                 "resourceGuid": "str",
+                                                                "serviceGateway": {"id": "str"},
                                                                 "sku": {"name": "str"},
                                                                 "sourceVirtualNetwork": {"id": "str"},
                                                                 "subnets": [{"id": "str"}],
@@ -2076,6 +2089,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperationsAsync(AzureMgmtRec
                                                 "type": "str",
                                             }
                                         ],
+                                        "ipVersionType": "IPv4",
                                         "location": "str",
                                         "manualPrivateLinkServiceConnections": [
                                             {
@@ -2119,6 +2133,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperationsAsync(AzureMgmtRec
                                         "type": "str",
                                     },
                                     "privateLinkService": {
+                                        "accessMode": "str",
                                         "alias": "str",
                                         "autoApproval": {"subscriptions": ["str"]},
                                         "destinationIPAddress": "str",
@@ -2199,6 +2214,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperationsAsync(AzureMgmtRec
                                                         "publicIpPrefixes": [{"id": "str"}],
                                                         "publicIpPrefixesV6": [{"id": "str"}],
                                                         "resourceGuid": "str",
+                                                        "serviceGateway": {"id": "str"},
                                                         "sku": {"name": "str"},
                                                         "sourceVirtualNetwork": {"id": "str"},
                                                         "subnets": [{"id": "str"}],
@@ -2260,6 +2276,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperationsAsync(AzureMgmtRec
                                                             "type": "str",
                                                         }
                                                     ],
+                                                    "ipVersionType": "IPv4",
                                                     "location": "str",
                                                     "manualPrivateLinkServiceConnections": [
                                                         {
@@ -2385,6 +2402,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperationsAsync(AzureMgmtRec
                                                             "publicIpPrefixes": [{"id": "str"}],
                                                             "publicIpPrefixesV6": [{"id": "str"}],
                                                             "resourceGuid": "str",
+                                                            "serviceGateway": {"id": "str"},
                                                             "sku": {"name": "str"},
                                                             "sourceVirtualNetwork": {"id": "str"},
                                                             "subnets": [{"id": "str"}],
@@ -2557,6 +2575,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperationsAsync(AzureMgmtRec
                                                             "publicIpPrefixes": [{"id": "str"}],
                                                             "publicIpPrefixesV6": [{"id": "str"}],
                                                             "resourceGuid": "str",
+                                                            "serviceGateway": {"id": "str"},
                                                             "sku": {"name": "str"},
                                                             "sourceVirtualNetwork": {"id": "str"},
                                                             "subnets": [{"id": "str"}],
@@ -2680,6 +2699,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperationsAsync(AzureMgmtRec
                                         "type": "str",
                                     }
                                 ],
+                                "ipVersionType": "IPv4",
                                 "location": "str",
                                 "manualPrivateLinkServiceConnections": [
                                     {
@@ -2867,6 +2887,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperationsAsync(AzureMgmtRec
                                                         "publicIpPrefixes": [{"id": "str"}],
                                                         "publicIpPrefixesV6": [{"id": "str"}],
                                                         "resourceGuid": "str",
+                                                        "serviceGateway": {"id": "str"},
                                                         "sku": {"name": "str"},
                                                         "sourceVirtualNetwork": {"id": "str"},
                                                         "subnets": [{"id": "str"}],
@@ -2946,6 +2967,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperationsAsync(AzureMgmtRec
                                                                     "publicIpPrefixes": [{"id": "str"}],
                                                                     "publicIpPrefixesV6": [{"id": "str"}],
                                                                     "resourceGuid": "str",
+                                                                    "serviceGateway": {"id": "str"},
                                                                     "sku": {"name": "str"},
                                                                     "sourceVirtualNetwork": {"id": "str"},
                                                                     "subnets": [{"id": "str"}],
@@ -3072,6 +3094,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperationsAsync(AzureMgmtRec
                                                     "location": "str",
                                                     "name": "str",
                                                     "provisioningState": "str",
+                                                    "recordTypes": "str",
                                                     "retentionPolicy": {"days": 0, "enabled": False},
                                                     "storageId": "str",
                                                     "tags": {"str": "str"},
@@ -3141,6 +3164,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperationsAsync(AzureMgmtRec
                                         "primary": bool,
                                         "privateEndpoint": ...,
                                         "privateLinkService": {
+                                            "accessMode": "str",
                                             "alias": "str",
                                             "autoApproval": {"subscriptions": ["str"]},
                                             "destinationIPAddress": "str",
@@ -3221,6 +3245,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperationsAsync(AzureMgmtRec
                                                             "publicIpPrefixes": [{"id": "str"}],
                                                             "publicIpPrefixesV6": [{"id": "str"}],
                                                             "resourceGuid": "str",
+                                                            "serviceGateway": {"id": "str"},
                                                             "sku": {"name": "str"},
                                                             "sourceVirtualNetwork": {"id": "str"},
                                                             "subnets": [{"id": "str"}],
@@ -3338,6 +3363,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperationsAsync(AzureMgmtRec
                                                                 "publicIpPrefixes": [{"id": "str"}],
                                                                 "publicIpPrefixesV6": [{"id": "str"}],
                                                                 "resourceGuid": "str",
+                                                                "serviceGateway": {"id": "str"},
                                                                 "sku": {"name": "str"},
                                                                 "sourceVirtualNetwork": {"id": "str"},
                                                                 "subnets": [{"id": "str"}],
@@ -3514,6 +3540,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperationsAsync(AzureMgmtRec
                                                                 "publicIpPrefixes": [{"id": "str"}],
                                                                 "publicIpPrefixesV6": [{"id": "str"}],
                                                                 "resourceGuid": "str",
+                                                                "serviceGateway": {"id": "str"},
                                                                 "sku": {"name": "str"},
                                                                 "sourceVirtualNetwork": {"id": "str"},
                                                                 "subnets": [{"id": "str"}],
@@ -3666,12 +3693,13 @@ class TestNetworkManagementVirtualHubIpConfigurationOperationsAsync(AzureMgmtRec
                                 "service": "str",
                             }
                         ],
+                        "serviceGateway": {"id": "str"},
                         "sharingScope": "str",
                         "type": "str",
                     },
                     "type": "str",
                 },
-                api_version="2024-07-01",
+                api_version="2025-05-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -3686,7 +3714,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperationsAsync(AzureMgmtRec
                 resource_group_name=resource_group.name,
                 virtual_hub_name="str",
                 ip_config_name="str",
-                api_version="2024-07-01",
+                api_version="2025-05-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -3699,7 +3727,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperationsAsync(AzureMgmtRec
         response = self.client.virtual_hub_ip_configuration.list(
             resource_group_name=resource_group.name,
             virtual_hub_name="str",
-            api_version="2024-07-01",
+            api_version="2025-05-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

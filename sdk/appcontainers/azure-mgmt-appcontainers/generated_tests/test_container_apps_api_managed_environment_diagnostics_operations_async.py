@@ -25,7 +25,7 @@ class TestContainerAppsAPIManagedEnvironmentDiagnosticsOperationsAsync(AzureMgmt
         response = await self.client.managed_environment_diagnostics.list_detectors(
             resource_group_name=resource_group.name,
             environment_name="str",
-            api_version="2025-02-02-preview",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestContainerAppsAPIManagedEnvironmentDiagnosticsOperationsAsync(AzureMgmt
             resource_group_name=resource_group.name,
             environment_name="str",
             detector_name="str",
-            api_version="2025-02-02-preview",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself

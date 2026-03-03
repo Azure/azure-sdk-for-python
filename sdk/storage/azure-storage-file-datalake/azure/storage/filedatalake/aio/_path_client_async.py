@@ -474,7 +474,7 @@ class PathClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # ty
             group identifier, and permissions in the format
             "[scope:][type]:[id]:[permissions]".
         :type acl: str
-        :keyword func(~azure.storage.filedatalake.AccessControlChanges) progress_hook:
+        :keyword Callable[[AccessControlChanges], Awaitable[Any]] progress_hook:
             Callback where the caller can track progress of the operation
             as well as collect paths that failed to change Access Control.
         :keyword str continuation_token:
@@ -527,7 +527,7 @@ class PathClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # ty
             group identifier, and permissions in the format
             "[scope:][type]:[id]:[permissions]".
         :type acl: str
-        :keyword func(~azure.storage.filedatalake.AccessControlChanges) progress_hook:
+        :keyword Callable[[AccessControlChanges], Awaitable[Any]] progress_hook:
             Callback where the caller can track progress of the operation
             as well as collect paths that failed to change Access Control.
         :keyword str continuation_token:
@@ -580,7 +580,7 @@ class PathClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # ty
             access control entry (ACE) consists of a scope, a type, and a user or
             group identifier in the format "[scope:][type]:[id]".
         :type acl: str
-        :keyword func(~azure.storage.filedatalake.AccessControlChanges) progress_hook:
+        :keyword Callable[[AccessControlChanges], Awaitable[Any]] progress_hook:
             Callback where the caller can track progress of the operation
             as well as collect paths that failed to change Access Control.
         :keyword str continuation_token:

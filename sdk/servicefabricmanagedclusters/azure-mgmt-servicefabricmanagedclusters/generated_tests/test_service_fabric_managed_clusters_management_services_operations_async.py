@@ -103,3 +103,25 @@ class TestServiceFabricManagedClustersManagementServicesOperationsAsync(AzureMgm
         result = [r async for r in response]
         # please add some check logic here by yourself
         # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_services_begin_restart_replica(self, resource_group):
+        response = await (
+            await self.client.services.begin_restart_replica(
+                resource_group_name=resource_group.name,
+                cluster_name="str",
+                application_name="str",
+                service_name="str",
+                parameters={
+                    "partitionId": "str",
+                    "replicaIds": [0],
+                    "restartKind": "str",
+                    "forceRestart": bool,
+                    "timeout": 0,
+                },
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...

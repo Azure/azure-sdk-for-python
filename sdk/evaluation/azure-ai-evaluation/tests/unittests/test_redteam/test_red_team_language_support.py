@@ -1,6 +1,10 @@
 import pytest
 from unittest.mock import AsyncMock, MagicMock, patch
-from azure.ai.evaluation.red_team._red_team import RedTeam, RiskCategory, SupportedLanguages
+from azure.ai.evaluation.red_team._red_team import (
+    RedTeam,
+    RiskCategory,
+    SupportedLanguages,
+)
 from azure.core.credentials import TokenCredential
 
 
@@ -25,7 +29,7 @@ class TestRedTeamLanguageSupport:
         """Test that RedTeam initializes with default English language."""
         with patch("azure.ai.evaluation.red_team._red_team.GeneratedRAIClient"), patch(
             "azure.ai.evaluation.red_team._red_team.setup_logger"
-        ) as mock_setup_logger, patch("azure.ai.evaluation.red_team._red_team.initialize_pyrit"), patch(
+        ) as mock_setup_logger, patch("azure.ai.evaluation.red_team._red_team.CentralMemory"), patch(
             "azure.ai.evaluation.red_team._red_team._AttackObjectiveGenerator"
         ):
 
@@ -46,7 +50,7 @@ class TestRedTeamLanguageSupport:
         """Test that RedTeam initializes with custom language."""
         with patch("azure.ai.evaluation.red_team._red_team.GeneratedRAIClient"), patch(
             "azure.ai.evaluation.red_team._red_team.setup_logger"
-        ) as mock_setup_logger, patch("azure.ai.evaluation.red_team._red_team.initialize_pyrit"), patch(
+        ) as mock_setup_logger, patch("azure.ai.evaluation.red_team._red_team.CentralMemory"), patch(
             "azure.ai.evaluation.red_team._red_team._AttackObjectiveGenerator"
         ):
 
@@ -82,7 +86,7 @@ class TestRedTeamLanguageSupport:
         """Test that RedTeam initializes correctly with all supported languages."""
         with patch("azure.ai.evaluation.red_team._red_team.GeneratedRAIClient"), patch(
             "azure.ai.evaluation.red_team._red_team.setup_logger"
-        ) as mock_setup_logger, patch("azure.ai.evaluation.red_team._red_team.initialize_pyrit"), patch(
+        ) as mock_setup_logger, patch("azure.ai.evaluation.red_team._red_team.CentralMemory"), patch(
             "azure.ai.evaluation.red_team._red_team._AttackObjectiveGenerator"
         ):
 
@@ -104,7 +108,7 @@ class TestRedTeamLanguageSupport:
         """Test that _get_attack_objectives passes language parameter to generated RAI client."""
         with patch("azure.ai.evaluation.red_team._red_team.GeneratedRAIClient") as mock_rai_client_class, patch(
             "azure.ai.evaluation.red_team._red_team.setup_logger"
-        ) as mock_setup_logger, patch("azure.ai.evaluation.red_team._red_team.initialize_pyrit"), patch(
+        ) as mock_setup_logger, patch("azure.ai.evaluation.red_team._red_team.CentralMemory"), patch(
             "azure.ai.evaluation.red_team._red_team._AttackObjectiveGenerator"
         ) as mock_attack_obj_generator_class:
 
@@ -154,60 +158,3 @@ class TestRedTeamLanguageSupport:
             mock_rai_client.get_attack_objectives.assert_called_once()
             call_args = mock_rai_client.get_attack_objectives.call_args
             assert call_args.kwargs["language"] == SupportedLanguages.Spanish.value
-
-    @pytest.mark.asyncio
-    async def test_get_attack_objectives_tense_strategy_passes_language(self, mock_azure_ai_project, mock_credential):
-        """Test that _get_attack_objectives passes language parameter for tense strategy."""
-        with patch("azure.ai.evaluation.red_team._red_team.GeneratedRAIClient") as mock_rai_client_class, patch(
-            "azure.ai.evaluation.red_team._red_team.setup_logger"
-        ) as mock_setup_logger, patch("azure.ai.evaluation.red_team._red_team.initialize_pyrit"), patch(
-            "azure.ai.evaluation.red_team._red_team._AttackObjectiveGenerator"
-        ) as mock_attack_obj_generator_class:
-
-            mock_logger = MagicMock()
-            mock_setup_logger.return_value = mock_logger
-
-            # Set up mock RAI client instance
-            mock_rai_client = MagicMock()
-            mock_rai_client.get_attack_objectives = AsyncMock(
-                return_value=[
-                    {
-                        "id": "test-id",
-                        "messages": [{"role": "user", "content": "test prompt"}],
-                        "metadata": {"target_harms": [{"risk-type": "violence"}]},
-                    }
-                ]
-            )
-            mock_rai_client_class.return_value = mock_rai_client
-
-            # Set up mock attack objective generator instance
-            mock_attack_obj_generator = MagicMock()
-            mock_attack_obj_generator.num_objectives = 5
-            mock_attack_obj_generator.custom_attack_seed_prompts = None
-            mock_attack_obj_generator.validated_prompts = False
-            mock_attack_obj_generator_class.return_value = mock_attack_obj_generator
-
-            # Create RedTeam instance with French language
-            agent = RedTeam(
-                azure_ai_project=mock_azure_ai_project,
-                credential=mock_credential,
-                risk_categories=[RiskCategory.Violence],
-                num_objectives=5,
-                language=SupportedLanguages.French,
-            )
-
-            agent.generated_rai_client = mock_rai_client
-            agent.scan_session_id = "test-session"
-
-            # Call _get_attack_objectives with tense strategy
-            await agent._get_attack_objectives(
-                risk_category=RiskCategory.Violence,
-                application_scenario="test scenario",
-                strategy="tense",
-            )
-
-            # Verify that get_attack_objectives was called with French language and tense strategy
-            mock_rai_client.get_attack_objectives.assert_called_once()
-            call_args = mock_rai_client.get_attack_objectives.call_args
-            assert call_args.kwargs["language"] == SupportedLanguages.French.value  # French language code
-            assert call_args.kwargs["strategy"] == "tense"

@@ -76,17 +76,6 @@ class CustomerTransitState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """pure transit provider or network service provider"""
 
 
-class CycleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Update Cycle type."""
-
-    PREVIEW = "Preview"
-    """customer selection of preview update install mcc on their physical vm"""
-    SLOW = "Slow"
-    """customer selection of slow update to install mcc on their physical vm"""
-    FAST = "Fast"
-    """customer selection of fast / auto update to install mcc on their physical vm"""
-
-
 class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
     logs UX. Default value is "user,system".

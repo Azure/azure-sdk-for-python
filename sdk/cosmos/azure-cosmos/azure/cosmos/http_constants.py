@@ -373,6 +373,11 @@ class _ErrorCodes:
     # Linux Error Codes
     LinuxConnectionReset = 131
 
+class SDKSupportedCapabilities:
+    """Constants of SDK supported capabilities.
+    """
+    NONE = '0'
+    PARTITION_MERGE = '1'
 
 class StatusCodes:
     """HTTP status codes returned by the REST operations
@@ -401,6 +406,7 @@ class StatusCodes:
     RETRY_WITH = 449
 
     INTERNAL_SERVER_ERROR = 500
+    SERVICE_UNAVAILABLE = 503
 
     # Operation pause and cancel. These are FAKE status codes for QOS logging purpose only.
     OPERATION_PAUSED = 1200

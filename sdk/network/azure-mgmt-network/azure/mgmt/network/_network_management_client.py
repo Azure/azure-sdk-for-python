@@ -93,7 +93,6 @@ from .operations import (
     NetworkInterfaceLoadBalancersOperations,
     NetworkInterfaceTapConfigurationsOperations,
     NetworkInterfacesOperations,
-    NetworkManagementClientOperationsMixin,
     NetworkManagerCommitsOperations,
     NetworkManagerDeploymentStatusOperations,
     NetworkManagerRoutingConfigurationsOperations,
@@ -108,6 +107,7 @@ from .operations import (
     NetworkSecurityPerimeterLoggingConfigurationsOperations,
     NetworkSecurityPerimeterOperationStatusesOperations,
     NetworkSecurityPerimeterProfilesOperations,
+    NetworkSecurityPerimeterServiceTagsOperations,
     NetworkSecurityPerimetersOperations,
     NetworkVirtualApplianceConnectionsOperations,
     NetworkVirtualAppliancesOperations,
@@ -142,6 +142,7 @@ from .operations import (
     ServiceAssociationLinksOperations,
     ServiceEndpointPoliciesOperations,
     ServiceEndpointPolicyDefinitionsOperations,
+    ServiceGatewaysOperations,
     ServiceTagInformationOperations,
     ServiceTagsOperations,
     StaticCidrsOperations,
@@ -158,6 +159,7 @@ from .operations import (
     VirtualHubIpConfigurationOperations,
     VirtualHubRouteTableV2SOperations,
     VirtualHubsOperations,
+    VirtualNetworkAppliancesOperations,
     VirtualNetworkGatewayConnectionsOperations,
     VirtualNetworkGatewayNatRulesOperations,
     VirtualNetworkGatewaysOperations,
@@ -178,14 +180,16 @@ from .operations import (
     VpnSitesOperations,
     WebApplicationFirewallPoliciesOperations,
     WebCategoriesOperations,
+    _NetworkManagementClientOperationsMixin,
 )
 
 if TYPE_CHECKING:
+    from azure.core import AzureClouds
     from azure.core.credentials import TokenCredential
 
 
 class NetworkManagementClient(
-    NetworkManagementClientOperationsMixin
+    _NetworkManagementClientOperationsMixin
 ):  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
     """Network Client.
 
@@ -444,6 +448,10 @@ class NetworkManagementClient(
      NetworkSecurityPerimeterOperationStatusesOperations operations
     :vartype network_security_perimeter_operation_statuses:
      azure.mgmt.network.operations.NetworkSecurityPerimeterOperationStatusesOperations
+    :ivar network_security_perimeter_service_tags: NetworkSecurityPerimeterServiceTagsOperations
+     operations
+    :vartype network_security_perimeter_service_tags:
+     azure.mgmt.network.operations.NetworkSecurityPerimeterServiceTagsOperations
     :ivar reachability_analysis_intents: ReachabilityAnalysisIntentsOperations operations
     :vartype reachability_analysis_intents:
      azure.mgmt.network.operations.ReachabilityAnalysisIntentsOperations
@@ -502,6 +510,8 @@ class NetworkManagementClient(
      operations
     :vartype service_endpoint_policy_definitions:
      azure.mgmt.network.operations.ServiceEndpointPolicyDefinitionsOperations
+    :ivar service_gateways: ServiceGatewaysOperations operations
+    :vartype service_gateways: azure.mgmt.network.operations.ServiceGatewaysOperations
     :ivar service_tags: ServiceTagsOperations operations
     :vartype service_tags: azure.mgmt.network.operations.ServiceTagsOperations
     :ivar service_tag_information: ServiceTagInformationOperations operations
@@ -521,6 +531,9 @@ class NetworkManagementClient(
     :ivar virtual_network_peerings: VirtualNetworkPeeringsOperations operations
     :vartype virtual_network_peerings:
      azure.mgmt.network.operations.VirtualNetworkPeeringsOperations
+    :ivar virtual_network_appliances: VirtualNetworkAppliancesOperations operations
+    :vartype virtual_network_appliances:
+     azure.mgmt.network.operations.VirtualNetworkAppliancesOperations
     :ivar virtual_network_gateways: VirtualNetworkGatewaysOperations operations
     :vartype virtual_network_gateways:
      azure.mgmt.network.operations.VirtualNetworkGatewaysOperations
@@ -612,20 +625,33 @@ class NetworkManagementClient(
     :type subscription_id: str
     :param base_url: Service URL. Default value is None.
     :type base_url: str
+    :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
+     None.
+    :paramtype cloud_setting: ~azure.core.AzureClouds
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
     """
 
     def __init__(
-        self, credential: "TokenCredential", subscription_id: str, base_url: Optional[str] = None, **kwargs: Any
+        self,
+        credential: "TokenCredential",
+        subscription_id: str,
+        base_url: Optional[str] = None,
+        *,
+        cloud_setting: Optional["AzureClouds"] = None,
+        **kwargs: Any
     ) -> None:
-        _cloud = kwargs.pop("cloud_setting", None) or settings.current.azure_cloud  # type: ignore
+        _cloud = cloud_setting or settings.current.azure_cloud  # type: ignore
         _endpoints = get_arm_endpoints(_cloud)
         if not base_url:
             base_url = _endpoints["resource_manager"]
         credential_scopes = kwargs.pop("credential_scopes", _endpoints["credential_scopes"])
         self._config = NetworkManagementClientConfiguration(
-            credential=credential, subscription_id=subscription_id, credential_scopes=credential_scopes, **kwargs
+            credential=credential,
+            subscription_id=subscription_id,
+            cloud_setting=cloud_setting,
+            credential_scopes=credential_scopes,
+            **kwargs
         )
 
         _policies = kwargs.pop("policies", None)
@@ -893,6 +919,9 @@ class NetworkManagementClient(
         self.network_security_perimeter_operation_statuses = NetworkSecurityPerimeterOperationStatusesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.network_security_perimeter_service_tags = NetworkSecurityPerimeterServiceTagsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.reachability_analysis_intents = ReachabilityAnalysisIntentsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -956,6 +985,9 @@ class NetworkManagementClient(
         self.service_endpoint_policy_definitions = ServiceEndpointPolicyDefinitionsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.service_gateways = ServiceGatewaysOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.service_tags = ServiceTagsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.service_tag_information = ServiceTagInformationOperations(
             self._client, self._config, self._serialize, self._deserialize
@@ -972,6 +1004,9 @@ class NetworkManagementClient(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.virtual_network_peerings = VirtualNetworkPeeringsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.virtual_network_appliances = VirtualNetworkAppliancesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.virtual_network_gateways = VirtualNetworkGatewaysOperations(

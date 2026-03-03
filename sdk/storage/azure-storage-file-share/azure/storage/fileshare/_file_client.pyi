@@ -38,7 +38,14 @@ from ._models import (
 from ._shared.base_client import StorageAccountHostsMixin
 
 class ShareFileClient(StorageAccountHostsMixin):
+    share_name: str
+    file_name: str
+    file_path: List[str]
+    directory_path: str
     snapshot: Optional[str]
+    allow_trailing_dot: Optional[bool]
+    allow_source_trailing_dot: Optional[bool]
+    file_request_intent: Optional[Literal["backup"]]
     def __init__(
         self,
         account_url: str,
@@ -131,7 +138,7 @@ class ShareFileClient(StorageAccountHostsMixin):
     @distributed_trace
     def upload_file(
         self,
-        data: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]],
+        data: Union[bytes, str, Iterable[AnyStr], IO[bytes]],
         length: Optional[int] = None,
         file_attributes: Optional[Union[str, NTFSAttributes]] = None,
         file_creation_time: Optional[Union[str, datetime]] = None,
@@ -193,6 +200,7 @@ class ShareFileClient(StorageAccountHostsMixin):
         validate_content: bool = False,
         lease: Optional[Union[ShareLeaseClient, str]] = None,
         progress_hook: Optional[Callable[[int, Optional[int]], None]] = None,
+        decompress: Optional[bool] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> StorageStreamDownloader: ...

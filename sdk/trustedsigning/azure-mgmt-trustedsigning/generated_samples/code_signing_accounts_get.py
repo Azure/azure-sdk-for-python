@@ -37,6 +37,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2024-02-05-preview/CodeSigningAccounts_Get.json
+# x-ms-original-file: 2025-10-13/CodeSigningAccounts_Get.json
 if __name__ == "__main__":
     main()

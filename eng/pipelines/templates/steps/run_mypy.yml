@@ -17,6 +17,7 @@ steps:
         --service="${{ parameters.ServiceDirectory }}"
         --checks="mypy"
         --disablecov
+        --disable-compatibility-filter
         ${{ parameters.AdditionalTestArgs }}
     env:
       TOX_PIP_IMPL: "uv"

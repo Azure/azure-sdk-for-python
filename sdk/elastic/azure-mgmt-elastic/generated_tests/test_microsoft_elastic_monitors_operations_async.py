@@ -21,9 +21,9 @@ class TestMicrosoftElasticMonitorsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_monitors_list(self, resource_group):
         response = self.client.monitors.list(
-            api_version="2024-06-15-preview",
+            api_version="2025-06-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -31,10 +31,10 @@ class TestMicrosoftElasticMonitorsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_resource_group(self, resource_group):
+    async def test_monitors_list_by_resource_group(self, resource_group):
         response = self.client.monitors.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2024-06-15-preview",
+            api_version="2025-06-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -42,11 +42,11 @@ class TestMicrosoftElasticMonitorsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_monitors_get(self, resource_group):
         response = await self.client.monitors.get(
             resource_group_name=resource_group.name,
             monitor_name="str",
-            api_version="2024-06-15-preview",
+            api_version="2025-06-01",
         )
 
         # please add some check logic here by yourself
@@ -54,12 +54,12 @@ class TestMicrosoftElasticMonitorsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create(self, resource_group):
+    async def test_monitors_begin_create(self, resource_group):
         response = await (
             await self.client.monitors.begin_create(
                 resource_group_name=resource_group.name,
                 monitor_name="str",
-                api_version="2024-06-15-preview",
+                api_version="2025-06-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -68,12 +68,12 @@ class TestMicrosoftElasticMonitorsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_update(self, resource_group):
+    async def test_monitors_begin_update(self, resource_group):
         response = await (
             await self.client.monitors.begin_update(
                 resource_group_name=resource_group.name,
                 monitor_name="str",
-                api_version="2024-06-15-preview",
+                api_version="2025-06-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -82,12 +82,12 @@ class TestMicrosoftElasticMonitorsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete(self, resource_group):
+    async def test_monitors_begin_delete(self, resource_group):
         response = await (
             await self.client.monitors.begin_delete(
                 resource_group_name=resource_group.name,
                 monitor_name="str",
-                api_version="2024-06-15-preview",
+                api_version="2025-06-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 

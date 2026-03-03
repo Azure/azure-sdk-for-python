@@ -1,5 +1,6 @@
 # Default Assets restore directory
 .assets
+.assets_distributed
 
 # Python cache
 __pycache__/
@@ -60,6 +61,7 @@ conda/assembled/
 conda/downloaded/
 conda/conda-env/
 scenario_*.txt
+.wheels
 
 # tox environment folders
 .tox/

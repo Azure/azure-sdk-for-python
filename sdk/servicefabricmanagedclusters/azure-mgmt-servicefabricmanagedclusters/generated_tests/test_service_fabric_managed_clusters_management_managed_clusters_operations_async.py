@@ -81,6 +81,7 @@ class TestServiceFabricManagedClustersManagementManagedClustersOperationsAsync(A
                         "enableAutoOSUpgrade": bool,
                         "enableHttpGatewayExclusiveAuthMode": bool,
                         "enableIpv6": bool,
+                        "enableOutboundOnlyNodeTypes": bool,
                         "enableServicePublicIP": bool,
                         "fabricSettings": [{"name": "str", "parameters": [{"name": "str", "value": "str"}]}],
                         "fqdn": "str",
@@ -121,7 +122,8 @@ class TestServiceFabricManagedClustersManagementManagedClustersOperationsAsync(A
                         "provisioningState": "str",
                         "publicIPPrefixId": "str",
                         "publicIPv6PrefixId": "str",
-                        "serviceEndpoints": [{"service": "str", "locations": ["str"]}],
+                        "serviceEndpoints": [{"service": "str", "locations": ["str"], "networkIdentifier": "str"}],
+                        "skipManagedNsgAssignment": bool,
                         "subnetId": "str",
                         "upgradeDescription": {
                             "deltaHealthPolicy": {
@@ -133,8 +135,8 @@ class TestServiceFabricManagedClustersManagementManagedClustersOperationsAsync(A
                             "healthPolicy": {"maxPercentUnhealthyApplications": 0, "maxPercentUnhealthyNodes": 0},
                             "monitoringPolicy": {
                                 "healthCheckRetryTimeout": "str",
-                                "healthCheckStableDuration": "1 day, 0:00:00",
-                                "healthCheckWaitDuration": "1 day, 0:00:00",
+                                "healthCheckStableDuration": "str",
+                                "healthCheckWaitDuration": "str",
                                 "upgradeDomainTimeout": "str",
                                 "upgradeTimeout": "str",
                             },
@@ -163,12 +165,14 @@ class TestServiceFabricManagedClustersManagementManagedClustersOperationsAsync(A
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_managed_clusters_update(self, resource_group):
-        response = await self.client.managed_clusters.update(
-            resource_group_name=resource_group.name,
-            cluster_name="str",
-            parameters={"tags": {"str": "str"}},
-        )
+    async def test_managed_clusters_begin_update(self, resource_group):
+        response = await (
+            await self.client.managed_clusters.begin_update(
+                resource_group_name=resource_group.name,
+                cluster_name="str",
+                parameters={"tags": {"str": "str"}},
+            )
+        ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
         # ...
@@ -201,56 +205,5 @@ class TestServiceFabricManagedClustersManagementManagedClustersOperationsAsync(A
     async def test_managed_clusters_list_by_subscription(self, resource_group):
         response = self.client.managed_clusters.list_by_subscription()
         result = [r async for r in response]
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_managed_clusters_get_fault_simulation(self, resource_group):
-        response = await self.client.managed_clusters.get_fault_simulation(
-            resource_group_name=resource_group.name,
-            cluster_name="str",
-            parameters={"simulationId": "str"},
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_managed_clusters_list_fault_simulation(self, resource_group):
-        response = self.client.managed_clusters.list_fault_simulation(
-            resource_group_name=resource_group.name,
-            cluster_name="str",
-        )
-        result = [r async for r in response]
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_managed_clusters_begin_start_fault_simulation(self, resource_group):
-        response = await (
-            await self.client.managed_clusters.begin_start_fault_simulation(
-                resource_group_name=resource_group.name,
-                cluster_name="str",
-                parameters={"parameters": "fault_simulation_content"},
-            )
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_managed_clusters_begin_stop_fault_simulation(self, resource_group):
-        response = await (
-            await self.client.managed_clusters.begin_stop_fault_simulation(
-                resource_group_name=resource_group.name,
-                cluster_name="str",
-                parameters={"simulationId": "str"},
-            )
-        ).result()  # call '.result()' to poll until service return final result
-
         # please add some check logic here by yourself
         # ...

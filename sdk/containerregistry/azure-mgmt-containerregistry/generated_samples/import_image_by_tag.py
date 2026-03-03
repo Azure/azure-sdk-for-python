@@ -46,6 +46,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: specification/containerregistry/resource-manager/Microsoft.ContainerRegistry/preview/2025-05-01-preview/examples/ImportImageByTag.json
+# x-ms-original-file: specification/containerregistry/resource-manager/Microsoft.ContainerRegistry/Registry/stable/2025-11-01/examples/ImportImageByTag.json
 if __name__ == "__main__":
     main()

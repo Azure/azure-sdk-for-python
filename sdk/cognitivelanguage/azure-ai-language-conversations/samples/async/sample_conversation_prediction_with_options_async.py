@@ -46,7 +46,7 @@ from azure.ai.language.conversations.models import (
 )
 
 
-async def sample_conversation_prediction_with_options_async():
+async def sample_conv_prediction_options_async():
     # settings
     endpoint = os.environ["AZURE_CONVERSATIONS_ENDPOINT"]
     project_name = os.environ["AZURE_CONVERSATIONS_PROJECT_NAME"]
@@ -106,11 +106,13 @@ async def sample_conversation_prediction_with_options_async():
                     print()
         else:
             print("Unexpected result type from analyze_conversation.")
+
+
 # [END conversation_prediction_with_options_async]
 
 
 async def main():
-    await sample_conversation_prediction_with_options_async()
+    await sample_conv_prediction_options_async()
 
 
 if __name__ == "__main__":

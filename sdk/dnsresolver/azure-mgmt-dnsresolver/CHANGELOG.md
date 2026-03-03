@@ -1,5 +1,59 @@
 # Release History
 
+## 2.0.0b1 (2025-10-23)
+
+### Features Added
+
+  - Model `DnsResolverManagementClient` added parameter `cloud_setting` in method `__init__`
+  - Client `DnsResolverManagementClient` added method `send_request`
+  - Model `VirtualNetworkDnsForwardingRuleset` added property `properties`
+  - Added model `CloudError`
+  - Added model `DnsResolverDomainListBulkProperties`
+  - Added model `ForwardingRulePatchProperties`
+  - Added enum `ManagedDomainList`
+  - Added model `VirtualNetworkLinkPatchProperties`
+  - Added model `VirtualNetworkLinkSubResourceProperties`
+
+### Breaking Changes
+
+  - This version introduces new hybrid models which have dual dictionary and model nature. And please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
+  - Model `DnsResolverDomainListBulk` instance variables `storage_url` and `action` have been moved under property `properties`
+  - Model `ForwardingRulePatch` instance variables `target_dns_servers`, `metadata`, and `forwarding_rule_state` have been moved under property `properties`
+  - Model `VirtualNetworkDnsForwardingRuleset` instance variable `virtual_network_link` has been moved under property `properties`
+  - Model `VirtualNetworkLinkPatch` instance variable `metadata` has been moved under property `properties`
+  - Method `DnsForwardingRulesetsOperations.begin_create_or_update` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `DnsForwardingRulesetsOperations.begin_delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `DnsForwardingRulesetsOperations.begin_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `DnsResolverDomainListsOperations.begin_bulk` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `DnsResolverDomainListsOperations.begin_create_or_update` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `DnsResolverDomainListsOperations.begin_delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `DnsResolverDomainListsOperations.begin_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `DnsResolverPoliciesOperations.begin_create_or_update` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `DnsResolverPoliciesOperations.begin_delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `DnsResolverPoliciesOperations.begin_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `DnsResolverPolicyVirtualNetworkLinksOperations.begin_create_or_update` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `DnsResolverPolicyVirtualNetworkLinksOperations.begin_delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `DnsResolverPolicyVirtualNetworkLinksOperations.begin_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `DnsResolversOperations.begin_create_or_update` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `DnsResolversOperations.begin_delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `DnsResolversOperations.begin_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `DnsSecurityRulesOperations.begin_create_or_update` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `DnsSecurityRulesOperations.begin_delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `DnsSecurityRulesOperations.begin_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `ForwardingRulesOperations.create_or_update` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `ForwardingRulesOperations.delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `ForwardingRulesOperations.update` replaced positional_or_keyword parameter `if_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `InboundEndpointsOperations.begin_create_or_update` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `InboundEndpointsOperations.begin_delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `InboundEndpointsOperations.begin_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `OutboundEndpointsOperations.begin_create_or_update` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `OutboundEndpointsOperations.begin_delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `OutboundEndpointsOperations.begin_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `VirtualNetworkLinksOperations.begin_create_or_update` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `VirtualNetworkLinksOperations.begin_delete` replaced positional_or_keyword parameter `if_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `VirtualNetworkLinksOperations.begin_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameters `etag`/`match_condition`
+
 ## 1.1.0 (2025-06-16)
 
 ### Features Added

@@ -9,7 +9,7 @@
 from collections.abc import MutableMapping # pylint:disable=import-error
 from io import IOBase
 import json
-from typing import Any, AsyncIterator, Callable, Dict, IO, Optional, TypeVar, Union, cast, overload
+from typing import Any, AsyncIterator, Callable, IO, Optional, TypeVar, Union, cast, overload
 
 from azure.core import AsyncPipelineClient
 from azure.core.exceptions import (
@@ -43,7 +43,7 @@ from .._configuration import ConversationAnalysisClientConfiguration
 
 JSON = MutableMapping[str, Any]
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 
 
 class _ConversationAnalysisClientOperationsMixin(
@@ -163,7 +163,10 @@ class _ConversationAnalysisClientOperationsMixin(
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -180,7 +183,7 @@ class _ConversationAnalysisClientOperationsMixin(
     @api_version_validation(
         method_added_on="2023-04-01",
         params_added_on={"2023-04-01": ["api_version", "job_id", "show_stats", "accept"]},
-        api_versions_list=["2023-04-01", "2024-05-01", "2024-11-01", "2024-11-15-preview", "2025-05-15-preview"],
+        api_versions_list=["2023-04-01", "2024-05-01", "2024-11-01", "2025-05-15-preview", "2025-11-15-preview"],
     )
     async def _get_job_status(
         self, job_id: str, *, show_stats: Optional[bool] = None, **kwargs: Any
@@ -239,7 +242,10 @@ class _ConversationAnalysisClientOperationsMixin(
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -255,7 +261,7 @@ class _ConversationAnalysisClientOperationsMixin(
     @api_version_validation(
         method_added_on="2023-04-01",
         params_added_on={"2023-04-01": ["api_version", "content_type"]},
-        api_versions_list=["2023-04-01", "2024-05-01", "2024-11-01", "2024-11-15-preview", "2025-05-15-preview"],
+        api_versions_list=["2023-04-01", "2024-05-01", "2024-11-01", "2025-05-15-preview", "2025-11-15-preview"],
     )
     async def _analyze_conversation_job_initial(
         self, body: Union[_models._models.AnalyzeConversationOperationInput, JSON, IO[bytes]], **kwargs: Any
@@ -306,7 +312,10 @@ class _ConversationAnalysisClientOperationsMixin(
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -340,7 +349,7 @@ class _ConversationAnalysisClientOperationsMixin(
     @api_version_validation(
         method_added_on="2023-04-01",
         params_added_on={"2023-04-01": ["api_version", "content_type"]},
-        api_versions_list=["2023-04-01", "2024-05-01", "2024-11-01", "2024-11-15-preview", "2025-05-15-preview"],
+        api_versions_list=["2023-04-01", "2024-05-01", "2024-11-01", "2025-05-15-preview", "2025-11-15-preview"],
     )
     async def _begin_analyze_conversation_job(
         self, body: Union[_models._models.AnalyzeConversationOperationInput, JSON, IO[bytes]], **kwargs: Any
@@ -399,7 +408,7 @@ class _ConversationAnalysisClientOperationsMixin(
     @api_version_validation(
         method_added_on="2023-04-01",
         params_added_on={"2023-04-01": ["api_version", "job_id"]},
-        api_versions_list=["2023-04-01", "2024-05-01", "2024-11-01", "2024-11-15-preview", "2025-05-15-preview"],
+        api_versions_list=["2023-04-01", "2024-05-01", "2024-11-01", "2025-05-15-preview", "2025-11-15-preview"],
     )
     async def _cancel_job_initial(self, job_id: str, **kwargs: Any) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -439,7 +448,10 @@ class _ConversationAnalysisClientOperationsMixin(
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -456,7 +468,7 @@ class _ConversationAnalysisClientOperationsMixin(
     @api_version_validation(
         method_added_on="2023-04-01",
         params_added_on={"2023-04-01": ["api_version", "job_id"]},
-        api_versions_list=["2023-04-01", "2024-05-01", "2024-11-01", "2024-11-15-preview", "2025-05-15-preview"],
+        api_versions_list=["2023-04-01", "2024-05-01", "2024-11-01", "2025-05-15-preview", "2025-11-15-preview"],
     )
     async def begin_cancel_job(self, job_id: str, **kwargs: Any) -> AsyncLROPoller[None]:
         """Cancel a long-running Text Analysis conversations job.

@@ -25,7 +25,7 @@ class TestStorageManagementObjectReplicationPoliciesOperationsAsync(AzureMgmtRec
         response = self.client.object_replication_policies.list(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2024-01-01",
+            api_version="2025-06-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestStorageManagementObjectReplicationPoliciesOperationsAsync(AzureMgmtRec
             resource_group_name=resource_group.name,
             account_name="str",
             object_replication_policy_id="str",
-            api_version="2024-01-01",
+            api_version="2025-06-01",
         )
 
         # please add some check logic here by yourself
@@ -58,6 +58,7 @@ class TestStorageManagementObjectReplicationPoliciesOperationsAsync(AzureMgmtRec
                 "metrics": {"enabled": bool},
                 "name": "str",
                 "policyId": "str",
+                "priorityReplication": {"enabled": bool},
                 "rules": [
                     {
                         "destinationContainer": "str",
@@ -69,7 +70,7 @@ class TestStorageManagementObjectReplicationPoliciesOperationsAsync(AzureMgmtRec
                 "sourceAccount": "str",
                 "type": "str",
             },
-            api_version="2024-01-01",
+            api_version="2025-06-01",
         )
 
         # please add some check logic here by yourself
@@ -82,7 +83,7 @@ class TestStorageManagementObjectReplicationPoliciesOperationsAsync(AzureMgmtRec
             resource_group_name=resource_group.name,
             account_name="str",
             object_replication_policy_id="str",
-            api_version="2024-01-01",
+            api_version="2025-06-01",
         )
 
         # please add some check logic here by yourself

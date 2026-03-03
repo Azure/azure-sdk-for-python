@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -7,44 +8,1084 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 import datetime
-from typing import Any, Deque, List, Optional, Iterable, Iterator, overload
+from typing import Any, Callable, cast, Deque, Dict, List, Optional, Iterable, Iterator, TypeVar
 import collections
 import logging
 import threading
 
 from azure.core import MatchConditions
-from azure.core.exceptions import HttpResponseError
-from azure.core.rest import HttpResponse
+from azure.core.exceptions import (
+    HttpResponseError,
+)
+from azure.core.polling import LROPoller
+from azure.core.rest import HttpResponse, HttpRequest
+from azure.core.pipeline import PipelineResponse
 from azure.core.tracing.decorator import distributed_trace
 
 from .. import models as _models
-from ._operations import (
-    BatchClientOperationsMixin as BatchClientOperationsMixinGenerated,
+from ._polling import (
+    DeallocateNodePollingMethod,
+    DeleteJobPollingMethod,
+    DeleteJobSchedulePollingMethod,
+    DeletePoolPollingMethod,
+    DisableJobPollingMethod,
+    EnableJobPollingMethod,
+    RebootNodePollingMethod,
+    ReimageNodePollingMethod,
+    RemoveNodePollingMethod,
+    ResizePoolPollingMethod,
+    StartNodePollingMethod,
+    StopPoolResizePollingMethod,
+    TerminateJobPollingMethod,
+    TerminateJobSchedulePollingMethod,
 )
+from ._operations import (
+    _BatchClientOperationsMixin as BatchClientOperationsMixinGenerated,
+)
+
+T = TypeVar("T")
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 MAX_TASKS_PER_REQUEST = 100
 _LOGGER = logging.getLogger(__name__)
 
 __all__: List[str] = [
-    "BatchClientOperationsMixin"
+    "_BatchClientOperationsMixin",
 ]  # Add all objects you want publicly available to users at this package level
 
 
-class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
+class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
     """Customize generated code"""
+
+    @distributed_trace
+    def begin_delete_job(
+        self,
+        job_id: str,
+        *,
+        timeout: Optional[int] = None,
+        ocpdate: Optional[datetime.datetime] = None,
+        if_modified_since: Optional[datetime.datetime] = None,
+        if_unmodified_since: Optional[datetime.datetime] = None,
+        force: Optional[bool] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        polling_interval: int = 5,
+        **kwargs: Any
+    ) -> LROPoller[None]:
+        """Deletes a Job with Long Running Operation support.
+
+        Deleting a Job also deletes all Tasks that are part of that Job, and all Job
+        statistics. This also overrides the retention period for Task data; that is, if
+        the Job contains Tasks which are still retained on Compute Nodes, the Batch
+        services deletes those Tasks' working directories and all their contents.  When
+        a Delete Job request is received, the Batch service sets the Job to the
+        deleting state. All update operations on a Job that is in deleting state will
+        fail with status code 409 (Conflict), with additional information indicating
+        that the Job is being deleted.
+
+        :param job_id: The ID of the Job to delete. Required.
+        :type job_id: str
+        :keyword timeout: The maximum time that the server can spend processing the request, in
+         seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
+         instead. Default value is None.
+        :paramtype timeout: int
+        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+         current system clock time; set it explicitly if you are calling the REST API
+         directly. Default value is None.
+        :paramtype ocpdate: ~datetime.datetime
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
+         to the client. The operation will be performed only if the resource on the service has
+         been modified since the specified time. Default value is None.
+        :paramtype if_modified_since: ~datetime.datetime
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
+         known to the client. The operation will be performed only if the resource on the service has
+         not been modified since the specified time. Default value is None.
+        :paramtype if_unmodified_since: ~datetime.datetime
+        :keyword force: If true, the server will delete the Job even if the corresponding nodes have
+         not fully processed the deletion. The default value is false. Default value is None.
+        :paramtype force: bool
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword polling_interval: The interval in seconds between polling attempts. Default value is 5.
+        :paramtype polling_interval: int
+        :return: An LROPoller that can be used to wait for the job deletion to complete
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+        def capture_pipeline_response(pipeline_response, _deserialized, _response_headers):
+            return pipeline_response
+
+        pipeline_response = cast(
+            PipelineResponse,
+            self._delete_job_internal(
+                job_id,
+                timeout=timeout,
+                ocpdate=ocpdate,
+                if_modified_since=if_modified_since,
+                if_unmodified_since=if_unmodified_since,
+                force=force,
+                etag=etag,
+                match_condition=match_condition,
+                cls=capture_pipeline_response,
+                **kwargs,
+            ),
+        )
+
+        polling_method = DeleteJobPollingMethod(self, pipeline_response, None, job_id, polling_interval)
+        return LROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
+
+    @distributed_trace
+    def begin_disable_job(
+        self,
+        job_id: str,
+        disable_options: _models.BatchJobDisableOptions,
+        *,
+        timeout: Optional[int] = None,
+        ocpdate: Optional[datetime.datetime] = None,
+        if_modified_since: Optional[datetime.datetime] = None,
+        if_unmodified_since: Optional[datetime.datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        polling_interval: int = 5,
+        **kwargs: Any
+    ) -> LROPoller[None]:
+        """Disables a Job with Long Running Operation support.
+
+        The Batch Service immediately moves the Job to the disabling state. Batch then
+        uses the disableTasks parameter to determine what to do with the currently
+        running Tasks of the Job. The Job remains in the disabling state until the
+        disable operation is completed and all Tasks have been dealt with according to
+        the disableTasks option; the Job then moves to the disabled state. No new Tasks
+        are started under the Job until it moves back to active state. If you try to
+        disable a Job that is in any state other than active, disabling, or disabled,
+        the request fails with status code 409.
+
+        :param job_id: The ID of the Job to disable. Required.
+        :type job_id: str
+        :param disable_options: The options to use for disabling the Job. Required.
+        :type disable_options: ~azure.batch.models.BatchJobDisableOptions
+        :keyword timeout: The maximum time that the server can spend processing the request, in
+         seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
+         instead.". Default value is None.
+        :paramtype timeout: int
+        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+         current system clock time; set it explicitly if you are calling the REST API
+         directly. Default value is None.
+        :paramtype ocpdate: ~datetime.datetime
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
+         to the
+         client. The operation will be performed only if the resource on the service has
+         been modified since the specified time. Default value is None.
+        :paramtype if_modified_since: ~datetime.datetime
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
+         known to the
+         client. The operation will be performed only if the resource on the service has
+         not been modified since the specified time. Default value is None.
+        :paramtype if_unmodified_since: ~datetime.datetime
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword polling_interval: The interval in seconds between polling attempts. Default value is 5.
+        :paramtype polling_interval: int
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+        def capture_pipeline_response(pipeline_response, _deserialized, _response_headers):
+            return pipeline_response
+
+        pipeline_response = cast(
+            PipelineResponse,
+            self._disable_job_internal(
+                job_id,
+                disable_options=disable_options,
+                timeout=timeout,
+                ocpdate=ocpdate,
+                if_modified_since=if_modified_since,
+                if_unmodified_since=if_unmodified_since,
+                etag=etag,
+                match_condition=match_condition,
+                cls=capture_pipeline_response,
+                **kwargs,
+            ),
+        )
+
+        polling_method = DisableJobPollingMethod(self, pipeline_response, None, job_id, polling_interval)
+        return LROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
+
+    @distributed_trace
+    def begin_enable_job(
+        self,
+        job_id: str,
+        *,
+        timeout: Optional[int] = None,
+        ocpdate: Optional[datetime.datetime] = None,
+        if_modified_since: Optional[datetime.datetime] = None,
+        if_unmodified_since: Optional[datetime.datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        polling_interval: int = 5,
+        **kwargs: Any
+    ) -> LROPoller[None]:
+        """Enables a Job with Long Running Operation support.
+        When you call this API, the Batch service sets a disabled Job to the enabling
+        state. After the this operation is completed, the Job moves to the active
+        state, and scheduling of new Tasks under the Job resumes. The Batch service
+        does not allow a Task to remain in the active state for more than 180 days.
+        Therefore, if you enable a Job containing active Tasks which were added more
+        than 180 days ago, those Tasks will not run.
+
+        :param job_id: The ID of the Job to enable. Required.
+        :type job_id: str
+        :keyword timeout: The maximum time that the server can spend processing the request, in
+         seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
+         instead.". Default value is None.
+        :paramtype timeout: int
+        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+         current system clock time; set it explicitly if you are calling the REST API
+         directly. Default value is None.
+        :paramtype ocpdate: ~datetime.datetime
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
+         to the
+         client. The operation will be performed only if the resource on the service has
+         been modified since the specified time. Default value is None.
+        :paramtype if_modified_since: ~datetime.datetime
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
+         known to the
+         client. The operation will be performed only if the resource on the service has
+         not been modified since the specified time. Default value is None.
+        :paramtype if_unmodified_since: ~datetime.datetime
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword polling_interval: The interval in seconds between polling attempts. Default value is 5.
+        :paramtype polling_interval: int
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+        def capture_pipeline_response(pipeline_response, _deserialized, _response_headers):
+            return pipeline_response
+
+        pipeline_response = cast(
+            PipelineResponse,
+            self._enable_job_internal(
+                job_id,
+                timeout=timeout,
+                ocpdate=ocpdate,
+                if_modified_since=if_modified_since,
+                if_unmodified_since=if_unmodified_since,
+                etag=etag,
+                match_condition=match_condition,
+                cls=capture_pipeline_response,
+                **kwargs,
+            ),
+        )
+
+        polling_method = EnableJobPollingMethod(self, pipeline_response, None, job_id, polling_interval)
+        return LROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
+
+    @distributed_trace
+    def begin_delete_job_schedule(
+        self,
+        job_schedule_id: str,
+        *,
+        timeout: Optional[int] = None,
+        ocpdate: Optional[datetime.datetime] = None,
+        if_modified_since: Optional[datetime.datetime] = None,
+        if_unmodified_since: Optional[datetime.datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        polling_interval: int = 5,
+        **kwargs: Any
+    ) -> LROPoller[None]:
+        """Deletes a Job Schedule with Long Running Operation support.
+
+        When you delete a Job Schedule, this also deletes all Jobs and Tasks under
+        that schedule. When Tasks are deleted, all the files in their working
+        directories on the Compute Nodes are also deleted (the retention period is
+        ignored). The Job Schedule statistics are no longer accessible once the Job
+        Schedule is deleted, though they are still counted towards Account lifetime
+        statistics.
+
+        :param job_schedule_id: The ID of the Job Schedule to delete. Required.
+        :type job_schedule_id: str
+        :keyword timeout: The maximum time that the server can spend processing the request, in
+         seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
+         instead. Default value is None.
+        :paramtype timeout: int
+        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+         current system clock time; set it explicitly if you are calling the REST API
+         directly. Default value is None.
+        :paramtype ocpdate: ~datetime.datetime
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
+         to the client. The operation will be performed only if the resource on the service has
+         been modified since the specified time. Default value is None.
+        :paramtype if_modified_since: ~datetime.datetime
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
+         known to the client. The operation will be performed only if the resource on the service has
+         not been modified since the specified time. Default value is None.
+        :paramtype if_unmodified_since: ~datetime.datetime
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword polling_interval: The interval in seconds between polling attempts. Default value is 5.
+        :paramtype polling_interval: int
+        :return: An LROPoller that can be used to wait for the job schedule deletion to complete
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+        def capture_pipeline_response(pipeline_response, _deserialized, _response_headers):
+            return pipeline_response
+
+        pipeline_response = cast(
+            PipelineResponse,
+            self._delete_job_schedule_internal(
+                job_schedule_id,
+                timeout=timeout,
+                ocpdate=ocpdate,
+                if_modified_since=if_modified_since,
+                if_unmodified_since=if_unmodified_since,
+                etag=etag,
+                match_condition=match_condition,
+                cls=capture_pipeline_response,
+                **kwargs,
+            ),
+        )
+
+        polling_method = DeleteJobSchedulePollingMethod(
+            self, pipeline_response, None, job_schedule_id, polling_interval
+        )
+        return LROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
+
+    @distributed_trace
+    def begin_delete_pool(
+        self,
+        pool_id: str,
+        *,
+        timeout: Optional[int] = None,
+        ocpdate: Optional[datetime.datetime] = None,
+        if_modified_since: Optional[datetime.datetime] = None,
+        if_unmodified_since: Optional[datetime.datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        polling_interval: int = 5,
+        **kwargs: Any
+    ) -> LROPoller[None]:
+        """Deletes a Pool from specified Account with Long Running Operation support.
+
+        When you request that a Pool be deleted, the following actions occur: the Pool
+        state is set to deleting; any ongoing resize operation on the Pool are stopped;
+        the Batch service starts resizing the Pool to zero Compute Nodes; any Tasks
+        running on existing Compute Nodes are terminated and requeued (as if a resize
+        Pool operation had been requested with the default requeue option); finally,
+        the Pool is removed from the system. Because running Tasks are requeued, the
+        user can rerun these Tasks by updating their Job to target a different Pool.
+        The Tasks can then run on the new Pool. If you want to override the requeue
+        behavior, then you should call resize Pool explicitly to shrink the Pool to
+        zero size before deleting the Pool. If you call an Update, Patch or Delete API
+        on a Pool in the deleting state, it will fail with HTTP status code 409 with
+        error code PoolBeingDeleted.
+
+        :param pool_id: The ID of the Pool to get. Required.
+        :type pool_id: str
+        :keyword timeout: The maximum time that the server can spend processing the request, in
+         seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
+         instead.". Default value is None.
+        :paramtype timeout: int
+        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+         current system clock time; set it explicitly if you are calling the REST API
+         directly. Default value is None.
+        :paramtype ocpdate: ~datetime.datetime
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
+         to the
+         client. The operation will be performed only if the resource on the service has
+         been modified since the specified time. Default value is None.
+        :paramtype if_modified_since: ~datetime.datetime
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
+         known to the
+         client. The operation will be performed only if the resource on the service has
+         not been modified since the specified time. Default value is None.
+        :paramtype if_unmodified_since: ~datetime.datetime
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword polling_interval: The interval in seconds between polling attempts. Default value is 5.
+        :paramtype polling_interval: int
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+        def capture_pipeline_response(pipeline_response, _deserialized, _response_headers):
+            return pipeline_response
+
+        pipeline_response = cast(
+            PipelineResponse,
+            self._delete_pool_internal(
+                pool_id,
+                timeout=timeout,
+                ocpdate=ocpdate,
+                if_modified_since=if_modified_since,
+                if_unmodified_since=if_unmodified_since,
+                etag=etag,
+                match_condition=match_condition,
+                cls=capture_pipeline_response,
+                **kwargs,
+            ),
+        )
+
+        polling_method = DeletePoolPollingMethod(self, pipeline_response, None, pool_id, polling_interval)
+        return LROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
+
+    @distributed_trace
+    def begin_deallocate_node(
+        self,
+        pool_id: str,
+        node_id: str,
+        options: Optional[_models.BatchNodeDeallocateOptions] = None,
+        *,
+        timeout: Optional[int] = None,
+        ocpdate: Optional[datetime.datetime] = None,
+        polling_interval: int = 5,
+        **kwargs: Any
+    ) -> LROPoller[None]:
+        """Deallocates a Compute Node with Long Running Operation support.
+
+        You can deallocate a Compute Node only if it is in an idle or running state.
+
+        :param pool_id: The ID of the Pool that contains the Compute Node. Required.
+        :type pool_id: str
+        :param node_id: The ID of the Compute Node that you want to restart. Required.
+        :type node_id: str
+        :param options: The options to use for deallocating the Compute Node. Default value is None.
+        :type options: ~azure.batch.models.BatchNodeDeallocateOptions
+        :keyword timeout: The maximum time that the server can spend processing the request, in
+         seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
+         instead.". Default value is None.
+        :paramtype timeout: int
+        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+         current system clock time; set it explicitly if you are calling the REST API
+         directly. Default value is None.
+        :paramtype ocpdate: ~datetime.datetime
+        :keyword polling_interval: The interval in seconds between polling attempts. Default value is 5.
+        :paramtype polling_interval: int
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+        def capture_pipeline_response(pipeline_response, _deserialized, _response_headers):
+            return pipeline_response
+
+        pipeline_response = cast(
+            PipelineResponse,
+            self._deallocate_node_internal(
+                pool_id,
+                node_id,
+                options=options,
+                timeout=timeout,
+                ocpdate=ocpdate,
+                cls=capture_pipeline_response,
+                **kwargs,
+            ),
+        )
+
+        polling_method = DeallocateNodePollingMethod(self, pipeline_response, None, pool_id, node_id, polling_interval)
+        return LROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
+
+    @distributed_trace
+    def begin_reboot_node(
+        self,
+        pool_id: str,
+        node_id: str,
+        options: Optional[_models.BatchNodeRebootOptions] = None,
+        *,
+        timeout: Optional[int] = None,
+        ocpdate: Optional[datetime.datetime] = None,
+        polling_interval: int = 5,
+        **kwargs: Any
+    ) -> LROPoller[None]:
+        """Reboots a Compute Node with Long Running Operation support.
+
+        You can restart a Compute Node only if it is in an idle or running state.
+
+        :param pool_id: The ID of the Pool that contains the Compute Node. Required.
+        :type pool_id: str
+        :param node_id: The ID of the Compute Node that you want to restart. Required.
+        :type node_id: str
+        :param options: The options to use for rebooting the Compute Node. Default value is None.
+        :type options: ~azure.batch.models.BatchNodeRebootOptions
+        :keyword timeout: The maximum time that the server can spend processing the request, in
+         seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
+         instead.". Default value is None.
+        :paramtype timeout: int
+        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+         current system clock time; set it explicitly if you are calling the REST API
+         directly. Default value is None.
+        :paramtype ocpdate: ~datetime.datetime
+        :keyword polling_interval: The interval in seconds between polling attempts. Default value is 5.
+        :paramtype polling_interval: int
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+        def capture_pipeline_response(pipeline_response, _deserialized, _response_headers):
+            return pipeline_response
+
+        pipeline_response = cast(
+            PipelineResponse,
+            self._reboot_node_internal(
+                pool_id,
+                node_id,
+                options=options,
+                timeout=timeout,
+                ocpdate=ocpdate,
+                cls=capture_pipeline_response,
+                **kwargs,
+            ),
+        )
+
+        polling_method = RebootNodePollingMethod(self, pipeline_response, None, pool_id, node_id, polling_interval)
+        return LROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
+
+    @distributed_trace
+    def begin_reimage_node(
+        self,
+        pool_id: str,
+        node_id: str,
+        options: Optional[_models.BatchNodeReimageOptions] = None,
+        *,
+        timeout: Optional[int] = None,
+        ocpdate: Optional[datetime.datetime] = None,
+        polling_interval: int = 5,
+        **kwargs: Any
+    ) -> LROPoller[None]:
+        """Reimages a Compute Node with Long Running Operation support.
+
+        Reinstalls the operating system on the specified Compute Node
+
+        You can reinstall the operating system on a Compute Node only if it is in an
+        idle or running state. This API can be invoked only on Pools created with the
+        cloud service configuration property.
+
+        :param pool_id: The ID of the Pool that contains the Compute Node. Required.
+        :type pool_id: str
+        :param node_id: The ID of the Compute Node that you want to restart. Required.
+        :type node_id: str
+        :param options: The options to use for reimaging the Compute Node. Default value is None.
+        :type options: ~azure.batch.models.BatchNodeReimageOptions
+        :keyword timeout: The maximum time that the server can spend processing the request, in
+         seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
+         instead.". Default value is None.
+        :paramtype timeout: int
+        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+         current system clock time; set it explicitly if you are calling the REST API
+         directly. Default value is None.
+        :paramtype ocpdate: ~datetime.datetime
+        :keyword polling_interval: The interval in seconds between polling attempts. Default value is 5.
+        :paramtype polling_interval: int
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+        def capture_pipeline_response(pipeline_response, _deserialized, _response_headers):
+            return pipeline_response
+
+        pipeline_response = cast(
+            PipelineResponse,
+            self._reimage_node_internal(
+                pool_id,
+                node_id,
+                options=options,
+                timeout=timeout,
+                ocpdate=ocpdate,
+                cls=capture_pipeline_response,
+                **kwargs,
+            ),
+        )
+
+        polling_method = ReimageNodePollingMethod(self, pipeline_response, None, pool_id, node_id, polling_interval)
+        return LROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
+
+    @distributed_trace
+    def begin_remove_nodes(
+        self,
+        pool_id: str,
+        remove_options: _models.BatchNodeRemoveOptions,
+        *,
+        timeout: Optional[int] = None,
+        ocpdate: Optional[datetime.datetime] = None,
+        if_modified_since: Optional[datetime.datetime] = None,
+        if_unmodified_since: Optional[datetime.datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        polling_interval: int = 5,
+        **kwargs: Any
+    ) -> LROPoller[None]:
+        """Removes Compute Nodes from a Pool with Long Running Operation support.
+
+        This operation can only run when the allocation state of the Pool is steady.
+        When this operation runs, the allocation state changes from steady to resizing.
+        Each request may remove up to 100 nodes.
+
+        :param pool_id: The ID of the Pool to get. Required.
+        :type pool_id: str
+        :param remove_options: The options to use for removing the node. Required.
+        :type remove_options: ~azure.batch.models.BatchNodeRemoveOptions
+        :keyword timeout: The maximum time that the server can spend processing the request, in
+         seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
+         instead.". Default value is None.
+        :paramtype timeout: int
+        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+         current system clock time; set it explicitly if you are calling the REST API
+         directly. Default value is None.
+        :paramtype ocpdate: ~datetime.datetime
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
+         to the
+         client. The operation will be performed only if the resource on the service has
+         been modified since the specified time. Default value is None.
+        :paramtype if_modified_since: ~datetime.datetime
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
+         known to the
+         client. The operation will be performed only if the resource on the service has
+         not been modified since the specified time. Default value is None.
+        :paramtype if_unmodified_since: ~datetime.datetime
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword polling_interval: The interval in seconds between polling attempts. Default value is 5.
+        :paramtype polling_interval: int
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+        def capture_pipeline_response(pipeline_response, _deserialized, _response_headers):
+            return pipeline_response
+
+        pipeline_response = cast(
+            PipelineResponse,
+            self._remove_nodes_internal(
+                pool_id,
+                remove_options=remove_options,
+                timeout=timeout,
+                ocpdate=ocpdate,
+                if_modified_since=if_modified_since,
+                if_unmodified_since=if_unmodified_since,
+                etag=etag,
+                match_condition=match_condition,
+                cls=capture_pipeline_response,
+                **kwargs,
+            ),
+        )
+
+        polling_method = RemoveNodePollingMethod(self, pipeline_response, None, pool_id, polling_interval)
+        return LROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
+
+    @distributed_trace
+    def begin_resize_pool(
+        self,
+        pool_id: str,
+        resize_options: _models.BatchPoolResizeOptions,
+        *,
+        timeout: Optional[int] = None,
+        ocpdate: Optional[datetime.datetime] = None,
+        if_modified_since: Optional[datetime.datetime] = None,
+        if_unmodified_since: Optional[datetime.datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        polling_interval: int = 5,
+        **kwargs: Any
+    ) -> LROPoller[None]:
+        """Resizes a Pool with Long Running Operation support.
+
+        You can only resize a Pool when its allocation state is steady. If the Pool is
+        already resizing, the request fails with status code 409. When you resize a
+        Pool, the Pool's allocation state changes from steady to resizing. You cannot
+        resize Pools which are configured for automatic scaling. If you try to do this,
+        the Batch service returns an error 409. If you resize a Pool downwards, the
+        Batch service chooses which Compute Nodes to remove. To remove specific Compute
+        Nodes, use the Pool remove Compute Nodes API instead.
+
+        :param pool_id: The ID of the Pool to get. Required.
+        :type pool_id: str
+        :param resize_options: The options to use for resizing the pool. Required.
+        :type resize_options: ~azure.batch.models.BatchPoolResizeOptions
+        :keyword timeout: The maximum time that the server can spend processing the request, in
+         seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
+         instead.". Default value is None.
+        :paramtype timeout: int
+        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+         current system clock time; set it explicitly if you are calling the REST API
+         directly. Default value is None.
+        :paramtype ocpdate: ~datetime.datetime
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
+         to the
+         client. The operation will be performed only if the resource on the service has
+         been modified since the specified time. Default value is None.
+        :paramtype if_modified_since: ~datetime.datetime
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
+         known to the
+         client. The operation will be performed only if the resource on the service has
+         not been modified since the specified time. Default value is None.
+        :paramtype if_unmodified_since: ~datetime.datetime
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword polling_interval: The interval in seconds between polling attempts. Default value is 5.
+        :paramtype polling_interval: int
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+        def capture_pipeline_response(pipeline_response, _deserialized, _response_headers):
+            return pipeline_response
+
+        pipeline_response = cast(
+            PipelineResponse,
+            self._resize_pool_internal(
+                pool_id,
+                resize_options=resize_options,
+                timeout=timeout,
+                ocpdate=ocpdate,
+                if_modified_since=if_modified_since,
+                if_unmodified_since=if_unmodified_since,
+                etag=etag,
+                match_condition=match_condition,
+                cls=capture_pipeline_response,
+                **kwargs,
+            ),
+        )
+
+        polling_method = ResizePoolPollingMethod(self, pipeline_response, None, pool_id, polling_interval)
+        return LROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
+
+    @distributed_trace
+    def begin_start_node(
+        self,
+        pool_id: str,
+        node_id: str,
+        *,
+        timeout: Optional[int] = None,
+        ocpdate: Optional[datetime.datetime] = None,
+        polling_interval: int = 5,
+        **kwargs: Any
+    ) -> LROPoller[None]:
+        """Starts a Compute Node with Long Running Operation support.
+
+        You can start a Compute Node only if it has been deallocated.
+
+        :param pool_id: The ID of the Pool that contains the Compute Node. Required.
+        :type pool_id: str
+        :param node_id: The ID of the Compute Node that you want to restart. Required.
+        :type node_id: str
+        :keyword timeout: The maximum time that the server can spend processing the request, in
+         seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
+         instead.". Default value is None.
+        :paramtype timeout: int
+        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+         current system clock time; set it explicitly if you are calling the REST API
+         directly. Default value is None.
+        :paramtype ocpdate: ~datetime.datetime
+        :keyword polling_interval: The interval in seconds between polling attempts. Default value is 5.
+        :paramtype polling_interval: int
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+        def capture_pipeline_response(pipeline_response, _deserialized, _response_headers):
+            return pipeline_response
+
+        pipeline_response = cast(
+            PipelineResponse,
+            self._start_node_internal(
+                pool_id,
+                node_id,
+                timeout=timeout,
+                ocpdate=ocpdate,
+                cls=capture_pipeline_response,
+                **kwargs,
+            ),
+        )
+
+        polling_method = StartNodePollingMethod(self, pipeline_response, None, pool_id, node_id, polling_interval)
+        return LROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
+
+    @distributed_trace
+    def begin_stop_pool_resize(
+        self,
+        pool_id: str,
+        *,
+        timeout: Optional[int] = None,
+        ocpdate: Optional[datetime.datetime] = None,
+        if_modified_since: Optional[datetime.datetime] = None,
+        if_unmodified_since: Optional[datetime.datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        polling_interval: int = 5,
+        **kwargs: Any
+    ) -> LROPoller[None]:
+        """Stops an ongoing Pool resize operation with Long Running Operation support.
+
+        This does not restore the Pool to its previous state before the resize
+        operation: it only stops any further changes being made, and the Pool maintains
+        its current state. After stopping, the Pool stabilizes at the number of Compute
+        Nodes it was at when the stop operation was done. During the stop operation,
+        the Pool allocation state changes first to stopping and then to steady. A
+        resize operation need not be an explicit resize Pool request; this API can also
+        be used to halt the initial sizing of the Pool when it is created.
+
+        :param pool_id: The ID of the Pool to get. Required.
+        :type pool_id: str
+        :keyword timeout: The maximum time that the server can spend processing the request, in
+         seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
+         instead.". Default value is None.
+        :paramtype timeout: int
+        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+         current system clock time; set it explicitly if you are calling the REST API
+         directly. Default value is None.
+        :paramtype ocpdate: ~datetime.datetime
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
+         to the
+         client. The operation will be performed only if the resource on the service has
+         been modified since the specified time. Default value is None.
+        :paramtype if_modified_since: ~datetime.datetime
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
+         known to the
+         client. The operation will be performed only if the resource on the service has
+         not been modified since the specified time. Default value is None.
+        :paramtype if_unmodified_since: ~datetime.datetime
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword polling_interval: The interval in seconds between polling attempts. Default value is 5.
+        :paramtype polling_interval: int
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+        def capture_pipeline_response(pipeline_response, _deserialized, _response_headers):
+            return pipeline_response
+
+        pipeline_response = cast(
+            PipelineResponse,
+            self._stop_pool_resize_internal(
+                pool_id,
+                timeout=timeout,
+                ocpdate=ocpdate,
+                if_modified_since=if_modified_since,
+                if_unmodified_since=if_unmodified_since,
+                etag=etag,
+                match_condition=match_condition,
+                cls=capture_pipeline_response,
+                **kwargs,
+            ),
+        )
+
+        polling_method = StopPoolResizePollingMethod(self, pipeline_response, None, pool_id, polling_interval)
+        return LROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
+
+    @distributed_trace
+    def begin_terminate_job(
+        self,
+        job_id: str,
+        options: Optional[_models.BatchJobTerminateOptions] = None,
+        *,
+        timeout: Optional[int] = None,
+        ocpdate: Optional[datetime.datetime] = None,
+        if_modified_since: Optional[datetime.datetime] = None,
+        if_unmodified_since: Optional[datetime.datetime] = None,
+        force: Optional[bool] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        polling_interval: int = 5,
+        **kwargs: Any
+    ) -> LROPoller[None]:
+        """Terminates a Job with Long Running Operation support, marking it as completed.
+
+        When a Terminate Job request is received, the Batch service sets the Job to the
+        terminating state. The Batch service then terminates any running Tasks
+        associated with the Job and runs any required Job release Tasks. Then the Job
+        moves into the completed state. If there are any Tasks in the Job in the active
+        state, they will remain in the active state. Once a Job is terminated, new
+        Tasks cannot be added and any remaining active Tasks will not be scheduled.
+
+        :param job_id: The ID of the Job to terminate. Required.
+        :type job_id: str
+        :param options: The options to use for terminating the Job. Default value is None.
+        :type options: ~azure.batch.models.BatchJobTerminateOptions
+        :keyword timeout: The maximum time that the server can spend processing the request, in
+         seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
+         instead.". Default value is None.
+        :paramtype timeout: int
+        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+         current system clock time; set it explicitly if you are calling the REST API
+         directly. Default value is None.
+        :paramtype ocpdate: ~datetime.datetime
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
+         to the
+         client. The operation will be performed only if the resource on the service has
+         been modified since the specified time. Default value is None.
+        :paramtype if_modified_since: ~datetime.datetime
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
+         known to the
+         client. The operation will be performed only if the resource on the service has
+         not been modified since the specified time. Default value is None.
+        :paramtype if_unmodified_since: ~datetime.datetime
+        :keyword force: If true, the server will terminate the Job even if the corresponding nodes have
+         not fully processed the termination. The default value is false. Default value is None.
+        :paramtype force: bool
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword polling_interval: The interval in seconds between polling attempts. Default value is 5.
+        :paramtype polling_interval: int
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+        def capture_pipeline_response(pipeline_response, _deserialized, _response_headers):
+            return pipeline_response
+
+        pipeline_response = cast(
+            PipelineResponse,
+            self._terminate_job_internal(
+                job_id,
+                options=options,
+                timeout=timeout,
+                ocpdate=ocpdate,
+                if_modified_since=if_modified_since,
+                if_unmodified_since=if_unmodified_since,
+                force=force,
+                etag=etag,
+                match_condition=match_condition,
+                cls=capture_pipeline_response,
+                **kwargs,
+            ),
+        )
+
+        polling_method = TerminateJobPollingMethod(self, pipeline_response, None, job_id, polling_interval)
+        return LROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
+
+    @distributed_trace
+    def begin_terminate_job_schedule(
+        self,
+        job_schedule_id: str,
+        *,
+        timeout: Optional[int] = None,
+        ocpdate: Optional[datetime.datetime] = None,
+        if_modified_since: Optional[datetime.datetime] = None,
+        if_unmodified_since: Optional[datetime.datetime] = None,
+        force: Optional[bool] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        polling_interval: int = 5,
+        **kwargs: Any
+    ) -> LROPoller[None]:
+        """Terminates a Job Schedule with Long Running Operation support.
+
+        :param job_schedule_id: The ID of the Job Schedule to terminates. Required.
+        :type job_schedule_id: str
+        :keyword timeout: The maximum time that the server can spend processing the request, in
+         seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
+         instead.". Default value is None.
+        :paramtype timeout: int
+        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+         current system clock time; set it explicitly if you are calling the REST API
+         directly. Default value is None.
+        :paramtype ocpdate: ~datetime.datetime
+        :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
+         to the
+         client. The operation will be performed only if the resource on the service has
+         been modified since the specified time. Default value is None.
+        :paramtype if_modified_since: ~datetime.datetime
+        :keyword if_unmodified_since: A timestamp indicating the last modified time of the resource
+         known to the
+         client. The operation will be performed only if the resource on the service has
+         not been modified since the specified time. Default value is None.
+        :paramtype if_unmodified_since: ~datetime.datetime
+        :keyword force: If true, the server will terminate the JobSchedule even if the corresponding
+         nodes have not fully processed the termination. The default value is false. Default value is
+         None.
+        :paramtype force: bool
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword polling_interval: The interval in seconds between polling attempts. Default value is 5.
+        :paramtype polling_interval: int
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+        def capture_pipeline_response(pipeline_response, _deserialized, _response_headers):
+            return pipeline_response
+
+        pipeline_response = cast(
+            PipelineResponse,
+            self._terminate_job_schedule_internal(
+                job_schedule_id,
+                timeout=timeout,
+                ocpdate=ocpdate,
+                if_modified_since=if_modified_since,
+                if_unmodified_since=if_unmodified_since,
+                force=force,
+                etag=etag,
+                match_condition=match_condition,
+                cls=capture_pipeline_response,
+                **kwargs,
+            ),
+        )
+
+        polling_method = TerminateJobSchedulePollingMethod(
+            self, pipeline_response, None, job_schedule_id, polling_interval
+        )
+        return LROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
 
     # create_task_collection renamed
     @distributed_trace
     def create_tasks(
         self,
         job_id: str,
-        task_collection: List[_models.BatchTaskCreateContent],
+        task_collection: List[_models.BatchTaskCreateOptions],
         concurrencies: int = 0,
         *,
         timeout: Optional[int] = None,
         ocpdate: Optional[datetime.datetime] = None,
         **kwargs: Any
-    ) -> _models.BatchTaskAddCollectionResult:
+    ) -> _models.BatchCreateTaskCollectionResult:
         """Adds a collection of Tasks to the specified Job.
 
         Note that each Task must have a unique ID. The Batch service may not return the
@@ -67,8 +1108,8 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :param task_collection: The Tasks to be added. Required.
         :type task_collection: ~azure.batch.models.BatchTaskAddCollectionResult
         :param concurrencies: number of threads to use in parallel when adding tasks. If specified
-        and greater than 0, will start additional threads to submit requests and wait for them to finish.
-        Otherwise will submit create_task_collection requests sequentially on main thread
+         and greater than 0, will start additional threads to submit requests and wait for them to finish.
+         Otherwise will submit create_task_collection requests sequentially on main thread
         :type concurrencies: int
         :keyword timeout: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
@@ -77,23 +1118,16 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocpdate: ~datetime.datetime
-        :keyword content_type: Type of content. Default value is "application/json;
-         odata=minimalmetadata".
-        :paramtype content_type: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: BatchTaskAddCollectionResult. The BatchTaskAddCollectionResult is compatible with MutableMapping
         :rtype: ~azure.batch.models.BatchTaskAddCollectionResult
-        :raises ~azure.batch.custom.CreateTasksError
+        :raises ~azure.batch.custom.CreateTasksError:
         """
 
         kwargs.update({"timeout": timeout, "ocpdate": ocpdate})
 
         # deque operations(append/pop) are thread-safe
-        results_queue: Deque[_models.BatchTaskAddResult] = collections.deque()
-        task_workflow_manager = _TaskWorkflowManager(
-            self, job_id=job_id, task_collection=task_collection, **kwargs
-        )
+        results_queue: Deque[_models.BatchTaskCreateResult] = collections.deque()
+        task_workflow_manager = _TaskWorkflowManager(self, job_id=job_id, task_collection=task_collection, **kwargs)
 
         # multi-threaded behavior
         if concurrencies:
@@ -101,7 +1135,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
                 raise ValueError("Concurrencies must be positive or 0")
 
             active_threads = []
-            for i in range(concurrencies):
+            for _ in range(concurrencies):
                 active_threads.append(
                     threading.Thread(
                         target=task_workflow_manager.task_collection_thread_handler,
@@ -122,9 +1156,8 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
                 task_workflow_manager.failure_tasks,
                 task_workflow_manager.errors,
             )
-        else:
-            submitted_tasks = _handle_output(results_queue)
-            return _models.BatchTaskAddCollectionResult(value=submitted_tasks)
+        submitted_tasks = _handle_output(results_queue)
+        return _models.BatchCreateTaskCollectionResult(values_property=submitted_tasks)
 
     @distributed_trace
     def get_node_file(
@@ -169,8 +1202,6 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
          The
          format is bytes=startRange-endRange. Default value is None.
         :paramtype ocp_range: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: bytes
         :rtype: bytes
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -226,33 +1257,33 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
         :paramtype if_unmodified_since: ~datetime.datetime
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: BatchFileProperties
         :rtype: ~azure.batch.models.BatchFileProperties
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-        cls = lambda pipeline_response, json_response, headers: _models.BatchFileProperties(
-            url=headers["ocp-batch-file-url"],
-            is_directory=headers["ocp-batch-file-isdirectory"],
-            last_modified=headers["Last-Modified"],
-            content_length=headers["Content-Length"],
-            creation_time=headers["ocp-creation-time"],
-            # content_type=headers["Content-Type"], # need to add to typespec
-            file_mode=headers["ocp-batch-file-mode"],
+        def cls(_pipeline_response, _json_response, headers):
+            return _models.BatchFileProperties(
+                url=headers["ocp-batch-file-url"],
+                is_directory=headers["ocp-batch-file-isdirectory"],
+                last_modified=headers["Last-Modified"],
+                content_length=headers["Content-Length"],
+                creation_time=headers["ocp-creation-time"],
+                # content_type=headers["Content-Type"], # need to add to typespec
+                file_mode=headers["ocp-batch-file-mode"],
             )
-    
-        get_response: _models.BatchFileProperties = super()._get_node_file_properties_internal( # type: ignore
-            pool_id, 
-            node_id, 
-            file_path, 
-            timeout=timeout, 
-            ocpdate=ocpdate, 
-            if_modified_since=if_modified_since, 
-            if_unmodified_since=if_unmodified_since, 
+
+        get_response: _models.BatchFileProperties = super()._get_node_file_properties_internal(  # type: ignore
+            pool_id,
+            node_id,
+            file_path,
+            timeout=timeout,
+            ocpdate=ocpdate,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
             cls=cls,
-            **kwargs)
+            **kwargs,
+        )
 
         return get_response
 
@@ -294,33 +1325,33 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
         :paramtype if_unmodified_since: ~datetime.datetime
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: BatchFileProperties
         :rtype: ~azure.batch.models.BatchFileProperties
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-        cls = lambda pipeline_response, json_response, headers: _models.BatchFileProperties(
-            url=headers["ocp-batch-file-url"],
-            is_directory=headers["ocp-batch-file-isdirectory"],
-            last_modified=headers["Last-Modified"],
-            content_length=headers["Content-Length"],
-            creation_time=headers["ocp-creation-time"],
-            # content_type=headers["Content-Type"], # need to add to typespec
-            file_mode=headers["ocp-batch-file-mode"],
+        def cls(_pipeline_response, _json_response, headers):
+            return _models.BatchFileProperties(
+                url=headers["ocp-batch-file-url"],
+                is_directory=headers["ocp-batch-file-isdirectory"],
+                last_modified=headers["Last-Modified"],
+                content_length=headers["Content-Length"],
+                creation_time=headers["ocp-creation-time"],
+                # content_type=headers["Content-Type"], # need to add to typespec
+                file_mode=headers["ocp-batch-file-mode"],
             )
-    
-        get_response: _models.BatchFileProperties = super()._get_task_file_properties_internal( # type: ignore
-            job_id, 
-            task_id, 
-            file_path, 
-            timeout=timeout, 
-            ocpdate=ocpdate, 
-            if_modified_since=if_modified_since, 
-            if_unmodified_since=if_unmodified_since, 
+
+        get_response: _models.BatchFileProperties = super()._get_task_file_properties_internal(  # type: ignore
+            job_id,
+            task_id,
+            file_path,
+            timeout=timeout,
+            ocpdate=ocpdate,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
             cls=cls,
-            **kwargs)
+            **kwargs,
+        )
 
         return get_response
 
@@ -367,8 +1398,6 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
          The
          format is bytes=startRange-endRange. Default value is None.
         :paramtype ocp_range: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: bytes
         :rtype: bytes
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -414,14 +1443,14 @@ class _TaskWorkflowManager:
 
     def __init__(
         self,
-        batch_client: BatchClientOperationsMixin,
+        batch_client: _BatchClientOperationsMixin,
         job_id: str,
-        task_collection: Iterable[_models.BatchTaskCreateContent],
+        task_collection: Iterable[_models.BatchTaskCreateOptions],
         **kwargs
     ):
         # Append operations thread safe - Only read once all threads have completed
         # List of tasks which failed to add due to a returned client error
-        self.failure_tasks: Deque[_models.BatchTaskAddResult] = collections.deque()
+        self.failure_tasks: Deque[_models.BatchTaskCreateResult] = collections.deque()
         # List of unknown exceptions which occurred during requests.
         self.errors: Deque[Any] = collections.deque()
 
@@ -438,7 +1467,11 @@ class _TaskWorkflowManager:
 
         self._kwargs = kwargs
 
-    def _bulk_add_tasks(self, results_queue, chunk_tasks_to_add):
+    def _bulk_add_tasks(
+        self,
+        results_queue: collections.deque,
+        chunk_tasks_to_add: List[_models.BatchTaskCreateOptions],
+    ):
         """Adds a chunk of tasks to the job
 
         Retry chunk if body exceeds the maximum request size and retry tasks
@@ -447,15 +1480,15 @@ class _TaskWorkflowManager:
         :param results_queue: Queue to place the return value of the request
         :type results_queue: collections.deque
         :param chunk_tasks_to_add: Chunk of at most 100 tasks with retry details
-        :type chunk_tasks_to_add: list[~BatchTaskAddResult]
+        :type chunk_tasks_to_add: list[~azure.batch.models.BatchTaskCreateOptions]
         """
 
         try:
-            create_task_collection_response: _models.BatchTaskAddCollectionResult = (
+            create_task_collection_response: _models.BatchCreateTaskCollectionResult = (
                 self._batch_client.create_task_collection(
                     job_id=self._job_id,
-                    task_collection=_models.BatchTaskGroup(value=chunk_tasks_to_add),
-                    **self._kwargs
+                    task_collection=_models.BatchTaskGroup(values_property=chunk_tasks_to_add),
+                    **self._kwargs,
                 )
             )
         except HttpResponseError as e:
@@ -471,7 +1504,7 @@ class _TaskWorkflowManager:
                     failed_task = chunk_tasks_to_add.pop()
                     self.errors.appendleft(e)
                     _LOGGER.error(
-                        "Failed to add task with ID %s due to the body" " exceeding the maximum request size",
+                        "Failed to add task with ID %s due to the body exceeding the maximum request size",
                         failed_task.id,
                     )
                 else:
@@ -498,7 +1531,7 @@ class _TaskWorkflowManager:
                     self.tasks_to_add.extendleft(chunk_tasks_to_add[midpoint:])
                     self._bulk_add_tasks(results_queue, chunk_tasks_to_add[:midpoint])
             # Retry server side errors
-            elif 500 <= e.response.status_code <= 599:
+            elif 500 <= e.response.status_code <= 599:  # type: ignore
                 self.tasks_to_add.extendleft(chunk_tasks_to_add)
             else:
                 # Re-add to pending queue as unknown status / don't have result
@@ -511,21 +1544,16 @@ class _TaskWorkflowManager:
             # Unknown State - don't know if tasks failed to add or were successful
             self.errors.appendleft(e)
         else:
-            try:
-                create_task_collection_response = create_task_collection_response.output
-            except AttributeError:
-                pass
-            if create_task_collection_response.value:
-                for task_result in create_task_collection_response.value:  # pylint: disable=no-member
+            if create_task_collection_response.values_property:
+                for task_result in create_task_collection_response.values_property:  # pylint: disable=no-member
                     if task_result.status == _models.BatchTaskAddStatus.SERVER_ERROR:
                         # Server error will be retried
                         with self._pending_queue_lock:
                             for task in chunk_tasks_to_add:
                                 if task.id == task_result.task_id:
                                     self.tasks_to_add.appendleft(task)
-                    elif (
-                        task_result.status == _models.BatchTaskAddStatus.CLIENT_ERROR
-                        and not (task_result.error and task_result.error.code == "TaskExists")
+                    elif task_result.status == _models.BatchTaskAddStatus.CLIENT_ERROR and not (
+                        task_result.error and task_result.error.code == "TaskExists"
                     ):
                         # Client error will be recorded unless Task already exists
                         self.failure_tasks.appendleft(task_result)

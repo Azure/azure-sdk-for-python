@@ -156,6 +156,8 @@ class TestCircuitBreakerEmulatorAsync:
 
     @pytest.mark.parametrize("error", create_errors())
     async def test_write_consecutive_failure_threshold_delete_all_items_by_pk_mm_async(self, setup_teardown, error):
+        if hasattr(error, "status_code") and error.status_code == 503:
+            pytest.skip("ServiceUnavailableError will do a cross-region retry, so it has to be special cased.")
         error_lambda = lambda r: asyncio.create_task(FaultInjectionTransportAsync.error_after_delay(0, error))
         setup, doc, expected_uri, uri_down, custom_setup, custom_transport, predicate = await self.setup_info(error_lambda, mm=True)
         fault_injection_container = custom_setup['col']
@@ -212,6 +214,8 @@ class TestCircuitBreakerEmulatorAsync:
 
     @pytest.mark.parametrize("error", create_errors())
     async def test_write_failure_rate_threshold_delete_all_items_by_pk_mm_async(self, setup_teardown, error):
+        if hasattr(error, "status_code") and error.status_code == 503:
+            pytest.skip("ServiceUnavailableError will do a cross-region retry, so it has to be special cased.")
         error_lambda = lambda r: asyncio.create_task(FaultInjectionTransportAsync.error_after_delay(0, error))
         setup, doc, expected_uri, uri_down, custom_setup, custom_transport, predicate = await self.setup_info(error_lambda, mm=True)
         fault_injection_container = custom_setup['col']

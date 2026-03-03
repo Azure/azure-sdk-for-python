@@ -1,0 +1,72 @@
+parameters:
+  - name: NameForReservation
+    type: string
+  - name: VersionForReservation
+    type: string
+    default: '0.0.0'
+
+extends:
+  template: /eng/pipelines/templates/stages/1es-redirect.yml
+  parameters:
+    stages:
+    - stage: Build
+      displayName: 'Build ${{ parameters.NameForReservation }}==${{ parameters.VersionForReservation }}'
+      jobs:
+        - template: ../jobs/build-namereserve-package.yml
+          parameters:
+            NameForReservation: ${{ parameters.NameForReservation }}
+            VersionForReservation: ${{ parameters.VersionForReservation }}
+
+    - stage: Publish
+      displayName: 'Publish Name Reservation Package'
+      dependsOn: Build
+      jobs:
+        - deployment: PublishPackage
+          displayName: "Publish to PyPI"
+          environment: package-publish
+
+          variables:
+            PUBLISHDIRECTORY: "$(Pipeline.Workspace)/esrp-release/"
+
+          templateContext:
+            type: releaseJob
+            isProduction: true
+            inputs:
+            - input: pipelineArtifact
+              artifactName: NameReservePackage
+              targetPath: $(Pipeline.Workspace)/NameReservePackage
+
+          pool:
+            image: ubuntu-24.04
+            name: azsdk-pool
+            os: linux
+
+          strategy:
+            runOnce:
+              deploy:
+                steps:
+                  - pwsh: |
+                      New-Item -ItemType Directory -Force -Path "$(PUBLISHDIRECTORY)"
+
+                      Get-ChildItem -Path "$(Pipeline.Workspace)/NameReservePackage/${{parameters.NameForReservation}}" `
+                        | Where-Object { ($_.Name -like "*.tar.gz" -or $_.Name -like "*.whl") } `
+                        | Copy-Item -Destination "$(PUBLISHDIRECTORY)"
+                      Get-ChildItem "$(PUBLISHDIRECTORY)"
+                    displayName: Isolate files for ESRP Publish
+
+                  - task: EsrpRelease@9
+                    displayName: 'Publish to ESRP'
+                    inputs:
+                      ConnectedServiceName: 'Azure SDK PME Managed Identity'
+                      ClientId: '5f81938c-2544-4f1f-9251-dd9de5b8a81b'
+                      DomainTenantId: '975f013f-7f24-47e8-a7d3-abc4752bf346'
+                      UseManagedIdentity: true
+                      KeyVaultName: 'kv-azuresdk-codesign'
+                      SignCertName: 'azure-sdk-esrp-release-certificate'
+                      Intent: 'PackageDistribution'
+                      ContentType: 'PyPI'
+                      FolderLocation: "$(PUBLISHDIRECTORY)"
+                      Owners: $(Build.RequestedForEmail)
+                      Approvers: $(Build.RequestedForEmail)
+                      ServiceEndpointUrl: 'https://api.esrp.microsoft.com'
+                      MainPublisher: 'ESRPRELPACMANTEST'

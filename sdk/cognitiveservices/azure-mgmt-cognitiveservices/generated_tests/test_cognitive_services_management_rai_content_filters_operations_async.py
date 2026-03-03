@@ -24,7 +24,7 @@ class TestCognitiveServicesManagementRaiContentFiltersOperationsAsync(AzureMgmtR
     async def test_rai_content_filters_list(self, resource_group):
         response = self.client.rai_content_filters.list(
             location="str",
-            api_version="2025-06-01",
+            api_version="2025-09-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -36,7 +36,7 @@ class TestCognitiveServicesManagementRaiContentFiltersOperationsAsync(AzureMgmtR
         response = await self.client.rai_content_filters.get(
             location="str",
             filter_name="str",
-            api_version="2025-06-01",
+            api_version="2025-09-01",
         )
 
         # please add some check logic here by yourself

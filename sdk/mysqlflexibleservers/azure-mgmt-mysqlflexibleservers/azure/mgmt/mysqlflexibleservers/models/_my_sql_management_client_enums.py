@@ -59,6 +59,14 @@ class BackupType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     FULL = "FULL"
 
 
+class BatchOfMaintenance(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The batch of maintenance when enabled the custom managed maintenance window of a server."""
+
+    DEFAULT = "Default"
+    BATCH1 = "Batch1"
+    BATCH2 = "Batch2"
+
+
 class ConfigurationSource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Source of the configuration."""
 
@@ -92,7 +100,7 @@ class DataEncryptionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class EnableStatusEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Enum to indicate whether value is 'Enabled' or 'Disabled'."""
+    """Whether or not geo redundant backup is enabled."""
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
@@ -202,6 +210,19 @@ class OperationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The operation has been Canceled"""
 
 
+class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
+    logs UX. Default value is "user,system".
+    """
+
+    USER = "user"
+    """Indicates the operation is initiated by a user."""
+    SYSTEM = "system"
+    """Indicates the operation is initiated by a system."""
+    USER_SYSTEM = "user,system"
+    """Indicates the operation is initiated by a user or system."""
+
+
 class PatchStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enum to indicate the patch strategy of a server."""
 
@@ -234,6 +255,15 @@ class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DELETING = "Deleting"
     FAILED = "Failed"
     CANCELED = "Canceled"
+
+
+class ReplicationMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The replication Mode."""
+
+    BINARY_LOG = "BinaryLog"
+    """Binary log replication"""
+    REDO_LOG = "RedoLog"
+    """Redo log replication"""
 
 
 class ReplicationRole(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -276,10 +306,11 @@ class ServerVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     FIVE7 = "5.7"
     EIGHT0_21 = "8.0.21"
+    EIGHT4 = "8.4"
 
 
 class StorageRedundancyEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Enum to indicate whether storage sku value is 'ZoneRedundancy' or 'LocalRedundancy'."""
+    """The redundant type of the server storage. The parameter is used for server creation."""
 
     LOCAL_REDUNDANCY = "LocalRedundancy"
     ZONE_REDUNDANCY = "ZoneRedundancy"

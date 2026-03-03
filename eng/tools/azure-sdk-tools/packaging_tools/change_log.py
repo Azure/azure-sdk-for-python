@@ -78,9 +78,9 @@ class ChangeLog:
         if not remaining_path:
             # Simplify renaming func to begin_func change, put it into the compare_operation() for processing
             if is_deletion:
-                self.removed_operations.append(f'{operation_name}.{function_name}')
+                self.removed_operations.append(f"{operation_name}.{function_name}")
             else:
-                self.added_operations.append(f'{operation_name}.{function_name}')
+                self.added_operations.append(f"{operation_name}.{function_name}")
             return
 
         if remaining_path[0] == "metadata":
@@ -168,29 +168,29 @@ class ChangeLog:
             return
 
     def client(self, old_report, new_report):
-        if new_report.get('client'):
-            if old_report.get('client'):
-                msg = _CLIENT_SIGNATURE_CHANGE.format(old_report['client'][0], new_report['client'][0])
+        if new_report.get("client"):
+            if old_report.get("client"):
+                msg = _CLIENT_SIGNATURE_CHANGE.format(old_report["client"][0], new_report["client"][0])
             else:
-                msg = _CLIENT_SIGNATURE_CHANGE_WITHOUT_OLD.format(new_report['client'][0])
+                msg = _CLIENT_SIGNATURE_CHANGE_WITHOUT_OLD.format(new_report["client"][0])
             self.breaking_changes.append(msg)
         return
 
     def compare_operation(self):
-        '''
+        """
         Record changelog like "rename operation.delete to operation.begin_delete"
         instead of "remove operation.delete or add operation.begin_delete"
-        '''
+        """
         while self.removed_operations:
-            op, old_function  = self.removed_operations.pop().split('.')
-            new_function = f'begin_{old_function}'
-            if f'{op}.{new_function}' in self.added_operations:
-                self.added_operations.remove(f'{op}.{new_function}')
+            op, old_function = self.removed_operations.pop().split(".")
+            new_function = f"begin_{old_function}"
+            if f"{op}.{new_function}" in self.added_operations:
+                self.added_operations.remove(f"{op}.{new_function}")
                 self.breaking_changes.append(_RENAME_OPERATION.format(op, old_function, op, new_function))
             else:
                 self.breaking_changes.append(_REMOVE_OPERATION.format(op, old_function))
         for op_function in self.added_operations:
-            operation_name, function_name = op_function.split('.')
+            operation_name, function_name = op_function.split(".")
             self.features.append(_ADD_OPERATION.format(operation_name, function_name))
 
 

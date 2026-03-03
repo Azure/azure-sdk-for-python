@@ -22,6 +22,7 @@ from ._configuration import ContainerServiceFleetMgmtClientConfiguration
 from .operations import (
     AutoUpgradeProfileOperationsOperations,
     AutoUpgradeProfilesOperations,
+    FleetManagedNamespacesOperations,
     FleetMembersOperations,
     FleetUpdateStrategiesOperations,
     FleetsOperations,
@@ -31,6 +32,7 @@ from .operations import (
 )
 
 if TYPE_CHECKING:
+    from azure.core import AzureClouds
     from azure.core.credentials_async import AsyncTokenCredential
 
 
@@ -43,6 +45,9 @@ class ContainerServiceFleetMgmtClient:  # pylint: disable=too-many-instance-attr
     :vartype fleets: azure.mgmt.containerservicefleet.aio.operations.FleetsOperations
     :ivar fleet_members: FleetMembersOperations operations
     :vartype fleet_members: azure.mgmt.containerservicefleet.aio.operations.FleetMembersOperations
+    :ivar fleet_managed_namespaces: FleetManagedNamespacesOperations operations
+    :vartype fleet_managed_namespaces:
+     azure.mgmt.containerservicefleet.aio.operations.FleetManagedNamespacesOperations
     :ivar gates: GatesOperations operations
     :vartype gates: azure.mgmt.containerservicefleet.aio.operations.GatesOperations
     :ivar update_runs: UpdateRunsOperations operations
@@ -62,8 +67,11 @@ class ContainerServiceFleetMgmtClient:  # pylint: disable=too-many-instance-attr
     :type subscription_id: str
     :param base_url: Service host. Default value is None.
     :type base_url: str
+    :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
+     None.
+    :paramtype cloud_setting: ~azure.core.AzureClouds
     :keyword api_version: The API version to use for this operation. Default value is
-     "2025-04-01-preview". Note that overriding this default value may result in unsupported
+     "2025-08-01-preview". Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
@@ -71,10 +79,16 @@ class ContainerServiceFleetMgmtClient:  # pylint: disable=too-many-instance-attr
     """
 
     def __init__(
-        self, credential: "AsyncTokenCredential", subscription_id: str, base_url: Optional[str] = None, **kwargs: Any
+        self,
+        credential: "AsyncTokenCredential",
+        subscription_id: str,
+        base_url: Optional[str] = None,
+        *,
+        cloud_setting: Optional["AzureClouds"] = None,
+        **kwargs: Any
     ) -> None:
         _endpoint = "{endpoint}"
-        _cloud = kwargs.pop("cloud_setting", None) or settings.current.azure_cloud  # type: ignore
+        _cloud = cloud_setting or settings.current.azure_cloud  # type: ignore
         _endpoints = get_arm_endpoints(_cloud)
         if not base_url:
             base_url = _endpoints["resource_manager"]
@@ -83,6 +97,7 @@ class ContainerServiceFleetMgmtClient:  # pylint: disable=too-many-instance-attr
             credential=credential,
             subscription_id=subscription_id,
             base_url=cast(str, base_url),
+            cloud_setting=cloud_setting,
             credential_scopes=credential_scopes,
             **kwargs
         )
@@ -115,6 +130,9 @@ class ContainerServiceFleetMgmtClient:  # pylint: disable=too-many-instance-attr
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
         self.fleets = FleetsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.fleet_members = FleetMembersOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.fleet_managed_namespaces = FleetManagedNamespacesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.gates = GatesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.update_runs = UpdateRunsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.fleet_update_strategies = FleetUpdateStrategiesOperations(

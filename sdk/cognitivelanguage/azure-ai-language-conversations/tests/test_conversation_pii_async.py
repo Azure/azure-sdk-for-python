@@ -1,5 +1,6 @@
 # pylint: disable=line-too-long,useless-suppression
 import functools
+from typing import cast, List
 import pytest
 
 from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader
@@ -8,6 +9,7 @@ from azure.core.async_paging import AsyncItemPaged
 from azure.ai.language.conversations.aio import ConversationAnalysisClient, AnalyzeConversationAsyncLROPoller
 from azure.ai.language.conversations.models import (
     AnalyzeConversationOperationInput,
+    ConversationPiiOperationResult,
     MultiLanguageConversationInput,
     TextConversation,
     TextConversationItem,
@@ -15,15 +17,13 @@ from azure.ai.language.conversations.models import (
     PiiOperationAction,
     ConversationPiiActionContent,
     ConversationActions,
+    NamedEntity,
+    ConversationError,
     AnalyzeConversationOperationResult,
-    ConversationPiiOperationResult,
     ConversationalPiiResult,
     ConversationPiiItemResult,
-    NamedEntity,
     InputWarning,
-    ConversationError,
 )
-from typing import cast, List
 from azure.core.credentials import AzureKeyCredential
 
 ConversationsPreparer = functools.partial(
@@ -49,7 +49,7 @@ class TestConversationsCase(TestConversations):
     @ConversationsPreparer()
     @recorded_by_proxy_async
     @pytest.mark.asyncio
-    async def test_conversation_pii_async(self, conversations_endpoint, conversations_key):
+    async def test_conversation_pii_async(self, conversations_endpoint, conversations_key): # pylint: disable=too-many-statements
         client = await self.create_client(conversations_endpoint, conversations_key)
 
         try:
@@ -116,8 +116,7 @@ class TestConversationsCase(TestConversations):
                     f"Failed: {actions_page.failed}, "
                     f"Total: {actions_page.total}"
                 )
-
-                for action_result in actions_page.task_results or []:
+                for action_result in actions_page.task_results or []: # pylint: disable=too-many-nested-blocks
                     ar = cast(AnalyzeConversationOperationResult, action_result)
                     print(f"\nAction Name: {getattr(ar, 'name', None)}")
                     print(f"Action Status: {getattr(ar, 'status', None)}")
@@ -151,13 +150,14 @@ class TestConversationsCase(TestConversations):
                         print("  [No supported results to display for this action type]")
 
             # ---- Print errors (from final-state metadata) ---------------------
+            # Print errors
             if d.get("errors"):
                 print("\nErrors:")
                 for err in d["errors"]:
                     err = cast(ConversationError, err)
                     print(f"  Code: {err.code} - {err.message}")
 
-            # ---- Assertions ---------------------------------------------------
+            # Assertions
             assert len(entities_detected) > 0, "Expected at least one PII entity."
             assert (d.get("status") or "").lower() in {"succeeded", "partiallysucceeded"}
         finally:

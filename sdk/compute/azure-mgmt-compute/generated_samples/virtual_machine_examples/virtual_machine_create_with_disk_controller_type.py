@@ -58,7 +58,10 @@ def main():
                     "computerName": "myVM",
                 },
                 "scheduledEventsPolicy": {
-                    "scheduledEventsAdditionalPublishingTargets": {"eventGridAndResourceGraph": {"enable": True}},
+                    "allInstancesDown": {"automaticallyApprove": True},
+                    "scheduledEventsAdditionalPublishingTargets": {
+                        "eventGridAndResourceGraph": {"enable": True, "scheduledEventsApiVersion": "2020-07-01"}
+                    },
                     "userInitiatedReboot": {"automaticallyApprove": True},
                     "userInitiatedRedeploy": {"automaticallyApprove": True},
                 },
@@ -84,6 +87,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/compute/resource-manager/Microsoft.Compute/ComputeRP/stable/2024-11-01/examples/virtualMachineExamples/VirtualMachine_Create_WithDiskControllerType.json
+# x-ms-original-file: specification/compute/resource-manager/Microsoft.Compute/ComputeRP/stable/2025-04-01/examples/virtualMachineExamples/VirtualMachine_Create_WithDiskControllerType.json
 if __name__ == "__main__":
     main()

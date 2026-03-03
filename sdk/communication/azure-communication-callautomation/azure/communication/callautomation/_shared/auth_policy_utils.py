@@ -28,11 +28,10 @@ def get_authentication_policy(
     :type credential: Union[TokenCredential, AsyncTokenCredential, AzureKeyCredential, str]
     :param bool decode_url: `True` if there is a need to decode the url. Default value is `False`
     :param bool is_async: For async clients there is a need to decode the url
-
-    :return: Either AsyncBearerTokenCredentialPolicy or BearerTokenCredentialPolicy or HMACCredentialsPolicy
+    :return: The authentication policy to be used.
     :rtype: ~azure.core.pipeline.policies.AsyncBearerTokenCredentialPolicy or
-    ~azure.core.pipeline.policies.BearerTokenCredentialPolicy or
-    ~azure.communication.callautomation.shared.policy.HMACCredentialsPolicy
+     ~azure.core.pipeline.policies.BearerTokenCredentialPolicy or
+     ~.HMACCredentialsPolicy
     """
 
     if credential is None:

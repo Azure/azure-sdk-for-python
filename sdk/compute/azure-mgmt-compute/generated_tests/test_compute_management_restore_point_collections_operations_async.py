@@ -23,7 +23,7 @@ class TestComputeManagementRestorePointCollectionsOperationsAsync(AzureMgmtRecor
     @recorded_by_proxy_async
     async def test_restore_point_collections_list_all(self, resource_group):
         response = self.client.restore_point_collections.list_all(
-            api_version="2024-11-01",
+            api_version="2025-04-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -34,7 +34,7 @@ class TestComputeManagementRestorePointCollectionsOperationsAsync(AzureMgmtRecor
     async def test_restore_point_collections_list(self, resource_group):
         response = self.client.restore_point_collections.list(
             resource_group_name=resource_group.name,
-            api_version="2024-11-01",
+            api_version="2025-04-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -46,7 +46,7 @@ class TestComputeManagementRestorePointCollectionsOperationsAsync(AzureMgmtRecor
         response = await self.client.restore_point_collections.get(
             resource_group_name=resource_group.name,
             restore_point_collection_name="str",
-            api_version="2024-11-01",
+            api_version="2025-04-01",
         )
 
         # please add some check logic here by yourself
@@ -61,6 +61,7 @@ class TestComputeManagementRestorePointCollectionsOperationsAsync(AzureMgmtRecor
             parameters={
                 "location": "str",
                 "id": "str",
+                "instantAccess": bool,
                 "name": "str",
                 "provisioningState": "str",
                 "restorePointCollectionId": "str",
@@ -83,6 +84,7 @@ class TestComputeManagementRestorePointCollectionsOperationsAsync(AzureMgmtRecor
                                             "time": "2020-02-20 00:00:00",
                                         },
                                     },
+                                    "snapshotAccessState": "str",
                                 }
                             ],
                             "statuses": [
@@ -95,6 +97,7 @@ class TestComputeManagementRestorePointCollectionsOperationsAsync(AzureMgmtRecor
                                 }
                             ],
                         },
+                        "instantAccessDurationMinutes": 0,
                         "name": "str",
                         "provisioningState": "str",
                         "sourceMetadata": {
@@ -162,6 +165,7 @@ class TestComputeManagementRestorePointCollectionsOperationsAsync(AzureMgmtRecor
                                 "encryptionAtHost": bool,
                                 "encryptionIdentity": {"userAssignedIdentityResourceId": "str"},
                                 "proxyAgentSettings": {
+                                    "addProxyAgentExtension": bool,
                                     "enabled": bool,
                                     "imds": {"inVMAccessControlProfileReferenceId": "str", "mode": "str"},
                                     "keyIncarnationId": 0,
@@ -251,7 +255,7 @@ class TestComputeManagementRestorePointCollectionsOperationsAsync(AzureMgmtRecor
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2024-11-01",
+            api_version="2025-04-01",
         )
 
         # please add some check logic here by yourself
@@ -264,6 +268,7 @@ class TestComputeManagementRestorePointCollectionsOperationsAsync(AzureMgmtRecor
             resource_group_name=resource_group.name,
             restore_point_collection_name="str",
             parameters={
+                "instantAccess": bool,
                 "provisioningState": "str",
                 "restorePointCollectionId": "str",
                 "restorePoints": [
@@ -285,6 +290,7 @@ class TestComputeManagementRestorePointCollectionsOperationsAsync(AzureMgmtRecor
                                             "time": "2020-02-20 00:00:00",
                                         },
                                     },
+                                    "snapshotAccessState": "str",
                                 }
                             ],
                             "statuses": [
@@ -297,6 +303,7 @@ class TestComputeManagementRestorePointCollectionsOperationsAsync(AzureMgmtRecor
                                 }
                             ],
                         },
+                        "instantAccessDurationMinutes": 0,
                         "name": "str",
                         "provisioningState": "str",
                         "sourceMetadata": {
@@ -364,6 +371,7 @@ class TestComputeManagementRestorePointCollectionsOperationsAsync(AzureMgmtRecor
                                 "encryptionAtHost": bool,
                                 "encryptionIdentity": {"userAssignedIdentityResourceId": "str"},
                                 "proxyAgentSettings": {
+                                    "addProxyAgentExtension": bool,
                                     "enabled": bool,
                                     "imds": {"inVMAccessControlProfileReferenceId": "str", "mode": "str"},
                                     "keyIncarnationId": 0,
@@ -444,7 +452,7 @@ class TestComputeManagementRestorePointCollectionsOperationsAsync(AzureMgmtRecor
                 "source": {"id": "str", "location": "str"},
                 "tags": {"str": "str"},
             },
-            api_version="2024-11-01",
+            api_version="2025-04-01",
         )
 
         # please add some check logic here by yourself
@@ -457,7 +465,7 @@ class TestComputeManagementRestorePointCollectionsOperationsAsync(AzureMgmtRecor
             await self.client.restore_point_collections.begin_delete(
                 resource_group_name=resource_group.name,
                 restore_point_collection_name="str",
-                api_version="2024-11-01",
+                api_version="2025-04-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 

@@ -27,8 +27,16 @@ parameters:
 steps:
   - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
     parameters:
+      ${{ if endsWith(variables['Build.Repository.Name'], '-pr') }}:
+        TokenToUseForAuth: $(azuresdk-github-pat)
       Paths:
         - '**'
+
+  # Authenticate to Azure Artifacts feed immediately after checkout to prevent 401 errors
+  # Public feeds have upstream sources enabled and require authentication for passthrough to pypi.org
+  - template: auth-dev-feed.yml
+    parameters:
+      DevFeedName: ${{ parameters.DevFeedName }}
 
   - task: UsePythonVersion@0
     displayName: 'Use Python $(PythonVersion)'
@@ -45,11 +53,6 @@ steps:
       TestPipeline: ${{ parameters.TestPipeline }}
 
   - template: /eng/common/pipelines/templates/steps/set-default-branch.yml@self
-
-  - ${{if eq(variables['System.TeamProject'], 'internal') }}:
-    - template: auth-dev-feed.yml
-      parameters:
-        DevFeedName: ${{ parameters.DevFeedName }}
 
   - script: |
       echo "##vso[build.addbuildtag]Scheduled"

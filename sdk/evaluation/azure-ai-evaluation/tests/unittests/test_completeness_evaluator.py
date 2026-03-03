@@ -6,19 +6,29 @@ from azure.ai.evaluation._exceptions import EvaluationException
 
 
 async def completeness_response1_async_mock():
-    return """<S0>Let's think step by step: The ground truth states "The capital of Japan is Tokyo," which provides 
-    both the subject (capital of Japan) and the specific answer (Tokyo). The response, "The capital of Japan,
-    " only partially addresses the subject but does not provide the specific answer (Tokyo). This means it misses the 
-    core claim established in the ground truth.</S0> <S1>The response is fully incomplete as it does not provide the 
-    necessary and relevant information, specifically the name of the capital, Tokyo.</S1> <S2>1</S2>"""
+    return {
+        "llm_output": '<S0>Let\'s think step by step: The ground truth states "The capital of Japan is Tokyo." The response is "The capital of Japan." The response does not specify what the capital is; it only repeats part of the question and omits the key information ("Tokyo"). Therefore, none of the necessary information from the ground truth is present in the response.</S0>\n<S1>The response is fully incomplete because it does not provide the answer ("Tokyo") at all.</S1>\n<S2>1</S2>',
+        "input_token_count": 1354,
+        "output_token_count": 108,
+        "total_token_count": 1462,
+        "finish_reason": "stop",
+        "model_id": "gpt-4.1-2025-04-14",
+        "sample_input": '[{"role": "user", "content": "{\\"response\\": \\"The capital of Japan\\", \\"ground_truth\\": \\"The capital of Japan is Tokyo.\\"}"}]',
+        "sample_output": '[{"role": "assistant", "content": "<S0>Let\'s think step by step: The ground truth states \\"The capital of Japan is Tokyo.\\" The response is \\"The capital of Japan.\\" The response does not specify what the capital is; it only repeats part of the question and omits the key information (\\"Tokyo\\"). Therefore, none of the necessary information from the ground truth is present in the response.</S0>\\n<S1>The response is fully incomplete because it does not provide the answer (\\"Tokyo\\") at all.</S1>\\n<S2>1</S2>"}]',
+    }
 
 
 async def completeness_response2_async_mock():
-    return """<S0>Let's think step by step: The response states that the capital of Japan is Tokyo. The ground truth 
-    also states that the capital of Japan is Tokyo. Both the response and the ground truth are identical, containing 
-    all the necessary and relevant information. There is no missing or incorrect information in the response.</S0> 
-    <S1>The response perfectly matches the ground truth, containing all the necessary and relevant information 
-    without any omissions or errors.</S1> <S2>5</S2>"""
+    return {
+        "llm_output": '<S0>Let\'s think step by step: The ground truth contains a single statement: "The capital of Japan is Tokyo." The response exactly matches this statement without omitting or altering any information. There are no additional claims or missing details to consider. According to the definitions, a fully complete response should perfectly contain all necessary and relevant information from the ground truth.</S0>\n<S1>The response is a perfect match to the ground truth, with no missing or incorrect information.</S1>\n<S2>5</S2>',
+        "input_token_count": 1356,
+        "output_token_count": 107,
+        "total_token_count": 1463,
+        "finish_reason": "stop",
+        "model_id": "gpt-4.1-2025-04-14",
+        "sample_input": '[{"role": "user", "content": "{\\"response\\": \\"The capital of Japan is Tokyo.\\", \\"ground_truth\\": \\"The capital of Japan is Tokyo.\\"}"}]',
+        "sample_output": '[{"role": "assistant", "content": "<S0>Let\'s think step by step: The ground truth contains a single statement: \\"The capital of Japan is Tokyo.\\" The response exactly matches this statement without omitting or altering any information. There are no additional claims or missing details to consider. According to the definitions, a fully complete response should perfectly contain all necessary and relevant information from the ground truth.</S0>\\n<S1>The response is a perfect match to the ground truth, with no missing or incorrect information.</S1>\\n<S2>5</S2>"}]',
+    }
 
 
 @pytest.mark.usefixtures("mock_model_config")
@@ -81,7 +91,7 @@ class TestResponseCompletenessEvaluator:
         assert result[key] == 5
         assert result[f"{key}_result"] == "pass"
         assert result[f"{key}_threshold"] == ResponseCompletenessEvaluator._DEFAULT_COMPLETENESS_THRESHOLD
-        assert "The response perfectly matches " in result[f"{key}_reason"]
+        assert "The response is a perfect match " in result[f"{key}_reason"]
 
     def test_evaluate_completeness_valid3(self, mock_model_config):
         response_completeness_evaluator = ResponseCompletenessEvaluator(
@@ -103,7 +113,7 @@ class TestResponseCompletenessEvaluator:
         assert result[key] == 5
         assert result[f"{key}_result"] == "pass"
         assert result[f"{key}_threshold"] == ResponseCompletenessEvaluator._DEFAULT_COMPLETENESS_THRESHOLD
-        assert "The response perfectly matches " in result[f"{key}_reason"]
+        assert "The response is a perfect match " in result[f"{key}_reason"]
 
     def test_evaluate_completeness_missing_ground_truth(self, mock_model_config):
         response_completeness_evaluator = ResponseCompletenessEvaluator(model_config=mock_model_config)
