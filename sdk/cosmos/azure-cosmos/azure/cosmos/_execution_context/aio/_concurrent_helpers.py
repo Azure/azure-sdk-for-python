@@ -25,8 +25,10 @@ Provides utilities used by the async aggregator classes to run document producer
 concurrently during cross-partition query execution.
 """
 
-import asyncio
+import asyncio  # pylint: disable=do-not-import-asyncio
 import os
+
+# pylint: disable=protected-access
 
 
 def _resolve_max_degree(max_degree_of_parallelism, num_partitions):
@@ -44,6 +46,11 @@ def _resolve_max_degree(max_degree_of_parallelism, num_partitions):
         return 0  # serial
     if max_degree_of_parallelism > 0:
         return max_degree_of_parallelism
+    if max_degree_of_parallelism != -1:
+        raise ValueError(
+            f"max_degree_of_parallelism must be -1 (auto), 0 (serial), or a positive "
+            f"integer, got {max_degree_of_parallelism}."
+        )
     # -1: auto
     cpu = os.cpu_count() or 4
     return min(num_partitions, cpu * 2, 32)
@@ -64,6 +71,11 @@ def _resolve_max_buffered(max_buffered_item_count, effective_concurrency):
         return 0
     if max_buffered_item_count > 0:
         return max_buffered_item_count
+    if max_buffered_item_count != -1:
+        raise ValueError(
+            f"max_buffered_item_count must be -1 (auto), 0 (disabled), or a positive "
+            f"integer, got {max_buffered_item_count}."
+        )
     # -1: auto
     return max(effective_concurrency * 100, 100) if effective_concurrency > 0 else 0
 
@@ -181,17 +193,21 @@ class PrefetchQueue:
     with result consumption. Background worker tasks pull items from document
     producers and push them into the queue, while __anext__ pulls from the queue.
 
-    :param int max_buffered: Maximum number of items to buffer. A non-positive value creates an unbounded internal queue.
+    :param int max_buffered: Maximum number of items to buffer.
+        A non-positive value creates an unbounded internal queue.
     :param int max_concurrency: Maximum number of concurrent fetch tasks.
     """
 
     def __init__(self, max_buffered, max_concurrency):
         maxsize = max_buffered if max_buffered > 0 else 0
         self._queue = asyncio.Queue(maxsize=maxsize)
+        self._max_concurrency = max_concurrency
         self._semaphore = asyncio.Semaphore(max_concurrency)
         self._workers = []
         self._done = False
         self._error = None
+        self._order_by_pq = None
+        self._comparator = None
 
     async def start_workers(self, order_by_pq, document_producer_comparator):
         """Start background workers that drain from the priority queue.
@@ -201,7 +217,10 @@ class PrefetchQueue:
         fetch the next item, re-push the producer, and put items into the buffer.
 
         :param order_by_pq: The priority queue of document producers.
+        :type order_by_pq: ~azure.cosmos._execution_context.aio.multi_execution_aggregator\
+            ._MultiExecutionContextAggregator.PriorityQueue
         :param document_producer_comparator: The comparator for the priority queue.
+        :type document_producer_comparator: object
         """
         self._order_by_pq = order_by_pq
         self._comparator = document_producer_comparator
@@ -225,16 +244,17 @@ class PrefetchQueue:
                             pass  # producer exhausted, don't re-push
 
                     await self._queue.put(result)
-            except Exception as e:
+            except Exception as e:  # pylint: disable=broad-exception-caught
                 self._error = e
                 await self._queue.put(None)  # signal error
 
-        self._workers = [asyncio.create_task(_worker()) for _ in range(self._semaphore._value)]
+        self._workers = [asyncio.create_task(_worker()) for _ in range(self._max_concurrency)]
 
     async def get(self):
         """Get the next item from the prefetch buffer.
 
         :returns: The next result item.
+        :rtype: dict
         :raises StopAsyncIteration: If all producers are exhausted.
         """
         if self._error:

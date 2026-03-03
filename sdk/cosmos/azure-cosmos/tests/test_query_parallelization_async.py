@@ -94,6 +94,11 @@ class TestResolveMaxDegree:
         result = _resolve_max_degree(-1, 1000)
         assert result <= 32
 
+    @pytest.mark.parametrize("bad_value", [-2, -5, -100])
+    def test_invalid_negative_raises(self, bad_value):
+        with pytest.raises(ValueError, match="max_degree_of_parallelism"):
+            _resolve_max_degree(bad_value, 10)
+
 
 # ---------------------------------------------------------------------------
 # _resolve_max_buffered tests
@@ -122,6 +127,11 @@ class TestResolveMaxBuffered:
     def test_auto_minimum_100(self):
         result = _resolve_max_buffered(-1, 1)
         assert result >= 100
+
+    @pytest.mark.parametrize("bad_value", [-2, -10, -999])
+    def test_invalid_negative_raises(self, bad_value):
+        with pytest.raises(ValueError, match="max_buffered_item_count"):
+            _resolve_max_buffered(bad_value, 4)
 
 
 # ---------------------------------------------------------------------------
@@ -439,6 +449,370 @@ class TestNonStreamingOrderByParallel:
             await aggregator._configure_partition_ranges()
 
         assert aggregator._orderByPQ.size() == 3
+
+    # ------------------------------------------------------------------
+    # Parallel drain path (_parallel_drain_producers) tests
+    # ------------------------------------------------------------------
+
+    @pytest.mark.asyncio
+    async def test_parallel_drain_ordering_multiple_producers(self):
+        """Items from multiple producers drained in parallel must be correctly
+        ordered by the priority queue (ascending by orderByItems value)."""
+        _NonStreamingOrderByContextAggregator = _import_non_streaming_aggregator()
+
+        client = MagicMock()
+        client._routing_map_provider = MagicMock()
+        client._routing_map_provider.get_overlapping_ranges = AsyncMock(return_value=[
+            {"id": "0", "minInclusive": "", "maxExclusive": "55"},
+            {"id": "1", "minInclusive": "55", "maxExclusive": "AA"},
+            {"id": "2", "minInclusive": "AA", "maxExclusive": "FF"},
+        ])
+
+        query_ex_info = MagicMock()
+        query_ex_info.get_order_by.return_value = [{"item": "Ascending"}]
+        query_ex_info.get_rewritten_query.return_value = None
+        query_ex_info.get_query_ranges.return_value = [
+            {"min": "", "max": "FF", "isMinInclusive": True, "isMaxInclusive": False}
+        ]
+        # pq_size large enough so no trimming occurs
+        query_ex_info.get_top.return_value = 100
+        query_ex_info.get_limit.return_value = 0
+        query_ex_info.get_offset.return_value = 0
+
+        options = {"maxDegreeOfParallelism": 2}  # triggers parallel path
+
+        aggregator = _NonStreamingOrderByContextAggregator(
+            client, "/dbs/db/colls/coll", "SELECT * FROM c ORDER BY c.val",
+            options, query_ex_info, None, None
+        )
+
+        class MockDocProducer:
+            def __init__(self, items_list, range_id):
+                self._items = list(items_list)
+                self._index = 0
+                self._cur_item = None
+                rng = {"id": str(range_id), "minInclusive": str(range_id), "maxExclusive": str(range_id + 1)}
+                self._partition_key_target_range = rng
+
+            def get_target_range(self):
+                return self._partition_key_target_range
+
+            async def peek(self):
+                if self._cur_item is not None:
+                    return self._cur_item
+                if self._index < len(self._items):
+                    self._cur_item = self._items[self._index]
+                    return self._cur_item
+                raise StopAsyncIteration
+
+            async def __anext__(self):
+                if self._cur_item is not None:
+                    res = self._cur_item
+                    self._cur_item = None
+                    self._index += 1
+                    return res
+                if self._index < len(self._items):
+                    res = self._items[self._index]
+                    self._index += 1
+                    return res
+                raise StopAsyncIteration
+
+        # Three producers with interleaved sort values
+        p0 = MockDocProducer([
+            {"id": "a1", "orderByItems": [{"item": 1}]},
+            {"id": "a5", "orderByItems": [{"item": 5}]},
+            {"id": "a9", "orderByItems": [{"item": 9}]},
+        ], range_id=0)
+        p1 = MockDocProducer([
+            {"id": "b2", "orderByItems": [{"item": 2}]},
+            {"id": "b6", "orderByItems": [{"item": 6}]},
+        ], range_id=1)
+        p2 = MockDocProducer([
+            {"id": "c3", "orderByItems": [{"item": 3}]},
+            {"id": "c4", "orderByItems": [{"item": 4}]},
+            {"id": "c7", "orderByItems": [{"item": 7}]},
+            {"id": "c8", "orderByItems": [{"item": 8}]},
+        ], range_id=2)
+
+        producers_iter = iter([p0, p1, p2])
+        with patch.object(
+            aggregator, '_createTargetPartitionQueryExecutionContext',
+            side_effect=lambda _range: next(producers_iter)
+        ):
+            await aggregator._configure_partition_ranges()
+
+        # All 9 items should be in the PQ
+        assert aggregator._orderByPQ.size() == 9
+
+        # Pop all and verify ascending order
+        popped_values = []
+        while aggregator._orderByPQ.size() > 0:
+            item = await aggregator._orderByPQ.pop_async(aggregator._document_producer_comparator)
+            popped_values.append(item._item_result["orderByItems"][0]["item"])
+
+        assert popped_values == [1, 2, 3, 4, 5, 6, 7, 8, 9]
+
+    @pytest.mark.asyncio
+    async def test_parallel_drain_size_trimming(self):
+        """When total drained items exceed pq_size, the priority queue must
+        be trimmed to keep only the top pq_size items."""
+        _NonStreamingOrderByContextAggregator = _import_non_streaming_aggregator()
+
+        client = MagicMock()
+        client._routing_map_provider = MagicMock()
+        client._routing_map_provider.get_overlapping_ranges = AsyncMock(return_value=[
+            {"id": "0", "minInclusive": "", "maxExclusive": "80"},
+            {"id": "1", "minInclusive": "80", "maxExclusive": "FF"},
+        ])
+
+        query_ex_info = MagicMock()
+        query_ex_info.get_order_by.return_value = [{"item": "Ascending"}]
+        query_ex_info.get_rewritten_query.return_value = None
+        query_ex_info.get_query_ranges.return_value = [
+            {"min": "", "max": "FF", "isMinInclusive": True, "isMaxInclusive": False}
+        ]
+        # pq_size = 3 (via get_top), but we'll have 6 items total
+        query_ex_info.get_top.return_value = 3
+        query_ex_info.get_limit.return_value = 0
+        query_ex_info.get_offset.return_value = 0
+
+        options = {"maxDegreeOfParallelism": 2}
+
+        aggregator = _NonStreamingOrderByContextAggregator(
+            client, "/dbs/db/colls/coll", "SELECT TOP 3 * FROM c ORDER BY c.val",
+            options, query_ex_info, None, None
+        )
+
+        class MockDocProducer:
+            def __init__(self, items_list, range_id):
+                self._items = list(items_list)
+                self._index = 0
+                self._cur_item = None
+                rng = {"id": str(range_id), "minInclusive": str(range_id), "maxExclusive": str(range_id + 1)}
+                self._partition_key_target_range = rng
+
+            def get_target_range(self):
+                return self._partition_key_target_range
+
+            async def peek(self):
+                if self._cur_item is not None:
+                    return self._cur_item
+                if self._index < len(self._items):
+                    self._cur_item = self._items[self._index]
+                    return self._cur_item
+                raise StopAsyncIteration
+
+            async def __anext__(self):
+                if self._cur_item is not None:
+                    res = self._cur_item
+                    self._cur_item = None
+                    self._index += 1
+                    return res
+                if self._index < len(self._items):
+                    res = self._items[self._index]
+                    self._index += 1
+                    return res
+                raise StopAsyncIteration
+
+        p0 = MockDocProducer([
+            {"id": "a1", "orderByItems": [{"item": 1}]},
+            {"id": "a3", "orderByItems": [{"item": 3}]},
+            {"id": "a5", "orderByItems": [{"item": 5}]},
+        ], range_id=0)
+        p1 = MockDocProducer([
+            {"id": "b2", "orderByItems": [{"item": 2}]},
+            {"id": "b4", "orderByItems": [{"item": 4}]},
+            {"id": "b6", "orderByItems": [{"item": 6}]},
+        ], range_id=1)
+
+        producers_iter = iter([p0, p1])
+        with patch.object(
+            aggregator, '_createTargetPartitionQueryExecutionContext',
+            side_effect=lambda _range: next(producers_iter)
+        ):
+            await aggregator._configure_partition_ranges()
+
+        # PQ should have been trimmed to pq_size = 3
+        assert aggregator._orderByPQ.size() == 3
+
+        # The top-3 ascending items should be 1, 2, 3
+        popped_values = []
+        while aggregator._orderByPQ.size() > 0:
+            item = await aggregator._orderByPQ.pop_async(aggregator._document_producer_comparator)
+            popped_values.append(item._item_result["orderByItems"][0]["item"])
+
+        assert popped_values == [1, 2, 3]
+
+    @pytest.mark.asyncio
+    async def test_parallel_drain_exception_cancels_remaining_tasks(self):
+        """If one producer raises during parallel drain, the exception should
+        propagate and remaining tasks should be cancelled."""
+        _NonStreamingOrderByContextAggregator = _import_non_streaming_aggregator()
+
+        client = MagicMock()
+        client._routing_map_provider = MagicMock()
+        client._routing_map_provider.get_overlapping_ranges = AsyncMock(return_value=[
+            {"id": "0", "minInclusive": "", "maxExclusive": "80"},
+            {"id": "1", "minInclusive": "80", "maxExclusive": "FF"},
+        ])
+
+        query_ex_info = MagicMock()
+        query_ex_info.get_order_by.return_value = [{"item": "Ascending"}]
+        query_ex_info.get_rewritten_query.return_value = None
+        query_ex_info.get_query_ranges.return_value = [
+            {"min": "", "max": "FF", "isMinInclusive": True, "isMaxInclusive": False}
+        ]
+        query_ex_info.get_top.return_value = 10
+        query_ex_info.get_limit.return_value = 0
+        query_ex_info.get_offset.return_value = 0
+
+        options = {"maxDegreeOfParallelism": 2}
+
+        aggregator = _NonStreamingOrderByContextAggregator(
+            client, "/dbs/db/colls/coll", "SELECT * FROM c ORDER BY c.val",
+            options, query_ex_info, None, None
+        )
+
+        class GoodProducer:
+            """Producer that yields one item then stops."""
+            def __init__(self):
+                self._done = False
+                self._cur_item = None
+                self._partition_key_target_range = {"id": "0", "minInclusive": "0", "maxExclusive": "80"}
+
+            def get_target_range(self):
+                return self._partition_key_target_range
+
+            async def peek(self):
+                if self._done:
+                    raise StopAsyncIteration
+                self._cur_item = {"id": "ok", "orderByItems": [{"item": 1}]}
+                return self._cur_item
+
+            async def __anext__(self):
+                if self._done:
+                    raise StopAsyncIteration
+                self._done = True
+                return self._cur_item
+
+        class FailingProducer:
+            """Producer that succeeds on peek but raises RuntimeError during drain."""
+            def __init__(self):
+                self._peeked = False
+                self._partition_key_target_range = {"id": "1", "minInclusive": "80", "maxExclusive": "FF"}
+
+            def get_target_range(self):
+                return self._partition_key_target_range
+
+            async def peek(self):
+                if not self._peeked:
+                    self._peeked = True
+                    return {"id": "fail", "orderByItems": [{"item": 2}]}
+                raise RuntimeError("simulated drain failure")
+
+            async def __anext__(self):
+                raise RuntimeError("simulated drain failure")
+
+        good = GoodProducer()
+        bad = FailingProducer()
+
+        producers_iter = iter([good, bad])
+        with patch.object(
+            aggregator, '_createTargetPartitionQueryExecutionContext',
+            side_effect=lambda _range: next(producers_iter)
+        ):
+            with pytest.raises(RuntimeError, match="simulated drain failure"):
+                await aggregator._configure_partition_ranges()
+
+    @pytest.mark.asyncio
+    async def test_parallel_drain_with_empty_producer(self):
+        """One empty producer among several should not affect parallel drain
+        of the remaining producers."""
+        _NonStreamingOrderByContextAggregator = _import_non_streaming_aggregator()
+
+        client = MagicMock()
+        client._routing_map_provider = MagicMock()
+        client._routing_map_provider.get_overlapping_ranges = AsyncMock(return_value=[
+            {"id": "0", "minInclusive": "", "maxExclusive": "55"},
+            {"id": "1", "minInclusive": "55", "maxExclusive": "AA"},
+            {"id": "2", "minInclusive": "AA", "maxExclusive": "FF"},
+        ])
+
+        query_ex_info = MagicMock()
+        query_ex_info.get_order_by.return_value = [{"item": "Ascending"}]
+        query_ex_info.get_rewritten_query.return_value = None
+        query_ex_info.get_query_ranges.return_value = [
+            {"min": "", "max": "FF", "isMinInclusive": True, "isMaxInclusive": False}
+        ]
+        query_ex_info.get_top.return_value = 50
+        query_ex_info.get_limit.return_value = 0
+        query_ex_info.get_offset.return_value = 0
+
+        options = {"maxDegreeOfParallelism": 3}
+
+        aggregator = _NonStreamingOrderByContextAggregator(
+            client, "/dbs/db/colls/coll", "SELECT * FROM c ORDER BY c.val",
+            options, query_ex_info, None, None
+        )
+
+        class MockDocProducer:
+            def __init__(self, items_list, range_id):
+                self._items = list(items_list)
+                self._index = 0
+                self._cur_item = None
+                rng = {"id": str(range_id), "minInclusive": str(range_id), "maxExclusive": str(range_id + 1)}
+                self._partition_key_target_range = rng
+
+            def get_target_range(self):
+                return self._partition_key_target_range
+
+            async def peek(self):
+                if self._cur_item is not None:
+                    return self._cur_item
+                if self._index < len(self._items):
+                    self._cur_item = self._items[self._index]
+                    return self._cur_item
+                raise StopAsyncIteration
+
+            async def __anext__(self):
+                if self._cur_item is not None:
+                    res = self._cur_item
+                    self._cur_item = None
+                    self._index += 1
+                    return res
+                if self._index < len(self._items):
+                    res = self._items[self._index]
+                    self._index += 1
+                    return res
+                raise StopAsyncIteration
+
+        # p0 has items, p1 is empty (will be filtered during peek), p2 has items
+        p0 = MockDocProducer([
+            {"id": "a1", "orderByItems": [{"item": 1}]},
+            {"id": "a3", "orderByItems": [{"item": 3}]},
+        ], range_id=0)
+        p1 = MockDocProducer([], range_id=1)  # empty
+        p2 = MockDocProducer([
+            {"id": "c2", "orderByItems": [{"item": 2}]},
+            {"id": "c4", "orderByItems": [{"item": 4}]},
+        ], range_id=2)
+
+        producers_iter = iter([p0, p1, p2])
+        with patch.object(
+            aggregator, '_createTargetPartitionQueryExecutionContext',
+            side_effect=lambda _range: next(producers_iter)
+        ):
+            await aggregator._configure_partition_ranges()
+
+        # Only 4 items from producers p0 and p2 (p1 was empty and filtered out during peek)
+        assert aggregator._orderByPQ.size() == 4
+
+        popped_values = []
+        while aggregator._orderByPQ.size() > 0:
+            item = await aggregator._orderByPQ.pop_async(aggregator._document_producer_comparator)
+            popped_values.append(item._item_result["orderByItems"][0]["item"])
+
+        assert popped_values == [1, 2, 3, 4]
 
 
 # ---------------------------------------------------------------------------

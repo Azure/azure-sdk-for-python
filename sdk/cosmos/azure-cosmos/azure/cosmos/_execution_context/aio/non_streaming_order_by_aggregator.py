@@ -3,7 +3,7 @@
 
 """Internal class for multi execution context aggregator implementation in the Azure Cosmos database service.
 """
-import asyncio
+import asyncio  # pylint: disable=do-not-import-asyncio
 from azure.cosmos._execution_context.aio.base_execution_context import _QueryExecutionContextBase
 from azure.cosmos._execution_context.aio.multi_execution_aggregator import _MultiExecutionContextAggregator
 from azure.cosmos._execution_context.aio import document_producer
@@ -16,7 +16,7 @@ from azure.cosmos import exceptions
 
 # pylint: disable=protected-access
 
-class _NonStreamingOrderByContextAggregator(_QueryExecutionContextBase):
+class _NonStreamingOrderByContextAggregator(_QueryExecutionContextBase):  # pylint: disable=too-many-instance-attributes
     """This class is a subclass of the query execution context base and serves for
     non-streaming order by queries. It is very similar to the existing MultiExecutionContextAggregator,
     but is needed since we're dealing with items and not document producers.

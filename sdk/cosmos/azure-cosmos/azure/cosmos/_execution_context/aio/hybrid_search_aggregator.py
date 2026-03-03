@@ -3,7 +3,7 @@
 
 """Internal class for multi execution context aggregator implementation in the Azure Cosmos database service.
 """
-import asyncio
+import asyncio  # pylint: disable=do-not-import-asyncio
 from azure.cosmos._execution_context.aio.base_execution_context import _QueryExecutionContextBase
 from azure.cosmos._execution_context.aio import document_producer
 from azure.cosmos._execution_context.hybrid_search_aggregator import _retrieve_component_scores, _rewrite_query_infos, \
@@ -26,7 +26,7 @@ class _Placeholders:
     formattable_order_by = "{documentdb-formattableorderbyquery-filter}"
 
 
-async def _drain_and_coalesce_results(document_producers_to_drain, effective_concurrency=0):
+async def _drain_and_coalesce_results(document_producers_to_drain, effective_concurrency=0):  # pylint: disable=unused-argument
     all_results = []
     is_singleton = True
 
@@ -79,7 +79,7 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: dis
         self._max_degree_of_parallelism = options.get("maxDegreeOfParallelism", 0)
 
 
-    async def _run_hybrid_search(self):  # pylint: disable=too-many-branches, too-many-statements
+    async def _run_hybrid_search(self):  # pylint: disable=too-many-branches, too-many-statements, too-many-locals
         effective_concurrency = _resolve_max_degree(self._max_degree_of_parallelism, 1)
 
         # Check if we need to run global statistics queries, and if so do for every partition in the container

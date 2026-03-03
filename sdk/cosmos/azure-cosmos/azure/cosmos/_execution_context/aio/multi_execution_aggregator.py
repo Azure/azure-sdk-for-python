@@ -21,7 +21,7 @@
 
 """Internal class for multi execution context aggregator implementation in the Azure Cosmos database service.
 """
-import asyncio
+import asyncio  # pylint: disable=do-not-import-asyncio
 from azure.cosmos._execution_context.aio.base_execution_context import _QueryExecutionContextBase
 from azure.cosmos._execution_context.aio import document_producer, _queue_async_helper
 from azure.cosmos._execution_context.aio._concurrent_helpers import (
@@ -34,7 +34,7 @@ from azure.cosmos import exceptions
 # pylint: disable=protected-access
 
 
-class _MultiExecutionContextAggregator(_QueryExecutionContextBase):
+class _MultiExecutionContextAggregator(_QueryExecutionContextBase):  # pylint: disable=too-many-instance-attributes
     """This class is capable of queries which requires rewriting based on
     backend's returned query execution info.
 

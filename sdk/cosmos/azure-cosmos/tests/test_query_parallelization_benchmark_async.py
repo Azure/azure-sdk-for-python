@@ -5,10 +5,10 @@
 
 These tests measure the performance impact of max_degree_of_parallelism
 on cross-partition queries. They require a live Cosmos DB account and are
-skipped by default (mark with pytest.mark.benchmark).
+skipped when COSMOS_ENDPOINT/COSMOS_KEY are not set.
 
 Run with:
-    pytest tests/test_query_parallelization_benchmark_async.py -v -m benchmark --no-header
+    pytest tests/test_query_parallelization_benchmark_async.py -v -m cosmosQuery --no-header
 
 Set environment variables:
     COSMOS_ENDPOINT, COSMOS_KEY, COSMOS_DATABASE, COSMOS_CONTAINER
@@ -25,14 +25,8 @@ import pytest
 logger = logging.getLogger(__name__)
 
 # Skip entire module if no Cosmos DB credentials are available
-pytestmark = [
-    pytest.mark.benchmark,
-    pytest.mark.asyncio,
-    pytest.mark.skipif(
-        not os.environ.get("COSMOS_ENDPOINT") or not os.environ.get("COSMOS_KEY"),
-        reason="COSMOS_ENDPOINT and COSMOS_KEY environment variables required"
-    ),
-]
+_SKIP_REASON = "COSMOS_ENDPOINT and COSMOS_KEY environment variables required"
+_SKIP = not os.environ.get("COSMOS_ENDPOINT") or not os.environ.get("COSMOS_KEY")
 
 ENDPOINT = os.environ.get("COSMOS_ENDPOINT", "")
 KEY = os.environ.get("COSMOS_KEY", "")
@@ -77,6 +71,8 @@ async def cosmos_container():
         yield container
 
 
+@pytest.mark.cosmosQuery
+@pytest.mark.skipif(_SKIP, reason=_SKIP_REASON)
 class TestParallelQueryBenchmarks:
     """Benchmark tests for parallel cross-partition queries."""
 
