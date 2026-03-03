@@ -4,9 +4,15 @@
 # license information.
 # --------------------------------------------------------------------------
 import time
-from unittest.mock import patch, call
+from unittest.mock import patch, call, MagicMock
 import pytest
 from azure.appconfiguration.provider.aio._async_client_manager import AsyncConfigurationClientManager
+
+
+def _create_mock_credential():
+    credential = MagicMock()
+    credential.get_token = MagicMock()
+    return credential
 
 
 class MockClient:
@@ -141,7 +147,9 @@ class TestAsyncConfigurationClientManager:
     @patch("azure.appconfiguration.provider.aio._async_client_manager.find_auto_failover_endpoints")
     @patch("azure.appconfiguration.provider.aio._async_client_manager._AsyncConfigurationClientWrapper.from_credential")
     @pytest.mark.asyncio
-    async def test_refresh_clients_credential(self, mock_client, mock_update_failover_endpoints): # pylint: disable=too-many-statements
+    async def test_refresh_clients_credential(
+        self, mock_client, mock_update_failover_endpoints
+    ):  # pylint: disable=too-many-statements
         endpoint = "https://fake.endpoint"
 
         mock_client.return_value = MockClient("https://fake.endpoint", "", "fake-credential", 0, 0)
@@ -225,7 +233,9 @@ class TestAsyncConfigurationClientManager:
         "azure.appconfiguration.provider.aio._async_client_manager"
         "._AsyncConfigurationClientWrapper.from_connection_string"
     )
-    async def test_refresh_clients_connection_string(self, mock_client, mock_update_failover_endpoints): # pylint: disable=too-many-statements
+    async def test_refresh_clients_connection_string(
+        self, mock_client, mock_update_failover_endpoints
+    ):  # pylint: disable=too-many-statements
         endpoint = "https://fake.endpoint"
 
         mock_client.return_value = MockClient(
@@ -328,10 +338,9 @@ class TestAsyncConfigurationClientManager:
     def test_calculate_backoff(self, mock_update_failover_endpoints):
         endpoint = "https://fake.endpoint"
         mock_update_failover_endpoints.return_value = []
-        manager = AsyncConfigurationClientManager(None, endpoint, "fake-credential", "", 0, 0, True, 30, 600, False)
-        manager_invalid = AsyncConfigurationClientManager(
-            None, endpoint, "fake-credential", "", 0, 0, True, 600, 30, False
-        )
+        credential = _create_mock_credential()
+        manager = AsyncConfigurationClientManager(None, endpoint, credential, "", 0, 0, True, 30, 600, False)
+        manager_invalid = AsyncConfigurationClientManager(None, endpoint, credential, "", 0, 0, True, 600, 30, False)
 
         assert manager._calculate_backoff(0) == 30000.0
         assert 30000.0 <= manager._calculate_backoff(1) <= 60000.0

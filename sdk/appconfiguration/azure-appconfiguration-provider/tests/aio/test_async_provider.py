@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 import functools
 from unittest.mock import MagicMock, patch
+import pytest
 from devtools_testutils import EnvironmentVariableLoader
 from devtools_testutils.aio import recorded_by_proxy_async
 from testcase import has_feature_flag
@@ -128,6 +129,7 @@ class TestAppConfigurationProvider(AppConfigTestCase):
         ) as client:
             assert client["secret"] == "Resolver Value"
 
+    @pytest.mark.asyncio
     async def test_process_key_value_content_type(self):
         with patch(
             "azure.appconfiguration.provider.aio._azureappconfigurationproviderasync.ConfigurationClientManager"
