@@ -45,6 +45,11 @@ from azure.ai.evaluation._model_configurations import (
 # Azure OpenAI uses cognitive services scope for AAD authentication
 AZURE_OPENAI_SCOPE = "https://cognitiveservices.azure.com/.default"
 
+# Default timeout for PyRIT's underlying httpx client (seconds).
+# Prevents premature ReadTimeout errors during red team scans with slow model responses.
+# Override via RedTeam.scan(..., _http_timeout=<seconds>).
+PYRIT_HTTP_TIMEOUT = 180
+
 
 def _create_token_provider(credential: Any) -> Callable[[], str]:
     """Create a token provider callable from a credential object.
@@ -154,6 +159,7 @@ def get_chat_target(
         OpenAIModelConfiguration,
     ],
     credential: Optional[Any] = None,
+    http_timeout: Optional[int] = None,
 ) -> PromptChatTarget:
     """Convert various target types to a PromptChatTarget.
 
@@ -163,10 +169,15 @@ def get_chat_target(
         Used as a fallback when target doesn't have an api_key or credential field. This is useful
         in ACA environments where DefaultAzureCredential is not available.
     :type credential: Optional[Any]
+    :param http_timeout: Optional HTTP timeout in seconds for the underlying httpx client.
+        Defaults to PYRIT_HTTP_TIMEOUT (180s) if not specified.
+    :type http_timeout: Optional[int]
     :return: A PromptChatTarget instance
     :rtype: PromptChatTarget
     """
     import inspect
+
+    timeout_value = http_timeout if http_timeout is not None else PYRIT_HTTP_TIMEOUT
 
     # Helper function for message conversion
     def _message_to_dict(message):
@@ -193,6 +204,7 @@ def get_chat_target(
                     model_name=target["azure_deployment"],
                     endpoint=target["azure_endpoint"],
                     api_key=api_key,
+                    httpx_client_kwargs={"timeout": timeout_value},
                 )
             elif target_credential:
                 # Use explicit TokenCredential for AAD auth (e.g., in ACA environments)
@@ -201,6 +213,7 @@ def get_chat_target(
                     model_name=target["azure_deployment"],
                     endpoint=target["azure_endpoint"],
                     api_key=token_provider,  # PyRIT accepts callable that returns token
+                    httpx_client_kwargs={"timeout": timeout_value},
                 )
             else:
                 # Fall back to DefaultAzureCredential via PyRIT's auth helpers
@@ -210,12 +223,14 @@ def get_chat_target(
                     model_name=target["azure_deployment"],
                     endpoint=target["azure_endpoint"],
                     api_key=get_azure_openai_auth(target["azure_endpoint"]),
+                    httpx_client_kwargs={"timeout": timeout_value},
                 )
         else:  # OpenAI
             chat_target = OpenAIChatTarget(
                 model_name=target["model"],
                 endpoint=target.get("base_url", None),
                 api_key=target["api_key"],
+                httpx_client_kwargs={"timeout": timeout_value},
             )
     else:
         # Target is callable

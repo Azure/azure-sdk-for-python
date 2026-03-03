@@ -15,6 +15,7 @@ from azure.ai.evaluation.red_team._utils.strategy_utils import (
     strategy_converter_map,
     get_converter_for_strategy,
     get_chat_target,
+    PYRIT_HTTP_TIMEOUT,
 )
 from azure.ai.evaluation.red_team._attack_strategy import AttackStrategy
 from azure.ai.evaluation.red_team._callback_chat_target import _CallbackChatTarget
@@ -117,6 +118,7 @@ class TestChatTargetFunctions:
             model_name="gpt-35-turbo",
             endpoint="https://example.openai.azure.com",
             api_key="test-api-key",
+            httpx_client_kwargs={"timeout": PYRIT_HTTP_TIMEOUT},
         )
 
     @patch("pyrit.auth.get_azure_openai_auth")
@@ -140,6 +142,7 @@ class TestChatTargetFunctions:
             model_name="gpt-35-turbo",
             endpoint="https://example.openai.azure.com",
             api_key=mock_auth_result,
+            httpx_client_kwargs={"timeout": PYRIT_HTTP_TIMEOUT},
         )
         assert result == mock_instance
 
@@ -226,6 +229,7 @@ class TestChatTargetFunctions:
             model_name="gpt-35-turbo",
             endpoint="https://example.openai.azure.com",
             api_key="test-api-key",
+            httpx_client_kwargs={"timeout": PYRIT_HTTP_TIMEOUT},
         )
         # Credential should not be used
         mock_credential.get_token.assert_not_called()
@@ -289,6 +293,7 @@ class TestChatTargetFunctions:
             model_name="gpt-4",
             endpoint=None,
             api_key="test-api-key",
+            httpx_client_kwargs={"timeout": PYRIT_HTTP_TIMEOUT},
         )
 
         # Test with base_url
@@ -306,6 +311,7 @@ class TestChatTargetFunctions:
             model_name="gpt-4",
             endpoint="https://example.com/api",
             api_key="test-api-key",
+            httpx_client_kwargs={"timeout": PYRIT_HTTP_TIMEOUT},
         )
 
     @patch("azure.ai.evaluation.red_team._utils.strategy_utils._CallbackChatTarget")
@@ -390,3 +396,53 @@ class TestChatTargetFunctions:
 
         # Verify we get a callback target
         assert isinstance(result, _CallbackChatTarget)
+
+
+@pytest.mark.unittest
+class TestHttpxTimeoutConfiguration:
+    """Test that httpx timeout is configurable via http_timeout parameter."""
+
+    @patch("azure.ai.evaluation.red_team._utils.strategy_utils.OpenAIChatTarget")
+    def test_custom_http_timeout(self, mock_openai_chat_target):
+        """Verify custom http_timeout overrides the default."""
+        mock_openai_chat_target.return_value = MagicMock()
+
+        config = {
+            "azure_deployment": "gpt-4",
+            "azure_endpoint": "https://example.openai.azure.com",
+            "api_key": "test-key",
+        }
+        get_chat_target(config, http_timeout=300)
+
+        call_kwargs = mock_openai_chat_target.call_args[1]
+        assert call_kwargs["httpx_client_kwargs"] == {"timeout": 300}
+
+    @patch("azure.ai.evaluation.red_team._utils.strategy_utils.OpenAIChatTarget")
+    def test_default_http_timeout(self, mock_openai_chat_target):
+        """Verify default timeout is PYRIT_HTTP_TIMEOUT when http_timeout is not specified."""
+        mock_openai_chat_target.return_value = MagicMock()
+
+        config = {
+            "azure_deployment": "gpt-4",
+            "azure_endpoint": "https://example.openai.azure.com",
+            "api_key": "test-key",
+        }
+        get_chat_target(config)
+
+        call_kwargs = mock_openai_chat_target.call_args[1]
+        assert call_kwargs["httpx_client_kwargs"] == {"timeout": PYRIT_HTTP_TIMEOUT}
+
+    @patch("azure.ai.evaluation.red_team._utils.strategy_utils.OpenAIChatTarget")
+    def test_none_http_timeout_uses_default(self, mock_openai_chat_target):
+        """Verify explicit None falls back to default."""
+        mock_openai_chat_target.return_value = MagicMock()
+
+        config = {
+            "azure_deployment": "gpt-4",
+            "azure_endpoint": "https://example.openai.azure.com",
+            "api_key": "test-key",
+        }
+        get_chat_target(config, http_timeout=None)
+
+        call_kwargs = mock_openai_chat_target.call_args[1]
+        assert call_kwargs["httpx_client_kwargs"] == {"timeout": PYRIT_HTTP_TIMEOUT}

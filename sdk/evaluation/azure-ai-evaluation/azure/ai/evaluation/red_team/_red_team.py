@@ -1304,6 +1304,7 @@ class RedTeam:
         self.taxonomy_risk_categories = taxonomy_risk_categories or {}
         is_agent_target: Optional[bool] = kwargs.get("is_agent_target", False)
         client_id: Optional[str] = kwargs.get("client_id")
+        http_timeout: Optional[int] = kwargs.get("_http_timeout")
 
         with UserAgentSingleton().add_useragent_product(user_agent):
             # Initialize scan
@@ -1402,7 +1403,7 @@ class RedTeam:
                     client_id,
                 )
 
-                chat_target = get_chat_target(target, credential=self.credential)
+                chat_target = get_chat_target(target, credential=self.credential, http_timeout=http_timeout)
                 self.chat_target = chat_target
 
                 # Execute attacks - use Foundry if orchestrator is not available
