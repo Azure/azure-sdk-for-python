@@ -9,7 +9,11 @@ from devtools_testutils import EnvironmentVariableLoader
 from devtools_testutils.aio import recorded_by_proxy_async
 from testcase import has_feature_flag
 from asynctestcase import AppConfigTestCase
-from test_constants import FEATURE_MANAGEMENT_KEY
+from test_constants import (
+    APPCONFIGURATION_CONNECTION_STRING,
+    APPCONFIGURATION_KEYVAULT_SECRET_URL,
+    FEATURE_MANAGEMENT_KEY,
+)
 from azure.appconfiguration.provider import SettingSelector, AzureAppConfigurationKeyVaultOptions
 from azure.appconfiguration.provider.aio._azureappconfigurationproviderasync import (
     _buildprovider,
@@ -18,8 +22,8 @@ from azure.appconfiguration.provider.aio._azureappconfigurationproviderasync imp
 AppConfigProviderPreparer = functools.partial(
     EnvironmentVariableLoader,
     "appconfiguration",
-    appconfiguration_connection_string="Endpoint=https://Sanitized.azconfig.io;Id=0-l4-s0:h5htBaY5Z1LwFz50bIQv;Secret=lamefakesecretlamefakesecretlamefakesecrett=",
-    appconfiguration_keyvault_secret_url="https://Sanitized.vault.azure.net/secrets/fake-secret/",
+    appconfiguration_connection_string=APPCONFIGURATION_CONNECTION_STRING,
+    appconfiguration_keyvault_secret_url=APPCONFIGURATION_KEYVAULT_SECRET_URL,
 )
 
 

@@ -72,7 +72,7 @@ async def cleanup_test_resources_async(
         for snapshot_name in snapshot_names:
             try:
                 await client.archive_snapshot(snapshot_name)
-            except Exception: # pylint: disable=broad-except
+            except Exception:  # pylint: disable=broad-except
                 pass
 
     # Delete configuration settings and feature flags
@@ -80,7 +80,7 @@ async def cleanup_test_resources_async(
         for setting in settings:
             try:
                 await client.delete_configuration_setting(key=setting.key, label=setting.label)
-            except Exception: # pylint: disable=broad-except
+            except Exception:  # pylint: disable=broad-except
                 pass
 
 

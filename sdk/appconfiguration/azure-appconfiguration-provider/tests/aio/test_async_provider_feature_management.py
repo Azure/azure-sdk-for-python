@@ -8,7 +8,7 @@ from devtools_testutils import EnvironmentVariableLoader
 from devtools_testutils.aio import recorded_by_proxy_async
 from testcase import has_feature_flag
 from asynctestcase import AppConfigTestCase, setup_configs
-from test_constants import FEATURE_MANAGEMENT_KEY
+from test_constants import APPCONFIGURATION_CONNECTION_STRING, FEATURE_MANAGEMENT_KEY
 from azure.appconfiguration.provider import SettingSelector
 from azure.appconfiguration.provider.aio import load
 from azure.appconfiguration.aio import AzureAppConfigurationClient
@@ -16,7 +16,7 @@ from azure.appconfiguration.aio import AzureAppConfigurationClient
 AppConfigProviderPreparer = functools.partial(
     EnvironmentVariableLoader,
     "appconfiguration",
-    appconfiguration_connection_string="Endpoint=https://Sanitized.azconfig.io;Id=0-l4-s0:h5htBaY5Z1LwFz50bIQv;Secret=lamefakesecretlamefakesecretlamefakesecrett=",
+    appconfiguration_connection_string=APPCONFIGURATION_CONNECTION_STRING,
 )
 
 

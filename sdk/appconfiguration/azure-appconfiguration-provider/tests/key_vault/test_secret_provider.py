@@ -8,6 +8,7 @@ import unittest
 from unittest.mock import Mock, patch
 from devtools_testutils import EnvironmentVariableLoader, recorded_by_proxy
 from testcase import AppConfigTestCase
+from test_constants import APPCONFIGURATION_ENDPOINT_STRING, APPCONFIGURATION_KEYVAULT_SECRET_URL
 from azure.appconfiguration import SecretReferenceConfigurationSetting
 from azure.keyvault.secrets import SecretClient
 from azure.appconfiguration.provider._key_vault._secret_provider import SecretProvider
@@ -19,14 +20,14 @@ TEST_SECRET_ID_VERSION = TEST_SECRET_ID + "/12345"
 AppConfigProviderPreparer = functools.partial(
     EnvironmentVariableLoader,
     "appconfiguration",
-    appconfiguration_endpoint_string="https://Sanitized.azconfig.io",
-    appconfiguration_keyvault_secret_url="https://Sanitized.vault.azure.net/secrets/fake-secret/",
+    appconfiguration_endpoint_string=APPCONFIGURATION_ENDPOINT_STRING,
+    appconfiguration_keyvault_secret_url=APPCONFIGURATION_KEYVAULT_SECRET_URL,
 )
 
 SecretPreparer = functools.partial(
     EnvironmentVariableLoader,
     "appconfiguration",
-    appconfiguration_keyvault_secret_url="https://Sanitized.vault.azure.net/secrets/fake-secret/",
+    appconfiguration_keyvault_secret_url=APPCONFIGURATION_KEYVAULT_SECRET_URL,
 )
 
 

@@ -9,6 +9,7 @@ from unittest.mock import Mock, patch, AsyncMock
 from devtools_testutils import EnvironmentVariableLoader
 from devtools_testutils.aio import recorded_by_proxy_async
 from asynctestcase import AppConfigTestCase
+from test_constants import APPCONFIGURATION_ENDPOINT_STRING, APPCONFIGURATION_KEYVAULT_SECRET_URL
 from azure.appconfiguration import SecretReferenceConfigurationSetting
 from azure.keyvault.secrets.aio import SecretClient
 from azure.appconfiguration.provider.aio._key_vault._async_secret_provider import SecretProvider
@@ -20,14 +21,14 @@ TEST_SECRET_ID_VERSION = TEST_SECRET_ID + "/12345"
 AppConfigProviderPreparer = functools.partial(
     EnvironmentVariableLoader,
     "appconfiguration",
-    appconfiguration_endpoint_string="https://Sanitized.azconfig.io",
-    appconfiguration_keyvault_secret_url="https://Sanitized.vault.azure.net/secrets/fake-secret/",
+    appconfiguration_endpoint_string=APPCONFIGURATION_ENDPOINT_STRING,
+    appconfiguration_keyvault_secret_url=APPCONFIGURATION_KEYVAULT_SECRET_URL,
 )
 
 SecretPreparer = functools.partial(
     EnvironmentVariableLoader,
     "appconfiguration",
-    appconfiguration_keyvault_secret_url="https://Sanitized.vault.azure.net/secrets/fake-secret/",
+    appconfiguration_keyvault_secret_url=APPCONFIGURATION_KEYVAULT_SECRET_URL,
 )
 
 
@@ -450,9 +451,7 @@ class TestSecretProviderAsync(AppConfigTestCase, unittest.IsolatedAsyncioTestCas
 
     @SecretPreparer()
     @recorded_by_proxy_async
-    async def test_integration_with_keyvault(
-        self, appconfiguration_keyvault_secret_url
-    ):
+    async def test_integration_with_keyvault(self, appconfiguration_keyvault_secret_url):
         """Test integration with Key Vault."""
         if not appconfiguration_keyvault_secret_url:
             self.skipTest("No Key Vault secret URL provided")

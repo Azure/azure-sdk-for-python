@@ -6,14 +6,14 @@
 import functools
 from devtools_testutils import EnvironmentVariableLoader, recorded_by_proxy
 from testcase import AppConfigTestCase, setup_configs, has_feature_flag, get_feature_flag
-from test_constants import FEATURE_MANAGEMENT_KEY
+from test_constants import APPCONFIGURATION_CONNECTION_STRING, FEATURE_MANAGEMENT_KEY
 from azure.appconfiguration import AzureAppConfigurationClient
 from azure.appconfiguration.provider import SettingSelector, load
 
 AppConfigProviderPreparer = functools.partial(
     EnvironmentVariableLoader,
     "appconfiguration",
-    appconfiguration_connection_string="Endpoint=https://Sanitized.azconfig.io;Id=0-l4-s0:h5htBaY5Z1LwFz50bIQv;Secret=lamefakesecretlamefakesecretlamefakesecrett=",
+    appconfiguration_connection_string=APPCONFIGURATION_CONNECTION_STRING,
 )
 
 
