@@ -51,7 +51,6 @@ class HumanInTheLoopAgent(AgentServer):
             if reply_to not in self._waiting:
                 return json.dumps({"error": f"No pending question for {reply_to}"}).encode()
 
-            original = self._waiting.pop(reply_to)
             return json.dumps({
                 "invocation_id": reply_to,
                 "status": "completed",
