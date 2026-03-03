@@ -4,19 +4,19 @@
 """Foundry-backed checkpoint repository implementation."""
 
 import logging
-from typing import Dict, Optional, Union
+from typing import Dict, Mapping, MutableMapping, Optional, Union
 
 from agent_framework import CheckpointStorage
-from azure.core.credentials import TokenCredential
-from azure.core.credentials_async import AsyncTokenCredential
 
 from azure.ai.agentserver.core.checkpoints.client import (
     CheckpointSession,
     FoundryCheckpointClient,
 )
+from azure.core.credentials import TokenCredential
+from azure.core.credentials_async import AsyncTokenCredential
 
-from .checkpoint_repository import CheckpointRepository
 from ._foundry_checkpoint_storage import FoundryCheckpointStorage
+from .checkpoint_repository import CheckpointRepository
 
 logger = logging.getLogger(__name__)
 
@@ -55,7 +55,7 @@ class FoundryCheckpointRepository(CheckpointRepository):
             )
 
         self._client = FoundryCheckpointClient(project_endpoint, credential)
-        self._inventory: Dict[str, CheckpointStorage] = {}
+        self._inventory: MutableMapping[str, CheckpointStorage] = {}
 
     async def get_or_create(
         self, conversation_id: Optional[str]

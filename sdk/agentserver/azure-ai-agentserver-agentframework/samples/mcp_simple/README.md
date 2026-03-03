@@ -1,9 +1,9 @@
 # Agent Framework MCP Simple Python Sample
 
-This sample demonstrates how to run a Microsoft Agent Framework `ChatAgent` that calls a Model Context Protocol (MCP) HTTP endpoint (Microsoft Learn MCP) using the Container Agents Adapter and the `AzureAIAgentClient` from the `agent-framework-azure-ai` package.
+This sample demonstrates how to run a Microsoft Agent Framework `Agent` that calls a Model Context Protocol (MCP) HTTP endpoint (Microsoft Learn MCP) using the Container Agents Adapter and the `AzureOpenAIChatClient` from the `agent-framework` package.
 
 ## What It Shows
-- Creating an Agent Framework `ChatAgent` with an `AzureAIAgentClient`
+- Creating an Agent Framework `Agent` with an `AzureOpenAIChatClient`
 - Adding an MCP tool via `MCPStreamableHTTPTool`
 - Serving the agent over HTTP using the Container Agents Adapter (`from_agent_framework(...).run()`)
 - Handling both streaming and non‑streaming response modes (client controlled via the `stream` flag in the request body)
@@ -14,7 +14,7 @@ This sample demonstrates how to run a Microsoft Agent Framework `ChatAgent` that
 
 ## Prerequisites
 
-> **Azure sign-in:** Run `az login` before starting the sample so `DefaultAzureCredential` can acquire a CLI token.
+> **Azure sign-in:** Run `az login` before starting the sample so `AzureCliCredential` can acquire a CLI token.
 
 Packages actually imported by `simple-mcp.py`:
 - agent-framework-azure-ai (published package with Agent Framework client + MCP support)
@@ -28,11 +28,11 @@ pip install agent-framework-azure-ai azure-identity python-dotenv
 curl -sS \
 # Agent Framework MCP Simple Python Sample
 
-This sample demonstrates how to run a Microsoft Agent Framework `ChatAgent` that calls a Model Context Protocol (MCP) HTTP endpoint (Microsoft Learn MCP) using the agentserver adapter and the `AzureOpenAIChatClient` from the `agent-framework` package.
+This sample demonstrates how to run a Microsoft Agent Framework `Agent` that calls a Model Context Protocol (MCP) HTTP endpoint (Microsoft Learn MCP) using the agentserver adapter and the `AzureOpenAIChatClient` from the `agent-framework` package.
 
 ## What It Shows
 
-- Creating an Agent Framework `ChatAgent` with an `AzureOpenAIChatClient`
+- Creating an Agent Framework `Agent` with an `AzureOpenAIChatClient`
 - Adding an MCP tool via `MCPStreamableHTTPTool`
 - Serving the agent over HTTP using the agentserver adapter (`from_agent_framework(...).run()`)
 - Handling both streaming and non‑streaming response modes (client controlled via the `stream` flag in the request body)
@@ -44,7 +44,7 @@ This sample demonstrates how to run a Microsoft Agent Framework `ChatAgent` that
 
 ## Prerequisites
 
-> **Azure sign-in:** Run `az login` before starting the sample so `DefaultAzureCredential` can acquire a CLI token.
+> **Azure sign-in:** Run `az login` before starting the sample so `AzureCliCredential` can acquire a CLI token.
 
 ### Install Dependencies
 

@@ -3,19 +3,19 @@
 import asyncio
 import json
 from dataclasses import dataclass
-from typing import Any
-
-from agent_framework.azure import AzureOpenAIChatClient
-from azure.identity import AzureCliCredential
-from dotenv import load_dotenv
+from typing import Any, Dict, Optional
 
 from agent_framework import (  # noqa: E402
     Executor,
+    Workflow,
     WorkflowBuilder,
     WorkflowContext,
     handler,
     response_handler,
 )
+from agent_framework.azure import AzureOpenAIChatClient
+from azure.identity import AzureCliCredential
+from dotenv import load_dotenv
 from workflow_as_agent_reflection_pattern import (  # noqa: E402
     ReviewRequest,
     ReviewResponse,
@@ -31,12 +31,12 @@ load_dotenv()
 class HumanReviewRequest:
     """A request message type for escalation to a human reviewer."""
 
-    agent_request: ReviewRequest | None = None
+    agent_request: Optional[ReviewRequest] = None
 
     def convert_to_payload(self) -> str:
         """Convert the HumanReviewRequest to a payload string."""
         request = self.agent_request
-        payload: dict[str, Any] = {"agent_request": None}
+        payload: Dict[str, Any] = {"agent_request": None}
 
         if request:
             payload["agent_request"] = {
@@ -51,7 +51,7 @@ class HumanReviewRequest:
 class ReviewerWithHumanInTheLoop(Executor):
     """Executor that always escalates reviews to a human manager."""
 
-    def __init__(self, worker_id: str, reviewer_id: str | None = None) -> None:
+    def __init__(self, worker_id: str, reviewer_id: Optional[str] = None) -> None:
         unique_id = reviewer_id or f"{worker_id}-reviewer"
         super().__init__(id=unique_id)
         self._worker_id = worker_id
@@ -84,34 +84,21 @@ class ReviewerWithHumanInTheLoop(Executor):
         print("Reviewer: Forwarding human review back to worker...")
         await ctx.send_message(response, target_id=self._worker_id)
 
-def create_builder():
+def create_workflow() -> Workflow:
     # Build a workflow with bidirectional communication between Worker and Reviewer,
     # and escalation paths for human review.
-    builder = (
-        WorkflowBuilder()
-        .register_executor(
-            lambda: Worker(
-                id="sub-worker",
-                chat_client=AzureOpenAIChatClient(credential=AzureCliCredential()),
-            ),
-            name="worker",
-        )
-        .register_executor(
-            lambda: ReviewerWithHumanInTheLoop(worker_id="sub-worker"),
-            name="reviewer",
-        )
-        .add_edge("worker", "reviewer")  # Worker sends requests to Reviewer
-        .add_edge("reviewer", "worker")  # Reviewer sends feedback to Worker
-        .set_start_executor("worker")
+    worker = Worker(
+        id="sub-worker",
+        chat_client=AzureOpenAIChatClient(credential=AzureCliCredential()),
     )
-    return builder
+    reviewer = ReviewerWithHumanInTheLoop(worker_id=worker.id)
+    return WorkflowBuilder(start_executor=worker).add_edge(worker, reviewer).add_edge(reviewer, worker).build()
 
 
 async def run_agent() -> None:
     """Run the workflow inside the agent server adapter."""
-    builder = create_builder()
     await from_agent_framework(
-        builder,  # pass workflow builder to adapter
+        create_workflow,  # pass workflow factory to adapter
         checkpoint_repository=FileCheckpointRepository(storage_path="./checkpoints"),  # for checkpoint storage
     ).run_async()
 

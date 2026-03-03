@@ -1,13 +1,16 @@
 import importlib
+
+# Load _foundry_tools module directly without triggering parent __init__ which has heavy deps
+import importlib.util
 import inspect
+import sys
+from pathlib import Path
 from types import SimpleNamespace
+from typing import Any, Optional
 from unittest.mock import AsyncMock
 
-from typing import Any
-
 import pytest
-from agent_framework import AIFunction, ChatOptions
-from pydantic import Field, create_model
+from agent_framework import AgentSession, FunctionTool, SessionContext
 
 # Import schema models directly from client._models to avoid heavy azure.identity import
 # chain triggered by azure.ai.agentserver.core.__init__.py
@@ -19,19 +22,23 @@ from azure.ai.agentserver.core.tools.client._models import (
 	SchemaProperty,
 	SchemaType,
 )
+from pydantic import Field, create_model
 
-# Load _foundry_tools module directly without triggering parent __init__ which has heavy deps
-import importlib.util
-import sys
-from pathlib import Path
-
-foundry_tools_path = Path(__file__).parent.parent.parent / "azure" / "ai" / "agentserver" / "agentframework" / "_foundry_tools.py"
+foundry_tools_path = (
+    Path(__file__).parent.parent.parent
+    / "azure"
+    / "ai"
+    / "agentserver"
+    / "agentframework"
+    / "_foundry_tools.py"
+)
 spec = importlib.util.spec_from_file_location("_foundry_tools", foundry_tools_path)
 foundry_tools_module = importlib.util.module_from_spec(spec)
 sys.modules["_foundry_tools"] = foundry_tools_module
 spec.loader.exec_module(foundry_tools_module)
 
 FoundryToolClient = foundry_tools_module.FoundryToolClient
+FoundryToolsContextProvider = foundry_tools_module.FoundryToolsContextProvider
 FoundryToolsChatMiddleware = foundry_tools_module.FoundryToolsChatMiddleware
 _attach_signature_from_pydantic_model = foundry_tools_module._attach_signature_from_pydantic_model
 
@@ -41,7 +48,7 @@ def test_attach_signature_from_pydantic_model_required_and_optional() -> None:
 	InputModel = create_model(
 		"InputModel",
 		required_int=(int, Field(description="required")),
-		optional_str=(str | None, Field(default=None, description="optional")),
+		optional_str=(Optional[str], Field(default=None, description="optional")),
 	)
 
 	async def tool_func(**kwargs):
@@ -93,7 +100,7 @@ async def test_to_aifunction_builds_pydantic_model_and_invokes(monkeypatch: pyte
 
 	client = FoundryToolClient(tools=[])
 	ai_func = client._to_aifunction(resolved_tool)
-	assert isinstance(ai_func, AIFunction)
+	assert isinstance(ai_func, FunctionTool)
 	assert ai_func.name == "echo"
 	assert ai_func.description == "Echo tool"
 
@@ -135,54 +142,52 @@ async def test_list_tools_uses_catalog_and_converts(monkeypatch: pytest.MonkeyPa
 	assert args[0] == list(allowed)
 
 	assert len(functions) == 1
-	assert isinstance(functions[0], AIFunction)
+	assert isinstance(functions[0], FunctionTool)
 	assert functions[0].name == "allowed_tool"
 
 
 @pytest.mark.unit
 @pytest.mark.asyncio
-async def test_middleware_process_creates_chat_options_when_missing(monkeypatch: pytest.MonkeyPatch) -> None:
-	middleware = FoundryToolsChatMiddleware(tools=[])
+async def test_context_provider_before_run_injects_tools(monkeypatch: pytest.MonkeyPatch) -> None:
+	provider = FoundryToolsContextProvider(tools=[])
 
 	async def dummy_tool(**kwargs):
 		return kwargs
 
 	DummyInput = create_model("DummyInput")
-	injected = [AIFunction(name="t", description="d", func=dummy_tool, input_model=DummyInput)]
-	monkeypatch.setattr(middleware._foundry_tool_client, "list_tools", AsyncMock(return_value=injected))
+	injected = [FunctionTool(name="t", description="d", func=dummy_tool, input_model=DummyInput)]
+	monkeypatch.setattr(provider._foundry_tool_client, "list_tools", AsyncMock(return_value=injected))
 
-	context = SimpleNamespace(chat_options=None)
-	next_fn = AsyncMock()
+	context = SessionContext(input_messages=[])
+	session = AgentSession()
+	agent = SimpleNamespace()
 
-	await middleware.process(context, next_fn)
+	await provider.before_run(agent=agent, session=session, context=context, state={})
 
-	assert isinstance(context.chat_options, ChatOptions)
-	assert context.chat_options.tools == injected
-	next_fn.assert_awaited_once_with(context)
+	assert context.tools == injected
 
 
 @pytest.mark.unit
 @pytest.mark.asyncio
-async def test_middleware_process_appends_to_existing_chat_options(monkeypatch: pytest.MonkeyPatch) -> None:
-	middleware = FoundryToolsChatMiddleware(tools=[])
+async def test_context_provider_before_run_appends_tools(monkeypatch: pytest.MonkeyPatch) -> None:
+	provider = FoundryToolsContextProvider(tools=[])
 
 	async def dummy_tool(**kwargs):
 		return kwargs
 
 	DummyInput = create_model("DummyInput")
-	injected = [AIFunction(name="t2", description="d2", func=dummy_tool, input_model=DummyInput)]
-	monkeypatch.setattr(middleware._foundry_tool_client, "list_tools", AsyncMock(return_value=injected))
+	injected = [FunctionTool(name="t2", description="d2", func=dummy_tool, input_model=DummyInput)]
+	monkeypatch.setattr(provider._foundry_tool_client, "list_tools", AsyncMock(return_value=injected))
 
-	# Existing ChatOptions with no tools should become injected
-	context = SimpleNamespace(chat_options=ChatOptions())
-	next_fn = AsyncMock()
-	await middleware.process(context, next_fn)
-	assert context.chat_options.tools == injected
+	existing = [FunctionTool(name="t1", description="d1", func=dummy_tool, input_model=DummyInput)]
+	context = SessionContext(input_messages=[], tools=existing.copy())
+	session = AgentSession()
+	agent = SimpleNamespace()
 
-	# Existing ChatOptions with tools should be appended
-	existing = [AIFunction(name="t1", description="d1", func=dummy_tool, input_model=DummyInput)]
-	context = SimpleNamespace(chat_options=ChatOptions(tools=existing))
-	next_fn = AsyncMock()
-	await middleware.process(context, next_fn)
-	assert context.chat_options.tools == existing + injected
-	assert next_fn.await_count == 1
+	await provider.before_run(agent=agent, session=session, context=context, state={})
+	assert context.tools == existing + injected
+
+
+@pytest.mark.unit
+def test_middleware_name_is_back_compat_alias() -> None:
+	assert issubclass(FoundryToolsChatMiddleware, FoundryToolsContextProvider)

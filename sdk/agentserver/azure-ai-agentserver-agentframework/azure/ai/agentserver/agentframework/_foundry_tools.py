@@ -6,9 +6,9 @@
 from __future__ import annotations
 
 import inspect
-from typing import Any, Awaitable, Callable, Dict, List, Optional, Sequence
+from typing import Any, Dict, List, Optional, Sequence
 
-from agent_framework import AIFunction, ChatContext, ChatOptions, ChatMiddleware
+from agent_framework import AgentSession, BaseContextProvider, FunctionTool, SessionContext, SupportsAgentRun
 from pydantic import Field, create_model
 
 from azure.ai.agentserver.core import AgentServerContext
@@ -47,19 +47,19 @@ class FoundryToolClient:
     ) -> None:
         self._allowed_tools: List[FoundryToolLike] = [ensure_foundry_tool(tool) for tool in tools]
 
-    async def list_tools(self) -> List[AIFunction]:
+    async def list_tools(self) -> List[FunctionTool]:
         server_context = AgentServerContext.get()
         foundry_tool_catalog = server_context.tools.catalog
         resolved_tools = await foundry_tool_catalog.list(self._allowed_tools)
         return [self._to_aifunction(tool) for tool in resolved_tools]
 
-    def _to_aifunction(self, foundry_tool: "ResolvedFoundryTool") -> AIFunction:
-        """Convert an FoundryTool to an Agent Framework AI Function
+    def _to_aifunction(self, foundry_tool: "ResolvedFoundryTool") -> FunctionTool:
+        """Convert an FoundryTool to an Agent Framework Function Tool
 
         :param foundry_tool: The FoundryTool to convert.
         :type foundry_tool: ~azure.ai.agentserver.core.client.tools.aio.FoundryTool
-        :return: An AI Function Tool.
-        :rtype: AIFunction
+        :return: A Function Tool.
+        :rtype: FunctionTool
         """
         # Get the input schema from the tool descriptor
         input_schema = foundry_tool.input_schema or {}
@@ -103,8 +103,8 @@ class FoundryToolClient:
             return await server_context.tools.invoke(foundry_tool, kwargs)
         _attach_signature_from_pydantic_model(tool_func, input_model)
 
-        # Create and return the AIFunction
-        return AIFunction(
+        # Create and return the FunctionTool
+        return FunctionTool(
             name=foundry_tool.name,
             description=foundry_tool.description or "No description available",
             func=tool_func,
@@ -112,27 +112,28 @@ class FoundryToolClient:
         )
 
 
-class FoundryToolsChatMiddleware(ChatMiddleware):
-    """Chat middleware to inject Foundry tools into ChatOptions on each call."""
+class FoundryToolsContextProvider(BaseContextProvider):
+    """Context provider to inject Foundry tools into an agent run."""
+
+    DEFAULT_SOURCE_ID = "foundry_tools"
 
     def __init__(
-            self,
-            tools: Sequence[FoundryToolLike]) -> None:
+        self,
+        tools: Sequence[FoundryToolLike],
+        *,
+        source_id: Optional[str] = None,
+    ) -> None:
+        super().__init__(source_id or self.DEFAULT_SOURCE_ID)
         self._foundry_tool_client = FoundryToolClient(tools=tools)
 
-    async def process(
+    async def before_run(
         self,
-        context: ChatContext,
-        next: Callable[[ChatContext], Awaitable[None]],
+        *,
+        agent: SupportsAgentRun,
+        session: AgentSession,
+        context: SessionContext,
+        state: Dict[str, Any],
     ) -> None:
         tools = await self._foundry_tool_client.list_tools()
-        base_chat_options = context.chat_options
-        if not base_chat_options:
-            logger.debug("No existing ChatOptions found, creating new one with Foundry tools.")
-            base_chat_options = ChatOptions(tools=tools)
-            context.chat_options = base_chat_options
-        else:
-            logger.debug("Adding Foundry tools to existing ChatOptions.")
-            base_tools = base_chat_options.tools or []
-            context.chat_options.tools = base_tools + tools
-        await next(context)
+        if tools:
+            context.extend_tools(self.source_id, tools)

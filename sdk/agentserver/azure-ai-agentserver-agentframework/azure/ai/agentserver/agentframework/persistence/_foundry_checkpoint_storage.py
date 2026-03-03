@@ -90,53 +90,65 @@ class FoundryCheckpointStorage:
         return checkpoint
 
     async def list_checkpoint_ids(
-        self, workflow_id: Optional[str] = None
+        self, workflow_name: Optional[str] = None, **kwargs
     ) -> List[str]:
         """List checkpoint IDs.
 
-        If workflow_id is provided, filter by that workflow.
+        If workflow_name is provided, filter by that workflow.
 
-        :param workflow_id: Optional workflow identifier for filtering.
-        :type workflow_id: Optional[str]
+        :param workflow_name: Optional workflow name for filtering.
+        :type workflow_name: Optional[str]
         :return: List of checkpoint identifiers.
         :rtype: List[str]
         """
         item_ids = await self._client.list_item_ids(self._session_id)
         ids = [item_id.item_id for item_id in item_ids]
 
-        # Filter by workflow_id if provided
-        if workflow_id is not None:
+        # Backward-compat alias
+        if workflow_name is None:
+            workflow_name = kwargs.get("workflow_id")
+
+        if workflow_name is not None:
             filtered_ids = []
             for checkpoint_id in ids:
                 checkpoint = await self.load_checkpoint(checkpoint_id)
-                if checkpoint and checkpoint.workflow_id == workflow_id:
+                if checkpoint and self._checkpoint_workflow_name(checkpoint) == workflow_name:
                     filtered_ids.append(checkpoint_id)
             return filtered_ids
 
         return ids
 
     async def list_checkpoints(
-        self, workflow_id: Optional[str] = None
+        self, workflow_name: Optional[str] = None, **kwargs
     ) -> List[WorkflowCheckpoint]:
         """List checkpoint objects.
 
-        If workflow_id is provided, filter by that workflow.
+        If workflow_name is provided, filter by that workflow.
 
-        :param workflow_id: Optional workflow identifier for filtering.
-        :type workflow_id: Optional[str]
+        :param workflow_name: Optional workflow name for filtering.
+        :type workflow_name: Optional[str]
         :return: List of workflow checkpoints.
         :rtype: List[WorkflowCheckpoint]
         """
-        ids = await self.list_checkpoint_ids(workflow_id=None)
+        if workflow_name is None:
+            workflow_name = kwargs.get("workflow_id")
+
+        ids = await self.list_checkpoint_ids(workflow_name=None)
         checkpoints: List[WorkflowCheckpoint] = []
 
         for checkpoint_id in ids:
             checkpoint = await self.load_checkpoint(checkpoint_id)
             if checkpoint is not None:
-                if workflow_id is None or checkpoint.workflow_id == workflow_id:
+                if workflow_name is None or self._checkpoint_workflow_name(checkpoint) == workflow_name:
                     checkpoints.append(checkpoint)
 
         return checkpoints
+
+    def _checkpoint_workflow_name(self, checkpoint: WorkflowCheckpoint) -> Optional[str]:
+        workflow_name = getattr(checkpoint, "workflow_name", None)
+        if workflow_name:
+            return workflow_name
+        return getattr(checkpoint, "workflow_id", None)
 
     async def delete_checkpoint(self, checkpoint_id: str) -> bool:
         """Delete a checkpoint by ID.

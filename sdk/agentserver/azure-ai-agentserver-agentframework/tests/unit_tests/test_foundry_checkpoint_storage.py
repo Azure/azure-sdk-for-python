@@ -11,6 +11,15 @@ from azure.ai.agentserver.agentframework.persistence import FoundryCheckpointSto
 from .mocks import MockFoundryCheckpointClient
 
 
+def _checkpoint(checkpoint_id: str, workflow_name: str, **kwargs) -> WorkflowCheckpoint:
+    return WorkflowCheckpoint(
+        checkpoint_id=checkpoint_id,
+        workflow_name=workflow_name,
+        graph_signature_hash="test-graph",
+        **kwargs,
+    )
+
+
 @pytest.mark.unit
 @pytest.mark.asyncio
 async def test_save_checkpoint_returns_checkpoint_id() -> None:
@@ -18,10 +27,7 @@ async def test_save_checkpoint_returns_checkpoint_id() -> None:
     client = MockFoundryCheckpointClient()
     storage = FoundryCheckpointStorage(client=client, session_id="session-1")
 
-    checkpoint = WorkflowCheckpoint(
-        checkpoint_id="cp-123",
-        workflow_id="wf-1",
-    )
+    checkpoint = _checkpoint("cp-123", "wf-1")
 
     result = await storage.save_checkpoint(checkpoint)
 
@@ -35,18 +41,14 @@ async def test_load_checkpoint_returns_checkpoint() -> None:
     client = MockFoundryCheckpointClient()
     storage = FoundryCheckpointStorage(client=client, session_id="session-1")
 
-    checkpoint = WorkflowCheckpoint(
-        checkpoint_id="cp-123",
-        workflow_id="wf-1",
-        iteration_count=5,
-    )
+    checkpoint = _checkpoint("cp-123", "wf-1", iteration_count=5)
 
     await storage.save_checkpoint(checkpoint)
     loaded = await storage.load_checkpoint("cp-123")
 
     assert loaded is not None
     assert loaded.checkpoint_id == "cp-123"
-    assert loaded.workflow_id == "wf-1"
+    assert loaded.workflow_name == "wf-1"
     assert loaded.iteration_count == 5
 
 
@@ -69,9 +71,9 @@ async def test_list_checkpoint_ids_returns_all_ids() -> None:
     client = MockFoundryCheckpointClient()
     storage = FoundryCheckpointStorage(client=client, session_id="session-1")
 
-    cp1 = WorkflowCheckpoint(checkpoint_id="cp-1", workflow_id="wf-1")
-    cp2 = WorkflowCheckpoint(checkpoint_id="cp-2", workflow_id="wf-1")
-    cp3 = WorkflowCheckpoint(checkpoint_id="cp-3", workflow_id="wf-2")
+    cp1 = _checkpoint("cp-1", "wf-1")
+    cp2 = _checkpoint("cp-2", "wf-1")
+    cp3 = _checkpoint("cp-3", "wf-2")
 
     await storage.save_checkpoint(cp1)
     await storage.save_checkpoint(cp2)
@@ -85,19 +87,19 @@ async def test_list_checkpoint_ids_returns_all_ids() -> None:
 @pytest.mark.unit
 @pytest.mark.asyncio
 async def test_list_checkpoint_ids_filters_by_workflow() -> None:
-    """Test that list_checkpoint_ids filters by workflow_id."""
+    """Test that list_checkpoint_ids filters by workflow_name."""
     client = MockFoundryCheckpointClient()
     storage = FoundryCheckpointStorage(client=client, session_id="session-1")
 
-    cp1 = WorkflowCheckpoint(checkpoint_id="cp-1", workflow_id="wf-1")
-    cp2 = WorkflowCheckpoint(checkpoint_id="cp-2", workflow_id="wf-1")
-    cp3 = WorkflowCheckpoint(checkpoint_id="cp-3", workflow_id="wf-2")
+    cp1 = _checkpoint("cp-1", "wf-1")
+    cp2 = _checkpoint("cp-2", "wf-1")
+    cp3 = _checkpoint("cp-3", "wf-2")
 
     await storage.save_checkpoint(cp1)
     await storage.save_checkpoint(cp2)
     await storage.save_checkpoint(cp3)
 
-    ids = await storage.list_checkpoint_ids(workflow_id="wf-1")
+    ids = await storage.list_checkpoint_ids(workflow_name="wf-1")
 
     assert set(ids) == {"cp-1", "cp-2"}
 
@@ -109,8 +111,8 @@ async def test_list_checkpoints_returns_all_checkpoints() -> None:
     client = MockFoundryCheckpointClient()
     storage = FoundryCheckpointStorage(client=client, session_id="session-1")
 
-    cp1 = WorkflowCheckpoint(checkpoint_id="cp-1", workflow_id="wf-1")
-    cp2 = WorkflowCheckpoint(checkpoint_id="cp-2", workflow_id="wf-2")
+    cp1 = _checkpoint("cp-1", "wf-1")
+    cp2 = _checkpoint("cp-2", "wf-2")
 
     await storage.save_checkpoint(cp1)
     await storage.save_checkpoint(cp2)
@@ -129,7 +131,7 @@ async def test_delete_checkpoint_returns_true_for_existing() -> None:
     client = MockFoundryCheckpointClient()
     storage = FoundryCheckpointStorage(client=client, session_id="session-1")
 
-    checkpoint = WorkflowCheckpoint(checkpoint_id="cp-123", workflow_id="wf-1")
+    checkpoint = _checkpoint("cp-123", "wf-1")
     await storage.save_checkpoint(checkpoint)
 
     deleted = await storage.delete_checkpoint("cp-123")
@@ -156,7 +158,7 @@ async def test_delete_checkpoint_removes_from_storage() -> None:
     client = MockFoundryCheckpointClient()
     storage = FoundryCheckpointStorage(client=client, session_id="session-1")
 
-    checkpoint = WorkflowCheckpoint(checkpoint_id="cp-123", workflow_id="wf-1")
+    checkpoint = _checkpoint("cp-123", "wf-1")
     await storage.save_checkpoint(checkpoint)
 
     await storage.delete_checkpoint("cp-123")

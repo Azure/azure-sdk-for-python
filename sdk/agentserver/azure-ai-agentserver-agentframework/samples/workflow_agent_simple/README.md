@@ -4,10 +4,10 @@ This sample hosts a two-step Agent Framework workflow—`Writer` followed by `Re
 
 ### What `workflow_agent_simple.py` does
 - Builds a workflow with `WorkflowBuilder`
-- Passes the builder to `from_agent_framework(...).run_async()` so the adapter spins up an HTTP server (defaults to `0.0.0.0:8088`).
-- A example of passing with a factory of `Workflow` is shown in comments.
+- Passes a workflow factory (`lambda: create_workflow(client)`) to `from_agent_framework(...).run_async()`, so a fresh workflow is created per request.
+- Uses `Agent(client=AzureOpenAIResponsesClient(project_endpoint=..., credential=...))` for the writer and reviewer nodes.
 
-Please note that the `WorkflowBuilder` or `Workflow` factory will be called for each incoming request. The `Workflow` will be converted to `WorkflowAgent` by `.as_agent()`. The workflow definition need ot be valid for `WorkflowAgent`.
+The workflow factory is invoked for each incoming request, so keep workflow construction deterministic and side-effect free.
 
 ---
 

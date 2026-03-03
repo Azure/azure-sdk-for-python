@@ -1,7 +1,8 @@
 # Copyright (c) Microsoft. All rights reserved.
 
-from dataclasses import dataclass
 import json
+from dataclasses import dataclass
+from typing import Dict, List, Tuple
 from uuid import uuid4
 
 from agent_framework import (
@@ -16,13 +17,14 @@ from agent_framework import (
     handler,
 )
 
+
 @dataclass
 class ReviewRequest:
     """Structured request passed from Worker to Reviewer for evaluation."""
 
     request_id: str
-    user_messages: list[ChatMessage]
-    agent_messages: list[ChatMessage]
+    user_messages: List[ChatMessage]
+    agent_messages: List[ChatMessage]
 
 
 @dataclass
@@ -44,7 +46,7 @@ class ReviewResponse:
         )
 
 
-PendingReviewState = tuple[ReviewRequest, list[ChatMessage]]
+PendingReviewState = Tuple[ReviewRequest, List[ChatMessage]]
 
 
 class Worker(Executor):
@@ -53,10 +55,10 @@ class Worker(Executor):
     def __init__(self, id: str, chat_client: ChatClientProtocol) -> None:
         super().__init__(id=id)
         self._chat_client = chat_client
-        self._pending_requests: dict[str, PendingReviewState] = {}
+        self._pending_requests: Dict[str, PendingReviewState] = {}
 
     @handler
-    async def handle_user_messages(self, user_messages: list[ChatMessage], ctx: WorkflowContext[ReviewRequest]) -> None:
+    async def handle_user_messages(self, user_messages: List[ChatMessage], ctx: WorkflowContext[ReviewRequest]) -> None:
         print("Worker: Received user messages, generating response...")
 
         # Initialize chat with system prompt.
@@ -89,7 +91,7 @@ class Worker(Executor):
 
         if review.approved:
             print("Worker: Response approved. Emitting to external consumer...")
-            contents: list[Contents] = []
+            contents: List[Contents] = []
             for message in request.agent_messages:
                 contents.extend(message.contents)
 
@@ -124,14 +126,14 @@ class Worker(Executor):
         # Track new request for further evaluation.
         self._pending_requests[new_request.request_id] = (new_request, messages)
 
-    async def on_checkpoint_save(self) -> dict:
+    async def on_checkpoint_save(self) -> Dict:
         """
         Persist pending requests during checkpointing.
         In memory implementation for demonstration purposes.
         """
         return {"pending_requests": self._pending_requests}
 
-    async def on_checkpoint_restore(self, data: dict) -> None:
+    async def on_checkpoint_restore(self, data: Dict) -> None:
         """
         Load pending requests from checkpoint data.
         In memory implementation for demonstration purposes.

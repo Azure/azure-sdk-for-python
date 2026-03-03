@@ -1,6 +1,6 @@
 # Chat Client With Foundry Tools
 
-This sample demonstrates how to attach `FoundryToolsChatMiddleware` to an Agent Framework chat client so that:
+This sample demonstrates how to attach `FoundryToolsContextProvider` to an Agent Framework chat client so that:
 
 - Foundry tools configured in your Azure AI Project are converted into Agent Framework `AIFunction` tools.
 - The tools are injected automatically for each agent run.
@@ -10,7 +10,7 @@ This sample demonstrates how to attach `FoundryToolsChatMiddleware` to an Agent 
 The script creates an Agent Framework agent using:
 
 - `AzureOpenAIChatClient` for model inference
-- `FoundryToolsChatMiddleware` to resolve and inject Foundry tools
+- `FoundryToolsContextProvider` to resolve and inject Foundry tools
 - `from_agent_framework(agent).run()` to start an AgentServer-compatible HTTP server
 
 ## Prerequisites
@@ -18,7 +18,7 @@ The script creates an Agent Framework agent using:
 - Python 3.10+
 - An Azure AI Project endpoint
 - A tool connection configured in that project (e.g. an MCP connection)
-- Azure credentials available to `DefaultAzureCredential`
+- Azure credentials available to `AzureCliCredential`
 
 ## Setup
 
@@ -41,7 +41,7 @@ AZURE_AI_PROJECT_TOOL_CONNECTION_ID=<your-tool-connection-id>
 
 Notes:
 
-- This sample uses `DefaultAzureCredential()`. Make sure you are signed in (e.g. `az login`) or otherwise configured.
+- This sample uses `AzureCliCredential()`. Make sure you are signed in with `az login`.
 
 ## Run
 
@@ -56,12 +56,13 @@ This starts a local Uvicorn server (it will keep running and wait for requests).
 The core pattern used by this sample:
 
 ```python
-agent = AzureOpenAIChatClient(
-    credential=DefaultAzureCredential(),
-    middleware=FoundryToolsChatMiddleware(
-        tools=[{"type": "web_search_preview"}, {"type": "mcp", "project_connection_id": tool_connection_id}],
+agent = Agent(
+    client=AzureOpenAIChatClient(
+        credential=AzureCliCredential(),
     ),
-).create_agent(
+    context_providers=[FoundryToolsContextProvider(
+        tools=[{"type": "web_search_preview"}, {"type": "mcp", "project_connection_id": tool_connection_id}],
+    )],
     name="FoundryToolAgent",
     instructions="You are a helpful assistant with access to various tools.",
 )
@@ -72,7 +73,7 @@ from_agent_framework(agent).run()
 ## Troubleshooting
 
 - **No tools found**: verify `AZURE_AI_PROJECT_TOOL_CONNECTION_ID` points at an existing tool connection in your project.
-- **Auth failures**: confirm `DefaultAzureCredential` can acquire a token (try `az login`).
+- **Auth failures**: confirm `AzureCliCredential` can acquire a token (try `az login`).
 - **Import errors / weird agent_framework circular import**: ensure you are running the sample from this folder (not from inside the package module directory) so the external `agent_framework` dependency is imported correctly.
 
 ## Learn more

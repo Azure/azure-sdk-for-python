@@ -20,14 +20,14 @@ AZURE_OPENAI_CHAT_DEPLOYMENT_NAME=<deployment-name>
 
 `main.py` automatically loads the `.env` file before spinning up the server.
 
-## Thread persistence
+## Session persistence
 
-The sample uses `JsonLocalFileAgentThreadRepository` for `AgentThread` persistence, creating a JSON file per conversation ID under the sample directory. An in-memory alternative, `InMemoryAgentThreadRepository`, lives in the `azure.ai.agentserver.agentframework.persistence` module.
+The sample uses `JsonLocalFileAgentSessionRepository` for `AgentSession` persistence, creating a JSON file per conversation ID under the sample directory. An in-memory alternative, `InMemoryAgentSessionRepository`, lives in the `azure.ai.agentserver.agentframework.persistence` module.
 
-To store thread messages elsewhere, inherit from `SerializedAgentThreadRepository` and override the following methods:
+To store session messages elsewhere, inherit from `SerializedAgentSessionRepository` and override the following methods:
 
 - `read_from_storage(self, conversation_id: str) -> Optional[Any]`
-- `write_to_storage(self, conversation_id: str, serialized_thread: Any)`
+- `write_to_storage(self, conversation_id: str, serialized_session: Any)`
 
 These hooks let you plug in any backing store (blob storage, databases, etc.) without changing the rest of the sample.
 

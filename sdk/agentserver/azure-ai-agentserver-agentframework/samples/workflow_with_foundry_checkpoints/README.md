@@ -8,10 +8,10 @@ resume even after the host process restarts, without managing your own storage b
 
 ### What `main.py` does
 
-- Builds a workflow with `WorkflowBuilder` (writer + reviewer)
+- Builds a workflow with `WorkflowBuilder` (writer + reviewer) using `Agent(client=AzureOpenAIResponsesClient(project_endpoint=..., credential=...))` nodes
 - Creates a `FoundryCheckpointRepository` pointed at your Azure AI Foundry project
-- Passes both to `from_agent_framework(..., checkpoint_repository=...)` so the adapter spins up an
-  HTTP server (defaults to `0.0.0.0:8088`)
+- Passes a workflow factory and `checkpoint_repository` to `from_agent_framework(...)` so the adapter
+  spins up an HTTP server (defaults to `0.0.0.0:8088`) with a fresh workflow per request
 
 ---
 

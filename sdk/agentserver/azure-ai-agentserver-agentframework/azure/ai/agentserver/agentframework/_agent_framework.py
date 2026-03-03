@@ -4,11 +4,11 @@
 # pylint: disable=logging-fstring-interpolation,no-name-in-module,no-member,do-not-import-asyncio
 from __future__ import annotations
 
+import asyncio
 import os
-from typing import Any, AsyncGenerator, Optional, TYPE_CHECKING, Union, Callable
+from typing import TYPE_CHECKING, Any, AsyncGenerator, Optional, Union
 
-from agent_framework import AgentProtocol, AgentThread, WorkflowAgent
-from agent_framework.azure import AzureAIClient  # pylint: disable=no-name-in-module
+from agent_framework import AgentSession, ResponseStream, SupportsAgentRun
 from opentelemetry import trace
 
 from azure.ai.agentserver.core import AgentRunContext, FoundryCBAgent
@@ -23,8 +23,9 @@ from azure.ai.agentserver.core.tools import OAuthConsentRequiredError  # pylint:
 
 from .models.agent_framework_output_streaming_converter import AgentFrameworkOutputStreamingConverter
 from .models.human_in_the_loop_helper import HumanInTheLoopHelper
-from .persistence._foundry_conversation_thread_repository import FoundryConversationThreadRepository
-from .persistence import AgentThreadRepository
+from .persistence import AgentSessionRepository
+from .persistence._foundry_conversation_history_provider import FoundryConversationHistoryProvider
+from .persistence._foundry_conversation_session_repository import FoundryConversationSessionRepository
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
@@ -36,12 +37,12 @@ class AgentFrameworkAgent(FoundryCBAgent):
     """
     Adapter class for integrating Agent Framework agents with the FoundryCB agent interface.
 
-    This class wraps an Agent Framework `AgentProtocol` instance and provides a unified interface
+    This class wraps an Agent Framework `SupportsAgentRun` instance and provides a unified interface
     for running agents in both streaming and non-streaming modes. It handles input and output
     conversion between the Agent Framework and the expected formats for FoundryCB agents.
 
     Parameters:
-        agent (AgentProtocol): An instance of an Agent Framework agent to be adapted.
+        agent (SupportsAgentRun): An instance of an Agent Framework agent to be adapted.
 
     Usage:
         - Instantiate with an Agent Framework agent.
@@ -49,26 +50,30 @@ class AgentFrameworkAgent(FoundryCBAgent):
         - Supports both streaming and non-streaming responses based on the `stream` flag.
     """
 
-    def __init__(self,
-                 credentials: "Optional[AsyncTokenCredential]" = None,
-                 thread_repository: Optional[AgentThreadRepository] = None,
-                 project_endpoint: Optional[str] = None,
-                 **kwargs) -> None:
-        """Initialize the AgentFrameworkAgent with an AgentProtocol.
+    def __init__(
+        self,
+        credentials: "Optional[AsyncTokenCredential]" = None,
+        session_repository: Optional[AgentSessionRepository] = None,
+        project_endpoint: Optional[str] = None,
+        **kwargs,
+    ) -> None:
+        """Initialize the AgentFrameworkAgent with a SupportsAgentRun-compatible agent adapter.
 
         :param credentials: Azure credentials for authentication.
         :type credentials: Optional[AsyncTokenCredential]
-        :param thread_repository: An optional AgentThreadRepository instance for managing thread messages.
-        :type thread_repository: Optional[AgentThreadRepository]
+        :param session_repository: An optional AgentSessionRepository instance for managing session messages.
+        :type session_repository: Optional[AgentSessionRepository]
         :param project_endpoint: The endpoint of the Azure AI Project.
         :type project_endpoint: Optional[str]
         """
         super().__init__(credentials=credentials, **kwargs)  # pylint: disable=unexpected-keyword-arg
         project_endpoint = get_project_endpoint(logger=logger) or project_endpoint
-        if not thread_repository and project_endpoint and self.credentials:
-            logger.warning("No thread repository provided. FoundryConversationThreadRepository will be used.")
-            thread_repository = self._create_foundry_conversation_thread_repository(project_endpoint, self.credentials)
-        self._thread_repository = thread_repository
+        if not session_repository and project_endpoint and self.credentials:
+            logger.warning("No session repository provided. FoundryConversationSessionRepository will be used.")
+            session_repository = self._create_foundry_conversation_session_repository(
+                project_endpoint, self.credentials
+            )
+        self._session_repository = session_repository
         self._hitl_helper = HumanInTheLoopHelper()
 
     def init_tracing(self):
@@ -88,10 +93,12 @@ class AgentFrameworkAgent(FoundryCBAgent):
                 if appinsight_exporter:
                     exporters.append(appinsight_exporter)
 
-            if exporters and self._setup_observability(exporters):
+            if exporters and self._configure_otel_providers(exporters):
                 logger.info("Observability setup completed with provided exporters.")
+            elif app_insights_conn_str and self._setup_tracing_with_connection_string(app_insights_conn_str):
+                logger.info("Observability setup completed with APPINSIGHTS connection string.")
             elif project_endpoint:
-                self._setup_tracing_with_azure_ai_client(project_endpoint)
+                self._setup_tracing_with_project_client(project_endpoint)
         except Exception as e: # pylint: disable=broad-exception-caught
             logger.warning(f"Failed to initialize tracing: {e}", exc_info=True)
         self.tracer = trace.get_tracer(__name__)
@@ -104,6 +111,16 @@ class AgentFrameworkAgent(FoundryCBAgent):
         except Exception as e: # pylint: disable=broad-exception-caught
             logger.error(f"Failed to create Application Insights exporter: {e}", exc_info=True)
             return None
+
+    def _setup_tracing_with_connection_string(self, connection_string: str) -> bool:
+        try:
+            from azure.monitor.opentelemetry import configure_azure_monitor
+
+            configure_azure_monitor(connection_string=connection_string)
+            return True
+        except Exception as e:  # pylint: disable=broad-exception-caught
+            logger.warning(f"Failed to set up Azure Monitor from APPINSIGHTS connection string: {e}", exc_info=True)
+            return False
 
     def _create_otlp_exporter(self, endpoint, protocol=None):
         try:
@@ -119,47 +136,32 @@ class AgentFrameworkAgent(FoundryCBAgent):
             logger.error(f"Failed to create OTLP exporter: {e}", exc_info=True)
             return None
 
-    def _setup_observability(self, exporters) -> bool:
-        setup_function = self._try_import_configure_otel_providers()
-        if not setup_function: # fallback to early version with setup_observability
-            setup_function = self._try_import_setup_observability()
-        if setup_function:
-            setup_function(
-                enable_sensitive_data=True,
-                exporters=exporters,
-            )
-            return True
-        return False
-
-    def _try_import_setup_observability(self):
-        try:
-            from agent_framework.observability import setup_observability
-            return setup_observability
-        except ImportError as e:
-            logger.warning(f"Failed to import setup_observability: {e}")
-            return None
-
-    def _try_import_configure_otel_providers(self):
+    def _configure_otel_providers(self, exporters) -> bool:
         try:
             from agent_framework.observability import configure_otel_providers
-            return configure_otel_providers
         except ImportError as e:
             logger.warning(f"Failed to import configure_otel_providers: {e}")
-            return None
+            return False
+        configure_otel_providers(
+            enable_sensitive_data=True,
+            exporters=exporters,
+        )
+        return True
 
-    def _setup_tracing_with_azure_ai_client(self, project_endpoint: str):
+    def _setup_tracing_with_project_client(self, project_endpoint: str):
+        if not self.credentials:
+            logger.warning(
+                "Skipping Azure Monitor setup through the project client because credentials are not configured."
+            )
+            return
+
         async def setup_async():
-            async with AzureAIClient(
-                project_endpoint=project_endpoint,
-                async_credential=self.credentials,
-                credential=self.credentials, # Af breaking change, keep both for compatibility
-                ) as agent_client:
-                try:
-                    await agent_client.configure_azure_monitor()
-                except AttributeError:
-                    await agent_client.setup_azure_ai_observability()
+            from azure.ai.projects.aio import AIProjectClient
+            from azure.monitor.opentelemetry import configure_azure_monitor
 
-        import asyncio
+            async with AIProjectClient(project_endpoint, self.credentials) as project_client:
+                connection_string = await project_client.telemetry.get_application_insights_connection_string()
+            configure_azure_monitor(connection_string=connection_string)
 
         loop = asyncio.get_event_loop()
         if loop.is_running():
@@ -177,60 +179,61 @@ class AgentFrameworkAgent(FoundryCBAgent):
     ]:
         raise NotImplementedError("This method is implemented in the base class.")
 
-    async def _load_agent_thread(
+    async def _load_agent_session(
         self,
         context: AgentRunContext,
-        agent: Union[AgentProtocol, WorkflowAgent],
-    ) -> Optional[AgentThread]:
-        """Load the agent thread for a given conversation ID.
+        agent: SupportsAgentRun,
+    ) -> Optional[AgentSession]:
+        """Load the agent session for a given conversation ID.
 
         :param context: The agent run context.
         :type context: AgentRunContext
         :param agent: The agent instance.
-        :type agent: AgentProtocol | WorkflowAgent
+        :type agent: SupportsAgentRun
 
-        :return: The loaded AgentThread if available, None otherwise.
-        :rtype: Optional[AgentThread]
+        :return: The loaded AgentSession if available, None otherwise.
+        :rtype: Optional[AgentSession]
         """
-        if self._thread_repository and context.conversation_id:
+        if self._session_repository and context.conversation_id:
+            self._ensure_foundry_history_provider(agent)
             conversation_id = context.conversation_id
-            agent_thread = await self._thread_repository.get(conversation_id, agent=agent)
-            if agent_thread:
-                logger.info(f"Loaded agent thread for conversation: {conversation_id}")
-                return agent_thread
-            return agent.get_new_thread()
+            agent_session = await self._session_repository.get(conversation_id)
+            if agent_session:
+                logger.info(f"Loaded agent session for conversation: {conversation_id}")
+                return agent_session
+            return agent.create_session()
         return None
 
-    async def _save_agent_thread(self, context: AgentRunContext, agent_thread: AgentThread) -> None:
-        """Save the agent thread for a given conversation ID.
+    async def _save_agent_session(self, context: AgentRunContext, agent_session: AgentSession) -> None:
+        """Save the agent session for a given conversation ID.
 
         :param context: The agent run context.
         :type context: AgentRunContext
-        :param agent_thread: The agent thread to save.
-        :type agent_thread: AgentThread
+        :param agent_session: The agent session to save.
+        :type agent_session: AgentSession
 
         :return: None
         :rtype: None
         """
-        if agent_thread and self._thread_repository and (conversation_id := context.conversation_id):
-            await self._thread_repository.set(conversation_id, agent_thread)
-            logger.info(f"Saved agent thread for conversation: {conversation_id}")
+        if agent_session and self._session_repository and (conversation_id := context.conversation_id):
+            await self._session_repository.set(conversation_id, agent_session)
+            logger.info(f"Saved agent session for conversation: {conversation_id}")
 
     def _run_streaming_updates(
         self,
         context: AgentRunContext,
-        run_stream: Callable[[], AsyncGenerator[Any, None]],
-        agent_thread: Optional[AgentThread] = None,
+        stream: ResponseStream[Any, Any],
+        agent_session: Optional[AgentSession] = None,
     ) -> AsyncGenerator[ResponseStreamEvent, Any]:
         """
         Execute a streaming run with shared OAuth/error handling.
-        
+
         :param context: The agent run context.
         :type context: AgentRunContext
-        :param run_stream: A callable that invokes the agent in stream mode
-        :type run_stream: Callable[[], AsyncGenerator[Any, None]]
-        :param agent_thread: The agent thread to use during streaming updates.
-        :type agent_thread: Optional[AgentThread]
+        :param stream: ResponseStream from an agent streaming run.
+        :type stream: ResponseStream[Any, Any]
+        :param agent_session: The agent session to use during streaming updates.
+        :type agent_session: Optional[AgentSession]
 
         :return: An async generator yielding streaming events.
         :rtype: AsyncGenerator[ResponseStreamEvent, Any]
@@ -245,12 +248,13 @@ class AgentFrameworkAgent(FoundryCBAgent):
             try:
                 update_count = 0
                 try:
-                    updates = run_stream()
+                    updates = stream.with_cleanup_hook(
+                        lambda: self._save_agent_session(context, agent_session)
+                    )
                     async for event in streaming_converter.convert(updates):
                         update_count += 1
                         yield event
 
-                    await self._save_agent_thread(context, agent_thread)
                     logger.info("Streaming completed with %d updates", update_count)
                 except OAuthConsentRequiredError as e:
                     logger.info("OAuth consent required during streaming updates")
@@ -290,23 +294,38 @@ class AgentFrameworkAgent(FoundryCBAgent):
 
         return stream_updates()
 
-    def _create_foundry_conversation_thread_repository(
+    def _create_foundry_conversation_session_repository(
         self,
         project_endpoint: str,
         credential: AsyncTokenCredential,
-    ) -> FoundryConversationThreadRepository:
-        """Helper method to create a FoundryConversationThreadRepository instance.
+    ) -> FoundryConversationSessionRepository:
+        """Helper method to create a FoundryConversationSessionRepository instance.
 
         :param project_endpoint: The endpoint of the Azure AI Project.
         :type project_endpoint: str
         :param credential: The credential for authenticating with the Azure AI Project.
         :type credential: AsyncTokenCredential
 
-        :return: An instance of FoundryConversationThreadRepository.
-        :rtype: FoundryConversationThreadRepository
+        :return: An instance of FoundryConversationSessionRepository.
+        :rtype: FoundryConversationSessionRepository
         """
-        return FoundryConversationThreadRepository(
-            agent=None,  # Agent will be provided during get/set calls
+        return FoundryConversationSessionRepository(
             project_endpoint=project_endpoint,
             credential=credential,
         )
+
+    def _ensure_foundry_history_provider(self, agent: SupportsAgentRun) -> None:
+        if not isinstance(self._session_repository, FoundryConversationSessionRepository):
+            return
+
+        context_providers = getattr(agent, "context_providers", None)
+        if not isinstance(context_providers, list):
+            logger.warning(
+                "Agent does not expose mutable context_providers; FoundryConversationHistoryProvider was not attached."
+            )
+            return
+
+        if any(isinstance(provider, FoundryConversationHistoryProvider) for provider in context_providers):
+            return
+
+        context_providers.append(self._session_repository.history_provider)

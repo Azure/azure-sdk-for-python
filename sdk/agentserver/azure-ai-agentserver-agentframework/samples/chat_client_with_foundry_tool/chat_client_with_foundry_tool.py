@@ -8,25 +8,31 @@ Client at runtime.
 """
 
 import os
-from dotenv import load_dotenv
-from agent_framework.azure import AzureOpenAIChatClient
 
-from azure.ai.agentserver.agentframework import from_agent_framework, FoundryToolsChatMiddleware
-from azure.identity import DefaultAzureCredential
+from agent_framework import Agent
+from agent_framework.azure import AzureOpenAIChatClient
+from azure.identity import AzureCliCredential
+from dotenv import load_dotenv
+
+from azure.ai.agentserver.agentframework import FoundryToolsContextProvider, from_agent_framework
 
 load_dotenv()
 
 def main():
     tool_connection_id = os.getenv("AZURE_AI_PROJECT_TOOL_CONNECTION_ID")
 
-    agent = AzureOpenAIChatClient(
-        credential=DefaultAzureCredential(), 
-        middleware=FoundryToolsChatMiddleware(
-            tools=[{"type": "web_search_preview"}, {"type": "mcp", "project_connection_id": tool_connection_id}]
-            )).create_agent(
-                name="FoundryToolAgent",
-                instructions="You are a helpful assistant with access to various tools.",
-        )
+    agent = Agent(
+        client=AzureOpenAIChatClient(
+            credential=AzureCliCredential(),
+        ),
+        context_providers=[
+            FoundryToolsContextProvider(
+                tools=[{"type": "web_search_preview"}, {"type": "mcp", "project_connection_id": tool_connection_id}]
+            )
+        ],
+        name="FoundryToolAgent",
+        instructions="You are a helpful assistant with access to various tools.",
+    )
 
     from_agent_framework(agent).run()
 

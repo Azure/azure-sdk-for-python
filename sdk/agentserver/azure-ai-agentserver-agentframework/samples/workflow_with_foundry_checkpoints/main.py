@@ -18,11 +18,10 @@ Prerequisites:
 import asyncio
 import os
 
+from agent_framework import Agent, Workflow, WorkflowBuilder
+from agent_framework.azure import AzureOpenAIResponsesClient
+from azure.identity import AzureCliCredential
 from dotenv import load_dotenv
-
-from agent_framework import ChatAgent, WorkflowBuilder
-from agent_framework.azure import AzureAIAgentClient
-from azure.identity.aio import AzureCliCredential
 
 from azure.ai.agentserver.agentframework import from_agent_framework
 from azure.ai.agentserver.agentframework.persistence import FoundryCheckpointRepository
@@ -30,20 +29,21 @@ from azure.ai.agentserver.agentframework.persistence import FoundryCheckpointRep
 load_dotenv()
 
 
-def create_writer_agent(client: AzureAIAgentClient) -> ChatAgent:
+def create_writer_agent(client: AzureOpenAIResponsesClient) -> Agent:
     """Create a writer agent that generates content."""
-    return client.create_agent(
+    return Agent(
+        client=client,
         name="Writer",
         instructions=(
-            "You are an excellent content writer. "
-            "You create new content and edit contents based on the feedback."
+            "You are an excellent content writer. You create new content and edit contents based on the feedback."
         ),
     )
 
 
-def create_reviewer_agent(client: AzureAIAgentClient) -> ChatAgent:
+def create_reviewer_agent(client: AzureOpenAIResponsesClient) -> Agent:
     """Create a reviewer agent that provides feedback."""
-    return client.create_agent(
+    return Agent(
+        client=client,
         name="Reviewer",
         instructions=(
             "You are an excellent content reviewer. "
@@ -53,31 +53,32 @@ def create_reviewer_agent(client: AzureAIAgentClient) -> ChatAgent:
     )
 
 
+def create_workflow(client: AzureOpenAIResponsesClient) -> Workflow:
+    writer = create_writer_agent(client)
+    reviewer = create_reviewer_agent(client)
+    return WorkflowBuilder(start_executor=writer).add_edge(writer, reviewer).build()
+
+
 async def main() -> None:
     """Run the workflow agent with Foundry managed checkpoints."""
     project_endpoint = os.getenv("AZURE_AI_PROJECT_ENDPOINT", "")
+    credential = AzureCliCredential()
+    client = AzureOpenAIResponsesClient(
+        project_endpoint=project_endpoint,
+        credential=credential,
+    )
+    # Use FoundryCheckpointRepository for Azure AI Foundry managed storage.
+    # This persists workflow checkpoints remotely, enabling pause/resume
+    # across requests and server restarts.
+    checkpoint_repository = FoundryCheckpointRepository(
+        project_endpoint=project_endpoint,
+        credential=credential,
+    )
 
-    async with AzureCliCredential() as cred, AzureAIAgentClient(credential=cred) as client:
-        builder = (
-            WorkflowBuilder()
-            .register_agent(lambda: create_writer_agent(client), name="writer")
-            .register_agent(lambda: create_reviewer_agent(client), name="reviewer", output_response=True)
-            .set_start_executor("writer")
-            .add_edge("writer", "reviewer")
-        )
-
-        # Use FoundryCheckpointRepository for Azure AI Foundry managed storage.
-        # This persists workflow checkpoints remotely, enabling pause/resume
-        # across requests and server restarts.
-        checkpoint_repository = FoundryCheckpointRepository(
-            project_endpoint=project_endpoint,
-            credential=cred,
-        )
-
-        await from_agent_framework(
-            builder,
-            checkpoint_repository=checkpoint_repository,
-        ).run_async()
+    await from_agent_framework(
+        lambda: create_workflow(client),
+        checkpoint_repository=checkpoint_repository,
+    ).run_async()
 
 
 if __name__ == "__main__":

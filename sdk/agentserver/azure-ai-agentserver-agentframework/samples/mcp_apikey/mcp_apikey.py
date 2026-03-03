@@ -3,9 +3,9 @@
 import asyncio
 import os
 
-from agent_framework import MCPStreamableHTTPTool
+from agent_framework import Agent, MCPStreamableHTTPTool
 from agent_framework.azure import AzureOpenAIChatClient
-from azure.identity import DefaultAzureCredential
+from azure.identity import AzureCliCredential
 from dotenv import load_dotenv
 
 from azure.ai.agentserver.agentframework import from_agent_framework
@@ -23,7 +23,8 @@ async def main() -> None:
             "GITHUB_TOKEN environment variable not set. Provide a GitHub token with MCP access."
         )
 
-    agent = AzureOpenAIChatClient(credential=DefaultAzureCredential()).create_agent(
+    agent = Agent(
+        client=AzureOpenAIChatClient(credential=AzureCliCredential()),
         instructions="You are a helpful assistant that answers GitHub questions. Use only the exposed MCP tools.",
         tools=MCPStreamableHTTPTool(
             name=MCP_TOOL_NAME,

@@ -1,16 +1,20 @@
 import asyncio
+import os
+
 from dotenv import load_dotenv
 
 load_dotenv()
 
-from agent_framework import ChatAgent, Workflow, WorkflowBuilder
-from agent_framework.azure import AzureAIAgentClient
-from azure.identity.aio import AzureCliCredential
+from agent_framework import Agent, Workflow, WorkflowBuilder
+from agent_framework.azure import AzureOpenAIResponsesClient
+from azure.identity import AzureCliCredential
 
 from azure.ai.agentserver.agentframework import from_agent_framework
 
-def create_writer_agent(client: AzureAIAgentClient) -> ChatAgent:
-    return client.create_agent(
+
+def create_writer_agent(client: AzureOpenAIResponsesClient) -> Agent:
+    return Agent(
+        client=client,
         name="Writer",
         instructions=(
             "You are an excellent content writer. You create new content and edit contents based on the feedback."
@@ -18,8 +22,9 @@ def create_writer_agent(client: AzureAIAgentClient) -> ChatAgent:
     )
 
 
-def create_reviewer_agent(client: AzureAIAgentClient) -> ChatAgent:
-    return client.create_agent(
+def create_reviewer_agent(client: AzureOpenAIResponsesClient) -> Agent:
+    return Agent(
+        client=client,
         name="Reviewer",
         instructions=(
             "You are an excellent content reviewer. "
@@ -29,23 +34,19 @@ def create_reviewer_agent(client: AzureAIAgentClient) -> ChatAgent:
     )
 
 
-async def main() -> None:
-    async with AzureCliCredential() as cred, AzureAIAgentClient(credential=cred) as client:
-        builder = (
-            WorkflowBuilder()
-            .register_agent(lambda: create_writer_agent(client), name="writer")
-            .register_agent(lambda: create_reviewer_agent(client), name="reviewer", output_response=True)
-            .set_start_executor("writer")
-            .add_edge("writer", "reviewer")
-        )
-        
-        # Pass the WorkflowBuilder to the adapter and run it
-        # await from_agent_framework(workflow=builder).run_async()
+def create_workflow(client: AzureOpenAIResponsesClient) -> Workflow:
+    writer = create_writer_agent(client)
+    reviewer = create_reviewer_agent(client)
+    return WorkflowBuilder(start_executor=writer).add_edge(writer, reviewer).build()
 
-        # Or create a factory function for the workflow pass the workflow factory to the adapter 
-        def workflow_factory() -> Workflow:
-            return builder.build()
-        await from_agent_framework(workflow_factory).run_async()
+
+async def main() -> None:
+    project_endpoint = os.getenv("AZURE_AI_PROJECT_ENDPOINT", "")
+    client = AzureOpenAIResponsesClient(
+        project_endpoint=project_endpoint,
+        credential=AzureCliCredential(),
+    )
+    await from_agent_framework(lambda: create_workflow(client)).run_async()
 
 
 if __name__ == "__main__":

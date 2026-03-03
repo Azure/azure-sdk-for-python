@@ -1,22 +1,22 @@
-from .agent_thread_repository import (
-    AgentThreadRepository,
-    InMemoryAgentThreadRepository,
-    SerializedAgentThreadRepository,
-    JsonLocalFileAgentThreadRepository,
+from ._foundry_checkpoint_repository import FoundryCheckpointRepository
+from ._foundry_checkpoint_storage import FoundryCheckpointStorage
+from .agent_session_repository import (
+    AgentSessionRepository,
+    InMemoryAgentSessionRepository,
+    JsonLocalFileAgentSessionRepository,
+    SerializedAgentSessionRepository,
 )
 from .checkpoint_repository import (
     CheckpointRepository,
-    InMemoryCheckpointRepository,
     FileCheckpointRepository,
+    InMemoryCheckpointRepository,
 )
-from ._foundry_checkpoint_storage import FoundryCheckpointStorage
-from ._foundry_checkpoint_repository import FoundryCheckpointRepository
 
 __all__ = [
-    "AgentThreadRepository",
-    "InMemoryAgentThreadRepository",
-    "SerializedAgentThreadRepository",
-    "JsonLocalFileAgentThreadRepository",
+    "AgentSessionRepository",
+    "InMemoryAgentSessionRepository",
+    "SerializedAgentSessionRepository",
+    "JsonLocalFileAgentSessionRepository",
     "CheckpointRepository",
     "InMemoryCheckpointRepository",
     "FileCheckpointRepository",
