@@ -30,8 +30,6 @@ instead on client constructor (see above).
 * Rename input argument `id` to `insight_id` in `.beta.insights.get()` method.
 * Rename input argument `id` to `schedule_id` in `.beta.schedules` methods.
 
-### Bugs Fixed
-
 ### Other Changes
 
 * The input `items` argument in the methods `.beta.memory_stores.begin_update_memories()` and `.beta.memory_stores.search_memories`
