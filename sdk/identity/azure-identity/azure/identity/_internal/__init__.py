@@ -14,6 +14,7 @@ from .utils import (
     normalize_authority,
     process_credential_exclusions,
     resolve_tenant,
+    should_refresh,
     validate_scope,
     validate_subscription,
     validate_tenant_id,
@@ -59,4 +60,5 @@ __all__ = [
     "within_dac",
     "wrap_exceptions",
     "validate_tenant_id",
+    "should_refresh",
 ]
