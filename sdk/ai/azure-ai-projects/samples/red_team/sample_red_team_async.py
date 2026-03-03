@@ -23,6 +23,7 @@ USAGE:
        Microsoft Foundry project. Example: https://<account_name>.services.ai.azure.com
     4) MODEL_API_KEY - Required. The API key for your Azure AI Model.
 """
+
 import os
 import asyncio
 from dotenv import load_dotenv

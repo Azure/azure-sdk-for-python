@@ -47,7 +47,6 @@ from azure.ai.projects.models import PromptAgentDefinition
 from openai.types.responses.response_input_text import ResponseInputText
 from openai.types.responses.response_output_text import ResponseOutputText
 
-
 load_dotenv()
 
 

@@ -7,6 +7,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+
 import os
 import logging
 from typing import List, Any
@@ -18,7 +19,6 @@ from azure.identity.aio import get_bearer_token_provider
 from .._patch import _BearerTokenRedactionFilter
 from ._client import AIProjectClient as AIProjectClientGenerated
 from .operations import TelemetryOperations
-
 
 logger = logging.getLogger(__name__)
 

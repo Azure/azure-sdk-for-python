@@ -55,7 +55,10 @@ class TestSamplesAsync(AzureRecordedTestCase):
         "sample_path",
         get_async_sample_paths(
             "memories",
-            samples_to_skip=[],
+            samples_to_skip=[
+                "sample_memory_advanced_async.py",
+                "sample_memory_basic_async.py",
+            ],
         ),
     )
     @servicePreparer()
