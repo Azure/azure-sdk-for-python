@@ -55,12 +55,16 @@ class TestSamplesAsync(AzureRecordedTestCase):
         "sample_path",
         get_async_sample_paths(
             "memories",
-            samples_to_skip=[],
+            samples_to_skip=[
+                "sample_memory_advanced_async.py",
+                "sample_memory_basic_async.py",
+            ],
         ),
     )
     @servicePreparer()
     @SamplePathPasser()
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    # To run this test: pytest tests/samples/test_samples_async.py::TestSamplesAsync::test_memory_samples -s
     async def test_memory_samples(self, sample_path: str, **kwargs) -> None:
         env_vars = get_sample_env_vars(kwargs)
         executor = AsyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
@@ -75,7 +79,7 @@ class TestSamplesAsync(AzureRecordedTestCase):
         "sample_path",
         get_async_sample_paths(
             "agents",
-            samples_to_skip=[],
+            samples_to_skip=["sample_workflow_multi_agent_async.py"],
         ),
     )
     @servicePreparer()

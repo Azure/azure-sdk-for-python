@@ -20,7 +20,7 @@ from devtools_testutils import recorded_by_proxy, RecordedTransport
 from azure.ai.projects.models import (
     PromptAgentDefinition,
     CodeInterpreterTool,
-    CodeInterpreterContainerAuto,
+    AutoCodeInterpreterToolParam,
     FunctionTool,
 )
 from openai.types.responses.response_input_param import FunctionCallOutput, ResponseInputParam
@@ -72,7 +72,7 @@ class TestAgentCodeInterpreterAndFunction(TestBase):
                 model=model,
                 instructions="You are a calculator assistant. Use code interpreter to perform calculations, then ALWAYS save the result using the save_result function.",
                 tools=[
-                    CodeInterpreterTool(container=CodeInterpreterContainerAuto()),
+                    CodeInterpreterTool(container=AutoCodeInterpreterToolParam()),
                     func_tool,
                 ],
             ),
@@ -134,7 +134,7 @@ class TestAgentCodeInterpreterAndFunction(TestBase):
                 model=model,
                 instructions="You are a data analyst. Use code interpreter to generate and analyze data, then ALWAYS create a report using the generate_report function with the exact statistics you computed.",
                 tools=[
-                    CodeInterpreterTool(container=CodeInterpreterContainerAuto()),
+                    CodeInterpreterTool(container=AutoCodeInterpreterToolParam()),
                     report_function,
                 ],
             ),

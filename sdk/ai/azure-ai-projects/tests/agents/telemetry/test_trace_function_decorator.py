@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 """Tests for the trace_function decorator with synchronous functions."""
+
 import pytest
 from opentelemetry import trace
 from opentelemetry.sdk.trace import TracerProvider

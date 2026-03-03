@@ -57,7 +57,6 @@ from ._utils import (
 )
 from ._responses_instrumentor import _ResponsesInstrumentorPreview
 
-
 _Unset: Any = object()
 
 logger = logging.getLogger(__name__)
@@ -189,7 +188,7 @@ class AIProjectInstrumentor:
 
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         if not _tracing_library_available:
             raise ModuleNotFoundError(
                 "Azure Core Tracing Opentelemetry is not installed. "
