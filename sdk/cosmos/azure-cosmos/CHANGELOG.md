@@ -1,23 +1,18 @@
 ## Release History
 
-### 4.16.0 (Unreleased)
+### 4.15.1 (Unreleased)
 
 #### Features Added
-* Added `max_degree_of_parallelism` and `max_buffered_item_count` kwargs to async `query_items` to enable
-  concurrent cross-partition query execution. When `max_degree_of_parallelism` is set to a positive value,
-  document producers for different partition key ranges are initialized and drained concurrently using
-  `asyncio` tasks bounded by a semaphore. This can significantly reduce wall-clock query latency at the
-  cost of higher instantaneous RU/s consumption. Defaults to `0` (serial execution) for backward
-  compatibility, matching the .NET and Java SDK defaults.
-  Supported values:
-  - `0`: Serial execution (current behavior, default).
-  - `> 0`: Use that many concurrent partition requests.
-  - `-1`: System automatically decides based on partition count and CPU count.
-  Parallelization is applied to all three async aggregator types: `_MultiExecutionContextAggregator`
-  (ORDER BY / cross-partition), `_NonStreamingOrderByContextAggregator` (vector search), and
-  `_HybridSearchContextAggregator` (hybrid/full-text search).
+* Added `max_degree_of_parallelism` and `max_buffered_item_count` kwargs to async `query_items` to enable See [PR 45488](https://github.com/Azure/azure-sdk-for-python/pull/45488)
+  concurrent cross-partition query execution.
+  
+#### Breaking Changes
 
-### 4.15.0 (2026-02-11)
+#### Bugs Fixed
+
+#### Other Changes
+
+### 4.15.0 (2026-02-19)
 
 #### Features Added
 * GA support of Per Partition Automatic Failover and AvailabilityStrategy features.
@@ -25,10 +20,12 @@
 #### Bugs Fixed
 * Fixed bug where sdk was encountering a timeout issue caused by infinite recursion during the 410 (Gone) error. See [PR 44770](https://github.com/Azure/azure-sdk-for-python/pull/44770)
 * Fixed crash in sync and async clients when `force_refresh_on_startup` was set to `None`, which could surface as `AttributeError: 'NoneType' object has no attribute '_WritableLocations'` during region discovery when `database_account` was `None`. See [PR 44987](https://github.com/Azure/azure-sdk-for-python/pull/44987)
+* Fixed bug where unavailable regional endpoints were dropped from the routing list instead of being kept as fallback options. See [PR 45200](https://github.com/Azure/azure-sdk-for-python/pull/45200)
 
 #### Other Changes
 * Added tests for multi-language support for full text search. See [PR 44254](https://github.com/Azure/azure-sdk-for-python/pull/44254)
 * Renamed `availability_strategy_config` introduced in 4.15.0b1 to `availability_strategy` for both sync and async clients. See [PR 45086](https://github.com/Azure/azure-sdk-for-python/pull/45086).
+* Request-level `availability_strategy` needs to be set to `False` in order to disable availability strategy for that request, as opposed to setting it to `None`. See [PR 45141](https://github.com/Azure/azure-sdk-for-python/pull/45141).
 
 ### 4.14.6 (2026-02-02)
 

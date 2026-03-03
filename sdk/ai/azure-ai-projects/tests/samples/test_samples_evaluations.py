@@ -12,7 +12,7 @@ from sample_executor import (
     get_sample_paths,
     SamplePathPasser,
 )
-from test_samples_helpers import get_sample_environment_variables_map
+from test_samples_helpers import get_sample_env_vars
 
 # Preparer with only the variables needed for evaluation samples
 evaluationsPreparer = functools.partial(
@@ -41,6 +41,9 @@ Respond with true if:
 Always respond with `reason` indicating the reason for the response."""
 
 
+@pytest.mark.skip(
+    reason="Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema"
+)
 class TestSamplesEvaluations(AzureRecordedTestCase):
     """
     Tests for evaluation samples.
@@ -129,8 +132,8 @@ class TestSamplesEvaluations(AzureRecordedTestCase):
     @SamplePathPasser()
     @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_evaluation_samples(self, sample_path: str, **kwargs) -> None:
-        env_var_mapping = get_sample_environment_variables_map(kwargs)
-        executor = SyncSampleExecutor(self, sample_path, env_var_mapping=env_var_mapping, **kwargs)
+        env_vars = get_sample_env_vars(kwargs)
+        executor = SyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
         executor.execute()
         executor.validate_print_calls_by_llm(
             instructions=evaluations_instructions,
@@ -166,8 +169,8 @@ class TestSamplesEvaluations(AzureRecordedTestCase):
     @SamplePathPasser()
     @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_agentic_evaluator_samples(self, sample_path: str, **kwargs) -> None:
-        env_var_mapping = get_sample_environment_variables_map(kwargs)
-        executor = SyncSampleExecutor(self, sample_path, env_var_mapping=env_var_mapping, **kwargs)
+        env_vars = get_sample_env_vars(kwargs)
+        executor = SyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
         executor.execute()
         executor.validate_print_calls_by_llm(
             instructions=evaluations_instructions,
@@ -191,8 +194,8 @@ class TestSamplesEvaluations(AzureRecordedTestCase):
             "sample_generic_agentic_evaluator",
             "sample_generic_agentic_evaluator.py",
         )
-        env_var_mapping = get_sample_environment_variables_map(kwargs)
-        executor = SyncSampleExecutor(self, sample_path, env_var_mapping=env_var_mapping, **kwargs)
+        env_vars = get_sample_env_vars(kwargs)
+        executor = SyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
         executor.execute()
         executor.validate_print_calls_by_llm(
             instructions=evaluations_instructions,

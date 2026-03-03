@@ -14,8 +14,8 @@ DESCRIPTION:
     These tests validate the sample_analyze_binary.py sample code.
     
     This sample demonstrates how to analyze a PDF file from disk using the `prebuilt-documentSearch`
-    analyzer. The service returns an AnalyzeResult that contains an array of MediaContent items
-    in AnalyzeResult.contents. For documents, each item is a DocumentContent that exposes markdown
+    analyzer. The service returns an AnalysisResult that contains an array of AnalysisContent items
+    in AnalysisResult.contents. For documents, each item is a DocumentContent that exposes markdown
     plus detailed structure such as pages, tables, figures, and paragraphs.
     
     The prebuilt-documentSearch analyzer transforms unstructured documents into structured, machine-
@@ -74,9 +74,7 @@ class TestSampleAnalyzeBinary(ContentUnderstandingClientTestBase):
         print("[PASS] Binary data created successfully")
 
         # Analyze the document
-        poller = client.begin_analyze_binary(
-            analyzer_id="prebuilt-documentSearch", binary_input=file_bytes
-        )
+        poller = client.begin_analyze_binary(analyzer_id="prebuilt-documentSearch", binary_input=file_bytes)
 
         result = poller.result()
 

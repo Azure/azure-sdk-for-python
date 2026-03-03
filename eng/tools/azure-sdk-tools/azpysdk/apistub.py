@@ -16,14 +16,14 @@ REPO_ROOT = discover_repo_root()
 MAX_PYTHON_VERSION = (3, 11)
 
 
-def get_package_wheel_path(pkg_root: str, out_path: Optional[str]) -> tuple[str, Optional[str]]:
+def get_package_wheel_path(pkg_root: str) -> str:
     # parse setup.py to get package name and version
     pkg_details = ParsedSetup.from_path(pkg_root)
 
     # Check if wheel is already built and available for current package
     prebuilt_dir = os.getenv("PREBUILT_WHEEL_DIR")
-    out_token_path = None
     if prebuilt_dir:
+        logger.info("Using prebuilt wheel directory: {}".format(prebuilt_dir))
         found_whl = find_whl(prebuilt_dir, pkg_details.name, pkg_details.version)
         pkg_path = os.path.join(prebuilt_dir, found_whl) if found_whl else None
         if not pkg_path:
@@ -32,16 +32,10 @@ def get_package_wheel_path(pkg_root: str, out_path: Optional[str]) -> tuple[str,
                     pkg_details.name, pkg_details.version, prebuilt_dir
                 )
             )
-        # If the package is a wheel and out_path is given, the token file output path should be the parent directory of the wheel
-        if out_path:
-            out_token_path = os.path.join(out_path, os.path.basename(os.path.dirname(pkg_path)))
-        return pkg_path, out_token_path
-
+        return pkg_path
     # Otherwise, use wheel created in staging directory, or fall back on source directory
     pkg_path = find_whl(pkg_root, pkg_details.name, pkg_details.version) or pkg_root
-    out_token_path = out_path
-
-    return pkg_path, out_token_path
+    return pkg_path
 
 
 def get_cross_language_mapping_path(pkg_root):
@@ -62,6 +56,12 @@ class apistub(Check):
         parents = parent_parsers or []
         p = subparsers.add_parser(
             "apistub", parents=parents, help="Run the apistub check to generate an API stub for a package"
+        )
+        p.add_argument(
+            "--dest-dir",
+            dest="dest_dir",
+            default=None,
+            help="Destination directory for generated API stub token files.",
         )
         p.set_defaults(func=self.run)
 
@@ -105,22 +105,35 @@ class apistub(Check):
                 logger.error(f"Failed to install dependencies: {e}")
                 return e.returncode
 
-            create_package_and_install(
-                distribution_directory=staging_directory,
-                target_setup=package_dir,
-                skip_install=True,
-                cache_dir=None,
-                work_dir=staging_directory,
-                force_create=False,
-                package_type="wheel",
-                pre_download_disabled=False,
-                python_executable=executable,
-            )
+            if not os.getenv("PREBUILT_WHEEL_DIR"):
+                create_package_and_install(
+                    distribution_directory=staging_directory,
+                    target_setup=package_dir,
+                    skip_install=True,
+                    cache_dir=None,
+                    work_dir=staging_directory,
+                    force_create=False,
+                    package_type="wheel",
+                    pre_download_disabled=False,
+                    python_executable=executable,
+                )
 
             self.pip_freeze(executable)
 
-            pkg_path, out_token_path = get_package_wheel_path(package_dir, staging_directory)
+            pkg_path = get_package_wheel_path(package_dir)
+            pkg_path = os.path.abspath(pkg_path)
+
+            dest_dir = getattr(args, "dest_dir", None)
+            if dest_dir:
+                out_token_path = os.path.join(dest_dir, package_name)
+                os.makedirs(out_token_path, exist_ok=True)
+            else:
+                out_token_path = os.path.abspath(staging_directory)
+
             cross_language_mapping_path = get_cross_language_mapping_path(package_dir)
+
+            if cross_language_mapping_path:
+                cross_language_mapping_path = os.path.abspath(cross_language_mapping_path)
 
             cmds = ["-m", "apistub", "--pkg-path", pkg_path]
 
@@ -132,7 +145,7 @@ class apistub(Check):
             logger.info("Running apistub {}.".format(cmds))
 
             try:
-                self.run_venv_command(executable, cmds, cwd=package_dir, check=True, immediately_dump=True)
+                self.run_venv_command(executable, cmds, cwd=staging_directory, check=True, immediately_dump=True)
             except CalledProcessError as e:
                 logger.error(f"{package_name} exited with error {e.returncode}")
                 results.append(e.returncode)
