@@ -184,10 +184,7 @@ def get_chat_target(
             f"Received value: {timeout_value!r} of type {type(timeout_value).__name__}."
         )
     if timeout_value <= 0:
-        raise ValueError(
-            "http_timeout must be greater than 0 seconds. "
-            f"Received value: {timeout_value!r}."
-        )
+        raise ValueError("http_timeout must be greater than 0 seconds. " f"Received value: {timeout_value!r}.")
 
     # Helper function for message conversion
     def _message_to_dict(message):
