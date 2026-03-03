@@ -1,0 +1,71 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://Sanitized.management.azure.com/subscriptions/31b0b6a5-2647-47eb-8a38-7d12047ee8ec/resourceGroups/olawal/providers/Microsoft.Discovery/workspaces/test-wrksp-2b2fb9b9?api-version=2026-02-01-preview",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Connection": "keep-alive",
+        "Content-Length": "888",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-mgmt-discovery/1.0.0b1 Python/3.11.9 (Windows-10-10.0.26200-SP0)"
+      },
+      "RequestBody": {
+        "location": "uksouth",
+        "properties": {
+          "supercomputerIds": [
+            "/subscriptions/31b0b6a5-2647-47eb-8a38-7d12047ee8ec/resourceGroups/olawal/providers/Microsoft.Discovery/supercomputers/test-sc-2bbb25b8"
+          ],
+          "workspaceIdentity": {
+            "id": "Sanitized"
+          },
+          "agentSubnetId": "/subscriptions/31b0b6a5-2647-47eb-8a38-7d12047ee8ec/resourceGroups/olawal/providers/Microsoft.Network/virtualNetworks/newapiv/subnets/workspace",
+          "privateEndpointSubnetId": "/subscriptions/31b0b6a5-2647-47eb-8a38-7d12047ee8ec/resourceGroups/olawal/providers/Microsoft.Network/virtualNetworks/newapiv/subnets/default",
+          "workspaceSubnetId": "/subscriptions/31b0b6a5-2647-47eb-8a38-7d12047ee8ec/resourceGroups/olawal/providers/Microsoft.Network/virtualNetworks/newapiv/subnets/default",
+          "logAnalyticsClusterId": "/subscriptions/31b0b6a5-2647-47eb-8a38-7d12047ee8ec/resourceGroups/olawal/providers/Microsoft.OperationalInsights/clusters/mycluse"
+        }
+      },
+      "StatusCode": 400,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "725",
+        "Content-Type": "application/json",
+        "Date": "Mon, 02 Mar 2026 22:18:53 GMT",
+        "Expires": "-1",
+        "mise-correlation-id": "3550d328-1e82-4965-bdf5-19191ce12eda",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "x-azure-ref": "Sanitized",
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-build-version": "1",
+        "x-ms-correlation-request-id": "77c0426e-80e8-4463-9185-3ca4a1499a2f",
+        "x-ms-failure-cause": "gateway",
+        "x-ms-providerhub-traffic": "True",
+        "x-ms-ratelimit-remaining-subscription-writes": "800",
+        "x-ms-routing-request-id": "EASTUS2EUAP:20260302T221854Z:77c0426e-80e8-4463-9185-3ca4a1499a2f",
+        "x-ms-throttling-version": "v2",
+        "X-MSEdge-Ref": "Ref A: 7FC6E74C83F646B9938148E39C7D0995 Ref B: SN4AA2022301045 Ref C: 2026-03-02T22:18:43Z"
+      },
+      "ResponseBody": {
+        "error": {
+          "code": "BadRequest",
+          "message": "Resource payload validation failed",
+          "details": [
+            {
+              "code": "BadRequest",
+              "target": "Properties.SupercomputerIds",
+              "message": "Validation failed for Properties.SupercomputerIds with message Supercomputer '/subscriptions/31b0b6a5-2647-47eb-8a38-7d12047ee8ec/resourceGroups/olawal/providers/Microsoft.Discovery/supercomputers/test-sc-2bbb25b8' is already linked to another workspace '/subscriptions/31b0b6a5-2647-47eb-8a38-7d12047ee8ec/resourceGroups/olawal/providers/Microsoft.Discovery/workspaces/test-wrksp-434a53e1'"
+            },
+            {
+              "code": "BadRequest",
+              "target": "Properties.SupercomputerIds",
+              "message": "Validation failed for Properties.SupercomputerIds with message SupercomputerIds validation failed"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}

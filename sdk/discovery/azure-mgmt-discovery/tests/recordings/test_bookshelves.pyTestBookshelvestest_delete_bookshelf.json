@@ -1,0 +1,32 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://Sanitized.management.azure.com/subscriptions/31b0b6a5-2647-47eb-8a38-7d12047ee8ec/resourceGroups/olawal/providers/Microsoft.Discovery/bookshelves/test-bookshelf-9379e896?api-version=2026-02-01-preview",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-mgmt-discovery/1.0.0b1 Python/3.11.9 (Windows-10-10.0.26200-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 204,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Date": "Mon, 02 Mar 2026 20:46:09 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "fb6d510e-bb80-45ce-a5ab-ed9841d7dbf4",
+        "x-ms-ratelimit-remaining-subscription-deletes": "799",
+        "x-ms-routing-request-id": "EASTUS2EUAP:20260302T204610Z:fb6d510e-bb80-45ce-a5ab-ed9841d7dbf4",
+        "x-ms-throttling-version": "v2",
+        "X-MSEdge-Ref": "Ref A: F97C127F618E4B0084727E7935FEB279 Ref B: SN4AA2022305031 Ref C: 2026-03-02T20:46:09Z"
+      },
+      "ResponseBody": null
+    }
+  ],
+  "Variables": {}
+}

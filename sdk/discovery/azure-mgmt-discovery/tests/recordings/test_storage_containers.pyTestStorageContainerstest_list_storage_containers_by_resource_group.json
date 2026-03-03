@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://Sanitized.management.azure.com/subscriptions/31b0b6a5-2647-47eb-8a38-7d12047ee8ec/resourceGroups/deray-private-test/providers/Microsoft.Discovery/storageContainers?api-version=2026-02-01-preview",
+      "RequestUri": "https://Sanitized.management.azure.com/subscriptions/31b0b6a5-2647-47eb-8a38-7d12047ee8ec/resourceGroups/olawal/providers/Microsoft.Discovery/storageContainers?api-version=2026-02-01-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -12,27 +12,27 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
-        "Content-Length": "506",
+        "Content-Length": "575",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 02 Mar 2026 15:40:13 GMT",
+        "Date": "Tue, 03 Mar 2026 16:56:39 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Cache": "CONFIG_NOCACHE",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "25a21615-297a-436a-be1e-89614bf011e6",
+        "x-ms-correlation-request-id": "f96ec5fc-d361-42a0-bb50-accab8495cfb",
         "x-ms-original-request-ids": [
-          "39d4aad2-8d49-45db-afe6-0f4e886f9af0",
-          "c6eeff6d-aa9d-461c-b225-0ef18696b7cb",
-          "6ce596ba-1b66-42b7-9a03-dd5c7a807bc9",
-          "33408eae-4933-4446-be2c-cb9bbbf06dfc",
-          "a2392daa-f880-469e-9559-fc44626ec097",
-          "2014d96f-235f-4f2b-890b-0eb0fe2c4e98"
+          "b0589582-e88a-43e9-ad13-7a12bf8e251b",
+          "bb0f09fb-174b-4d75-a2b4-a9048503dd80",
+          "d9822582-d6de-475e-aa18-e7a9a7bfcbdd",
+          "23f70422-6ec4-467b-8c6b-00a3b54ed23b",
+          "19068a6f-a31c-4396-b8b2-ccda25a6b2d7",
+          "1d518613-bcef-4957-bb52-ec4f7ec84ff8"
         ],
-        "x-ms-ratelimit-remaining-subscription-reads": "1098",
-        "x-ms-routing-request-id": "EASTUS2EUAP:20260302T154013Z:25a21615-297a-436a-be1e-89614bf011e6",
+        "x-ms-ratelimit-remaining-subscription-reads": "1099",
+        "x-ms-routing-request-id": "EASTUS2EUAP:20260303T165640Z:f96ec5fc-d361-42a0-bb50-accab8495cfb",
         "x-ms-throttling-version": "v2",
-        "X-MSEdge-Ref": "Ref A: 1B2C337B09044DCA8E6D41749056B7EF Ref B: SN4AA2022303023 Ref C: 2026-03-02T15:40:13Z"
+        "X-MSEdge-Ref": "Ref A: 1E1FC7A1B1BE43BE9359DA1BFD41998C Ref B: DM2AA1091212011 Ref C: 2026-03-03T16:56:39Z"
       },
       "ResponseBody": {
         "value": [
@@ -43,13 +43,16 @@
             "location": "uksouth",
             "tags": {},
             "systemData": {
+              "createdBy": "Sanitized",
+              "createdByType": "User",
+              "createdAt": "2026-03-02T20:45:51.2603686Z",
               "lastModifiedBy": "Sanitized",
-              "lastModifiedByType": "Application",
-              "lastModifiedAt": "2026-02-25T16:37:07.4258986Z"
+              "lastModifiedByType": "User",
+              "lastModifiedAt": "2026-03-02T20:45:51.2603686Z"
             },
             "properties": {
               "storageStore": {
-                "storageAccountId": "/subscriptions/31b0b6a5-2647-47eb-8a38-7d12047ee8ec/resourceGroups/deray-private-test/providers/Microsoft.Storage/storageAccounts/derayprstg",
+                "storageAccountId": "/subscriptions/31b0b6a5-2647-47eb-8a38-7d12047ee8ec/resourceGroups/olawal/providers/Microsoft.Storage/storageAccounts/mytststr",
                 "kind": "AzureStorageBlob"
               },
               "provisioningState": "Succeeded"

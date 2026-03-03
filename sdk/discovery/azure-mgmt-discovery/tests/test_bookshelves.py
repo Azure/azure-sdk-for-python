@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 """Tests for Bookshelves operations."""
+import uuid
 import pytest
 from azure.mgmt.discovery import DiscoveryClient
 from devtools_testutils import recorded_by_proxy
@@ -28,32 +29,26 @@ class TestBookshelves(DiscoveryMgmtTestCase):
         """Test listing bookshelves in a resource group."""
         bookshelves = list(self.client.bookshelves.list_by_resource_group(self.resource_group))
         assert isinstance(bookshelves, list)
-
-    @pytest.mark.skip(reason="Requires existing bookshelf")
     @recorded_by_proxy
     def test_get_bookshelf(self):
         """Test getting a specific bookshelf by name."""
-        # TODO: Replace with actual bookshelf name from test environment
-        bookshelf = self.client.bookshelves.get(self.resource_group, "test-bookshelf")
+        bookshelf = self.client.bookshelves.get(self.resource_group, "test-bookshelf-05fbc43d")
         assert bookshelf is not None
         assert hasattr(bookshelf, "name")
         assert hasattr(bookshelf, "location")
-
-    @pytest.mark.skip(reason="Requires proper setup with workload identities and managed resource group configuration")
     @recorded_by_proxy
     def test_create_bookshelf(self):
         """Test creating a bookshelf."""
-        # TODO: Bookshelf creation may require additional configuration
-        bookshelf_data = {"location": "centraluseuap"}
+        unique_name = f"test-bookshelf-{uuid.uuid4().hex[:8]}"
+        bookshelf_data = {"location": "uksouth"}
         operation = self.client.bookshelves.begin_create_or_update(
-            resource_group_name=self.resource_group,
-            bookshelf_name="test-bookshelf",
+            resource_group_name="olawal",
+            bookshelf_name=unique_name,
             resource=bookshelf_data,
         )
         bookshelf = operation.result()
         assert bookshelf is not None
-
-    @pytest.mark.skip(reason="Requires existing bookshelf with properties that can be updated")
+    @pytest.mark.skip(reason="no recording")
     @recorded_by_proxy
     def test_update_bookshelf(self):
         """Test updating a bookshelf."""
@@ -69,13 +64,11 @@ class TestBookshelves(DiscoveryMgmtTestCase):
         )
         updated_bookshelf = operation.result()
         assert updated_bookshelf is not None
-
-    @pytest.mark.skip(reason="Requires existing bookshelf to delete")
     @recorded_by_proxy
     def test_delete_bookshelf(self):
         """Test deleting a bookshelf."""
         operation = self.client.bookshelves.begin_delete(
-            resource_group_name=self.resource_group,
-            bookshelf_name="bookshelf-to-delete",
+            resource_group_name="olawal",
+            bookshelf_name="test-bookshelf-9379e896",
         )
         operation.result()

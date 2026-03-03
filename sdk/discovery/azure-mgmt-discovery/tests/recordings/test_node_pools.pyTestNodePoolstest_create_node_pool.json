@@ -1,0 +1,60 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://Sanitized.management.azure.com/subscriptions/31b0b6a5-2647-47eb-8a38-7d12047ee8ec/resourceGroups/olawal/providers/Microsoft.Discovery/supercomputers/test-sc-2bbb25b8/nodePools/test-np-568f7883?api-version=2026-02-01-preview",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Connection": "keep-alive",
+        "Content-Length": "294",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-mgmt-discovery/1.0.0b1 Python/3.11.9 (Windows-10-10.0.26200-SP0)"
+      },
+      "RequestBody": {
+        "location": "uksouth",
+        "properties": {
+          "subnetId": "/subscriptions/31b0b6a5-2647-47eb-8a38-7d12047ee8ec/resourceGroups/olawal/providers/Microsoft.Network/virtualNetworks/newapiv/subnets/default",
+          "vmSize": "Standard_D4s_v6",
+          "maxNodeCount": 3,
+          "minNodeCount": 1,
+          "scaleSetPriority": "Regular"
+        }
+      },
+      "StatusCode": 400,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "167",
+        "Content-Type": "application/json",
+        "Date": "Tue, 03 Mar 2026 16:39:38 GMT",
+        "Expires": "-1",
+        "mise-correlation-id": "7ba6e65a-bb6f-4a0a-bd29-a679dab13fa7",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "x-azure-ref": "Sanitized",
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-build-version": "1",
+        "x-ms-correlation-request-id": "ce0ee4d8-e1e0-414f-840a-208c413b3c33",
+        "x-ms-failure-cause": "gateway",
+        "x-ms-providerhub-traffic": "True",
+        "x-ms-ratelimit-remaining-subscription-writes": "799",
+        "x-ms-routing-request-id": "EASTUS2EUAP:20260303T163939Z:ce0ee4d8-e1e0-414f-840a-208c413b3c33",
+        "x-ms-throttling-version": "v2",
+        "X-MSEdge-Ref": "Ref A: C5F68705DD5C4E34A8C1ECD9207DE79C Ref B: SN4AA2022304045 Ref C: 2026-03-03T16:39:34Z"
+      },
+      "ResponseBody": {
+        "error": {
+          "code": "BadRequest",
+          "message": "Resource payload validation failed",
+          "details": [
+            {
+              "code": "BadRequest",
+              "message": "Validation failed due to an internal error"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}

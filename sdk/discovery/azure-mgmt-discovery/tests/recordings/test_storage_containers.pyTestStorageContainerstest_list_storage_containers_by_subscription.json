@@ -12,27 +12,27 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
-        "Content-Length": "506",
+        "Content-Length": "1070",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 02 Mar 2026 15:40:09 GMT",
+        "Date": "Tue, 03 Mar 2026 16:56:44 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Cache": "CONFIG_NOCACHE",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "4bf663cb-6f25-4a90-b3fd-9f26e077249b",
+        "x-ms-correlation-request-id": "1d3b7639-709d-410f-a99e-347bfe6e2520",
         "x-ms-original-request-ids": [
-          "edeff0fe-5295-47de-a7a3-10fb6bcf96e8",
-          "ba79e75c-c6d8-4179-a844-15b417b38eed",
-          "21df5c85-573c-43eb-9b37-a416a2c741dc",
-          "d85511bb-d35d-48f4-af56-4264e4f7980f",
-          "55ee4f09-f417-49eb-82fa-37d4543e08c4",
-          "5ab1cdae-fb34-41f7-9d94-72913f085e88"
+          "128a456b-21d4-480d-98ba-faf629e50062",
+          "02a69c46-a2bb-41dd-a69f-78b51e06c6b6",
+          "342bb941-e37d-4b38-b604-ad4758ef1a49",
+          "3df070ce-6ec2-4c6c-9b01-fc9121d9776a",
+          "d3c3125f-f407-4c4d-9f09-b676a2f8bba2",
+          "9675f956-e7b1-42d8-9e1f-2fcf6df9e339"
         ],
         "x-ms-ratelimit-remaining-subscription-reads": "1099",
-        "x-ms-routing-request-id": "EASTUS2EUAP:20260302T154009Z:4bf663cb-6f25-4a90-b3fd-9f26e077249b",
+        "x-ms-routing-request-id": "EASTUS2EUAP:20260303T165645Z:1d3b7639-709d-410f-a99e-347bfe6e2520",
         "x-ms-throttling-version": "v2",
-        "X-MSEdge-Ref": "Ref A: 12D6EB12B1D140408327D4DEED96B14C Ref B: SN4AA2022303023 Ref C: 2026-03-02T15:40:08Z"
+        "X-MSEdge-Ref": "Ref A: 46B242B0E81942C498579F3A2309AF54 Ref B: DM2AA1091212011 Ref C: 2026-03-03T16:56:44Z"
       },
       "ResponseBody": {
         "value": [
@@ -45,11 +45,33 @@
             "systemData": {
               "lastModifiedBy": "Sanitized",
               "lastModifiedByType": "Application",
-              "lastModifiedAt": "2026-02-25T16:37:07.4258986Z"
+              "lastModifiedAt": "2026-03-02T20:56:51.8425901Z"
             },
             "properties": {
               "storageStore": {
                 "storageAccountId": "/subscriptions/31b0b6a5-2647-47eb-8a38-7d12047ee8ec/resourceGroups/deray-private-test/providers/Microsoft.Storage/storageAccounts/derayprstg",
+                "kind": "AzureStorageBlob"
+              },
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "microsoft.discovery/storagecontainers",
+            "location": "uksouth",
+            "tags": {},
+            "systemData": {
+              "createdBy": "Sanitized",
+              "createdByType": "User",
+              "createdAt": "2026-03-02T20:45:51.2603686Z",
+              "lastModifiedBy": "Sanitized",
+              "lastModifiedByType": "User",
+              "lastModifiedAt": "2026-03-02T20:45:51.2603686Z"
+            },
+            "properties": {
+              "storageStore": {
+                "storageAccountId": "/subscriptions/31b0b6a5-2647-47eb-8a38-7d12047ee8ec/resourceGroups/olawal/providers/Microsoft.Storage/storageAccounts/mytststr",
                 "kind": "AzureStorageBlob"
               },
               "provisioningState": "Succeeded"

@@ -21,14 +21,14 @@ This is the primary use case for the Discovery service - executing
 scientific computing tools on Azure supercomputers.
 """
 import os
-import pytest
 import uuid
+import pytest
 from devtools_testutils import AzureMgmtRecordedTestCase, recorded_by_proxy
 
 
 # Test configuration
 AZURE_LOCATION = os.environ.get("AZURE_LOCATION", "eastus")
-AZURE_RESOURCE_GROUP = os.environ.get("AZURE_RESOURCE_GROUP", "discovery-test-rg")
+AZURE_RESOURCE_GROUP = os.environ.get("AZURE_RESOURCE_GROUP", "olawal")
 SUPERCOMPUTER_NAME = os.environ.get("SUPERCOMPUTER_NAME", "test-supercomputer")
 
 
@@ -216,8 +216,7 @@ class TestHeroScenario(AzureMgmtRecordedTestCase):
     # =========================================================================
     # RECORDED INTEGRATION TESTS
     # =========================================================================
-
-    @pytest.mark.skip(reason="Requires real Azure resources - run with TEST_MODE=record")
+    @pytest.mark.skip(reason="no recording")
     @recorded_by_proxy
     def test_step1_create_workspace(self):
         """Step 1: Create a Workspace via ARM."""
@@ -236,8 +235,7 @@ class TestHeroScenario(AzureMgmtRecordedTestCase):
         assert workspace is not None
         assert workspace.name == self.workspace_name
         assert workspace.location == AZURE_LOCATION
-
-    @pytest.mark.skip(reason="Requires real Azure resources - run with TEST_MODE=record")
+    @pytest.mark.skip(reason="no recording")
     @recorded_by_proxy
     def test_step2_create_project(self):
         """Step 2: Create a Project in the Workspace via ARM."""
@@ -256,8 +254,7 @@ class TestHeroScenario(AzureMgmtRecordedTestCase):
 
         assert project is not None
         assert project.name == self.project_name
-
-    @pytest.mark.skip(reason="Requires real Azure resources - run with TEST_MODE=record")
+    @pytest.mark.skip(reason="no recording")
     @recorded_by_proxy
     def test_step3_verify_supercomputer(self):
         """Step 3: Verify Supercomputer exists."""
@@ -277,8 +274,7 @@ class TestHeroScenario(AzureMgmtRecordedTestCase):
             # If not found, list available supercomputers
             supercomputers = list(client.supercomputers.list_by_subscription())
             print(f"Available supercomputers: {[s.name for s in supercomputers]}")
-
-    @pytest.mark.skip(reason="Requires real Azure resources - run with TEST_MODE=record")
+    @pytest.mark.skip(reason="no recording")
     @recorded_by_proxy
     def test_step6_create_investigation(self):
         """Step 6: Create an Investigation via Workspace client."""
@@ -296,8 +292,7 @@ class TestHeroScenario(AzureMgmtRecordedTestCase):
         )
 
         assert investigation is not None
-
-    @pytest.mark.skip(reason="Tool run requires specific tool configuration and compute resources")
+    @pytest.mark.skip(reason="no recording")
     @recorded_by_proxy
     def test_step7_run_tool_on_supercomputer(self):
         """
@@ -332,8 +327,7 @@ class TestHeroScenario(AzureMgmtRecordedTestCase):
         run_result = poller.result()
 
         assert run_result is not None
-
-    @pytest.mark.skip(reason="Requires active tool run")
+    @pytest.mark.skip(reason="no recording")
     @recorded_by_proxy
     def test_step8_monitor_run_status(self):
         """Step 8: Monitor Tool Run Status."""
@@ -348,8 +342,7 @@ class TestHeroScenario(AzureMgmtRecordedTestCase):
         status = client.tools.get_run_status(run_id=run_id)
 
         assert status is not None
-
-    @pytest.mark.skip(reason="Requires real Azure resources")
+    @pytest.mark.skip(reason="no recording")
     @recorded_by_proxy
     def test_step10_query_knowledge_base(self):
         """Step 10: Query Knowledge Base for insights."""

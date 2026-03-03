@@ -11,7 +11,7 @@ from .testcase import DiscoveryMgmtTestCase
 
 
 # Resource group and resources for testing
-WORKSPACE_RESOURCE_GROUP = "newapiversiontest"
+WORKSPACE_RESOURCE_GROUP = "olawal"
 WORKSPACE_NAME = "wrksptest44"
 BOOKSHELF_NAME = "test-bookshelf"
 
@@ -26,8 +26,7 @@ class TestPrivateEndpoints(DiscoveryMgmtTestCase):
         self.bookshelf_name = BOOKSHELF_NAME
 
     # ============ Workspace Private Endpoint Connection Tests ============
-
-    @pytest.mark.skip(reason="Requires existing private endpoint connections for the workspace")
+    @pytest.mark.skip(reason="no recording")
     @recorded_by_proxy
     def test_list_workspace_private_endpoint_connections(self):
         """Test listing workspace private endpoint connections."""
@@ -37,8 +36,7 @@ class TestPrivateEndpoints(DiscoveryMgmtTestCase):
             )
         )
         assert isinstance(connections, list)
-
-    @pytest.mark.skip(reason="Requires existing private endpoint connection")
+    @pytest.mark.skip(reason="no recording")
     @recorded_by_proxy
     def test_get_workspace_private_endpoint_connection(self):
         """Test getting a workspace private endpoint connection."""
@@ -48,14 +46,18 @@ class TestPrivateEndpoints(DiscoveryMgmtTestCase):
         )
         assert connection is not None
         assert hasattr(connection, "name")
-
-    @pytest.mark.skip(reason="Requires private endpoint configuration and network setup")
     @recorded_by_proxy
     def test_create_workspace_private_endpoint_connection(self):
         """Test creating a workspace private endpoint connection."""
         connection_name = "test-pe-connection"
-        connection_data = {}
-        operation = self.client.workspace_private_endpoint_connections.begin_create(
+        connection_data = {
+            "properties": {
+                "privateLinkServiceConnectionState": {
+                    "status": "Approved"
+                }
+            }
+        }
+        operation = self.client.workspace_private_endpoint_connections.begin_create_or_update(
             resource_group_name=self.resource_group,
             workspace_name=self.workspace_name,
             private_endpoint_connection_name=connection_name,
@@ -63,8 +65,7 @@ class TestPrivateEndpoints(DiscoveryMgmtTestCase):
         )
         connection = operation.result()
         assert connection is not None
-
-    @pytest.mark.skip(reason="Requires existing private endpoint connection to delete")
+    @pytest.mark.skip(reason="no recording")
     @recorded_by_proxy
     def test_delete_workspace_private_endpoint_connection(self):
         """Test deleting a workspace private endpoint connection."""
@@ -77,8 +78,7 @@ class TestPrivateEndpoints(DiscoveryMgmtTestCase):
         operation.result()
 
     # ============ Workspace Private Link Resource Tests ============
-
-    @pytest.mark.skip(reason="Requires workspace configured for private endpoint")
+    @pytest.mark.skip(reason="no recording")
     @recorded_by_proxy
     def test_list_workspace_private_link_resources(self):
         """Test listing workspace private link resources."""
@@ -86,8 +86,7 @@ class TestPrivateEndpoints(DiscoveryMgmtTestCase):
             self.client.workspace_private_link_resources.list_by_workspace(self.resource_group, self.workspace_name)
         )
         assert isinstance(link_resources, list)
-
-    @pytest.mark.skip(reason="Requires workspace configured for private endpoint")
+    @pytest.mark.skip(reason="no recording")
     @recorded_by_proxy
     def test_get_workspace_private_link_resource(self):
         """Test getting a workspace private link resource."""
@@ -98,8 +97,7 @@ class TestPrivateEndpoints(DiscoveryMgmtTestCase):
         assert link_resource is not None
 
     # ============ Bookshelf Private Endpoint Connection Tests ============
-
-    @pytest.mark.skip(reason="Requires existing private endpoint connections for the bookshelf")
+    @pytest.mark.skip(reason="no recording")
     @recorded_by_proxy
     def test_list_bookshelf_private_endpoint_connections(self):
         """Test listing bookshelf private endpoint connections."""
@@ -109,8 +107,7 @@ class TestPrivateEndpoints(DiscoveryMgmtTestCase):
             )
         )
         assert isinstance(connections, list)
-
-    @pytest.mark.skip(reason="Requires existing private endpoint connection")
+    @pytest.mark.skip(reason="no recording")
     @recorded_by_proxy
     def test_get_bookshelf_private_endpoint_connection(self):
         """Test getting a bookshelf private endpoint connection."""
@@ -120,14 +117,18 @@ class TestPrivateEndpoints(DiscoveryMgmtTestCase):
         )
         assert connection is not None
         assert hasattr(connection, "name")
-
-    @pytest.mark.skip(reason="Requires private endpoint configuration and network setup")
     @recorded_by_proxy
     def test_create_bookshelf_private_endpoint_connection(self):
         """Test creating a bookshelf private endpoint connection."""
         connection_name = "test-pe-connection"
-        connection_data = {}
-        operation = self.client.bookshelf_private_endpoint_connections.begin_create(
+        connection_data = {
+            "properties": {
+                "privateLinkServiceConnectionState": {
+                    "status": "Approved"
+                }
+            }
+        }
+        operation = self.client.bookshelf_private_endpoint_connections.begin_create_or_update(
             resource_group_name=self.resource_group,
             bookshelf_name=self.bookshelf_name,
             private_endpoint_connection_name=connection_name,
@@ -135,8 +136,7 @@ class TestPrivateEndpoints(DiscoveryMgmtTestCase):
         )
         connection = operation.result()
         assert connection is not None
-
-    @pytest.mark.skip(reason="Requires existing private endpoint connection to delete")
+    @pytest.mark.skip(reason="no recording")
     @recorded_by_proxy
     def test_delete_bookshelf_private_endpoint_connection(self):
         """Test deleting a bookshelf private endpoint connection."""
@@ -149,8 +149,7 @@ class TestPrivateEndpoints(DiscoveryMgmtTestCase):
         operation.result()
 
     # ============ Bookshelf Private Link Resource Tests ============
-
-    @pytest.mark.skip(reason="Requires bookshelf configured for private endpoint")
+    @pytest.mark.skip(reason="no recording")
     @recorded_by_proxy
     def test_list_bookshelf_private_link_resources(self):
         """Test listing bookshelf private link resources."""
@@ -158,8 +157,7 @@ class TestPrivateEndpoints(DiscoveryMgmtTestCase):
             self.client.bookshelf_private_link_resources.list_by_bookshelf(self.resource_group, self.bookshelf_name)
         )
         assert isinstance(link_resources, list)
-
-    @pytest.mark.skip(reason="Requires bookshelf configured for private endpoint")
+    @pytest.mark.skip(reason="no recording")
     @recorded_by_proxy
     def test_get_bookshelf_private_link_resource(self):
         """Test getting a bookshelf private link resource."""

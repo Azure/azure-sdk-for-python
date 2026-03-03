@@ -4,6 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 """Tests for Storage Assets operations."""
+import uuid
 import pytest
 from azure.mgmt.discovery import DiscoveryClient
 from devtools_testutils import recorded_by_proxy
@@ -11,8 +12,8 @@ from devtools_testutils import recorded_by_proxy
 from .testcase import DiscoveryMgmtTestCase
 
 # Resource group and storage container for storage asset tests
-STORAGE_ASSET_RESOURCE_GROUP = "deray-private-test"
-STORAGE_ASSET_CONTAINER_NAME = "testCon"
+STORAGE_ASSET_RESOURCE_GROUP = "olawal"
+STORAGE_ASSET_CONTAINER_NAME = "test-sc-8bef0d1a"
 
 
 class TestStorageAssets(DiscoveryMgmtTestCase):
@@ -27,32 +28,34 @@ class TestStorageAssets(DiscoveryMgmtTestCase):
         """Test listing storage assets in a storage container."""
         assets = list(self.client.storage_assets.list_by_storage_container(self.resource_group, STORAGE_ASSET_CONTAINER_NAME))
         assert isinstance(assets, list)
-
-    @pytest.mark.skip(reason="Requires existing StorageContainer and StorageAsset")
     @recorded_by_proxy
     def test_get_storage_asset(self):
         """Test getting a specific storage asset by name."""
-        storage_container_name = "test-storage-container"
-        asset = self.client.storage_assets.get(self.resource_group, storage_container_name, "test-storage-asset")
+        storage_container_name = "test-sc-8bef0d1a"
+        asset = self.client.storage_assets.get(self.resource_group, storage_container_name, "test-sa-482ad005")
         assert asset is not None
         assert hasattr(asset, "name")
-
-    @pytest.mark.skip(reason="Requires StorageAssetProperties with path configuration")
     @recorded_by_proxy
     def test_create_storage_asset(self):
         """Test creating a storage asset."""
-        storage_container_name = "test-storage-container"
-        asset_data = {"location": "centraluseuap"}
+        storage_container_name = "test-sc-8bef0d1a"
+        unique_name = f"test-sa-{uuid.uuid4().hex[:8]}"
+        asset_data = {
+            "location": "uksouth",
+            "properties": {
+                "description": "Test storage asset for SDK validation",
+                "path": "data/test-assets"
+            }
+        }
         operation = self.client.storage_assets.begin_create_or_update(
-            resource_group_name=self.resource_group,
+            resource_group_name="olawal",
             storage_container_name=storage_container_name,
-            storage_asset_name="test-storage-asset",
+            storage_asset_name=unique_name,
             resource=asset_data,
         )
         asset = operation.result()
         assert asset is not None
-
-    @pytest.mark.skip(reason="Requires existing StorageAsset to update")
+    @pytest.mark.skip(reason="no recording")
     @recorded_by_proxy
     def test_update_storage_asset(self):
         """Test updating a storage asset."""
@@ -69,8 +72,7 @@ class TestStorageAssets(DiscoveryMgmtTestCase):
         )
         updated_asset = operation.result()
         assert updated_asset is not None
-
-    @pytest.mark.skip(reason="Requires existing StorageAsset to delete")
+    @pytest.mark.skip(reason="no recording")
     @recorded_by_proxy
     def test_delete_storage_asset(self):
         """Test deleting a storage asset."""

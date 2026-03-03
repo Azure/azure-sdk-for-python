@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 """Tests for Projects operations."""
+import uuid
 import pytest
 from azure.mgmt.discovery import DiscoveryClient
 from devtools_testutils import recorded_by_proxy
@@ -11,7 +12,7 @@ from .testcase import DiscoveryMgmtTestCase
 
 
 # Resource group that has a workspace
-WORKSPACE_RESOURCE_GROUP = "newapiversiontest"
+WORKSPACE_RESOURCE_GROUP = "olawal"
 WORKSPACE_NAME = "wrksptest44"
 
 
@@ -28,8 +29,7 @@ class TestProjects(DiscoveryMgmtTestCase):
         """Test listing projects in a workspace."""
         projects = list(self.client.projects.list_by_workspace(self.resource_group, self.workspace_name))
         assert isinstance(projects, list)
-
-    @pytest.mark.skip(reason="Requires existing project in the workspace")
+    @pytest.mark.skip(reason="no recording")
     @recorded_by_proxy
     def test_get_project(self):
         """Test getting a specific project by name."""
@@ -38,22 +38,20 @@ class TestProjects(DiscoveryMgmtTestCase):
         assert project is not None
         assert hasattr(project, "name")
         assert hasattr(project, "location")
-
-    @pytest.mark.skip(reason="Requires proper ProjectProperties configuration")
     @recorded_by_proxy
     def test_create_project(self):
         """Test creating a project."""
-        project_data = {"location": "centraluseuap"}
+        unique_name = f"test-proj-{uuid.uuid4().hex[:8]}"
+        project_data = {"location": "uksouth"}
         operation = self.client.projects.begin_create_or_update(
-            resource_group_name=self.resource_group,
+            resource_group_name="olawal",
             workspace_name=self.workspace_name,
-            project_name="test-project",
+            project_name=unique_name,
             resource=project_data,
         )
         project = operation.result()
         assert project is not None
-
-    @pytest.mark.skip(reason="Requires existing project with properties that can be updated")
+    @pytest.mark.skip(reason="no recording")
     @recorded_by_proxy
     def test_update_project(self):
         """Test updating a project."""
@@ -69,8 +67,7 @@ class TestProjects(DiscoveryMgmtTestCase):
         )
         updated_project = operation.result()
         assert updated_project is not None
-
-    @pytest.mark.skip(reason="Requires existing project to delete")
+    @pytest.mark.skip(reason="no recording")
     @recorded_by_proxy
     def test_delete_project(self):
         """Test deleting a project."""

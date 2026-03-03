@@ -4,6 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 """Tests for Workspaces operations."""
+import uuid
 import pytest
 from azure.mgmt.discovery import DiscoveryClient
 from devtools_testutils import recorded_by_proxy
@@ -12,7 +13,7 @@ from .testcase import DiscoveryMgmtTestCase
 
 
 # Resource group and workspace that exist in the test environment
-WORKSPACE_RESOURCE_GROUP = "newapiversiontest"
+WORKSPACE_RESOURCE_GROUP = "olawal"
 WORKSPACE_NAME = "wrksptest44"
 
 
@@ -45,24 +46,33 @@ class TestWorkspaces(DiscoveryMgmtTestCase):
         # Don't assert on name since it may be sanitized in playback
         assert hasattr(workspace, "name")
         assert hasattr(workspace, "location")
-
-    @pytest.mark.skip(reason="Requires WorkspaceProperties with Identity (user-assigned managed identity)")
     @recorded_by_proxy
     def test_create_workspace(self):
         """Test creating a workspace."""
-        # TODO: Workspace creation requires:
-        # 1. A user-assigned managed identity
-        # 2. WorkspaceProperties with the Identity object
-        workspace_data = {"location": "centraluseuap"}
+        unique_name = f"test-wrksp-{uuid.uuid4().hex[:8]}"
+        workspace_data = {
+            "location": "uksouth",
+            "properties": {
+                "supercomputerIds": [
+                    "/subscriptions/31b0b6a5-2647-47eb-8a38-7d12047ee8ec/resourceGroups/olawal/providers/Microsoft.Discovery/supercomputers/test-sc-2bbb25b8"
+                ],
+                "workspaceIdentity": {
+                    "id": "/subscriptions/31b0b6a5-2647-47eb-8a38-7d12047ee8ec/resourcegroups/olawal/providers/Microsoft.ManagedIdentity/userAssignedIdentities/myidentity"
+                },
+                "agentSubnetId": "/subscriptions/31b0b6a5-2647-47eb-8a38-7d12047ee8ec/resourceGroups/olawal/providers/Microsoft.Network/virtualNetworks/newapiv/subnets/workspace",
+                "privateEndpointSubnetId": "/subscriptions/31b0b6a5-2647-47eb-8a38-7d12047ee8ec/resourceGroups/olawal/providers/Microsoft.Network/virtualNetworks/newapiv/subnets/default",
+                "workspaceSubnetId": "/subscriptions/31b0b6a5-2647-47eb-8a38-7d12047ee8ec/resourceGroups/olawal/providers/Microsoft.Network/virtualNetworks/newapiv/subnets/default",
+                "logAnalyticsClusterId": "/subscriptions/31b0b6a5-2647-47eb-8a38-7d12047ee8ec/resourceGroups/olawal/providers/Microsoft.OperationalInsights/clusters/mycluse",
+            }
+        }
         operation = self.client.workspaces.begin_create_or_update(
-            resource_group_name=self.resource_group,
-            workspace_name="test-workspace",
+            resource_group_name="olawal",
+            workspace_name=unique_name,
             resource=workspace_data,
         )
         workspace = operation.result()
         assert workspace is not None
-
-    @pytest.mark.skip(reason="Requires existing workspace with properties that can be updated")
+    @pytest.mark.skip(reason="no recording")
     @recorded_by_proxy
     def test_update_workspace(self):
         """Test updating a workspace."""
@@ -79,13 +89,11 @@ class TestWorkspaces(DiscoveryMgmtTestCase):
         )
         updated_workspace = operation.result()
         assert updated_workspace is not None
-
-    @pytest.mark.skip(reason="Requires existing workspace to delete")
     @recorded_by_proxy
     def test_delete_workspace(self):
         """Test deleting a workspace."""
         operation = self.client.workspaces.begin_delete(
-            resource_group_name=self.resource_group,
-            workspace_name="workspace-to-delete",
+            resource_group_name="olawal",
+            workspace_name="test-wrksp-6055c323",
         )
         operation.result()

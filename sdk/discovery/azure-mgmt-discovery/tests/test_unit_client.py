@@ -7,7 +7,6 @@ Unit tests for azure-mgmt-discovery client.
 
 These tests verify client configuration without making HTTP calls.
 """
-import pytest
 from azure.mgmt.discovery import DiscoveryClient
 
 

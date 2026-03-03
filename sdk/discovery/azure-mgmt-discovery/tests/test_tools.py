@@ -4,6 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 """Tests for Tools operations."""
+import uuid
 import pytest
 from azure.mgmt.discovery import DiscoveryClient
 from devtools_testutils import recorded_by_proxy
@@ -12,7 +13,7 @@ from .testcase import DiscoveryMgmtTestCase, AZURE_RESOURCE_GROUP
 
 
 # Known tool name in the test environment
-TOOL_NAME = "testtool"
+TOOL_NAME = "test-tool-50d87c62"
 
 
 class TestTools(DiscoveryMgmtTestCase):
@@ -42,21 +43,75 @@ class TestTools(DiscoveryMgmtTestCase):
         # Don't assert on name since it may be sanitized in playback
         assert hasattr(tool, "name")
         assert hasattr(tool, "location")
-
-    @pytest.mark.skip(reason="Requires ToolProperties with tool configuration")
     @recorded_by_proxy
     def test_create_tool(self):
         """Test creating a tool."""
-        tool_data = {"location": "centraluseuap"}
+        unique_name = f"test-tool-{uuid.uuid4().hex[:8]}"
+        tool_data = {
+            "location": "uksouth",
+            "properties": {
+                "version": "1.0.0",
+                "definitionContent": {
+                    "name": "molpredictor",
+                    "description": "Molecular property prediction for single SMILES strings.",
+                    "version": "1.0.0",
+                    "category": "cheminformatics",
+                    "license": "MIT",
+                    "infra": [
+                        {
+                            "name": "worker",
+                            "infra_type": "container",
+                            "image": {
+                                "acr": "demodiscoveryacr.azurecr.io/molpredictor:latest"
+                            },
+                            "compute": {
+                                "min_resources": {
+                                    "cpu": "1",
+                                    "ram": "1Gi",
+                                    "storage": "32",
+                                    "gpu": "0"
+                                },
+                                "max_resources": {
+                                    "cpu": "2",
+                                    "ram": "1Gi",
+                                    "storage": "64",
+                                    "gpu": "0"
+                                },
+                                "recommended_sku": ["Standard_D4s_v6"],
+                                "pool_type": "static",
+                                "pool_size": 1
+                            }
+                        }
+                    ],
+                    "actions": [
+                        {
+                            "name": "predict",
+                            "description": "Predict molecular properties for SMILES strings.",
+                            "input_schema": {
+                                "type": "object",
+                                "properties": {
+                                    "action": {
+                                        "type": "string",
+                                        "description": "The property to predict. Must be one of [log_p, boiling_point, solubility, density, critical_point]"
+                                    }
+                                },
+                                "required": ["action"]
+                            },
+                            "command": "python molpredictor.py --action {{ action }}",
+                            "infra_node": "worker"
+                        }
+                    ]
+                }
+            }
+        }
         operation = self.client.tools.begin_create_or_update(
-            resource_group_name=self.resource_group,
-            tool_name="test-tool",
+            resource_group_name="olawal",
+            tool_name=unique_name,
             resource=tool_data,
         )
         tool = operation.result()
         assert tool is not None
-
-    @pytest.mark.skip(reason="Requires existing Tool to update")
+    @pytest.mark.skip(reason="no recording")
     @recorded_by_proxy
     def test_update_tool(self):
         """Test updating a tool."""
@@ -71,8 +126,7 @@ class TestTools(DiscoveryMgmtTestCase):
         )
         updated_tool = operation.result()
         assert updated_tool is not None
-
-    @pytest.mark.skip(reason="Requires existing Tool to delete")
+    @pytest.mark.skip(reason="no recording")
     @recorded_by_proxy
     def test_delete_tool(self):
         """Test deleting a tool."""

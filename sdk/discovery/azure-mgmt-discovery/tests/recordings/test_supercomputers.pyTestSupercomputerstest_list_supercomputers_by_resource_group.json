@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://Sanitized.management.azure.com/subscriptions/31b0b6a5-2647-47eb-8a38-7d12047ee8ec/resourceGroups/spec1-test/providers/Microsoft.Discovery/supercomputers?api-version=2026-02-01-preview",
+      "RequestUri": "https://Sanitized.management.azure.com/subscriptions/31b0b6a5-2647-47eb-8a38-7d12047ee8ec/resourceGroups/olawal/providers/Microsoft.Discovery/supercomputers?api-version=2026-02-01-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -12,27 +12,27 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
-        "Content-Length": "1295",
+        "Content-Length": "1210",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 02 Mar 2026 15:39:19 GMT",
+        "Date": "Tue, 03 Mar 2026 16:56:25 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Cache": "CONFIG_NOCACHE",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "20bc3a48-530a-44f3-963e-e671cd53420d",
+        "x-ms-correlation-request-id": "86ed8968-dd64-46a4-80d6-7af7a10d76b6",
         "x-ms-original-request-ids": [
-          "c1d3c33a-590a-4b92-9911-a2c808e65c79",
-          "36eaf4f3-cad0-4bea-927a-c3a21d1c59bf",
-          "e6769823-6de4-4fc4-af38-3d7eeaeb0b07",
-          "2c1137b6-5e5e-4cdc-ac2c-0470c8f5576b",
-          "e90499c8-4711-4337-b8bd-eb2523b8fb03",
-          "84cb1f22-64b0-4264-bd85-2d7c64bdb2f7"
+          "18f7d244-a82f-45e2-aebe-c34308c2aa3b",
+          "33b0a420-8c88-4600-8794-330571b2fe8b",
+          "34317fa1-86b7-44c2-924c-e676d5065983",
+          "602166b4-ebdb-4ee3-8313-ad710669ba36",
+          "207ed322-ff3a-4d35-97d1-14b87829966e",
+          "ae5581c7-b238-4efc-8ae1-db1e76740a11"
         ],
         "x-ms-ratelimit-remaining-subscription-reads": "1099",
-        "x-ms-routing-request-id": "EASTUS2EUAP:20260302T153920Z:20bc3a48-530a-44f3-963e-e671cd53420d",
+        "x-ms-routing-request-id": "EASTUS2EUAP:20260303T165626Z:86ed8968-dd64-46a4-80d6-7af7a10d76b6",
         "x-ms-throttling-version": "v2",
-        "X-MSEdge-Ref": "Ref A: A685C25C8D4C4776999339E4B8CF13DE Ref B: SN4AA2022303049 Ref C: 2026-03-02T15:39:19Z"
+        "X-MSEdge-Ref": "Ref A: 85DB5D24A851438DB933E355650980E0 Ref B: DM2AA1091212011 Ref C: 2026-03-03T16:56:25Z"
       },
       "ResponseBody": {
         "value": [
@@ -41,19 +41,16 @@
             "name": "Sanitized",
             "type": "microsoft.discovery/supercomputers",
             "location": "uksouth",
-            "tags": {
-              "createdBy": "Sanitized"
-            },
             "systemData": {
               "createdBy": "Sanitized",
-              "createdByType": "Application",
-              "createdAt": "2025-11-18T14:01:46.9205594Z",
+              "createdByType": "User",
+              "createdAt": "2026-03-02T20:26:38.4028447Z",
               "lastModifiedBy": "Sanitized",
-              "lastModifiedByType": "User",
-              "lastModifiedAt": "2026-02-19T13:40:29.0395037Z"
+              "lastModifiedByType": "Application",
+              "lastModifiedAt": "2026-03-02T23:22:24.8691796Z"
             },
             "properties": {
-              "subnetId": "/subscriptions/31b0b6a5-2647-47eb-8a38-7d12047ee8ec/resourceGroups/fixedrg-dev-uksouth1/providers/Microsoft.Network/virtualNetworks/vnet-dev-uksouth1/subnets/supercomputer-aks",
+              "subnetId": "/subscriptions/31b0b6a5-2647-47eb-8a38-7d12047ee8ec/resourceGroups/olawal/providers/Microsoft.Network/virtualNetworks/newapiv/subnets/default",
               "identities": {
                 "clusterIdentity": {
                   "id": "Sanitized",
@@ -66,13 +63,13 @@
                   "clientId": "00000000-0000-0000-0000-000000000000"
                 },
                 "workloadIdentities": {
-                  "/subscriptions/31b0b6a5-2647-47eb-8a38-7d12047ee8ec/resourcegroups/fixedrg-dev-uksouth1/providers/Microsoft.ManagedIdentity/userAssignedIdentities/dev-uksouth1-uami": {
+                  "/subscriptions/31b0b6a5-2647-47eb-8a38-7d12047ee8ec/resourcegroups/olawal/providers/Microsoft.ManagedIdentity/userAssignedIdentities/myidentity": {
                     "principalId": "00000000-0000-0000-0000-000000000000",
                     "clientId": "00000000-0000-0000-0000-000000000000"
                   }
                 }
               },
-              "systemSku": "Standard_D4s_v5",
+              "systemSku": "Standard_D4s_v6",
               "managedOnBehalfOfConfiguration": {
                 "moboBrokerResources": [
                   {
@@ -80,7 +77,7 @@
                   }
                 ]
               },
-              "provisioningState": "Failed"
+              "provisioningState": "Succeeded"
             }
           }
         ]

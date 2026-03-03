@@ -4,7 +4,6 @@
 # Licensed under the MIT License.
 # ------------------------------------
 """Tests for Operations operations."""
-import pytest
 from azure.mgmt.discovery import DiscoveryClient
 from devtools_testutils import recorded_by_proxy
 

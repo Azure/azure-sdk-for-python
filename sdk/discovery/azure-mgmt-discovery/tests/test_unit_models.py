@@ -7,7 +7,6 @@ Unit tests for azure-mgmt-discovery models.
 
 These tests verify model initialization without making HTTP calls.
 """
-import pytest
 from azure.mgmt.discovery import models
 
 
