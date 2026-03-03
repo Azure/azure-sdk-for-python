@@ -51,9 +51,7 @@ MANAGEMENT_PACKAGES_FILTER_EXCLUSIONS = [
 # We need to actively prevent ourselves from discovering the package in its old location. To do that we:
 #  - Add the path to this list, any entrypoints that use discover_targeted_packages should exclude these paths
 #  - This will also affect usage of get_package_properties.py (Save-Package-Properties stage of CI), so please be aware of this!
-PATHS_EXCLUDED_FROM_DISCOVERY = [
-    "sdk/textanalytics/azure-ai-textanalytics",
-]
+PATHS_EXCLUDED_FROM_DISCOVERY = []
 
 TEST_COMPATIBILITY_MAP = {"azure-ai-ml": ">=3.7"}
 TEST_PYTHON_DISTRO_INCOMPATIBILITY_MAP = {
