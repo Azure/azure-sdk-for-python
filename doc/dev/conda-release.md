@@ -65,7 +65,7 @@ The auto-generated PR includes:
    - Create an AKA link for new release logs at [https://aka.ms/](https://aka.ms/).
       - The `meta.yaml` for the new package(s) will contain the short link to use.
 
-4. **Build the packages.** Merging to main triggers the internal **[Conda Build/Release Pipeline](https://dev.azure.com/azure-sdk/internal/_build?definitionId=6321)** (`conda-sdk-client.yml`) automatically, but you must queue a manual run to enable the release stage. Running manually also enables manual customization of which packages to include.
+4. **Build the packages.** Merging to main triggers the internal **[Conda Build/Release Pipeline](https://dev.azure.com/azure-sdk/internal/_build?definitionId=6321)** (`conda-sdk-client.yml`) automatically, but you must queue a manual run to enable the release stage. Running manually also enables customization of which packages to include.
 
 5. **Approve the release.** After a successful build, the pipeline will show a pending approval gate. Approve it to publish the packages to Anaconda (under the `Microsoft` channel).
 
