@@ -1,0 +1,27 @@
+name: shared-sdk-release-eval
+description: Evaluation suite for SDK release skill.
+skill: shared-sdk-release
+version: "1.0"
+config:
+  trials_per_task: 1
+  timeout_seconds: 300
+  parallel: false
+  executor: copilot-sdk
+  model: claude-sonnet-4.6
+graders:
+  - type: keyword
+    name: mentions_release_concepts
+    config:
+      keywords: ["release", "pipeline", "azsdk_release_sdk"]
+      must_include_all: false
+  - type: regex
+    name: references_tools
+    config:
+      pattern: "(?i)(azsdk_release_sdk|release.*pipeline|check.*ready|trigger.*release)"
+  - type: code
+    name: has_substantive_output
+    config:
+      assertions:
+        - "len(output) > 50"
+tasks:
+  - "tasks/*.yaml"
