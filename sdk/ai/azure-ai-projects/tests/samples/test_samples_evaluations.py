@@ -23,7 +23,8 @@ evaluationsPreparer = functools.partial(
     azure_ai_agent_name="sanitized-agent-name",
 )
 
-evaluations_instructions = """We just run Python code for an evaluation sample and captured a Python array of print statements.
+evaluations_instructions = """
+We just run Python code for an evaluation sample and captured print/log output in an attached log file (TXT).
 Validating the printed content to determine if the evaluation completed successfully:
 Respond false if any entries show:
 - Error messages or exception text (not including normal status messages)
@@ -38,7 +39,8 @@ Respond with true if:
 - The evaluation completed with results (passed or failed evaluation metrics are both valid outcomes)
 - Resources were cleaned up (agent deleted, evaluation deleted)
 
-Always respond with `reason` indicating the reason for the response."""
+Always respond with `reason` indicating the reason for the response.
+""".strip()
 
 
 class TestSamplesEvaluations(AzureRecordedTestCase):
@@ -124,13 +126,11 @@ class TestSamplesEvaluations(AzureRecordedTestCase):
         env_vars = get_sample_env_vars(kwargs)
         executor = SyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
         executor.execute()
-        # Recording can't sanitize LLM validation input for this sample, so skip validation in playback
-        if self.is_live or not sample_path.endswith("sample_evaluations_builtin_with_dataset_id.py"):
-            executor.validate_print_calls_by_llm(
-                instructions=evaluations_instructions,
-                project_endpoint=kwargs["azure_ai_project_endpoint"],
-                model=kwargs["azure_ai_model_deployment_name"],
-            )
+        executor.validate_print_calls_by_llm(
+            instructions=evaluations_instructions,
+            project_endpoint=kwargs["azure_ai_project_endpoint"],
+            model=kwargs["azure_ai_model_deployment_name"],
+        )
 
     # To run this test with a specific sample, use:
     # pytest tests/samples/test_samples_evaluations.py::TestSamplesEvaluations::test_agentic_evaluator_samples[sample_coherence]

@@ -13,7 +13,9 @@ from devtools_testutils import add_general_string_sanitizer
 
 from test_samples_helpers import get_sample_env_vars
 
-fine_tuning_instructions = """We just ran Python code and captured a Python array of print statements.
+
+fine_tuning_instructions = """
+We just ran Python code and captured print/log output in an attached log file (TXT).
 Validate whether sample execution/output is correct for a fine-tuning workflow.
 
 Successful output typically shows one or more of:
@@ -34,7 +36,8 @@ Important distinction:
 Mark `correct = true` when execution succeeds and output is consistent with initiating/inspecting
 the intended fine-tuning workflow.
 
-Always include `reason` with a concise explanation tied to the observed print output."""
+Always include `reason` with a concise explanation tied to the observed print output.
+""".strip()
 
 
 SCRUBBED_FINE_TUNING_CONFIG: dict[str, Any] = {

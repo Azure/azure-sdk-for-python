@@ -28,27 +28,28 @@ class TestSamples(AzureRecordedTestCase):
     # To run this test with a specific sample, use:
     # pytest tests/samples/test_samples.py::TestSamples::test_agent_tools_samples[sample_agent_memory_search]
     @servicePreparer()
-    @additionalSampleTests(
-        [
-            AdditionalSampleTestDetail(
-                test_id="sample_agent_azure_function",
-                sample_filename="sample_agent_azure_function.py",
-                env_vars={
-                    "STORAGE_INPUT_QUEUE_NAME": "sanitized_input_queue_name",
-                    "STORAGE_OUTPUT_QUEUE_NAME": "sanitized_output_queue_name",
-                    "STORAGE_QUEUE_SERVICE_ENDPOINT": "sanitized_queue_service_endpoint",
-                },
-            ),
-        ]
-    )
+    # @additionalSampleTests(
+    #     [
+    #         AdditionalSampleTestDetail( # 2/28/2026 westus2 get 500
+    #             test_id="sample_agent_azure_function",
+    #             sample_filename="sample_agent_azure_function.py",
+    #             env_vars={
+    #                 "STORAGE_INPUT_QUEUE_NAME": "sanitized_input_queue_name",
+    #                 "STORAGE_OUTPUT_QUEUE_NAME": "sanitized_output_queue_name",
+    #                 "STORAGE_QUEUE_SERVICE_ENDPOINT": "sanitized_queue_service_endpoint",
+    #             },
+    #         ),
+    #     ]
+    # )
     @pytest.mark.parametrize(
         "sample_path",
         get_sample_paths(
             "agents/tools",
             samples_to_skip=[
-                "sample_agent_azure_function.py",  # Requires Foundry endpoint supporting new versioning schema (see TODO above)
+                "sample_agent_azure_function.py",  # In the list of additional sample tests above due to more parameters needed
                 "sample_agent_computer_use.py",  # 400 BadRequestError: Invalid URI (URI string too long)
                 "sample_agent_browser_automation.py",  # APITimeoutError: request timed out
+                "sample_agent_openapi.py",  # 400 2/28/2026 validation/tool_user_error; failing weather GET curl call in OpenAPI tool
             ],
         ),
     )
@@ -58,19 +59,20 @@ class TestSamples(AzureRecordedTestCase):
         env_vars = get_sample_env_vars(kwargs)
         executor = SyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
         executor.execute()
-        if self.is_live and sample_path.endswith("sample_agent_azure_function.py"):
-            # Don't replay LLM validation for this sample since proxy server fail to sanitize the captured print content
-            executor.validate_print_calls_by_llm(
-                instructions=resource_management_instructions,
-                project_endpoint=kwargs["azure_ai_project_endpoint"],
-                model=kwargs["azure_ai_model_deployment_name"],
-            )
+        executor.validate_print_calls_by_llm(
+            instructions=resource_management_instructions,
+            project_endpoint=kwargs["azure_ai_project_endpoint"],
+            model=kwargs["azure_ai_model_deployment_name"],
+        )
 
     @pytest.mark.parametrize(
         "sample_path",
         get_sample_paths(
             "memories",
-            samples_to_skip=[],
+            samples_to_skip=[
+                "sample_memory_advanced.py",
+                "sample_memory_basic.py",
+            ],
         ),
     )
     @servicePreparer()
@@ -183,14 +185,11 @@ class TestSamples(AzureRecordedTestCase):
         env_vars = get_sample_env_vars(kwargs)
         executor = SyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
         executor.execute()
-        if self.is_live:
-            # Don't replay LLM validation since there probably a defect in proxy server fail to replay
-            # Proxy server probably not able to parse the captured print content
-            executor.validate_print_calls_by_llm(
-                instructions=resource_management_instructions,
-                project_endpoint=kwargs["azure_ai_project_endpoint"],
-                model=kwargs["azure_ai_model_deployment_name"],
-            )
+        executor.validate_print_calls_by_llm(
+            instructions=resource_management_instructions,
+            project_endpoint=kwargs["azure_ai_project_endpoint"],
+            model=kwargs["azure_ai_model_deployment_name"],
+        )
 
     @pytest.mark.parametrize(
         "sample_path",

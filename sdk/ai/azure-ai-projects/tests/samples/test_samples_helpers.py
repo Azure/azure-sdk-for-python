@@ -4,10 +4,11 @@
 # Licensed under the MIT License.
 # ------------------------------------
 """Shared base code for sample tests - sync dependencies only."""
-from typing import Optional, Mapping, Any
+from typing import Mapping, Any
 
 
-agent_tools_instructions = """We just ran Python code and captured a Python array of print statements.
+agent_tools_instructions = """
+We just ran Python code and captured print/log output in an attached log file (TXT).
 Validate whether sample execution/output is correct for a tool-driven assistant workflow.
 
 Prefer matched/substantive data in the final output when available.
@@ -29,10 +30,11 @@ Important distinction:
 Mark `correct = true` when execution succeeds and the output includes matched/substantive data,
 even if it also asks follow-up questions.
 
-Always include `reason` with a concise explanation tied to the observed print output."""
+Always include `reason` with a concise explanation tied to the observed print output.
+""".strip()
 
-
-memories_instructions = """We just ran Python code and captured a Python array of print statements.
+memories_instructions = """
+We just ran Python code and captured print/log output in an attached log file (TXT).
 Validate whether sample execution/output is correct for a memories workflow.
 
 For memories scenarios, successful output typically shows one or more of:
@@ -54,9 +56,11 @@ Important distinction:
 Mark `correct = true` when execution succeeds and the output is consistent with the sample's intended
 memory behavior, even if no memory matches are found.
 
-Always include `reason` with a concise explanation tied to the observed print output."""
+Always include `reason` with a concise explanation tied to the observed print output.
+""".strip()
 
-agents_instructions = """We just ran Python code and captured a Python array of print statements.
+agents_instructions = """
+We just ran Python code and captured print/log output in an attached log file (TXT).
 Validate whether sample execution/output is correct.
 
 For agents scenarios, successful output typically shows one or more of:
@@ -84,10 +88,11 @@ Important distinction:
 Mark `correct = true` when execution succeeds and the output is consistent with the sample's intended
 agent behavior, including reasonable correspondence between input prompt(s) and final output.
 
-Always include `reason` with a concise explanation tied to the observed print output."""
+Always include `reason` with a concise explanation tied to the observed print output.
+""".strip()
 
-
-resource_management_instructions = """We just ran Python code and captured a Python array of print statements.
+resource_management_instructions = """
+We just ran Python code and captured print/log output in an attached log file (TXT).
 Validate whether sample execution/output is correct for resource-management samples (for example
 connections, files, and deployments).
 
@@ -110,7 +115,8 @@ Important distinction:
 Mark `correct = true` when execution succeeds and output is consistent with the sample's intended
 resource-management behavior.
 
-Always include `reason` with a concise explanation tied to the observed print output."""
+Always include `reason` with a concise explanation tied to the observed print output.
+""".strip()
 
 
 def get_sample_env_vars(env_kwargs: Mapping[str, Any]) -> dict[str, str]:
