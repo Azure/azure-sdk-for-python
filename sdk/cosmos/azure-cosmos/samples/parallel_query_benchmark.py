@@ -29,6 +29,7 @@ import argparse
 import asyncio
 import os
 import statistics
+import sys
 import time
 from azure.cosmos.aio import CosmosClient  # noqa: E402
 
@@ -114,6 +115,10 @@ async def main():
     if not endpoint or not key:
         print("ERROR: Set COSMOS_ENDPOINT and COSMOS_KEY environment variables.")
         sys.exit(1)
+
+    # At this point endpoint and key are guaranteed to be str (not None)
+    assert endpoint is not None
+    assert key is not None
 
     degrees = [int(d.strip()) for d in args.degrees.split(",")]
 
