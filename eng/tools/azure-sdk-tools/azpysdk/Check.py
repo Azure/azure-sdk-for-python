@@ -185,16 +185,6 @@ class Check(abc.ABC):
         targeted: List[ParsedSetup] = []
         targeted_dir = os.getcwd()
 
-        # Narrow discovery to a specific service directory when --service is provided.
-        # "auto" is discarded (treated the same as no value), matching dispatch_checks.py behavior.
-        service = getattr(args, "service", None)
-        if service and service != "auto":
-            service_dir = os.path.join(REPO_ROOT, "sdk", service)
-            if os.path.isdir(service_dir):
-                targeted_dir = service_dir
-            else:
-                logger.warning(f"Service directory '{service_dir}' does not exist, falling back to cwd.")
-
         if args.target == ".":
             try:
                 targeted.append(ParsedSetup.from_path(targeted_dir))
@@ -205,6 +195,16 @@ class Check(abc.ABC):
                 logger.error(f"Exception: {e}")
                 return []
         else:
+            # Narrow discovery to a specific service directory when --service is provided.
+            # "auto" is discarded (treated the same as no value), matching dispatch_checks.py behavior.
+            service = getattr(args, "service", None)
+            if service and service != "auto":
+                service_dir = os.path.join(REPO_ROOT, "sdk", service)
+                if os.path.isdir(service_dir):
+                    targeted_dir = service_dir
+                else:
+                    logger.warning(f"Service directory '{service_dir}' does not exist, falling back to cwd.")
+
             targeted_packages = discover_targeted_packages(args.target, targeted_dir)
             for pkg in targeted_packages:
                 try:
