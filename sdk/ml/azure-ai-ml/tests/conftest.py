@@ -217,17 +217,13 @@ def mock_machinelearning_client(mocker: MockFixture) -> MLClient:
 
 @pytest.fixture
 def mock_machinelearning_registry_client(mocker: MockFixture) -> MLClient:
-    mock_response = json.dumps(
-        {
-            "registryName": "testFeed",
-            "primaryRegionResourceProviderUri": "https://cert-master.experiments.azureml-test.net/",
-            "resourceGroup": "resourceGroup",
-            "subscriptionId": "subscriptionId",
-        }
-    )
+    mock_response = Mock()
+    mock_response.primary_region_resource_provider_uri = "https://cert-master.experiments.azureml-test.net/"
+    mock_response.resource_group = "resourceGroup"
+    mock_response.subscription_id = "subscriptionId"
     mocker.patch(
-        "azure.ai.ml._restclient.registry_discovery.operations._registry_management_non_workspace_operations.RegistryManagementNonWorkspaceOperations.registry_management_non_workspace",
-        return_val=mock_response,
+        "azure.ai.ml._restclient.registry_discovery.operations._operations.RegistryManagementNonWorkspaceOperations.registry_management_non_workspace",
+        return_value=mock_response,
     )
     yield MLClient(
         credential=Mock(spec_set=DefaultAzureCredential),
