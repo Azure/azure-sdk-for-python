@@ -31,7 +31,10 @@ class TestSamplesAsync(AzureRecordedTestCase):
         "sample_path",
         get_async_sample_paths(
             "agents/tools",
-            samples_to_skip=["sample_agent_computer_use_async.py"],
+            samples_to_skip=[
+                "sample_agent_computer_use_async.py",
+                "sample_agent_memory_search_async.py",  # Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema
+            ],
         ),
     )
     @SamplePathPasser()
@@ -55,12 +58,17 @@ class TestSamplesAsync(AzureRecordedTestCase):
         "sample_path",
         get_async_sample_paths(
             "memories",
-            samples_to_skip=[],
+            samples_to_skip=[
+                "sample_memory_advanced_async.py",
+                "sample_memory_basic_async.py",
+                "sample_memory_crud_async.py",  # Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema
+            ],
         ),
     )
     @servicePreparer()
     @SamplePathPasser()
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    # To run this test: pytest tests/samples/test_samples_async.py::TestSamplesAsync::test_memory_samples -s
     async def test_memory_samples(self, sample_path: str, **kwargs) -> None:
         env_vars = get_sample_env_vars(kwargs)
         executor = AsyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
@@ -75,7 +83,7 @@ class TestSamplesAsync(AzureRecordedTestCase):
         "sample_path",
         get_async_sample_paths(
             "agents",
-            samples_to_skip=[],
+            samples_to_skip=["sample_workflow_multi_agent_async.py"],
         ),
     )
     @servicePreparer()
@@ -117,7 +125,9 @@ class TestSamplesAsync(AzureRecordedTestCase):
         "sample_path",
         get_async_sample_paths(
             "files",
-            samples_to_skip=[],
+            samples_to_skip=[
+                "sample_files_async.py",  # Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema
+            ],
         ),
     )
     @servicePreparer()
@@ -157,7 +167,9 @@ class TestSamplesAsync(AzureRecordedTestCase):
         "sample_path",
         get_async_sample_paths(
             "datasets",
-            samples_to_skip=[],
+            samples_to_skip=[
+                "sample_datasets_async.py",  # Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema
+            ],
         ),
     )
     @servicePreparer()

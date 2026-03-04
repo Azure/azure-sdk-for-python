@@ -191,14 +191,6 @@ def add_sanitizers(test_proxy, sanitized_values):
         value="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/connections/connector-name",
     )
 
-    # Sanitize print output from sample validation to prevent replay failures when print statements change
-    # Only targets the validation Responses API call by matching the unique input prefix
-    add_body_key_sanitizer(
-        json_path="$.input",
-        value="sanitized-print-output",
-        regex=r"(?s)print contents array = .*",
-    )
-
     # Remove Stainless headers from OpenAI client requests, since they include platform and OS specific info, which we can't have in recorded requests.
     # Here is an example of all the `x-stainless` headers from a Responses call:
     #   x-stainless-arch: other:amd64
