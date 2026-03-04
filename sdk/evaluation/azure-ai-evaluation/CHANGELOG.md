@@ -4,6 +4,9 @@
 
 ### Bugs Fixed
 
+- Fixed red team scan status stuck at `in_progress` in results.json despite the scan completing, by treating leftover `pending` entries as `failed`.
+- Fixed `ungrounded_attributes` risk category being silently skipped due to a cache key mismatch (`isa` vs `ungrounded_attributes`) in the Foundry execution path.
+- Fixed RAI evaluation service errors (`ServiceInvocationException`) incorrectly inflating attack success rate by treating error responses as undetermined instead of attack success.
 - Fixed Foundry red team double-evaluation that caused ~3x scan latency by removing redundant evaluation_processor.evaluate() call.
 - Fixed lost red team attack details where baseline overwrites wiped evaluation results.
 - Fixed incorrect per_testing_criteria that showed attack strategies alongside risk categories.
