@@ -22,10 +22,7 @@ from azure.core.exceptions import ResourceExistsError
 
 
 class AppConfigTestCase(AzureRecordedTestCase):
-
-    def __init__(self, method_name):
-        super().__init__(method_name)
-        self.client = None
+    client = None
 
     def create_aad_client(self, appconfiguration_endpoint_string, audience=None):
         cred = self.get_credential(AzureAppConfigurationClient)
