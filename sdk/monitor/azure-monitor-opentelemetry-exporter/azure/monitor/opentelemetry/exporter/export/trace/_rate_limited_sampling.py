@@ -91,22 +91,32 @@ class RateLimitedSamplingPercentage:
 
 
 class RateLimitedSampler(Sampler):
-    def __init__(self, traces_per_second: float = 5.0):
-        sampling_arg = os.environ.get(OTEL_TRACES_SAMPLER_ARG)
-        try:
-            sampler_value = float(sampling_arg) if sampling_arg is not None else traces_per_second
-            if sampler_value < 0.0:
-                _logger.error("Invalid value for OTEL_TRACES_SAMPLER_ARG. It should be a non-negative number.")
+    def __init__(self, traces_per_second: Optional[float] = None):
+        default_traces_per_second = 5.0
+        if traces_per_second is not None:
+            if traces_per_second < 0.0:
+                _logger.error("Invalid value for traces per second. It should be a non-negative number.")
+                traces_per_second = default_traces_per_second
             else:
-                _logger.info("Using rate limited sampler: %s traces per second", sampler_value)
-                traces_per_second = sampler_value
-        except ValueError as e:
-            _logger.error(  # pylint: disable=C
-                _INVALID_TRACES_PER_SECOND_MESSAGE,
-                OTEL_TRACES_SAMPLER_ARG,
-                traces_per_second,
-                e,
-            )
+                _logger.info("Using rate limited sampler: %s traces per second", traces_per_second)
+        else:
+            sampling_arg = os.environ.get(OTEL_TRACES_SAMPLER_ARG)
+            try:
+                sampler_value = float(sampling_arg) if sampling_arg is not None else default_traces_per_second
+                if sampler_value < 0.0:
+                    _logger.error("Invalid value for OTEL_TRACES_SAMPLER_ARG. It should be a non-negative number.")
+                    traces_per_second = default_traces_per_second
+                else:
+                    _logger.info("Using rate limited sampler: %s traces per second", sampler_value)
+                    traces_per_second = sampler_value
+            except ValueError as e:
+                _logger.error(  # pylint: disable=C
+                    _INVALID_TRACES_PER_SECOND_MESSAGE,
+                    OTEL_TRACES_SAMPLER_ARG,
+                    default_traces_per_second,
+                    e,
+                )
+                traces_per_second = default_traces_per_second
 
         self._sampling_percentage_generator = RateLimitedSamplingPercentage(traces_per_second)
         self._description = f"RateLimitedSampler{{{traces_per_second}}}"

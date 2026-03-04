@@ -37,18 +37,18 @@ class ApplicationInsightsSampler(Sampler):
 
     # sampling_ratio must take a value in the range [0,1]
     def __init__(self, sampling_ratio: Optional[float] = None):
-        default_value = 1.0
+        default_sampling_ratio = 1.0
         if sampling_ratio is not None:
             if sampling_ratio < 0.0 or sampling_ratio > 1.0:
-                _logger.error("Sampling ratio must be in the range [0.0, 1.0]. Defaulting to %s.", default_value)
-                sampling_ratio = default_value
+                _logger.error("Sampling ratio must be in the range [0.0, 1.0]. Defaulting to %s.", default_sampling_ratio)
+                sampling_ratio = default_sampling_ratio
         else:
             sampling_arg = os.environ.get(OTEL_TRACES_SAMPLER_ARG)
             try:
-                sampler_value = float(sampling_arg) if sampling_arg is not None else default_value
+                sampler_value = float(sampling_arg) if sampling_arg is not None else default_sampling_ratio
                 if sampler_value < 0.0 or sampler_value > 1.0:
-                    _logger.error("Invalid value for OTEL_TRACES_SAMPLER_ARG. It should be a value between 0 and 1. Defaulting to %s.", default_value)
-                    sampling_ratio = default_value
+                    _logger.error("Invalid value for OTEL_TRACES_SAMPLER_ARG. It should be a value between 0 and 1. Defaulting to %s.", default_sampling_ratio)
+                    sampling_ratio = default_sampling_ratio
                 else:
                     _logger.info("Using sampling ratio: %s", sampler_value)
                     sampling_ratio = sampler_value
@@ -56,10 +56,10 @@ class ApplicationInsightsSampler(Sampler):
                 _logger.error(  # pylint: disable=C
                     _INVALID_FLOAT_MESSAGE,
                     OTEL_TRACES_SAMPLER_ARG,
-                    default_value,
+                    default_sampling_ratio,
                     e,
                 )
-                sampling_ratio = default_value
+                sampling_ratio = default_sampling_ratio
 
         self._ratio = sampling_ratio
         self._sample_rate = sampling_ratio * 100
