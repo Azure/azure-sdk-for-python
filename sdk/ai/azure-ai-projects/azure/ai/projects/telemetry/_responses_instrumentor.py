@@ -63,7 +63,6 @@ from ._utils import (
     RESPONSES_PROVIDER,
 )
 
-
 _Unset: Any = object()
 
 logger = logging.getLogger(__name__)
@@ -108,7 +107,7 @@ class ResponsesInstrumentor:
     and provides functionality to check whether instrumentation is active.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         if not _tracing_library_available:
             logger.warning(
                 "OpenTelemetry is not available. "

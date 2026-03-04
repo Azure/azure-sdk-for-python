@@ -6,6 +6,7 @@
 """
 Tests for ResponsesInstrumentor with Code Interpreter tool (async).
 """
+
 import os
 import pytest
 from io import BytesIO
@@ -23,7 +24,7 @@ from devtools_testutils import RecordedTransport
 from azure.ai.projects.models import (
     PromptAgentDefinition,
     CodeInterpreterTool,
-    CodeInterpreterContainerAuto,
+    AutoCodeInterpreterToolParam,
 )
 
 from test_base import servicePreparer
@@ -95,7 +96,7 @@ TRANSPORTATION,Contoso air,1100000
                 definition=PromptAgentDefinition(
                     model=deployment_name,
                     instructions="You are a helpful assistant that can execute Python code to analyze data.",
-                    tools=[CodeInterpreterTool(container=CodeInterpreterContainerAuto(file_ids=[file.id]))],
+                    tools=[CodeInterpreterTool(container=AutoCodeInterpreterToolParam(file_ids=[file.id]))],
                 ),
             )
 
@@ -282,7 +283,7 @@ TRANSPORTATION,Contoso air,1100000
                 definition=PromptAgentDefinition(
                     model=deployment_name,
                     instructions="You are a helpful assistant that can execute Python code to analyze data.",
-                    tools=[CodeInterpreterTool(container=CodeInterpreterContainerAuto(file_ids=[file.id]))],
+                    tools=[CodeInterpreterTool(container=AutoCodeInterpreterToolParam(file_ids=[file.id]))],
                 ),
             )
 
@@ -473,7 +474,7 @@ TRANSPORTATION,Contoso air,1100000
                 definition=PromptAgentDefinition(
                     model=deployment_name,
                     instructions="You are a helpful assistant that can execute Python code to analyze data.",
-                    tools=[CodeInterpreterTool(container=CodeInterpreterContainerAuto(file_ids=[file.id]))],
+                    tools=[CodeInterpreterTool(container=AutoCodeInterpreterToolParam(file_ids=[file.id]))],
                 ),
             )
 
@@ -664,7 +665,7 @@ TRANSPORTATION,Contoso air,1100000
                 definition=PromptAgentDefinition(
                     model=deployment_name,
                     instructions="You are a helpful assistant that can execute Python code to analyze data.",
-                    tools=[CodeInterpreterTool(container=CodeInterpreterContainerAuto(file_ids=[file.id]))],
+                    tools=[CodeInterpreterTool(container=AutoCodeInterpreterToolParam(file_ids=[file.id]))],
                 ),
             )
 

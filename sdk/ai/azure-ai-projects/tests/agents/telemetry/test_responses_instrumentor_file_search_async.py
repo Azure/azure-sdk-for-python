@@ -6,6 +6,7 @@
 """
 Async tests for ResponsesInstrumentor with File Search tool.
 """
+
 import os
 import pytest
 from io import BytesIO
