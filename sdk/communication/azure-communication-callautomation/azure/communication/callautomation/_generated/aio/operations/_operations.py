@@ -1560,9 +1560,9 @@ class CallConnectionOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.MoveParticipantsResponse:
-        """Add a participant to the call.
+        """Move a participant to the call.
 
-        Add a participant to the call.
+        Move a participant to the call.
 
         :param call_connection_id: The call connection Id. Required.
         :type call_connection_id: str
@@ -1586,9 +1586,9 @@ class CallConnectionOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.MoveParticipantsResponse:
-        """Add a participant to the call.
+        """Move a participant to the call.
 
-        Add a participant to the call.
+        Move a participant to the call.
 
         :param call_connection_id: The call connection Id. Required.
         :type call_connection_id: str
@@ -1609,9 +1609,9 @@ class CallConnectionOperations:
         move_participant_request: Union[_models.MoveParticipantsRequest, IO[bytes]],
         **kwargs: Any
     ) -> _models.MoveParticipantsResponse:
-        """Add a participant to the call.
+        """Move a participant to the call.
 
-        Add a participant to the call.
+        Move a participant to the call.
 
         :param call_connection_id: The call connection Id. Required.
         :type call_connection_id: str
