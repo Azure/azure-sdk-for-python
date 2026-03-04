@@ -118,7 +118,7 @@ steps:
 
   - pwsh: |
       which python
-      sdk_build -d "$(Build.ArtifactStagingDirectory)" "$(TargetingString)" --inactive
+      sdk_build -d "$(Build.ArtifactStagingDirectory)" "$(TargetingString)" --inactive --service ${{ parameters.ServiceDirectory }}
     displayName: 'Generate Packages'
     condition: and(succeeded(), or(eq(variables['ENABLE_EXTENSION_BUILD'], 'true'), eq('${{ parameters.ArtifactSuffix }}', 'linux')))
     timeoutInMinutes: 80
