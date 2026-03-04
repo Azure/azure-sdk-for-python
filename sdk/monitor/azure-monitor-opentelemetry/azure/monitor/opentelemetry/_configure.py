@@ -169,20 +169,16 @@ def configure_azure_monitor(**kwargs) -> None:  # pylint: disable=C4758
 def _setup_tracing(configurations: Dict[str, ConfigurationValue]):
     resource: Resource = configurations[RESOURCE_ARG]  # type: ignore
     enable_performance_counters_config = configurations[ENABLE_PERFORMANCE_COUNTERS_ARG]
-    if SAMPLER_TYPE in configurations:
-        sampler_type = configurations[SAMPLER_TYPE]
-        if sampler_type == RATE_LIMITED_SAMPLER:
-            tracer_provider = TracerProvider(
-            sampler=RateLimitedSampler(), resource=resource
-        )
-        elif sampler_type == FIXED_PERCENTAGE_SAMPLER:
-            tracer_provider = TracerProvider(
-                sampler=ApplicationInsightsSampler(), resource=resource
-            )
-        else:
-            tracer_provider = TracerProvider(
-                sampler = _get_sampler_from_name(SAMPLER_TYPE), resource=resource)
-
+    sampler_type = configurations.get(SAMPLER_TYPE, RATE_LIMITED_SAMPLER)
+    if sampler_type == RATE_LIMITED_SAMPLER:
+        traces_per_second = configurations.get(SAMPLING_TRACES_PER_SECOND_ARG)
+        sampler = RateLimitedSampler() if traces_per_second is None else RateLimitedSampler(traces_per_second=traces_per_second)
+    elif sampler_type == FIXED_PERCENTAGE_SAMPLER:
+        sampling_ratio = configurations.get(SAMPLING_RATIO_ARG)
+        sampler = ApplicationInsightsSampler() if sampling_ratio is None else ApplicationInsightsSampler(sampling_ratio=sampling_ratio)
+    else:
+        sampler = _get_sampler_from_name(sampler_type)
+    tracer_provider = TracerProvider(sampler=sampler, resource=resource)
 
     for span_processor in configurations[SPAN_PROCESSORS_ARG]:  # type: ignore
         tracer_provider.add_span_processor(span_processor)  # type: ignore

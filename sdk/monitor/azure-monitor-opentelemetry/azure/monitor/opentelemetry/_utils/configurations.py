@@ -100,7 +100,7 @@ def _get_configurations(**kwargs) -> Dict[str, ConfigurationValue]:
     _default_logger_name(configurations)
     _default_logging_formatter(configurations)
     _default_resource(configurations)
-    _default_sampling_ratio(configurations)
+    _default_sampler(configurations)
     _default_instrumentation_options(configurations)
     _default_span_processors(configurations)
     _default_log_record_processors(configurations)
@@ -181,23 +181,29 @@ def _default_resource(configurations):
         configurations[RESOURCE_ARG] = Resource.create(configurations[RESOURCE_ARG].attributes)
 
 
-# pylint: disable=too-many-statements,too-many-branches
-def _default_sampling_ratio(configurations):
-    default_value_for_rate_limited_sampler = 5.0
-    SAMPLER_TYPE = environ.get(OTEL_TRACES_SAMPLER)
-
-    if SAMPLER_TYPE is None or SAMPLER_TYPE not in SUPPORTED_OTEL_SAMPLERS:
-         # Handle all other cases (no sampler type specified or unsupported sampler type)
-        if configurations.get(SAMPLING_TRACES_PER_SECOND_ARG) is None:
-            configurations[SAMPLING_TRACES_PER_SECOND_ARG] = default_value_for_rate_limited_sampler
-        if SAMPLER_TYPE is not None:
-            _logger.error(  # pylint: disable=C
-                "Invalid argument for the sampler to be used for tracing. "
-                "Supported values are %s. Defaulting to %s: %s",
-                SUPPORTED_OTEL_SAMPLERS,
-                RATE_LIMITED_SAMPLER,
-                configurations[SAMPLING_TRACES_PER_SECOND_ARG],
-            )
+def _default_sampler(configurations):
+    sampler = (environ.get(OTEL_TRACES_SAMPLER) or "").strip() or None
+    if sampler in SUPPORTED_OTEL_SAMPLERS:
+        configurations[SAMPLER_TYPE] = sampler
+    elif sampler is not None:
+        _logger.error(  # pylint: disable=C
+            "Invalid value: %s, provided for the sampler to be used for tracing. "
+            "Supported values are %s. Defaulting to %s: %s",
+            sampler, SUPPORTED_OTEL_SAMPLERS, RATE_LIMITED_SAMPLER, "5.0 traces per second",
+        )
+        configurations[SAMPLER_TYPE] = RATE_LIMITED_SAMPLER
+    elif configurations.get("sampling_ratio") is not None:
+        configurations[SAMPLER_TYPE] = FIXED_PERCENTAGE_SAMPLER
+        configurations[SAMPLING_RATIO_ARG] = configurations["sampling_ratio"]
+    elif configurations.get("traces_per_second") is not None:
+        configurations[SAMPLER_TYPE] = RATE_LIMITED_SAMPLER
+        configurations[SAMPLING_TRACES_PER_SECOND_ARG] = configurations["traces_per_second"]
+    else:
+        _logger.info(  # pylint: disable=C
+            "No sampler specified. Defaulting to %s: %s", RATE_LIMITED_SAMPLER, "5.0 traces per second",
+        )
+        configurations[SAMPLER_TYPE] = RATE_LIMITED_SAMPLER
+    print(f"Sampler type set to: {configurations[SAMPLER_TYPE]}")
 
 
 def _default_instrumentation_options(configurations):
@@ -288,9 +294,8 @@ def _get_sampler_from_name(sampler_type):
         return ALWAYS_OFF
     if sampler_type == TRACE_ID_RATIO_SAMPLER:
         try:
-            sampler_value = float(sampler_arg) if sampler_arg is not None else default_value
             if sampler_value < 0.0 or sampler_value > 1.0:
-                _logger.error("Invalid argument value for TRACE_ID_RATIO_SAMPLER. It should be a value between 0 and 1.")
+                _logger.error("Invalid sampler argument for TRACE_ID_RATIO_SAMPLER. It should be a value between 0 and 1.")
                 sampler_value = default_value
             else:
                 _logger.info("Using sampling value: %s", sampler_value)
@@ -307,9 +312,8 @@ def _get_sampler_from_name(sampler_type):
         return ParentBased(ALWAYS_OFF)
     if sampler_type == PARENT_BASED_TRACE_ID_RATIO_SAMPLER:
         try:
-            sampler_value = float(sampler_arg) if sampler_arg is not None else default_value
             if sampler_value < 0.0 or sampler_value > 1.0:
-                _logger.error("Invalid argument value for PARENT_BASED_TRACE_ID_RATIO_SAMPLER. It should be a value between 0 and 1.")
+                _logger.error("Invalid sampler argument for PARENT_BASED_TRACE_ID_RATIO_SAMPLER. It should be a value between 0 and 1.")
                 sampler_value = default_value
             else:
                 _logger.info("Using sampling value: %s", sampler_value)

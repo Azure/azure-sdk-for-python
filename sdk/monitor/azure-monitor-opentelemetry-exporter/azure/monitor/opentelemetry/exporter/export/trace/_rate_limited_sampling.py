@@ -6,6 +6,7 @@ import os
 import threading
 import time
 from typing import Optional, Sequence
+from logging import getLogger
 from opentelemetry.context import Context
 from opentelemetry.trace import Link, SpanKind, format_trace_id
 from opentelemetry.sdk.trace.sampling import (
@@ -29,6 +30,9 @@ from azure.monitor.opentelemetry.exporter.export.trace._utils import (
     parent_context_sampling,
 )
 
+_INVALID_TRACES_PER_SECOND_MESSAGE = "Value of %s must be a positive number for traces per second. Defaulting to %s: %s"
+
+_logger = getLogger(__name__)
 
 class _State:
     def __init__(self, effective_window_count: float, effective_window_nanoseconds: float, last_nano_time: int):
@@ -88,9 +92,21 @@ class RateLimitedSamplingPercentage:
 
 class RateLimitedSampler(Sampler):
     def __init__(self, traces_per_second: float = 5.0):
-        env_sampling_traces_per_second = os.environ.get(OTEL_TRACES_SAMPLER_ARG)
-        if env_sampling_traces_per_second is not None:
-            traces_per_second = float(env_sampling_traces_per_second)
+        sampling_arg = os.environ.get(OTEL_TRACES_SAMPLER_ARG)
+        try:
+            sampler_value = float(sampling_arg) if sampling_arg is not None else traces_per_second
+            if sampler_value < 0.0:
+                _logger.error("Invalid value for OTEL_TRACES_SAMPLER_ARG. It should be a non-negative number.")
+            else:
+                _logger.info("Using rate limited sampler: %s traces per second", sampler_value)
+                traces_per_second = sampler_value
+        except ValueError as e:
+            _logger.error(  # pylint: disable=C
+                _INVALID_TRACES_PER_SECOND_MESSAGE,
+                OTEL_TRACES_SAMPLER_ARG,
+                traces_per_second,
+                e,
+            )
 
         self._sampling_percentage_generator = RateLimitedSamplingPercentage(traces_per_second)
         self._description = f"RateLimitedSampler{{{traces_per_second}}}"

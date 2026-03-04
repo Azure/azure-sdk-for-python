@@ -2,6 +2,7 @@
 # Licensed under the MIT License.
 import os
 from typing import Optional, Sequence
+from logging import getLogger
 
 from opentelemetry.context import Context
 from opentelemetry.trace import Link, SpanKind, format_trace_id
@@ -22,6 +23,9 @@ from azure.monitor.opentelemetry.exporter.export.trace._utils import _get_DJB2_s
 
 from azure.monitor.opentelemetry.exporter._constants import _SAMPLE_RATE_KEY
 
+_INVALID_FLOAT_MESSAGE = "Value of %s must be a float. Defaulting to %s: %s"
+
+_logger = getLogger(__name__)
 
 # Sampler is responsible for the following:
 # Implements same trace id hashing algorithm so that traces are sampled the same across multiple nodes (via AI SDKS)
@@ -32,12 +36,31 @@ class ApplicationInsightsSampler(Sampler):
     """Sampler that implements the same probability sampling algorithm as the ApplicationInsights SDKs."""
 
     # sampling_ratio must take a value in the range [0,1]
-    def __init__(self, sampling_ratio: float = 1.0):
-        env_sampling_ratio = os.environ.get(OTEL_TRACES_SAMPLER_ARG)
-        if env_sampling_ratio is not None:
-            sampling_ratio = float(env_sampling_ratio)
-        if not 0.0 <= sampling_ratio <= 1.0:
-            raise ValueError("sampling_ratio must be in the range [0,1]")
+    def __init__(self, sampling_ratio: Optional[float] = None):
+        default_value = 1.0
+        if sampling_ratio is not None:
+            if sampling_ratio < 0.0 or sampling_ratio > 1.0:
+                _logger.error("Sampling ratio must be in the range [0.0, 1.0]. Defaulting to %s.", default_value)
+                sampling_ratio = default_value
+        else:
+            sampling_arg = os.environ.get(OTEL_TRACES_SAMPLER_ARG)
+            try:
+                sampler_value = float(sampling_arg) if sampling_arg is not None else default_value
+                if sampler_value < 0.0 or sampler_value > 1.0:
+                    _logger.error("Invalid value for OTEL_TRACES_SAMPLER_ARG. It should be a value between 0 and 1. Defaulting to %s.", default_value)
+                    sampling_ratio = default_value
+                else:
+                    _logger.info("Using sampling ratio: %s", sampler_value)
+                    sampling_ratio = sampler_value
+            except ValueError as e:
+                _logger.error(  # pylint: disable=C
+                    _INVALID_FLOAT_MESSAGE,
+                    OTEL_TRACES_SAMPLER_ARG,
+                    default_value,
+                    e,
+                )
+                sampling_ratio = default_value
+
         self._ratio = sampling_ratio
         self._sample_rate = sampling_ratio * 100
 
