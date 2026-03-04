@@ -22,7 +22,7 @@ class DummyTokenCredential(TokenCredential):
         return None
 
 
-@pytest.fixture(autouse=True)
+@pytest.fixture
 def patch_openai(monkeypatch):
     # Ensure no real network/token calls are made during the test.
     monkeypatch.setattr("azure.ai.projects._patch.get_bearer_token_provider", lambda *_, **__: "token-provider")
@@ -103,7 +103,9 @@ class TestResponses(TestBase):
             ),
         ],
     )
-    def test_user_agent_patching_via_response_create(self, project_ua, openai_default_header, expected_ua):
+    def test_user_agent_patching_via_response_create(
+        self, project_ua, openai_default_header, expected_ua, patch_openai
+    ):
         client = _build_client(project_ua, openai_default_header)
 
         calls = []
