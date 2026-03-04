@@ -183,6 +183,8 @@ class RAIServiceScorer(TrueFalseScorer):
             result_label = ""
             passed = None
 
+            matched_result_dict = None
+
             if hasattr(eval_result, "results") or (isinstance(eval_result, dict) and "results" in eval_result):
                 results = eval_result.results if hasattr(eval_result, "results") else eval_result.get("results", [])
                 results = results or []
@@ -197,7 +199,21 @@ class RAIServiceScorer(TrueFalseScorer):
                         threshold = result_dict.get("threshold")
                         passed = result_dict.get("passed")
                         result_label = result_dict.get("label") or ""
+                        matched_result_dict = result_dict
                         break
+
+            # Check for evaluation service errors (e.g. ServiceInvocationException).
+            # These return score=0.0 and passed=False but with properties.outcome="error",
+            # meaning the evaluation didn't actually run.  Raising here lets the existing
+            # except block re-raise so PyRIT marks the score as UNDETERMINED.
+            if matched_result_dict is not None:
+                result_properties = matched_result_dict.get("properties", {})
+                if isinstance(result_properties, dict) and result_properties.get("outcome") == "error":
+                    error_detail = result_properties.get("error", "Unknown evaluation error")
+                    raise RuntimeError(
+                        f"RAI evaluation service returned an error for {metric_name}: {error_detail}. "
+                        f"Score will be treated as undetermined."
+                    )
 
             if raw_score is None:
                 self.logger.warning(f"No matching result found for metric '{metric_name}' in evaluation response.")
