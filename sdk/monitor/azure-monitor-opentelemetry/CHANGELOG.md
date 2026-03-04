@@ -6,12 +6,12 @@
 - Add Browser SDK loader feature ([#42904](https://github.com/Azure/azure-sdk-for-python/pull/44162))
 
 ### Breaking Changes
-- Change import path for `LoggingHandler` to match the upstream breaking changes
-([#XXXXX](https://github.com/Azure/azure-sdk-for-python/pull/XXXXX))
 
 ### Bugs Fixed
 
 ### Other Changes
+- Change import path for `LoggingHandler` to accomodate upstream breaking changes
+([#45516](https://github.com/Azure/azure-sdk-for-python/pull/45516))
 
 ## 1.8.6 (2026-02-05)
 
