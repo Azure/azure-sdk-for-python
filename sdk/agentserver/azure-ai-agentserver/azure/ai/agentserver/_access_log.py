@@ -102,7 +102,10 @@ class AccessLogHelper:
 
     @property
     def enabled(self) -> bool:
-        """Whether access logging is active."""
+        """Whether access logging is active.
+
+        :rtype: bool
+        """
         return self._enabled
 
     def log_request(
