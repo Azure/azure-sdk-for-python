@@ -23,7 +23,7 @@ class DatasetDataplaneOperations(_ScopeDependentOperations):
         self._operation = service_client.data_version_ops
 
     def get_batch_dataset_uris(self, dataset_ids: List[str]) -> BatchDataUriResponse:
-        batch_uri_request = BatchGetResolvedURIs(values=dataset_ids)
+        batch_uri_request = BatchGetResolvedURIs(values_property=dataset_ids)
         return self._operation.batch_get_resolved_uris(
             self._operation_scope.subscription_id,
             self._operation_scope.resource_group_name,
