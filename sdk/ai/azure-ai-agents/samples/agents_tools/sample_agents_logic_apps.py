@@ -6,33 +6,30 @@
 
 """
 DESCRIPTION:
-    This sample demonstrates how to use agents with Logic Apps to execute the task of sending an email.
+    This sample shows how to use agents with Azure Logic Apps to execute a task, such as sending an email.
 
 PREREQUISITES:
-    1) Create a Logic App within the same resource group as your Azure AI Project in Azure Portal
-    2) To configure your Logic App to send emails, you must include an HTTP request trigger that is
-    configured to accept JSON with 'to', 'subject', and 'body'. The guide to creating a Logic App Workflow
-    can be found here:
-    https://learn.microsoft.com/en-us/azure/ai-services/openai/how-to/agents-logic-apps#create-logic-apps-workflows-for-function-calling
+    1) Create a Consumption logic app resource in the same resource group as your Microsoft Foundry project in Azure portal.
+    2) For the agent to run the logic app workflow, you must start the workflow with the HTTP **Request** trigger. 
+    To set up the trigger and workflow for sending emails, configure the trigger to accept JSON with the 'to', 'subject', 
+    and 'body' parameter values. To learn how to create a logic app resource and workflow, see: 
+    https://learn.microsoft.com/azure/foundry-classic/openai/how-to/assistants-logic-apps#create-logic-apps-workflows-for-function-calling
 
 USAGE:
     python sample_agents_logic_apps.py
 
-    Before running the sample:
+    Before you run the sample, install the following Azure-related Python client libraries:
 
     pip install azure-ai-projects azure-ai-agents azure-identity azure-mgmt-logic
 
-    Set this environment variables with your own values:
-    1) PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
-                          page of your Azure AI Foundry portal.
-    2) MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in
-       the "Models + endpoints" tab in your Azure AI Foundry project.
+    Set the following environment variables with your own values:
+    1) PROJECT_ENDPOINT - The Microsoft Foundry project endpoint. To find this value, in the Foundry portal, go to your project's "Overview" page.
+    2) MODEL_DEPLOYMENT_NAME - The deployment name for the AI model. To find this value, in the Foundry portal, go to your project's "Models + endpoints" page, and look in the "Name" column.
 
     Replace the following values in the sample with your own values:
-    1) <LOGIC_APP_NAME> - The name of the Logic App you created.
-    2) <TRIGGER_NAME> - The name of the trigger in the Logic App you created (the default name for HTTP
-        triggers in the Azure Portal is "When_a_HTTP_request_is_received").
-    3) <RECIPIENT_EMAIL> - The email address of the recipient.
+    1) <LOGIC_APP_NAME> - The name for the logic app you created.
+    2) <TRIGGER_NAME> - The name for the trigger that starts the logic app workflow. The default JSON name for HTTP **Request** triggers is "When_an_HTTP_request_is_received".
+    3) <RECIPIENT_EMAIL> - The email address for the recipient.
 """
 
 
