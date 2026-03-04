@@ -2,8 +2,6 @@
 
 ## 1.32.0 (2026-03-04)
 
-### Features Added
-
 ### Bugs Fixed
 
 - Skip _list_secrets for identity-based datastores to prevent noisy telemetry traces.
