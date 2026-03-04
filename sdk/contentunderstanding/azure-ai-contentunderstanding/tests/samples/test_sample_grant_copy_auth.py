@@ -59,7 +59,7 @@ class TestSampleGrantCopyAuth(ContentUnderstandingClientTestBase):
 
         # Get variables from test proxy (recorded values in playback, empty dict in recording)
         variables = kwargs.pop("variables", {})
-        
+
         try:
             # Always use placeholder values in variables to avoid storing real resource IDs/regions
             # Real values are read from environment for API calls (they'll be sanitized in request bodies)
@@ -69,7 +69,7 @@ class TestSampleGrantCopyAuth(ContentUnderstandingClientTestBase):
             source_region = variables.setdefault("source_region", "placeholder-source-region")
             target_resource_id = variables.setdefault("target_resource_id", "placeholder-target-resource-id")
             target_region = variables.setdefault("target_region", "placeholder-target-region")
-            
+
             # For actual API calls, use real values from environment if available (in live mode)
             # These will be sanitized in request/response bodies by conftest sanitizers
             if is_live():
@@ -88,7 +88,7 @@ class TestSampleGrantCopyAuth(ContentUnderstandingClientTestBase):
                 env_target_region = os.environ.get("CONTENTUNDERSTANDING_TARGET_REGION")
                 if env_target_region:
                     target_region = env_target_region
-            
+
             target_key = os.environ.get("CONTENTUNDERSTANDING_TARGET_KEY")
 
             # Only require environment variables in live mode

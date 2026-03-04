@@ -10,6 +10,15 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
+class _AgentDefinitionOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Feature opt-in keys for agent definition operations supporting hosted or workflow agents."""
+
+    HOSTED_AGENTS_V1_PREVIEW = "HostedAgents=V1Preview"
+    """HOSTED_AGENTS_V1_PREVIEW."""
+    WORKFLOW_AGENTS_V1_PREVIEW = "WorkflowAgents=V1Preview"
+    """WORKFLOW_AGENTS_V1_PREVIEW."""
+
+
 class AgentKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of AgentKind."""
 
@@ -17,8 +26,6 @@ class AgentKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """PROMPT."""
     HOSTED = "hosted"
     """HOSTED."""
-    CONTAINER_APP = "container_app"
-    """CONTAINER_APP."""
     WORKFLOW = "workflow"
     """WORKFLOW."""
 
@@ -186,6 +193,24 @@ class ContainerMemoryLimit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """MEMORY_64GB."""
 
 
+class ContainerNetworkPolicyParamType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of ContainerNetworkPolicyParamType."""
+
+    DISABLED = "disabled"
+    """DISABLED."""
+    ALLOWLIST = "allowlist"
+    """ALLOWLIST."""
+
+
+class ContainerSkillType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of ContainerSkillType."""
+
+    SKILL_REFERENCE = "skill_reference"
+    """SKILL_REFERENCE."""
+    INLINE = "inline"
+    """INLINE."""
+
+
 class CredentialType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The credential type used by the connection."""
 
@@ -333,15 +358,9 @@ class EvaluatorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Custom evaluator."""
 
 
-class FoundryFeaturesOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class _FoundryFeaturesOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of FoundryFeaturesOptInKeys."""
 
-    CONTAINER_AGENTS_V1_PREVIEW = "ContainerAgents=V1Preview"
-    """CONTAINER_AGENTS_V1_PREVIEW."""
-    HOSTED_AGENTS_V1_PREVIEW = "HostedAgents=V1Preview"
-    """HOSTED_AGENTS_V1_PREVIEW."""
-    WORKFLOW_AGENTS_V1_PREVIEW = "WorkflowAgents=V1Preview"
-    """WORKFLOW_AGENTS_V1_PREVIEW."""
     EVALUATIONS_V1_PREVIEW = "Evaluations=V1Preview"
     """EVALUATIONS_V1_PREVIEW."""
     SCHEDULES_V1_PREVIEW = "Schedules=V1Preview"
@@ -354,6 +373,17 @@ class FoundryFeaturesOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """MEMORY_STORES_V1_PREVIEW."""
 
 
+class FunctionShellToolParamEnvironmentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of FunctionShellToolParamEnvironmentType."""
+
+    CONTAINER_AUTO = "container_auto"
+    """CONTAINER_AUTO."""
+    LOCAL = "local"
+    """LOCAL."""
+    CONTAINER_REFERENCE = "container_reference"
+    """CONTAINER_REFERENCE."""
+
+
 class GrammarSyntax1(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of GrammarSyntax1."""
 
@@ -361,6 +391,17 @@ class GrammarSyntax1(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """LARK."""
     REGEX = "regex"
     """REGEX."""
+
+
+class ImageGenActionEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of ImageGenActionEnum."""
+
+    GENERATE = "generate"
+    """GENERATE."""
+    EDIT = "edit"
+    """EDIT."""
+    AUTO = "auto"
+    """AUTO."""
 
 
 class IndexType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -376,8 +417,9 @@ class IndexType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 class InputFidelity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Control how much effort the model will exert to match the style and features, especially facial
-    features, of input images. This parameter is only supported for ``gpt-image-1``. Unsupported
-    for ``gpt-image-1-mini``. Supports ``high`` and ``low``. Defaults to ``low``.
+    features, of input images. This parameter is only supported for ``gpt-image-1`` and
+    ``gpt-image-1.5`` and later models, unsupported for ``gpt-image-1-mini``. Supports ``high`` and
+    ``low``. Defaults to ``low``.
     """
 
     HIGH = "high"
@@ -504,8 +546,8 @@ class RankerVersionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     AUTO = "auto"
     """AUTO."""
-    DEFAULT2024_11_15 = "default-2024-11-15"
-    """DEFAULT2024_11_15."""
+    DEFAULT_2024_11_15 = "default-2024-11-15"
+    """DEFAULT_2024_11_15."""
 
 
 class RecurrenceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -620,8 +662,8 @@ class ToolChoiceParamType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """WEB_SEARCH_PREVIEW."""
     COMPUTER_USE_PREVIEW = "computer_use_preview"
     """COMPUTER_USE_PREVIEW."""
-    WEB_SEARCH_PREVIEW2025_03_11 = "web_search_preview_2025_03_11"
-    """WEB_SEARCH_PREVIEW2025_03_11."""
+    WEB_SEARCH_PREVIEW_2025_03_11 = "web_search_preview_2025_03_11"
+    """WEB_SEARCH_PREVIEW_2025_03_11."""
     IMAGE_GENERATION = "image_generation"
     """IMAGE_GENERATION."""
     CODE_INTERPRETER = "code_interpreter"
