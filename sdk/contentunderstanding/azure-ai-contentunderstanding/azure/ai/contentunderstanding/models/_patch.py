@@ -11,7 +11,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 
 import re
 from enum import Enum
-from typing import Any, Dict, List, Optional, TypeVar
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, TypeVar
 from azure.core import CaseInsensitiveEnumMeta
 from azure.core.polling import LROPoller, PollingMethod
 from ._models import (
@@ -27,8 +27,50 @@ from ._models import (
     ContentField,
 )
 
-# Note: The .value property is added to ContentField classes at runtime in patch_sdk()
-# Type annotations are set on the classes' __annotations__ for type checker support
+# Type-only redeclarations so type checkers (pyright / mypy) see the .value
+# property that patch_sdk() adds at runtime.  Each class inherits from the
+# generated version, preserving all original attributes.
+if TYPE_CHECKING:
+
+    class ContentField(ContentField):  # type: ignore[no-redef]
+        @property
+        def value(self) -> Any: ...
+
+    class StringField(StringField):  # type: ignore[no-redef]
+        @property
+        def value(self) -> Optional[str]: ...
+
+    class IntegerField(IntegerField):  # type: ignore[no-redef]
+        @property
+        def value(self) -> Optional[int]: ...
+
+    class NumberField(NumberField):  # type: ignore[no-redef]
+        @property
+        def value(self) -> Optional[float]: ...
+
+    class BooleanField(BooleanField):  # type: ignore[no-redef]
+        @property
+        def value(self) -> Optional[bool]: ...
+
+    class DateField(DateField):  # type: ignore[no-redef]
+        @property
+        def value(self) -> Optional[str]: ...
+
+    class TimeField(TimeField):  # type: ignore[no-redef]
+        @property
+        def value(self) -> Optional[str]: ...
+
+    class ArrayField(ArrayField):  # type: ignore[no-redef]
+        @property
+        def value(self) -> Optional[List[Any]]: ...
+
+    class ObjectField(ObjectField):  # type: ignore[no-redef]
+        @property
+        def value(self) -> Optional[Dict[str, Any]]: ...
+
+    class JsonField(JsonField):  # type: ignore[no-redef]
+        @property
+        def value(self) -> Optional[Any]: ...
 
 PollingReturnType_co = TypeVar("PollingReturnType_co", covariant=True)
 
