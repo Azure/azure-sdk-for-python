@@ -4,7 +4,7 @@
 # ------------------------------------
 
 import pytest
-from azure.ai.projects.models import ConnectionType
+from azure.ai.projects.models import ConnectionType, CredentialType, CustomCredential
 from test_base import TestBase, servicePreparer
 from devtools_testutils import recorded_by_proxy
 
@@ -15,7 +15,7 @@ from devtools_testutils import recorded_by_proxy
 class TestConnections(TestBase):
 
     # To run this test, use the following command in the \sdk\ai\azure-ai-projects folder:
-    # cls & pytest tests\test_connections.py::TestConnections::test_connections -s
+    # cls & pytest tests\connections\test_connections.py::TestConnections::test_connections -s
     @servicePreparer()
     @recorded_by_proxy
     def test_connections(self, **kwargs):
@@ -60,3 +60,26 @@ class TestConnections(TestBase):
             print(f"[test_connections] Get the connection named `{connection_name}`, with its credentials")
             connection = project_client.connections.get(connection_name, include_credentials=True)
             TestBase.validate_connection(connection, True, expected_connection_name=connection_name)
+
+    # Unit-test for patched initialization method in CustomCredential class.
+    # To run this test, use the following command in the \sdk\ai\azure-ai-projects folder:
+    # cls & pytest tests\connections\test_connections.py::TestConnections::test_custom_credential_deserialization -s
+    def test_custom_credential_deserialization(self):
+
+        # Case 1: credentials payload WITH secret keys (in addition to the "type" discriminator)
+        payload_with_keys = {
+            "key1": "value1",
+            "key2": "value2",
+            "type": "CustomKeys",
+        }
+        cred_with_keys = CustomCredential(payload_with_keys)
+        assert cred_with_keys.type == CredentialType.CUSTOM
+        assert cred_with_keys.credential_keys == {"key1": "value1", "key2": "value2"}
+
+        # Case 2: credentials payload WITHOUT secret keys (only the "type" discriminator)
+        payload_without_keys = {
+            "type": "CustomKeys",
+        }
+        cred_without_keys = CustomCredential(payload_without_keys)
+        assert cred_without_keys.type == CredentialType.CUSTOM
+        assert cred_without_keys.credential_keys == {}
