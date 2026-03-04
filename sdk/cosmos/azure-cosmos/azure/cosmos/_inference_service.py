@@ -66,6 +66,12 @@ class _InferenceService:
         self._token_scope = self.inference_service_default_scope
 
         semantic_reranking_inference_endpoint = os.environ.get(Constants.SEMANTIC_RERANKER_INFERENCE_ENDPOINT)
+
+        if semantic_reranking_inference_endpoint is None:
+            raise ValueError(
+                f"Semantic reranking inference endpoint is not configured. Please set the environment variable '{Constants.SEMANTIC_RERANKER_INFERENCE_ENDPOINT}' with the appropriate endpoint URL."
+            )
+
         self._inference_endpoint = f"{semantic_reranking_inference_endpoint}/inference/semanticReranking"
         self._inference_request_timeout = self._client_connection.connection_policy.InferenceRequestTimeout
         self._inference_pipeline_client = self._create_inference_pipeline_client()
