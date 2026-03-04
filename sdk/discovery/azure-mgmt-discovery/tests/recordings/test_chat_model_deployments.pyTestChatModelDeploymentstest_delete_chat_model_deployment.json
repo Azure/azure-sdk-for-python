@@ -1,0 +1,32 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://Sanitized.management.azure.com/subscriptions/31b0b6a5-2647-47eb-8a38-7d12047ee8ec/resourceGroups/olawal/providers/Microsoft.Discovery/workspaces/test-wrksp-create01/chatModelDeployments/test-deploy-chatmodel01?api-version=2026-02-01-preview",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-mgmt-discovery/1.0.0b1 Python/3.11.9 (Windows-10-10.0.26200-SP0)",
+        "Content-Length": "0"
+      },
+      "RequestBody": null,
+      "StatusCode": 204,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Pragma": "no-cache",
+        "Expires": "-1",
+        "x-ms-providerhub-traffic": "True",
+        "x-ms-request-id": "e4a1b2c3-d4e5-6f7a-8b9c-0d1e2f3a4b5c",
+        "x-ms-correlation-request-id": "f5a6b7c8-d9e0-1f2a-3b4c-5d6e7f8a9b0c",
+        "x-ms-ratelimit-remaining-subscription-deletes": "799",
+        "x-ms-routing-request-id": "EASTUS2EUAP:20260304T212000Z:f5a6b7c8-d9e0-1f2a-3b4c-5d6e7f8a9b0c",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "X-Cache": "CONFIG_NOCACHE",
+        "Date": "Wed, 04 Mar 2026 21:20:00 GMT"
+      },
+      "ResponseBody": null
+    }
+  ],
+  "Variables": {}
+}

@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://Sanitized.management.azure.com/subscriptions/31b0b6a5-2647-47eb-8a38-7d12047ee8ec/resourceGroups/newapiversiontest/providers/Microsoft.Discovery/workspaces?api-version=2026-02-01-preview",
+      "RequestUri": "https://Sanitized.management.azure.com/subscriptions/31b0b6a5-2647-47eb-8a38-7d12047ee8ec/resourceGroups/olawal/providers/Microsoft.Discovery/workspaces?api-version=2026-02-01-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -12,21 +12,22 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
-        "Content-Length": "1356",
-        "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 04 Feb 2026 15:48:45 GMT",
-        "Expires": "-1",
         "Pragma": "no-cache",
-        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-        "X-Cache": "CONFIG_NOCACHE",
-        "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "5a24b777-da2e-4525-9482-4f289c5b40b4",
-        "x-ms-original-request-ids": "efcb0fc5-e2e8-4d92-8770-9f0fcebb7442",
+        "Content-Length": "1619",
+        "Content-Type": "application/json; charset=utf-8",
+        "Expires": "-1",
+        "x-ms-original-request-ids": "37bbdb9b-8704-4d62-bceb-8a6d5c04eace",
         "x-ms-providerhub-traffic": "True",
-        "x-ms-ratelimit-remaining-subscription-reads": "1098",
-        "x-ms-routing-request-id": "EASTUS2EUAP:20260204T154845Z:5a24b777-da2e-4525-9482-4f289c5b40b4",
-        "x-ms-throttling-version": "v2",
-        "X-MSEdge-Ref": "Ref A: 882498E759574314BD454FCDC84FDCBB Ref B: SN4AA2022302025 Ref C: 2026-02-04T15:48:45Z"
+        "x-ms-correlation-request-id": "994eee78-4cf2-4c9f-abbb-d28d558c65a1",
+        "x-ms-ratelimit-remaining-subscription-reads": "1099",
+        "x-ms-ratelimit-remaining-subscription-global-reads": "16499",
+        "x-ms-request-id": "994eee78-4cf2-4c9f-abbb-d28d558c65a1",
+        "x-ms-routing-request-id": "UKSOUTH:20260304T203847Z:994eee78-4cf2-4c9f-abbb-d28d558c65a1",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-MSEdge-Ref": "Ref A: A8F8C59D0E8F4F1BA565F48F60749B0B Ref B: SN4AA2022303045 Ref C: 2026-03-04T20:38:46Z",
+        "Date": "Wed, 04 Mar 2026 20:38:46 GMT"
       },
       "ResponseBody": {
         "value": [
@@ -34,53 +35,33 @@
             "id": "Sanitized",
             "name": "Sanitized",
             "type": "microsoft.discovery/workspaces",
-            "location": "centraluseuap",
+            "location": "uksouth",
             "tags": {},
             "systemData": {
               "createdBy": "Sanitized",
               "createdByType": "User",
-              "createdAt": "2026-02-03T10:53:18.7643596Z",
+              "createdAt": "2026-03-04T19:36:15.7991238Z",
               "lastModifiedBy": "Sanitized",
               "lastModifiedByType": "User",
-              "lastModifiedAt": "2026-02-03T10:53:18.7643596Z"
+              "lastModifiedAt": "2026-03-04T19:36:15.7991238Z"
             },
             "properties": {
-              "managedResourceGroup": "mrg-dwsp-wrksptest44-rxc6r1",
+              "managedResourceGroup": "mrg-dwsp-test-wrksp-create01-w3qqoq",
               "supercomputerIds": [],
-              "workspaceApiUri": "https://wrksptest44.workspace-dev.discovery.azure.com",
-              "workspaceUiUri": "https://studio.discovery.microsoft.com/workspaces/wrksptest44",
+              "workspaceApiUri": "https://test-wrksp-create01.workspace-dev.discovery.azure.com",
+              "workspaceUiUri": "https://studio.discovery.microsoft.com/workspaces/test-wrksp-create01",
               "workspaceIdentity": {
-                "id": "Sanitized"
+                "id": "Sanitized",
+                "principalId": "43959abc-ba88-4e2f-9f69-a7d3cc984c75",
+                "clientId": "3fe9d307-c0dc-410b-8dfe-116741e50bfb"
               },
-              "managedOnBehalfOfConfiguration": {
-                "moboBrokerResources": [
-                  {
-                    "id": "Sanitized"
-                  }
-                ]
+              "customerManagedKeys": "Enabled",
+              "keyVaultProperties": {
+                "keyVaultUri": "https://newapik.vault.azure.net/",
+                "keyName": "discoverykey",
+                "keyVersion": "2c9db3cf55d247b4a1c1831fbbdad906"
               },
-              "provisioningState": "Failed"
-            }
-          },
-          {
-            "id": "Sanitized",
-            "name": "Sanitized",
-            "type": "microsoft.discovery/workspaces",
-            "location": "centraluseuap",
-            "tags": {},
-            "systemData": {
-              "lastModifiedBy": "Sanitized",
-              "lastModifiedByType": "User",
-              "lastModifiedAt": "2026-02-04T09:19:20.1363722Z"
-            },
-            "properties": {
-              "managedResourceGroup": "mrg-dwsp-wrksptest45-4rxpj0",
-              "supercomputerIds": [],
-              "workspaceApiUri": "https://wrksptest45.workspace-dev.discovery.azure.com",
-              "workspaceUiUri": "https://studio.discovery.microsoft.com/workspaces/wrksptest45",
-              "workspaceIdentity": {
-                "id": "Sanitized"
-              },
+              "logAnalyticsClusterId": "/subscriptions/31b0b6a5-2647-47eb-8a38-7d12047ee8ec/resourceGroups/olawal/providers/Microsoft.OperationalInsights/clusters/mycluse",
               "managedOnBehalfOfConfiguration": {
                 "moboBrokerResources": [
                   {

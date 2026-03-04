@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://Sanitized.management.azure.com/subscriptions/31b0b6a5-2647-47eb-8a38-7d12047ee8ec/resourceGroups/newapiversiontest/providers/Microsoft.Discovery/workspaces/wrksptest44?api-version=2026-02-01-preview",
+      "RequestUri": "https://Sanitized.management.azure.com/subscriptions/31b0b6a5-2647-47eb-8a38-7d12047ee8ec/resourceGroups/olawal/providers/Microsoft.Discovery/workspaces/test-wrksp-create01?api-version=2026-02-01-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -12,44 +12,54 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
-        "Content-Length": "715",
-        "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 04 Feb 2026 15:48:48 GMT",
-        "ETag": "\"2400f5db-0000-3300-0000-6981d6540000\"",
-        "Expires": "-1",
         "Pragma": "no-cache",
-        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-        "X-Cache": "CONFIG_NOCACHE",
-        "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "5e3e9e33-119a-41f3-8229-7d8f494a94aa",
-        "x-ms-providerhub-traffic": "True",
+        "Content-Length": "1607",
+        "Content-Type": "application/json; charset=utf-8",
+        "Expires": "-1",
+        "ETag": "\"0502323c-0000-1100-0000-69a8934a0000\"",
         "x-ms-ratelimit-remaining-subscription-reads": "1099",
-        "x-ms-routing-request-id": "EASTUS2EUAP:20260204T154848Z:5e3e9e33-119a-41f3-8229-7d8f494a94aa",
-        "x-ms-throttling-version": "v2",
-        "X-MSEdge-Ref": "Ref A: 1CE8D99659144624B265DA16D7A4F84F Ref B: SN4AA2022302025 Ref C: 2026-02-04T15:48:48Z"
+        "x-ms-providerhub-traffic": "True",
+        "x-ms-request-id": "1dcda016-4a3d-4ada-bdea-69e76ff62001",
+        "x-ms-correlation-request-id": "3539e8a3-d7d6-4658-843f-6162ac25641e",
+        "x-ms-ratelimit-remaining-subscription-global-reads": "16499",
+        "x-ms-routing-request-id": "UKSOUTH:20260304T203849Z:3539e8a3-d7d6-4658-843f-6162ac25641e",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-MSEdge-Ref": "Ref A: CF625DDD8A3B415C94D9D49490F08B77 Ref B: SN4AA2022305029 Ref C: 2026-03-04T20:38:49Z",
+        "Date": "Wed, 04 Mar 2026 20:38:49 GMT"
       },
       "ResponseBody": {
         "id": "Sanitized",
         "name": "Sanitized",
         "type": "microsoft.discovery/workspaces",
-        "location": "centraluseuap",
+        "location": "uksouth",
         "tags": {},
         "systemData": {
           "createdBy": "Sanitized",
           "createdByType": "User",
-          "createdAt": "2026-02-03T10:53:18.7643596Z",
+          "createdAt": "2026-03-04T19:36:15.7991238Z",
           "lastModifiedBy": "Sanitized",
           "lastModifiedByType": "User",
-          "lastModifiedAt": "2026-02-03T10:53:18.7643596Z"
+          "lastModifiedAt": "2026-03-04T19:36:15.7991238Z"
         },
         "properties": {
-          "managedResourceGroup": "mrg-dwsp-wrksptest44-rxc6r1",
+          "managedResourceGroup": "mrg-dwsp-test-wrksp-create01-w3qqoq",
           "supercomputerIds": [],
-          "workspaceApiUri": "https://wrksptest44.workspace-dev.discovery.azure.com",
-          "workspaceUiUri": "https://studio.discovery.microsoft.com/workspaces/wrksptest44",
+          "workspaceApiUri": "https://test-wrksp-create01.workspace-dev.discovery.azure.com",
+          "workspaceUiUri": "https://studio.discovery.microsoft.com/workspaces/test-wrksp-create01",
           "workspaceIdentity": {
-            "id": "Sanitized"
+            "id": "Sanitized",
+            "principalId": "43959abc-ba88-4e2f-9f69-a7d3cc984c75",
+            "clientId": "3fe9d307-c0dc-410b-8dfe-116741e50bfb"
           },
+          "customerManagedKeys": "Enabled",
+          "keyVaultProperties": {
+            "keyVaultUri": "https://newapik.vault.azure.net/",
+            "keyName": "discoverykey",
+            "keyVersion": "2c9db3cf55d247b4a1c1831fbbdad906"
+          },
+          "logAnalyticsClusterId": "/subscriptions/31b0b6a5-2647-47eb-8a38-7d12047ee8ec/resourceGroups/olawal/providers/Microsoft.OperationalInsights/clusters/mycluse",
           "managedOnBehalfOfConfiguration": {
             "moboBrokerResources": [
               {
@@ -57,7 +67,7 @@
               }
             ]
           },
-          "provisioningState": "Failed"
+          "provisioningState": "Succeeded"
         }
       }
     }
