@@ -221,10 +221,7 @@ def get_chat_target(
             # Foundry endpoints (*.services.ai.azure.com) need /openai/v1 appended
             # because PyRIT's OpenAIChatTarget passes the URL directly to AsyncOpenAI(base_url=)
             endpoint = target["azure_endpoint"]
-            if (
-                ".services.ai.azure.com" in endpoint
-                and "/openai" not in endpoint
-            ):
+            if ".services.ai.azure.com" in endpoint and "/openai" not in endpoint:
                 endpoint = endpoint.rstrip("/") + "/openai/v1"
 
             api_key = target.get("api_key", None)

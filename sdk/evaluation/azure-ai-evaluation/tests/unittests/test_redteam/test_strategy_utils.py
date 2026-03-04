@@ -453,8 +453,9 @@ class TestChatTargetFunctions:
         result = get_chat_target(config)
 
         call_kwargs = mock_openai_chat_target.call_args[1]
-        assert call_kwargs["endpoint"] == "https://my-resource.services.ai.azure.com/openai/v1", \
-            f"Foundry endpoint should have /openai/v1 appended, got: {call_kwargs['endpoint']}"
+        assert (
+            call_kwargs["endpoint"] == "https://my-resource.services.ai.azure.com/openai/v1"
+        ), f"Foundry endpoint should have /openai/v1 appended, got: {call_kwargs['endpoint']}"
         assert call_kwargs["model_name"] == "gpt-4o"
 
     @patch("azure.ai.evaluation.red_team._utils.strategy_utils.OpenAIChatTarget")
@@ -472,8 +473,9 @@ class TestChatTargetFunctions:
         result = get_chat_target(config)
 
         call_kwargs = mock_openai_chat_target.call_args[1]
-        assert call_kwargs["endpoint"] == "https://my-resource.services.ai.azure.com/openai/v1", \
-            f"Already-normalized endpoint should not be modified, got: {call_kwargs['endpoint']}"
+        assert (
+            call_kwargs["endpoint"] == "https://my-resource.services.ai.azure.com/openai/v1"
+        ), f"Already-normalized endpoint should not be modified, got: {call_kwargs['endpoint']}"
 
     @patch("azure.ai.evaluation.red_team._utils.strategy_utils.OpenAIChatTarget")
     def test_get_chat_target_foundry_endpoint_with_trailing_slash(self, mock_openai_chat_target):
@@ -490,8 +492,9 @@ class TestChatTargetFunctions:
         result = get_chat_target(config)
 
         call_kwargs = mock_openai_chat_target.call_args[1]
-        assert call_kwargs["endpoint"] == "https://my-resource.services.ai.azure.com/openai/v1", \
-            f"Trailing slash should be stripped before appending, got: {call_kwargs['endpoint']}"
+        assert (
+            call_kwargs["endpoint"] == "https://my-resource.services.ai.azure.com/openai/v1"
+        ), f"Trailing slash should be stripped before appending, got: {call_kwargs['endpoint']}"
 
     @patch("azure.ai.evaluation.red_team._utils.strategy_utils.OpenAIChatTarget")
     def test_get_chat_target_traditional_aoai_not_modified(self, mock_openai_chat_target):
@@ -508,8 +511,9 @@ class TestChatTargetFunctions:
         result = get_chat_target(config)
 
         call_kwargs = mock_openai_chat_target.call_args[1]
-        assert call_kwargs["endpoint"] == "https://my-resource.openai.azure.com", \
-            f"Traditional AOAI endpoint should not be modified, got: {call_kwargs['endpoint']}"
+        assert (
+            call_kwargs["endpoint"] == "https://my-resource.openai.azure.com"
+        ), f"Traditional AOAI endpoint should not be modified, got: {call_kwargs['endpoint']}"
 
 
 @pytest.mark.unittest
