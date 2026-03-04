@@ -3,19 +3,32 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import functools
 import time
 import unittest
 from unittest.mock import Mock, patch
-from devtools_testutils import recorded_by_proxy
-from preparers import app_config_decorator_aad
+from devtools_testutils import EnvironmentVariableLoader, recorded_by_proxy
 from testcase import AppConfigTestCase
+from test_constants import (
+    APPCONFIGURATION_ENDPOINT_STRING,
+    APPCONFIGURATION_KEYVAULT_SECRET_URL,
+    APPCONFIGURATION_KEYVAULT_SECRET_URL2,
+)
 from azure.appconfiguration import SecretReferenceConfigurationSetting
 from azure.appconfiguration.provider import SettingSelector, WatchKey
 
+AppConfigProviderPreparer = functools.partial(
+    EnvironmentVariableLoader,
+    "appconfiguration",
+    appconfiguration_endpoint_string=APPCONFIGURATION_ENDPOINT_STRING,
+    appconfiguration_keyvault_secret_url=APPCONFIGURATION_KEYVAULT_SECRET_URL,
+    appconfiguration_keyvault_secret_url2=APPCONFIGURATION_KEYVAULT_SECRET_URL2,
+)
+
 
 class TestSecretRefresh(AppConfigTestCase, unittest.TestCase):
+    @AppConfigProviderPreparer()
     @recorded_by_proxy
-    @app_config_decorator_aad
     def test_secret_refresh_timer(
         self,
         appconfiguration_endpoint_string,
@@ -57,8 +70,8 @@ class TestSecretRefresh(AppConfigTestCase, unittest.TestCase):
             # Should have been called at least twice now
             assert mock_refresh.call_count >= 2
 
+    @AppConfigProviderPreparer()
     @recorded_by_proxy
-    @app_config_decorator_aad
     def test_secret_refresh_with_updated_values(
         self,
         appconfiguration_endpoint_string,
@@ -105,8 +118,8 @@ class TestSecretRefresh(AppConfigTestCase, unittest.TestCase):
         assert client["secret"] == "Very secret value 2"
         assert mock_callback.call_count >= 1
 
+    @AppConfigProviderPreparer()
     @recorded_by_proxy
-    @app_config_decorator_aad
     def test_no_secret_refresh_without_timer(
         self,
         appconfiguration_endpoint_string,
@@ -146,8 +159,8 @@ class TestSecretRefresh(AppConfigTestCase, unittest.TestCase):
             # but there should be no automatic refresh caused by the secret timer
             assert mock_time.call_count == 2
 
+    @AppConfigProviderPreparer()
     @recorded_by_proxy
-    @app_config_decorator_aad
     def test_secret_refresh_timer_triggers_refresh(
         self,
         appconfiguration_endpoint_string,
@@ -181,8 +194,8 @@ class TestSecretRefresh(AppConfigTestCase, unittest.TestCase):
                 # Verify refresh was called
                 assert mock_refresh.call_count > 0
 
+    @AppConfigProviderPreparer()
     @recorded_by_proxy
-    @app_config_decorator_aad
     def test_secret_refresh_interval_parameter(
         self,
         appconfiguration_endpoint_string,
