@@ -11,7 +11,8 @@ from io import IOBase, UnsupportedOperation
 from typing import Any, Dict, Optional, Tuple
 from unittest.mock import Mock, AsyncMock
 
-from azure.core.pipeline.transport import AioHttpTransportResponse, AsyncHttpTransport
+from azure.core.pipeline.transport import AsyncHttpTransport
+from azure.core.rest._aiohttp import RestAioHttpTransportResponse
 from azure.core.rest import HttpRequest
 from azure.storage.blob._serialize import get_api_version
 from aiohttp import ClientResponse
@@ -145,7 +146,7 @@ class MockLegacyTransport(AsyncHttpTransport):
     This transport returns legacy http response objects from azure core and is
     intended only to test our backwards compatibility support.
     """
-    async def send(self, request: HttpRequest, **kwargs: Any) -> AioHttpTransportResponse:
+    async def send(self, request: HttpRequest, **kwargs: Any) -> RestAioHttpTransportResponse:
         if request.method == 'GET':
             # download_blob
             headers = {
@@ -157,20 +158,20 @@ class MockLegacyTransport(AsyncHttpTransport):
             if "x-ms-range-get-content-md5" in request.headers:
                 headers["Content-MD5"] = "I3pVbaOCUTom+G9F9uKFoA=="
 
-            rest_response = AioHttpTransportResponse(
+            rest_response = RestAioHttpTransportResponse(
                 request=request,
-                aiohttp_response=MockAioHttpClientResponse(
+                internal_response=MockAioHttpClientResponse(
                     request.url,
                     b"Hello Async World!",
                     headers,
                 ),
-                decompress=False
+                decompress=False,
             )
         elif request.method == 'HEAD':
             # get_blob_properties
-            rest_response = AioHttpTransportResponse(
+            rest_response = RestAioHttpTransportResponse(
                 request=request,
-                aiohttp_response=MockAioHttpClientResponse(
+                internal_response=MockAioHttpClientResponse(
                     request.url,
                     b"",
                     {
@@ -178,13 +179,13 @@ class MockLegacyTransport(AsyncHttpTransport):
                         "Content-Length": "1024",
                     },
                 ),
-                decompress=False
+                decompress=False,
             )
         elif request.method == 'PUT':
             # upload_blob
-            rest_response = AioHttpTransportResponse(
+            rest_response = RestAioHttpTransportResponse(
                 request=request,
-                aiohttp_response=MockAioHttpClientResponse(
+                internal_response=MockAioHttpClientResponse(
                     request.url,
                     b"",
                     {
@@ -193,13 +194,13 @@ class MockLegacyTransport(AsyncHttpTransport):
                     201,
                     "Created"
                 ),
-                decompress=False
+                decompress=False,
             )
         elif request.method == 'DELETE':
             # delete_blob
-            rest_response = AioHttpTransportResponse(
+            rest_response = RestAioHttpTransportResponse(
                 request=request,
-                aiohttp_response=MockAioHttpClientResponse(
+                internal_response=MockAioHttpClientResponse(
                     request.url,
                     b"",
                     {
@@ -208,12 +209,12 @@ class MockLegacyTransport(AsyncHttpTransport):
                     202,
                     "Accepted"
                 ),
-                decompress=False
+                decompress=False,
             )
         else:
             raise ValueError("The request is not accepted as part of MockLegacyTransport.")
 
-        await rest_response.load_body()
+        await rest_response.read()
         return rest_response
 
     async def __aenter__(self):
