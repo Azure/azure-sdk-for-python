@@ -30,8 +30,10 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.tracing.decorator import distributed_trace
 
 from ._cosmos_client_connection_async import CosmosClientConnection
+from ._cosmos_span_attributes_async import cosmos_span_attributes_async
 from .._base import build_options as _build_options, _set_throughput_options, _deserialize_throughput, \
     _replace_throughput
+from .._constants import _Constants as Constants
 from ._container import ContainerProxy
 from ..offer import ThroughputProperties
 from ..http_constants import StatusCodes
@@ -128,6 +130,7 @@ class DatabaseProxy(object):
         return self._properties
 
     @distributed_trace_async
+    @cosmos_span_attributes_async(operation_type=Constants.OpenTelemetryOperationTypes.READ)
     async def read(
         self,
         *,
@@ -316,6 +319,7 @@ class DatabaseProxy(object):
         ...
 
     @distributed_trace_async
+    @cosmos_span_attributes_async(operation_type=Constants.OpenTelemetryOperationTypes.CREATE)
     async def create_container( # pylint:disable=docstring-should-be-keyword, too-many-statements
         self,
         *args: Any,
@@ -573,6 +577,7 @@ class DatabaseProxy(object):
         ...
 
     @distributed_trace_async
+    @cosmos_span_attributes_async(operation_type=Constants.OpenTelemetryOperationTypes.CREATE)
     async def create_container_if_not_exists( # pylint:disable=docstring-should-be-keyword
         self,
         *args: Any,
@@ -711,6 +716,7 @@ class DatabaseProxy(object):
         return ContainerProxy(self.client_connection, self.database_link, id_value)
 
     @distributed_trace
+    @cosmos_span_attributes_async(operation_type=Constants.OpenTelemetryOperationTypes.READ_FEED)
     def list_containers(
         self,
         *,
@@ -758,6 +764,7 @@ class DatabaseProxy(object):
         return result
 
     @distributed_trace
+    @cosmos_span_attributes_async(operation_type=Constants.OpenTelemetryOperationTypes.QUERY)
     def query_containers(
         self,
         query: str,
@@ -927,6 +934,7 @@ class DatabaseProxy(object):
         ...
 
     @distributed_trace_async
+    @cosmos_span_attributes_async(operation_type=Constants.OpenTelemetryOperationTypes.REPLACE)
     async def replace_container( # pylint:disable=docstring-should-be-keyword
         self,
         *args: Any,
@@ -1046,6 +1054,7 @@ class DatabaseProxy(object):
             properties=container_properties), container_properties
 
     @distributed_trace_async
+    @cosmos_span_attributes_async(operation_type=Constants.OpenTelemetryOperationTypes.DELETE)
     async def delete_container(
         self,
         container: Union[str, ContainerProxy, Mapping[str, Any]],
@@ -1091,6 +1100,7 @@ class DatabaseProxy(object):
         await self.client_connection.DeleteContainer(collection_link, options=request_options, **kwargs)
 
     @distributed_trace_async
+    @cosmos_span_attributes_async(operation_type=Constants.OpenTelemetryOperationTypes.CREATE)
     async def create_user(
         self,
         body: dict[str, Any],
@@ -1149,6 +1159,7 @@ class DatabaseProxy(object):
         return UserProxy(client_connection=self.client_connection, id=id_value, database_link=self.database_link)
 
     @distributed_trace
+    @cosmos_span_attributes_async(operation_type=Constants.OpenTelemetryOperationTypes.READ_FEED)
     def list_users(
         self,
         *,
@@ -1176,6 +1187,7 @@ class DatabaseProxy(object):
         return result
 
     @distributed_trace
+    @cosmos_span_attributes_async(operation_type=Constants.OpenTelemetryOperationTypes.QUERY)
     def query_users(
         self,
         query: str,
@@ -1213,6 +1225,7 @@ class DatabaseProxy(object):
         return result
 
     @distributed_trace_async
+    @cosmos_span_attributes_async(operation_type=Constants.OpenTelemetryOperationTypes.UPSERT)
     async def upsert_user(
         self,
         body: dict[str, Any],
@@ -1272,6 +1285,7 @@ class DatabaseProxy(object):
         )
 
     @distributed_trace_async
+    @cosmos_span_attributes_async(operation_type=Constants.OpenTelemetryOperationTypes.DELETE)
     async def delete_user(
         self,
         user: Union[str, UserProxy, Mapping[str, Any]],
@@ -1295,6 +1309,7 @@ class DatabaseProxy(object):
         )
 
     @distributed_trace_async
+    @cosmos_span_attributes_async(operation_type=Constants.OpenTelemetryOperationTypes.READ)
     async def get_throughput(
             self,
             *,
@@ -1330,6 +1345,7 @@ class DatabaseProxy(object):
         return _deserialize_throughput(throughput=throughput_properties)
 
     @distributed_trace_async
+    @cosmos_span_attributes_async(operation_type=Constants.OpenTelemetryOperationTypes.REPLACE)
     async def replace_throughput(
         self,
         throughput: Union[int, ThroughputProperties],
@@ -1367,3 +1383,4 @@ class DatabaseProxy(object):
                                                          offer=throughput_properties[0], **kwargs)
 
         return ThroughputProperties(offer_throughput=data["content"]["offerThroughput"], properties=data)
+

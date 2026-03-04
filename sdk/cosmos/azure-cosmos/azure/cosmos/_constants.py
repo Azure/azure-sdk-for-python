@@ -112,6 +112,58 @@ class _Constants:
         AVAILABILITY_STRATEGY: Literal["availabilityStrategy"] = "availabilityStrategy"
         """Availability strategy config. Used either at client level or request level"""
 
+    class OpenTelemetryAttributes:
+        """OpenTelemetry Semantic Convention attributes for Cosmos DB.
+        Based on OpenTelemetry semantic conventions.
+        Reference: https://github.com/devopsleague/opentelemetry-semantic-conventions/blob/main/docs/database/cosmosdb.md
+        """
+
+        # Core database attributes (required)
+        DB_SYSTEM: Literal["db.system"] = "db.system"
+        DB_NAMESPACE: Literal["db.namespace"] = "db.namespace"  # Database name
+        DB_OPERATION_NAME: Literal["db.operation.name"] = "db.operation.name"  # Operation name
+        DB_COLLECTION_NAME: Literal["db.collection.name"] = "db.collection.name"  # Container name
+
+        # Query attributes
+        DB_QUERY_TEXT: Literal["db.query.text"] = "db.query.text"
+
+        # Cosmos DB specific attributes
+        DB_COSMOSDB_CLIENT_ID: Literal["db.cosmosdb.client_id"] = "db.cosmosdb.client_id"
+        DB_COSMOSDB_CONNECTION_MODE: Literal["db.cosmosdb.connection_mode"] = "db.cosmosdb.connection_mode"
+        DB_COSMOSDB_OPERATION_TYPE: Literal["db.cosmosdb.operation_type"] = "db.cosmosdb.operation_type"
+        DB_COSMOSDB_REQUEST_CHARGE: Literal["db.cosmosdb.request_charge"] = "db.cosmosdb.request_charge"
+        DB_COSMOSDB_REQUEST_CONTENT_LENGTH: Literal["db.cosmosdb.request_content_length"] = "db.cosmosdb.request_content_length"
+        DB_COSMOSDB_RESPONSE_CONTENT_LENGTH: Literal["db.cosmosdb.response_content_length"] = "db.cosmosdb.response_content_length"
+        DB_COSMOSDB_STATUS_CODE: Literal["db.cosmosdb.status_code"] = "db.cosmosdb.status_code"
+        DB_COSMOSDB_SUB_STATUS_CODE: Literal["db.cosmosdb.sub_status_code"] = "db.cosmosdb.sub_status_code"
+        DB_COSMOSDB_REQUEST_DIAGNOSTICS_ID: Literal["db.cosmosdb.request_diagnostics_id"] = "db.cosmosdb.request_diagnostics_id"
+        DB_COSMOSDB_ITEM_COUNT: Literal["db.cosmosdb.item_count"] = "db.cosmosdb.item_count"
+        DB_COSMOSDB_REGIONS_CONTACTED: Literal["db.cosmosdb.regions_contacted"] = "db.cosmosdb.regions_contacted"
+
+    class OpenTelemetryOperationTypes:
+        """db.cosmosdb.operation_type values per OpenTelemetry semantic conventions.
+
+        These values are used in the db.cosmosdb.operation_type attribute to indicate
+        the type of operation being performed on Cosmos DB.
+
+        Reference: https://github.com/devopsleague/opentelemetry-semantic-conventions/blob/main/docs/database/cosmosdb.md
+        """
+        BATCH: Literal["batch"] = "batch"
+        CREATE: Literal["create"] = "create"
+        DELETE: Literal["delete"] = "delete"
+        EXECUTE: Literal["execute"] = "execute"
+        EXECUTE_JAVASCRIPT: Literal["execute_javascript"] = "execute_javascript"
+        HEAD: Literal["head"] = "head"
+        HEAD_FEED: Literal["head_feed"] = "head_feed"
+        INVALID: Literal["invalid"] = "invalid"
+        PATCH: Literal["patch"] = "patch"
+        QUERY: Literal["query"] = "query"
+        QUERY_PLAN: Literal["query_plan"] = "query_plan"
+        READ: Literal["read"] = "read"
+        READ_FEED: Literal["read_feed"] = "read_feed"
+        REPLACE: Literal["replace"] = "replace"
+        UPSERT: Literal["upsert"] = "upsert"
+
     class UserAgentFeatureFlags(IntEnum):
         """
         User agent feature flags.

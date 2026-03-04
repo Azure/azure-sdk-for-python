@@ -32,6 +32,8 @@ from azure.cosmos import CosmosDict
 
 from ._cosmos_client_connection import CosmosClientConnection
 from ._base import build_options
+from ._constants import _Constants as Constants
+from ._cosmos_span_attributes import cosmos_span_attributes
 from .permission import Permission
 
 
@@ -75,6 +77,7 @@ class UserProxy:
         return self._properties
 
     @distributed_trace
+    @cosmos_span_attributes(operation_type=Constants.OpenTelemetryOperationTypes.READ)
     def read(
         self,
         **kwargs: Any
@@ -95,6 +98,7 @@ class UserProxy:
         return self._properties
 
     @distributed_trace
+    @cosmos_span_attributes(operation_type=Constants.OpenTelemetryOperationTypes.READ_FEED)
     def list_permissions(
             self,
             max_item_count: Optional[int] = None,
@@ -126,6 +130,7 @@ class UserProxy:
         return result
 
     @distributed_trace
+    @cosmos_span_attributes(operation_type=Constants.OpenTelemetryOperationTypes.QUERY)
     def query_permissions(
         self,
         query: str,
@@ -164,6 +169,7 @@ class UserProxy:
         return result
 
     @distributed_trace
+    @cosmos_span_attributes(operation_type=Constants.OpenTelemetryOperationTypes.READ)
     def get_permission(
         self,
         permission: Union[str, Permission, Mapping[str, Any]],
@@ -194,6 +200,7 @@ class UserProxy:
         )
 
     @distributed_trace
+    @cosmos_span_attributes(operation_type=Constants.OpenTelemetryOperationTypes.CREATE)
     def create_permission(self, body: dict[str, Any], **kwargs: Any) -> Permission:
         """Create a permission for the user.
 
@@ -221,6 +228,7 @@ class UserProxy:
         )
 
     @distributed_trace
+    @cosmos_span_attributes(operation_type=Constants.OpenTelemetryOperationTypes.UPSERT)
     def upsert_permission(self, body: dict[str, Any], **kwargs: Any) -> Permission:
         """Insert or update the specified permission.
 
@@ -246,6 +254,7 @@ class UserProxy:
         )
 
     @distributed_trace
+    @cosmos_span_attributes(operation_type=Constants.OpenTelemetryOperationTypes.REPLACE)
     def replace_permission(
         self,
         permission: Union[str, Permission, Mapping[str, Any]],
@@ -282,6 +291,7 @@ class UserProxy:
         )
 
     @distributed_trace
+    @cosmos_span_attributes(operation_type=Constants.OpenTelemetryOperationTypes.DELETE)
     def delete_permission(
         self,
         permission: Union[str, Permission, Mapping[str, Any]],
