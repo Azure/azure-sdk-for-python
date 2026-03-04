@@ -6,6 +6,8 @@ import pytest
 from unittest.mock import MagicMock, patch
 from typing import Dict, List, Callable
 
+import httpx
+
 from pyrit.memory import CentralMemory, SQLiteMemory
 
 # Initialize PyRIT with in-memory database
@@ -16,6 +18,10 @@ from azure.ai.evaluation.red_team._utils.strategy_utils import (
     get_converter_for_strategy,
     get_chat_target,
     PYRIT_HTTP_TIMEOUT,
+    DEFAULT_CONNECT_TIMEOUT,
+    DEFAULT_READ_TIMEOUT,
+    DEFAULT_WRITE_TIMEOUT,
+    DEFAULT_POOL_TIMEOUT,
 )
 from azure.ai.evaluation.red_team._attack_strategy import AttackStrategy
 from azure.ai.evaluation.red_team._callback_chat_target import _CallbackChatTarget
@@ -118,7 +124,14 @@ class TestChatTargetFunctions:
             model_name="gpt-35-turbo",
             endpoint="https://example.openai.azure.com",
             api_key="test-api-key",
-            httpx_client_kwargs={"timeout": PYRIT_HTTP_TIMEOUT},
+            httpx_client_kwargs={
+                "timeout": httpx.Timeout(
+                    connect=DEFAULT_CONNECT_TIMEOUT,
+                    read=DEFAULT_READ_TIMEOUT,
+                    write=DEFAULT_WRITE_TIMEOUT,
+                    pool=DEFAULT_POOL_TIMEOUT,
+                )
+            },
         )
 
     @patch("pyrit.auth.get_azure_openai_auth")
@@ -142,7 +155,14 @@ class TestChatTargetFunctions:
             model_name="gpt-35-turbo",
             endpoint="https://example.openai.azure.com",
             api_key=mock_auth_result,
-            httpx_client_kwargs={"timeout": PYRIT_HTTP_TIMEOUT},
+            httpx_client_kwargs={
+                "timeout": httpx.Timeout(
+                    connect=DEFAULT_CONNECT_TIMEOUT,
+                    read=DEFAULT_READ_TIMEOUT,
+                    write=DEFAULT_WRITE_TIMEOUT,
+                    pool=DEFAULT_POOL_TIMEOUT,
+                )
+            },
         )
         assert result == mock_instance
 
@@ -229,7 +249,14 @@ class TestChatTargetFunctions:
             model_name="gpt-35-turbo",
             endpoint="https://example.openai.azure.com",
             api_key="test-api-key",
-            httpx_client_kwargs={"timeout": PYRIT_HTTP_TIMEOUT},
+            httpx_client_kwargs={
+                "timeout": httpx.Timeout(
+                    connect=DEFAULT_CONNECT_TIMEOUT,
+                    read=DEFAULT_READ_TIMEOUT,
+                    write=DEFAULT_WRITE_TIMEOUT,
+                    pool=DEFAULT_POOL_TIMEOUT,
+                )
+            },
         )
         # Credential should not be used
         mock_credential.get_token.assert_not_called()
@@ -293,7 +320,14 @@ class TestChatTargetFunctions:
             model_name="gpt-4",
             endpoint=None,
             api_key="test-api-key",
-            httpx_client_kwargs={"timeout": PYRIT_HTTP_TIMEOUT},
+            httpx_client_kwargs={
+                "timeout": httpx.Timeout(
+                    connect=DEFAULT_CONNECT_TIMEOUT,
+                    read=DEFAULT_READ_TIMEOUT,
+                    write=DEFAULT_WRITE_TIMEOUT,
+                    pool=DEFAULT_POOL_TIMEOUT,
+                )
+            },
         )
 
         # Test with base_url
@@ -311,7 +345,14 @@ class TestChatTargetFunctions:
             model_name="gpt-4",
             endpoint="https://example.com/api",
             api_key="test-api-key",
-            httpx_client_kwargs={"timeout": PYRIT_HTTP_TIMEOUT},
+            httpx_client_kwargs={
+                "timeout": httpx.Timeout(
+                    connect=DEFAULT_CONNECT_TIMEOUT,
+                    read=DEFAULT_READ_TIMEOUT,
+                    write=DEFAULT_WRITE_TIMEOUT,
+                    pool=DEFAULT_POOL_TIMEOUT,
+                )
+            },
         )
 
     @patch("azure.ai.evaluation.red_team._utils.strategy_utils._CallbackChatTarget")
@@ -415,7 +456,11 @@ class TestHttpxTimeoutConfiguration:
         get_chat_target(config, http_timeout=300)
 
         call_kwargs = mock_openai_chat_target.call_args[1]
-        assert call_kwargs["httpx_client_kwargs"] == {"timeout": 300}
+        assert call_kwargs["httpx_client_kwargs"] == {
+            "timeout": httpx.Timeout(
+                connect=DEFAULT_CONNECT_TIMEOUT, read=300, write=DEFAULT_WRITE_TIMEOUT, pool=DEFAULT_POOL_TIMEOUT
+            )
+        }
 
     @patch("azure.ai.evaluation.red_team._utils.strategy_utils.OpenAIChatTarget")
     def test_default_http_timeout(self, mock_openai_chat_target):
@@ -430,7 +475,14 @@ class TestHttpxTimeoutConfiguration:
         get_chat_target(config)
 
         call_kwargs = mock_openai_chat_target.call_args[1]
-        assert call_kwargs["httpx_client_kwargs"] == {"timeout": PYRIT_HTTP_TIMEOUT}
+        assert call_kwargs["httpx_client_kwargs"] == {
+            "timeout": httpx.Timeout(
+                connect=DEFAULT_CONNECT_TIMEOUT,
+                read=DEFAULT_READ_TIMEOUT,
+                write=DEFAULT_WRITE_TIMEOUT,
+                pool=DEFAULT_POOL_TIMEOUT,
+            )
+        }
 
     @patch("azure.ai.evaluation.red_team._utils.strategy_utils.OpenAIChatTarget")
     def test_none_http_timeout_uses_default(self, mock_openai_chat_target):
@@ -445,7 +497,14 @@ class TestHttpxTimeoutConfiguration:
         get_chat_target(config, http_timeout=None)
 
         call_kwargs = mock_openai_chat_target.call_args[1]
-        assert call_kwargs["httpx_client_kwargs"] == {"timeout": PYRIT_HTTP_TIMEOUT}
+        assert call_kwargs["httpx_client_kwargs"] == {
+            "timeout": httpx.Timeout(
+                connect=DEFAULT_CONNECT_TIMEOUT,
+                read=DEFAULT_READ_TIMEOUT,
+                write=DEFAULT_WRITE_TIMEOUT,
+                pool=DEFAULT_POOL_TIMEOUT,
+            )
+        }
 
     @patch("azure.ai.evaluation.red_team._utils.strategy_utils.OpenAIChatTarget")
     def test_httpx_timeout_credential_auth_path(self, mock_openai_chat_target):
@@ -463,7 +522,14 @@ class TestHttpxTimeoutConfiguration:
 
         call_kwargs = mock_openai_chat_target.call_args[1]
         assert "httpx_client_kwargs" in call_kwargs
-        assert call_kwargs["httpx_client_kwargs"] == {"timeout": PYRIT_HTTP_TIMEOUT}
+        assert call_kwargs["httpx_client_kwargs"] == {
+            "timeout": httpx.Timeout(
+                connect=DEFAULT_CONNECT_TIMEOUT,
+                read=DEFAULT_READ_TIMEOUT,
+                write=DEFAULT_WRITE_TIMEOUT,
+                pool=DEFAULT_POOL_TIMEOUT,
+            )
+        }
 
     def test_invalid_http_timeout_string(self):
         """Verify ValueError for non-numeric http_timeout."""
