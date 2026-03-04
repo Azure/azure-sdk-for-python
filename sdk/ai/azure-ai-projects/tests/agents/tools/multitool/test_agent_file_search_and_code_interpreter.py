@@ -25,9 +25,6 @@ from azure.ai.projects.models import (
 )
 
 
-@pytest.mark.skip(
-    reason="Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema"
-)
 class TestAgentFileSearchAndCodeInterpreter(TestBase):
     """Tests for agents using File Search + Code Interpreter combination."""
 
