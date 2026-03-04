@@ -1,5 +1,10 @@
 # Release History
 
+## 1.0.1 (Unreleased)
+
+### Bugs Fixed
+- Removed `_models.pyi` stub file that caused type checkers (pyright, mypy) to only resolve 10 of 51 model classes, hiding types like `AnalysisResult` and `AnalyzerDefinition`. The `.value` property type information is now provided via `TYPE_CHECKING` class redeclarations in `models/_patch.py`.
+
 ## 1.0.0 (2026-02-28)
 
 ### Features Added
