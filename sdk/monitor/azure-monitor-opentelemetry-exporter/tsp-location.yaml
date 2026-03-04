@@ -1,2 +1,6 @@
 batch:
+<<<<<<< monitor-otel-exporter-typespec
   - azure/monitor/opentelemetry/exporter/_generated
+=======
+  - azure/monitor/opentelemetry/exporter/_quickpulse/_generated
+>>>>>>> main

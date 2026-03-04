@@ -20,6 +20,7 @@ from azure.core.pipeline.policies import (
     AsyncRedirectPolicy,
     SensitiveHeaderCleanupPolicy,
 )
+from azure.core.pipeline.policies._authentication import MAX_REFRESH_JITTER_SECONDS
 from azure.core.pipeline.transport import AsyncHttpTransport, HttpRequest
 import pytest
 import trio
@@ -244,7 +245,9 @@ async def test_bearer_policy_access_token_info_caching(http_request):
     await pipeline.run(http_request("GET", "https://spam.eggs"))
     assert credential.get_token_info.call_count == 2  # token is expired -> policy should call get_token_info again
 
-    refreshable_token = AccessTokenInfo("token", int(time.time() + 3600), refresh_on=int(time.time() - 1))
+    refreshable_token = AccessTokenInfo(
+        "token", int(time.time() + 3600), refresh_on=int(time.time() - (MAX_REFRESH_JITTER_SECONDS + 5))
+    )
     credential.get_token_info.reset_mock()
     credential.get_token_info.return_value = refreshable_token
     pipeline = AsyncPipeline(transport=AsyncMock(), policies=[AsyncBearerTokenCredentialPolicy(credential, "scope")])
@@ -735,3 +738,33 @@ async def test_async_bearer_policy_reads_streamed_response_on_challenge_exceptio
     # Verify the exception chaining
     assert exc_info.value.__cause__ is not None
     assert isinstance(exc_info.value.__cause__, HttpResponseError)
+
+
+@pytest.mark.asyncio
+async def test_jitter_set_on_token_request_async():
+    """Test that _refresh_jitter is set when _request_token is called on the async policy."""
+    token = AccessToken("test_token", int(time.time()) + 3600)
+
+    credential = AsyncMock(spec_set=["get_token"])
+    credential.get_token.return_value = token
+    policy = AsyncBearerTokenCredentialPolicy(credential, "scope")
+
+    # Initially jitter should be 0
+    assert policy._refresh_jitter == 0
+
+    with patch("azure.core.pipeline.policies._authentication_async.random.randint") as mock_randint:
+        mock_randint.return_value = 42
+
+        await policy._request_token("scope")
+
+        assert policy._refresh_jitter == 42
+        mock_randint.assert_called_once_with(0, MAX_REFRESH_JITTER_SECONDS)
+
+    # Test that jitter is updated on subsequent token requests
+    with patch("azure.core.pipeline.policies._authentication_async.random.randint") as mock_randint:
+        mock_randint.return_value = 25
+
+        await policy._request_token("scope")
+
+        assert policy._refresh_jitter == 25
+        mock_randint.assert_called_once_with(0, MAX_REFRESH_JITTER_SECONDS)
