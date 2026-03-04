@@ -5,7 +5,6 @@
 
 from openai.types.eval_create_params import DataSourceConfigCustom
 
-
 evaluator_to_data_source_config = {
     "coherence": DataSourceConfigCustom(
         {

@@ -137,6 +137,7 @@ async def run_check(
     proxy_port: int,
     mark_arg: Optional[str],
     dest_dir: Optional[str] = None,
+    service: Optional[str] = None,
 ) -> CheckResult:
     """Run a single check (subprocess) within a concurrency semaphore, capturing output and timing.
 
@@ -160,6 +161,8 @@ async def run_check(
     async with semaphore:
         start = time.time()
         cmd = base_args + [check, "--isolate", package]
+        if service:
+            cmd += ["--service", service]
         if mark_arg:
             cmd += ["--mark_arg", mark_arg]
         if dest_dir and check == "apistub":
@@ -263,6 +266,7 @@ async def run_all_checks(
     mark_arg: Optional[str],
     injected_packages: str,
     dest_dir: Optional[str] = None,
+    service: Optional[str] = None,
 ):
     """Run all checks for all packages concurrently and return the worst exit code.
 
@@ -338,6 +342,7 @@ async def run_all_checks(
                     proxy_port,
                     mark_arg,
                     dest_dir,
+                    service,
                 )
             )
         )
@@ -581,6 +586,8 @@ In the case of an environment invoking `pytest`, results can be collected in a j
             logger.info(
                 f"Ensuring {len(checks)} test proxies are running for requested checks..."
             )
+        # Pass through service if set and not "auto"
+        effective_service = args.service if (args.service and args.service != "auto") else None
         exit_code = asyncio.run(
             run_all_checks(
                 targeted_packages,
@@ -590,6 +597,7 @@ In the case of an environment invoking `pytest`, results can be collected in a j
                 args.mark_arg,
                 args.injected_packages,
                 args.dest_dir,
+                effective_service,
             )
         )
     except KeyboardInterrupt:

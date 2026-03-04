@@ -9,5 +9,4 @@
 from ._ai_project_instrumentor import AIProjectInstrumentor
 from ._trace_function import trace_function
 
-
 __all__ = ["AIProjectInstrumentor", "trace_function"]
