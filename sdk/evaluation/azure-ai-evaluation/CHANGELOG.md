@@ -1,5 +1,10 @@
 # Release History
 
+## 1.16.0 (Unreleased)
+
+### Bugs Fixed
+- Fixed `NotFoundError: 404` when using `model_config` dict target with Foundry-style endpoints (`*.services.ai.azure.com`) by appending `/openai/v1` to the endpoint URL for PyRIT compatibility.
+
 ## 1.15.3 (Unreleased)
 
 ### Bugs Fixed
