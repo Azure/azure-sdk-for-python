@@ -243,10 +243,14 @@ class TestUnicodeJSONLRoundTrip:
         """Test JSONL round-trip with CJK characters (Japanese, Chinese)."""
         output_path = str(tmp_path / "cjk_test.jsonl")
         content = [
-            {"conversation": {"messages": [
-                {"role": "user", "content": "これはテストです"},
-                {"role": "assistant", "content": "这是一个测试"},
-            ]}},
+            {
+                "conversation": {
+                    "messages": [
+                        {"role": "user", "content": "これはテストです"},
+                        {"role": "assistant", "content": "这是一个测试"},
+                    ]
+                }
+            },
         ]
         # Write with utf-8 (as the fixed code does)
         with open(output_path, "w", encoding="utf-8") as f:
@@ -264,10 +268,14 @@ class TestUnicodeJSONLRoundTrip:
         output_path = str(tmp_path / "confusable_test.jsonl")
         confusable_text = "Ⓗⓔⓛⓛⓞ ⓦⓞⓡⓛⓓ"  # Unicode confusable "Hello world"
         content = [
-            {"conversation": {"messages": [
-                {"role": "user", "content": confusable_text},
-                {"role": "assistant", "content": "I understand your request."},
-            ]}},
+            {
+                "conversation": {
+                    "messages": [
+                        {"role": "user", "content": confusable_text},
+                        {"role": "assistant", "content": "I understand your request."},
+                    ]
+                }
+            },
         ]
         with open(output_path, "w", encoding="utf-8") as f:
             for entry in content:
@@ -281,10 +289,14 @@ class TestUnicodeJSONLRoundTrip:
         """Test JSONL round-trip with mixed scripts (Arabic, Cyrillic, emoji)."""
         output_path = str(tmp_path / "mixed_test.jsonl")
         content = [
-            {"conversation": {"messages": [
-                {"role": "user", "content": "مرحبا Привет 🔥 café"},
-                {"role": "assistant", "content": "Multi-script response: αβγ"},
-            ]}},
+            {
+                "conversation": {
+                    "messages": [
+                        {"role": "user", "content": "مرحبا Привет 🔥 café"},
+                        {"role": "assistant", "content": "Multi-script response: αβγ"},
+                    ]
+                }
+            },
         ]
         with open(output_path, "w", encoding="utf-8") as f:
             for entry in content:
