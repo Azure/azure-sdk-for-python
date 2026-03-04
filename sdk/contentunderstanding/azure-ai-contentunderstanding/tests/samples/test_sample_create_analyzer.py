@@ -51,7 +51,7 @@ class TestSampleCreateAnalyzer(ContentUnderstandingClientTestBase):
         """
         # Get variables from test proxy (recorded values in playback, empty dict in recording)
         variables = kwargs.pop("variables", {})
-        
+
         client = self.create_client(endpoint=contentunderstanding_endpoint)
 
         # Generate a unique analyzer ID
@@ -175,7 +175,7 @@ class TestSampleCreateAnalyzer(ContentUnderstandingClientTestBase):
                 print(f"[PASS] Cleanup: Analyzer '{analyzer_id}' deleted")
             except Exception as e:
                 print(f"[WARN] Cleanup failed: {str(e)}")
-        
+
         print("\n[SUCCESS] All test_sample_create_analyzer assertions passed")
 
         # Return variables to be recorded for playback mode

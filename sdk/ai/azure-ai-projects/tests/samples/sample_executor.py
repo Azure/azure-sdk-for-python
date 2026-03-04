@@ -1,9 +1,11 @@
-# pylint: disable=line-too-long,useless-suppression
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
 """Shared base code for sample tests - sync dependencies only."""
+
+import ast
 import os
 import sys
 import re
@@ -26,11 +28,13 @@ from pydantic import BaseModel
 import json
 import unittest.mock as mock
 from typing import cast
+from io import BytesIO
 from azure.core.credentials import TokenCredential
 from azure.core.credentials_async import AsyncTokenCredential
 from devtools_testutils.fake_credentials import FakeTokenCredential
 from devtools_testutils.fake_credentials_async import AsyncFakeCredential
 from devtools_testutils import is_live
+from devtools_testutils import add_general_string_sanitizer
 from azure.ai.projects import AIProjectClient
 
 # Fixed timestamp for playback mode (Nov 2023).
@@ -179,7 +183,7 @@ class BaseSampleExecutor:
         test_instance,
         sample_path: str,
         *,
-        env_var_mapping: dict[str, str] = {},
+        env_vars: dict[str, str] = {},
         allowed_llm_validation_failures: Optional[set[str]] = None,
         **kwargs,
     ):
@@ -191,13 +195,9 @@ class BaseSampleExecutor:
 
         # Prepare environment variables
         self.env_vars = {}
-        for sample_var, test_var in env_var_mapping.items():
-            if not isinstance(test_var, str):
-                continue
-            value = kwargs.pop(test_var, None)
-            if value is not None and isinstance(value, str):
-                self.env_vars[sample_var] = value
-
+        for key, val in env_vars.items():
+            if isinstance(key, str) and isinstance(val, str):
+                self.env_vars[key] = val
         # Any remaining ALL_CAPS string kwargs are treated as env vars for the sample.
         # This supports decorators/tests passing env-var overrides via **kwargs.
         env_var_overrides: dict[str, str] = {}
@@ -412,7 +412,11 @@ class BaseSampleExecutor:
                 f.write(f"{i}. {print_call}\n")
         return log_file
 
-    def _get_validation_request_params(self, instructions: str, model: str = "gpt-4o") -> dict:
+    def _get_validation_request_params(
+        self,
+        instructions: str,
+        model: str = "gpt-4o",
+    ) -> dict:
         """Get common parameters for validation request."""
         return {
             "model": model,
@@ -424,12 +428,28 @@ class BaseSampleExecutor:
                     "schema": self.TestReport.model_json_schema(),
                 }
             },
-            # The input field is sanitized in recordings (see conftest.py) by matching the unique prefix
-            # "print contents array = ". This allows sample print statements to change without breaking playback.
-            # The instructions field is preserved as-is in recordings. If you modify the instructions,
-            # you must re-record the tests.
-            "input": f"print contents array = {self.print_calls}",
+            "input": [
+                {
+                    "role": "user",
+                    "content": [
+                        {
+                            "type": "input_text",
+                            "text": "Analyze the attached TXT log file from code interpreter files and return TestReport JSON.",
+                        },
+                    ],
+                }
+            ],
         }
+
+    def _build_validation_text(self) -> str:
+        """Build plain-text validation log content from captured output."""
+        return "\n".join(self.print_calls)
+
+    def _build_validation_txt_bytes(self, validation_log_text: str) -> bytes:
+        """Build UTF-8 TXT content containing captured print/log output."""
+        if not validation_log_text:
+            validation_log_text = ""
+        return f"print/log contents from sample execution = {validation_log_text}".encode("utf-8")
 
     def _assert_validation_result(self, test_report: dict) -> None:
         """Assert validation result and print reason."""
@@ -453,6 +473,102 @@ class BaseSampleExecutor:
             if log_file:
                 print(f"\nValidation passed! Print statements logged to: {log_file}")
             print(f"Reason: {test_report['reason']}")
+
+    def _resolve_local_module_file(
+        self,
+        *,
+        current_file: str,
+        module_name: str,
+        level: int,
+    ) -> Optional[str]:
+        sample_dir_abs = os.path.abspath(self.sample_dir)
+
+        def _candidate_from_base(base_path: str) -> Optional[str]:
+            candidates = [f"{base_path}.py", os.path.join(base_path, "__init__.py")]
+            for candidate in candidates:
+                candidate_abs = os.path.abspath(candidate)
+                if not os.path.isfile(candidate_abs):
+                    continue
+                try:
+                    if os.path.commonpath([sample_dir_abs, candidate_abs]) != sample_dir_abs:
+                        continue
+                except ValueError:
+                    continue
+                return candidate_abs
+            return None
+
+        if level > 0:
+            base_dir = os.path.dirname(os.path.abspath(current_file))
+            for _ in range(level - 1):
+                base_dir = os.path.dirname(base_dir)
+
+            relative_base = base_dir
+            if module_name:
+                relative_base = os.path.join(base_dir, *module_name.split("."))
+            resolved = _candidate_from_base(relative_base)
+            if resolved:
+                return resolved
+
+        if module_name:
+            absolute_base = os.path.join(sample_dir_abs, *module_name.split("."))
+            resolved = _candidate_from_base(absolute_base)
+            if resolved:
+                return resolved
+
+        return None
+
+    def _collect_sample_code_files_for_code_interpreter(self) -> list[str]:
+        """Collect sample source files to attach for code interpreter validation.
+
+        Starts from ``self.sample_path`` and recursively walks local Python imports
+        (both ``import`` and ``from ... import ...``) that resolve to files under
+        the sample directory. The returned list always includes the entry sample
+        file first, followed by discovered local dependencies, each included once.
+
+        Returns:
+            List of absolute file paths for local sample code files.
+        """
+        visited: set[str] = set()
+        discovered: list[str] = []
+        pending: list[str] = [os.path.abspath(self.sample_path)]
+
+        while pending:
+            current_file = pending.pop()
+            if current_file in visited:
+                continue
+            if not os.path.isfile(current_file):
+                continue
+
+            visited.add(current_file)
+            discovered.append(current_file)
+
+            try:
+                with open(current_file, "r", encoding="utf-8") as source_file:
+                    source_code = source_file.read()
+                parsed = ast.parse(source_code)
+            except Exception:  # pylint: disable=broad-exception-caught
+                continue
+
+            for node in ast.walk(parsed):
+                if isinstance(node, ast.Import):
+                    for alias in node.names:
+                        resolved = self._resolve_local_module_file(
+                            current_file=current_file,
+                            module_name=alias.name,
+                            level=0,
+                        )
+                        if resolved and resolved not in visited:
+                            pending.append(resolved)
+                elif isinstance(node, ast.ImportFrom):
+                    resolved = self._resolve_local_module_file(
+                        current_file=current_file,
+                        module_name=node.module or "",
+                        level=node.level,
+                    )
+                    if resolved and resolved not in visited:
+                        pending.append(resolved)
+
+        return discovered
 
 
 class SamplePathPasser:
@@ -481,14 +597,16 @@ class SyncSampleExecutor(BaseSampleExecutor):
         test_instance,
         sample_path: str,
         *,
-        env_var_mapping: dict[str, str] = {},
+        env_vars: Optional[dict[str, str]] = None,
         allowed_llm_validation_failures: Optional[set[str]] = None,
         **kwargs,
     ):
+        if env_vars is None:
+            env_vars = {}
         super().__init__(
             test_instance,
             sample_path,
-            env_var_mapping=env_var_mapping,
+            env_vars=env_vars,
             allowed_llm_validation_failures=allowed_llm_validation_failures,
             **kwargs,
         )
@@ -575,10 +693,82 @@ class SyncSampleExecutor(BaseSampleExecutor):
             project_client.get_openai_client() as openai_client,
         ):
             response = None
+            uploaded_file_ids: list[str] = []
             try:
-                response = openai_client.responses.create(
-                    **self._get_validation_request_params(instructions, model=model)
+
+                def _upload_file_for_validation(file_obj, placeholder_value: str) -> str:
+                    uploaded = openai_client.files.create(
+                        file=file_obj,
+                        purpose="assistants",
+                        extra_headers={"x-recording-skip": "request-response"},
+                    )
+                    uploaded_file_id = getattr(uploaded, "id", None)
+                    if not isinstance(uploaded_file_id, str) or not uploaded_file_id:
+                        raise ValueError("Failed to upload validation input file")
+                    uploaded_file_ids.append(uploaded_file_id)
+                    add_general_string_sanitizer(
+                        function_scoped=True,
+                        target=uploaded_file_id,
+                        value=placeholder_value,
+                    )
+                    return uploaded_file_id
+
+                validation_log_text = self._build_validation_text()
+                validation_file_id: str
+
+                if is_live():
+                    validation_text_file = BytesIO(self._build_validation_txt_bytes(validation_log_text))
+                    validation_text_file.name = "sample_validation_log.txt"  # type: ignore[attr-defined]
+                    validation_file_id = _upload_file_for_validation(validation_text_file, "validation_log_file_1")
+                else:
+                    validation_file_id = "validation_log_file_1"
+
+                request_params = self._get_validation_request_params(
+                    instructions,
+                    model=model,
                 )
+
+                sample_code_files = self._collect_sample_code_files_for_code_interpreter()
+                code_interpreter_file_ids: list[str]
+
+                if is_live():
+                    uploaded_code_interpreter_file_ids: list[str] = []
+                    # Keep upload/delete out of recordings because multipart payloads contain
+                    # full file bytes and become brittle whenever sample files change.
+                    #
+                    # Since upload calls are skipped from recording, playback cannot discover
+                    # runtime file IDs via `files.create`. To keep `responses.create` replayable,
+                    # sanitize each live file ID to a deterministic placeholder and reuse the
+                    # same placeholders in playback mode below.
+                    for file_path in sample_code_files:
+                        with open(file_path, "rb") as source_file:
+                            scrubbed_file_id = f"code_interpreter_file_{len(uploaded_code_interpreter_file_ids) + 1}"
+                            uploaded_file_id = _upload_file_for_validation(source_file, scrubbed_file_id)
+                        uploaded_code_interpreter_file_ids.append(uploaded_file_id)
+
+                    code_interpreter_file_ids = [validation_file_id, *uploaded_code_interpreter_file_ids]
+                else:
+                    # Playback counterpart of the live sanitization mapping above.
+                    # Must match the same deterministic sequence used during recording.
+                    code_interpreter_file_ids = [
+                        "validation_log_file_1",
+                        *[f"code_interpreter_file_{index}" for index, _ in enumerate(sample_code_files, start=1)],
+                    ]
+
+                code_interpreter_container: dict[str, object] = {
+                    "type": "auto",
+                }
+                if code_interpreter_file_ids:
+                    code_interpreter_container["file_ids"] = code_interpreter_file_ids
+
+                request_params["tools"] = [
+                    {
+                        "type": "code_interpreter",
+                        "container": code_interpreter_container,
+                    }
+                ]
+
+                response = openai_client.responses.create(**request_params)
                 test_report = json.loads(response.output_text)
             except Exception as e:  # pylint: disable=broad-exception-caught
                 response_output_text = None
@@ -592,6 +782,17 @@ class SyncSampleExecutor(BaseSampleExecutor):
                     reason += f". Raw output_text: {response_output_text}"
 
                 test_report = {"correct": False, "reason": reason}
+            finally:
+                if is_live():
+                    # Skip recording delete operations for the same reason as uploads.
+                    for uploaded_file_id in uploaded_file_ids:
+                        try:
+                            openai_client.files.delete(
+                                uploaded_file_id,
+                                extra_headers={"x-recording-skip": "request-response"},
+                            )
+                        except Exception:  # pylint: disable=broad-exception-caught
+                            pass
 
             self._assert_validation_result(test_report)
 
@@ -604,14 +805,14 @@ class AsyncSampleExecutor(BaseSampleExecutor):
         test_instance,
         sample_path: str,
         *,
-        env_var_mapping: dict[str, str] = {},
+        env_vars: dict[str, str] = {},
         allowed_llm_validation_failures: Optional[set[str]] = None,
         **kwargs,
     ):
         super().__init__(
             test_instance,
             sample_path,
-            env_var_mapping=env_var_mapping,
+            env_vars=env_vars,
             allowed_llm_validation_failures=allowed_llm_validation_failures,
             **kwargs,
         )
@@ -675,6 +876,7 @@ class AsyncSampleExecutor(BaseSampleExecutor):
         instructions: str,
         project_endpoint: str,
         model: str = "gpt-4o",
+        use_code_interpreter: bool = True,
     ):
         """Validate captured print output using asynchronous OpenAI client."""
         if not instructions or not instructions.strip():
@@ -693,10 +895,89 @@ class AsyncSampleExecutor(BaseSampleExecutor):
             project_client.get_openai_client() as openai_client,
         ):
             response = None
+            uploaded_file_ids: list[str] = []
             try:
-                response = await openai_client.responses.create(
-                    **self._get_validation_request_params(instructions, model=model)
+
+                async def _upload_file_for_validation_async(file_obj, placeholder_value: str) -> str:
+                    uploaded = await openai_client.files.create(
+                        file=file_obj,
+                        purpose="assistants",
+                        extra_headers={"x-recording-skip": "request-response"},
+                    )
+                    uploaded_file_id = getattr(uploaded, "id", None)
+                    if not isinstance(uploaded_file_id, str) or not uploaded_file_id:
+                        raise ValueError("Failed to upload validation input file")
+                    uploaded_file_ids.append(uploaded_file_id)
+                    add_general_string_sanitizer(
+                        function_scoped=True,
+                        target=uploaded_file_id,
+                        value=placeholder_value,
+                    )
+                    return uploaded_file_id
+
+                validation_log_text = self._build_validation_text()
+                validation_file_id: str
+
+                if is_live():
+                    validation_text_file = BytesIO(self._build_validation_txt_bytes(validation_log_text))
+                    validation_text_file.name = "sample_validation_log.txt"  # type: ignore[attr-defined]
+                    validation_file_id = await _upload_file_for_validation_async(
+                        validation_text_file, "validation_log_file_1"
+                    )
+                else:
+                    validation_file_id = "validation_log_file_1"
+
+                request_params = self._get_validation_request_params(
+                    instructions,
+                    model=model,
                 )
+
+                if use_code_interpreter:
+                    sample_code_files = self._collect_sample_code_files_for_code_interpreter()
+                    code_interpreter_file_ids: list[str]
+
+                    if is_live():
+                        uploaded_code_interpreter_file_ids: list[str] = []
+                        # Keep upload/delete out of recordings because multipart payloads contain
+                        # full file bytes and become brittle whenever sample files change.
+                        #
+                        # Since upload calls are skipped from recording, playback cannot discover
+                        # runtime file IDs via `files.create`. To keep `responses.create` replayable,
+                        # sanitize each live file ID to a deterministic placeholder and reuse the
+                        # same placeholders in playback mode below.
+                        for file_path in sample_code_files:
+                            with open(file_path, "rb") as source_file:
+                                scrubbed_file_id = (
+                                    f"code_interpreter_file_{len(uploaded_code_interpreter_file_ids) + 1}"
+                                )
+                                uploaded_file_id = await _upload_file_for_validation_async(
+                                    source_file, scrubbed_file_id
+                                )
+                            uploaded_code_interpreter_file_ids.append(uploaded_file_id)
+
+                        code_interpreter_file_ids = [validation_file_id, *uploaded_code_interpreter_file_ids]
+                    else:
+                        # Playback counterpart of the live sanitization mapping above.
+                        # Must match the same deterministic sequence used during recording.
+                        code_interpreter_file_ids = [
+                            "validation_log_file_1",
+                            *[f"code_interpreter_file_{index}" for index, _ in enumerate(sample_code_files, start=1)],
+                        ]
+
+                    code_interpreter_container: dict[str, object] = {
+                        "type": "auto",
+                    }
+                    if code_interpreter_file_ids:
+                        code_interpreter_container["file_ids"] = code_interpreter_file_ids
+
+                    request_params["tools"] = [
+                        {
+                            "type": "code_interpreter",
+                            "container": code_interpreter_container,
+                        }
+                    ]
+
+                response = await openai_client.responses.create(**request_params)
                 test_report = json.loads(response.output_text)
             except Exception as e:  # pylint: disable=broad-exception-caught
                 response_output_text = None
@@ -710,6 +991,17 @@ class AsyncSampleExecutor(BaseSampleExecutor):
                     reason += f". Raw output_text: {response_output_text}"
 
                 test_report = {"correct": False, "reason": reason}
+            finally:
+                if is_live():
+                    # Skip recording delete operations for the same reason as uploads.
+                    for uploaded_file_id in uploaded_file_ids:
+                        try:
+                            await openai_client.files.delete(
+                                uploaded_file_id,
+                                extra_headers={"x-recording-skip": "request-response"},
+                            )
+                        except Exception:  # pylint: disable=broad-exception-caught
+                            pass
 
             self._assert_validation_result(test_report)
 
@@ -753,8 +1045,6 @@ def _register_env_var_sanitizers(
     """Register function-scoped sanitizers to replace live env-var values with playback values."""
     if not _is_live_mode():
         return
-
-    from devtools_testutils import add_general_string_sanitizer
 
     for env_key, live_value in resolved_env_vars.items():
         playback_value = playback_values.get(env_key)

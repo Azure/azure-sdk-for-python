@@ -12,18 +12,19 @@ from sample_executor import (
     get_sample_paths,
     SamplePathPasser,
 )
-from test_samples_helpers import get_sample_environment_variables_map
+from test_samples_helpers import get_sample_env_vars
 
 # Preparer with only the variables needed for evaluation samples
 evaluationsPreparer = functools.partial(
     EnvironmentVariableLoader,
     "",
     azure_ai_project_endpoint="https://sanitized-account-name.services.ai.azure.com/api/projects/sanitized-project-name",
-    azure_ai_model_deployment_name="gpt-4o",
+    azure_ai_model_deployment_name="sanitized-model-deployment-name",
     azure_ai_agent_name="sanitized-agent-name",
 )
 
-evaluations_instructions = """We just run Python code for an evaluation sample and captured a Python array of print statements.
+evaluations_instructions = """
+We just run Python code for an evaluation sample and captured print/log output in an attached log file (TXT).
 Validating the printed content to determine if the evaluation completed successfully:
 Respond false if any entries show:
 - Error messages or exception text (not including normal status messages)
@@ -38,12 +39,10 @@ Respond with true if:
 - The evaluation completed with results (passed or failed evaluation metrics are both valid outcomes)
 - Resources were cleaned up (agent deleted, evaluation deleted)
 
-Always respond with `reason` indicating the reason for the response."""
+Always respond with `reason` indicating the reason for the response.
+""".strip()
 
 
-@pytest.mark.skip(
-    reason="Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema"
-)
 class TestSamplesEvaluations(AzureRecordedTestCase):
     """
     Tests for evaluation samples.
@@ -112,28 +111,21 @@ class TestSamplesEvaluations(AzureRecordedTestCase):
         "sample_path",
         get_sample_paths(
             "evaluations",
-            samples_to_test=[
-                "sample_agent_evaluation.py",
-                "sample_model_evaluation.py",
-                "sample_agent_response_evaluation.py",
-                "sample_evaluations_builtin_with_inline_data.py",
-                "sample_eval_catalog.py",
-                "sample_eval_catalog_code_based_evaluators.py",
-                "sample_eval_catalog_prompt_based_evaluators.py",
-                "sample_evaluation_compare_insight.py",
-                "sample_agent_response_evaluation_with_function_tool.py",
-                "sample_redteam_evaluations.py",
-                "sample_evaluations_graders.py",
-                "sample_evaluations_ai_assisted.py",
-                "sample_evaluation_cluster_insight.py",
+            samples_to_skip=[
+                "sample_evaluations_ai_assisted.py",  # Similarity evaluator returns FAILED_EXECUTION ('query' is missing)
+                "sample_evaluations_builtin_with_inline_data_oai.py",  # 401 AuthenticationError (invalid subscription key or API endpoint)
+                "sample_evaluations_builtin_with_traces.py",  # Missing required env var APPINSIGHTS_RESOURCE_ID (KeyError)
+                "sample_evaluations_score_model_grader_with_image.py",  # Eval fails: image inputs not supported for configured grader model
+                "sample_scheduled_evaluations.py",  # Missing dependency azure.mgmt.resource (ModuleNotFoundError)
+                "sample_evaluation_cluster_insight.py",  # Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema
             ],
         ),
     )
     @SamplePathPasser()
     @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_evaluation_samples(self, sample_path: str, **kwargs) -> None:
-        env_var_mapping = get_sample_environment_variables_map(kwargs)
-        executor = SyncSampleExecutor(self, sample_path, env_var_mapping=env_var_mapping, **kwargs)
+        env_vars = get_sample_env_vars(kwargs)
+        executor = SyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
         executor.execute()
         executor.validate_print_calls_by_llm(
             instructions=evaluations_instructions,
@@ -148,29 +140,18 @@ class TestSamplesEvaluations(AzureRecordedTestCase):
         "sample_path",
         get_sample_paths(
             "evaluations/agentic_evaluators",
-            samples_to_test=[
-                "sample_coherence.py",
-                "sample_fluency.py",
-                "sample_groundedness.py",
-                "sample_intent_resolution.py",
-                "sample_relevance.py",
-                "sample_response_completeness.py",
-                "sample_task_adherence.py",
-                "sample_task_completion.py",
-                "sample_task_navigation_efficiency.py",
-                "sample_tool_call_accuracy.py",
-                "sample_tool_call_success.py",
-                "sample_tool_input_accuracy.py",
-                "sample_tool_output_utilization.py",
-                "sample_tool_selection.py",
+            samples_to_skip=[
+                "sample_intent_resolution.py",  # Evaluator FAILED_EXECUTION: tool_definitions must be a list of dictionaries
+                "sample_task_navigation_efficiency.py",  # Evaluator FAILED_EXECUTION: required 'actions' parameter is missing
+                "sample_tool_call_success.py",  # Sample data evaluates to failure (tool result has DB_CONNECTION_FAILED)
             ],
         ),
     )
     @SamplePathPasser()
     @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_agentic_evaluator_samples(self, sample_path: str, **kwargs) -> None:
-        env_var_mapping = get_sample_environment_variables_map(kwargs)
-        executor = SyncSampleExecutor(self, sample_path, env_var_mapping=env_var_mapping, **kwargs)
+        env_vars = get_sample_env_vars(kwargs)
+        executor = SyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
         executor.execute()
         executor.validate_print_calls_by_llm(
             instructions=evaluations_instructions,
@@ -194,8 +175,8 @@ class TestSamplesEvaluations(AzureRecordedTestCase):
             "sample_generic_agentic_evaluator",
             "sample_generic_agentic_evaluator.py",
         )
-        env_var_mapping = get_sample_environment_variables_map(kwargs)
-        executor = SyncSampleExecutor(self, sample_path, env_var_mapping=env_var_mapping, **kwargs)
+        env_vars = get_sample_env_vars(kwargs)
+        executor = SyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
         executor.execute()
         executor.validate_print_calls_by_llm(
             instructions=evaluations_instructions,
