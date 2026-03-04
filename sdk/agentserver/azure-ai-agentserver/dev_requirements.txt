@@ -1,0 +1,10 @@
+-e ../../../eng/tools/azure-sdk-tools
+pytest
+httpx
+httpx[http2]
+pytest-asyncio
+opentelemetry-api>=1.20.0
+opentelemetry-sdk>=1.20.0
+prometheus_client>=0.20.0
+python-json-logger>=3.0.0
+cryptography

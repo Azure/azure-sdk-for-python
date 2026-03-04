@@ -1,0 +1,24 @@
+# ---------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# ---------------------------------------------------------
+
+
+class Constants:
+    """Well-known environment variables and defaults for AgentServer."""
+
+    AGENT_LOG_LEVEL = "AGENT_LOG_LEVEL"
+    AGENT_DEBUG_ERRORS = "AGENT_DEBUG_ERRORS"
+    AGENT_ENABLE_TRACING = "AGENT_ENABLE_TRACING"
+    AGENT_SERVER_PORT = "AGENT_SERVER_PORT"
+    AGENT_GRACEFUL_SHUTDOWN_TIMEOUT = "AGENT_GRACEFUL_SHUTDOWN_TIMEOUT"
+    AGENT_MAX_REQUEST_BODY_SIZE = "AGENT_MAX_REQUEST_BODY_SIZE"
+    AGENT_REQUEST_TIMEOUT = "AGENT_REQUEST_TIMEOUT"
+    AGENT_MAX_CONCURRENT_REQUESTS = "AGENT_MAX_CONCURRENT_REQUESTS"
+    AGENT_ENABLE_METRICS = "AGENT_ENABLE_METRICS"
+    AGENT_ENABLE_ACCESS_LOG = "AGENT_ENABLE_ACCESS_LOG"
+    DEFAULT_PORT = 8088
+    DEFAULT_GRACEFUL_SHUTDOWN_TIMEOUT = 30
+    DEFAULT_MAX_REQUEST_BODY_SIZE = 100 * 1024 * 1024  # 100 MB
+    DEFAULT_REQUEST_TIMEOUT = 300  # 5 minutes
+    DEFAULT_MAX_CONCURRENT_REQUESTS = 0  # disabled
+    INVOCATION_ID_HEADER = "x-agent-invocation-id"

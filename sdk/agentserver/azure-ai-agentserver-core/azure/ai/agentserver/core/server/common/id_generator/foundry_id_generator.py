@@ -34,12 +34,11 @@ class FoundryIdGenerator(IdGenerator):
     def from_request(cls, payload: dict) -> "FoundryIdGenerator":
         response_id = payload.get("metadata", {}).get("response_id", None)
         conv_id_raw = payload.get("conversation", None)
+        conv_id: Optional[str] = None
         if isinstance(conv_id_raw, str):
             conv_id = conv_id_raw
         elif isinstance(conv_id_raw, dict):
             conv_id = conv_id_raw.get("id", None)
-        else:
-            conv_id = None
         return cls(response_id, conv_id)
 
     def generate(self, category: Optional[str] = None) -> str:

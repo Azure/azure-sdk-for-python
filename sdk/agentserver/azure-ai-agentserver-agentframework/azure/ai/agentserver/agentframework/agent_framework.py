@@ -77,7 +77,9 @@ class AgentFrameworkCBAgent(FoundryCBAgent):
 
     def init_tracing(self):
         exporter = os.environ.get(AdapterConstants.OTEL_EXPORTER_ENDPOINT)
-        app_insights_conn_str = os.environ.get(AdapterConstants.APPLICATION_INSIGHTS_CONNECTION_STRING)
+        app_insights_conn_str = os.environ.get(
+            AdapterConstants.APPLICATION_INSIGHTS_CONNECTION_STRING  # pylint: disable=no-member
+        )
         project_endpoint = os.environ.get(AdapterConstants.AZURE_AI_PROJECT_ENDPOINT)
 
         if project_endpoint:

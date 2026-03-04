@@ -1,0 +1,16 @@
+{
+    "ignoreWords": [
+        "agentserver",
+        "azureai",
+        "ainvoke",
+        "invocations",
+        "openapi",
+        "msgpack"
+    ],
+    "ignorePaths": [
+        "*.csv",
+        "*.json",
+        "*.rst",
+        "samples/**"
+    ]
+}
