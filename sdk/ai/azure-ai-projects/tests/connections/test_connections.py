@@ -4,6 +4,7 @@
 # ------------------------------------
 
 import pytest
+from azure.ai.projects.models import ConnectionType
 from test_base import TestBase, servicePreparer
 from devtools_testutils import recorded_by_proxy
 
@@ -19,8 +20,8 @@ class TestConnections(TestBase):
     @recorded_by_proxy
     def test_connections(self, **kwargs):
 
-        connection_name = self.test_connections_params["connection_name"]
-        connection_type = self.test_connections_params["connection_type"]
+        connection_name = kwargs["mcp_project_connection_id"].split("/")[-1]
+        connection_type = ConnectionType.AZURE_OPEN_AI
 
         with self.create_client(**kwargs) as project_client:
 
