@@ -4976,7 +4976,7 @@ class ImageGenTool(Tool, discriminator="image_generation"):
     :vartype partial_images: int
     :ivar action: Whether to generate a new image or edit an existing image. Default: ``auto``.
      Known values are: "generate", "edit", and "auto".
-    :vartype action: str or ~azure.ai.projects.models.ImageGenActionEnum
+    :vartype action: str or ~azure.ai.projects.models.ImageGenAction
     """
 
     type: Literal[ToolType.IMAGE_GENERATION] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -5027,7 +5027,7 @@ class ImageGenTool(Tool, discriminator="image_generation"):
      (string, optional)."""
     partial_images: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Number of partial images to generate in streaming mode, from 0 (default value) to 3."""
-    action: Optional[Union[str, "_models.ImageGenActionEnum"]] = rest_field(
+    action: Optional[Union[str, "_models.ImageGenAction"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Whether to generate a new image or edit an existing image. Default: ``auto``. Known values are:
@@ -5049,7 +5049,7 @@ class ImageGenTool(Tool, discriminator="image_generation"):
         input_fidelity: Optional[Union[str, "_models.InputFidelity"]] = None,
         input_image_mask: Optional["_models.ImageGenToolInputImageMask"] = None,
         partial_images: Optional[int] = None,
-        action: Optional[Union[str, "_models.ImageGenActionEnum"]] = None,
+        action: Optional[Union[str, "_models.ImageGenAction"]] = None,
     ) -> None: ...
 
     @overload
