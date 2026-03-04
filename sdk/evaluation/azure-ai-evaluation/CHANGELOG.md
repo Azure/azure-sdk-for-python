@@ -1,5 +1,10 @@
 # Release History
 
+## 1.16.0 (Unreleased)
+
+### Bugs Fixed
+- Improved error messages when passing invalid `target` to `RedTeam.scan()` — now raises clear `ValueError` instead of cryptic `TypeError` or `AttributeError`.
+
 ## 1.15.3 (Unreleased)
 
 ### Bugs Fixed
