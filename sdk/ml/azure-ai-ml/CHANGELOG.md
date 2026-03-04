@@ -6,9 +6,6 @@
 
 - Skip _list_secrets for identity-based datastores to prevent noisy telemetry traces.
 
-### Other Changes
-
-
 ## 1.31.0 (2025-12-18)
 
 ### Features Added
