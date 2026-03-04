@@ -10,6 +10,7 @@ from azure.appconfiguration.aio import AzureAppConfigurationClient
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.exceptions import ResourceExistsError
 
+
 # pylint: disable=invalid-overridden-method
 class AsyncAppConfigTestCase(AppConfigTestCase):
     def create_aad_client(self, appconfiguration_endpoint_string, audience=None):
