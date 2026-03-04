@@ -34,7 +34,7 @@ from azure.mgmt.containerregistry import ContainerRegistryManagementClient
 
 client = ContainerRegistryManagementClient(...)
 
-# Operations abount tasks were on the main client
+# Operations about tasks were on the main client
 client.agent_pools.list(...)
 client.runs.list(...)
 client.task_runs.list(...)
