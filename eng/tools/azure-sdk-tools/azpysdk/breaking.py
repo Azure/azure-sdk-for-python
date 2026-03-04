@@ -44,6 +44,7 @@ class breaking(Check):
         p.add_argument(
             "-s",
             "--stable-version",
+            "--stable_version",
             dest="stable_version",
             help="The stable version of the target package, if it exists on PyPi.",
             default=None,
