@@ -125,7 +125,9 @@ def main() -> None:
     # Get source configuration
     source_endpoint = os.environ["CONTENTUNDERSTANDING_ENDPOINT"]
     source_key = os.getenv("CONTENTUNDERSTANDING_KEY")
-    source_credential = AzureKeyCredential(source_key) if source_key else DefaultAzureCredential()
+    source_credential = (
+        AzureKeyCredential(source_key) if source_key else DefaultAzureCredential()
+    )
 
     source_resource_id = os.environ["CONTENTUNDERSTANDING_SOURCE_RESOURCE_ID"]
     source_region = os.environ["CONTENTUNDERSTANDING_SOURCE_REGION"]
@@ -133,14 +135,20 @@ def main() -> None:
     # Get target configuration
     target_endpoint = os.environ["CONTENTUNDERSTANDING_TARGET_ENDPOINT"]
     target_key = os.getenv("CONTENTUNDERSTANDING_TARGET_KEY")
-    target_credential = AzureKeyCredential(target_key) if target_key else DefaultAzureCredential()
+    target_credential = (
+        AzureKeyCredential(target_key) if target_key else DefaultAzureCredential()
+    )
 
     target_resource_id = os.environ["CONTENTUNDERSTANDING_TARGET_RESOURCE_ID"]
     target_region = os.environ["CONTENTUNDERSTANDING_TARGET_REGION"]
 
     # Create source and target clients using DefaultAzureCredential
-    source_client = ContentUnderstandingClient(endpoint=source_endpoint, credential=source_credential)
-    target_client = ContentUnderstandingClient(endpoint=target_endpoint, credential=target_credential)
+    source_client = ContentUnderstandingClient(
+        endpoint=source_endpoint, credential=source_credential
+    )
+    target_client = ContentUnderstandingClient(
+        endpoint=target_endpoint, credential=target_credential
+    )
 
     # Generate unique analyzer IDs
     base_id = f"my_analyzer_{int(time.time())}"

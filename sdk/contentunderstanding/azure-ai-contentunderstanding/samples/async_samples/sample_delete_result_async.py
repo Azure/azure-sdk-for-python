@@ -1,4 +1,5 @@
 # pylint: disable=line-too-long,useless-suppression
+# mypy: disable-error-code="assignment,union-attr,attr-defined"
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -57,7 +58,9 @@ async def main() -> None:
     key = os.getenv("CONTENTUNDERSTANDING_KEY")
     credential = AzureKeyCredential(key) if key else DefaultAzureCredential()
 
-    async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client:
+    async with ContentUnderstandingClient(
+        endpoint=endpoint, credential=credential
+    ) as client:
         # [START analyze_and_delete_result]
         # You can replace this URL with your own invoice file URL
         document_url = "https://raw.githubusercontent.com/Azure-Samples/azure-ai-content-understanding-assets/main/document/invoice.pdf"
@@ -76,7 +79,7 @@ async def main() -> None:
 
         # Display some sample results
         if result.contents and len(result.contents) > 0:
-            document_content: DocumentContent = result.contents[0]  # type: ignore
+            document_content: DocumentContent = result.contents[0]
             if document_content.fields:
                 print(f"Total fields extracted: {len(document_content.fields)}")
 

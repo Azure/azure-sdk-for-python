@@ -1,4 +1,5 @@
 # pylint: disable=line-too-long,useless-suppression
+# mypy: disable-error-code="assignment,union-attr,attr-defined"
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -76,7 +77,7 @@ def main() -> None:
 
     # Display some sample results
     if result.contents and len(result.contents) > 0:
-        document_content: DocumentContent = result.contents[0]  # type: ignore
+        document_content: DocumentContent = result.contents[0]
         if document_content.fields:
             print(f"Total fields extracted: {len(document_content.fields)}")
 

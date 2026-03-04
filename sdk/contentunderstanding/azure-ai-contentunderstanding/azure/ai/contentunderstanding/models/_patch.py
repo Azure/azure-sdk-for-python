@@ -1,4 +1,4 @@
-# pylint: disable=line-too-long,useless-suppression
+# pylint: disable=line-too-long,useless-suppression,function-redefined
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -24,7 +24,7 @@ from ._models import (
     ArrayField,
     ObjectField,
     JsonField,
-    ContentField,
+    ContentField,  # pyright: ignore[reportAssignmentType]
 )
 
 # Type-only redeclarations so type checkers (pyright / mypy) see the .value

@@ -1,4 +1,5 @@
 # pylint: disable=line-too-long,useless-suppression
+# mypy: disable-error-code="assignment,union-attr,attr-defined"
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -174,11 +175,17 @@ def main() -> None:
 
     # Option B: upload local label files and auto-generate a SAS URL
     if not training_data_sas_url:
-        storage_account = os.getenv("CONTENTUNDERSTANDING_TRAINING_DATA_STORAGE_ACCOUNT")
+        storage_account = os.getenv(
+            "CONTENTUNDERSTANDING_TRAINING_DATA_STORAGE_ACCOUNT"
+        )
         container = os.getenv("CONTENTUNDERSTANDING_TRAINING_DATA_CONTAINER")
         if storage_account and container:
             from azure.core.exceptions import ResourceExistsError
-            from azure.storage.blob import BlobServiceClient, ContainerSasPermissions, generate_container_sas
+            from azure.storage.blob import (
+                BlobServiceClient,
+                ContainerSasPermissions,
+                generate_container_sas,
+            )
 
             azure_credential = DefaultAzureCredential()
 
@@ -193,14 +200,24 @@ def main() -> None:
             except ResourceExistsError:
                 pass  # Container already exists
 
-            local_label_dir = Path(os.path.join(os.path.dirname(__file__), "sample_files", "training_samples"))
+            local_label_dir = Path(
+                os.path.join(
+                    os.path.dirname(__file__), "sample_files", "training_samples"
+                )
+            )
             prefix = os.getenv("CONTENTUNDERSTANDING_TRAINING_DATA_PREFIX")
             for file_path in local_label_dir.iterdir():
                 if file_path.is_file() and file_path.name != "README.md":
-                    blob_name = file_path.name if not prefix else prefix.rstrip("/") + "/" + file_path.name
+                    blob_name = (
+                        file_path.name
+                        if not prefix
+                        else prefix.rstrip("/") + "/" + file_path.name
+                    )
                     print(f"Uploading {file_path.name} -> {blob_name}")
                     with open(file_path, "rb") as data:
-                        container_client.upload_blob(name=blob_name, data=data, overwrite=True)
+                        container_client.upload_blob(
+                            name=blob_name, data=data, overwrite=True
+                        )
 
             # Generate a User Delegation SAS URL (Read + List) for the container
             blob_service_client = BlobServiceClient(
@@ -257,8 +274,12 @@ def main() -> None:
     print(f"Analyzer created: {analyzer_id}")
     print(f"  Description: {result.description}")
     print(f"  Base analyzer: {result.base_analyzer_id}")
-    print(f"  Fields: {len(result.field_schema.fields) if result.field_schema and result.field_schema.fields else 0}")
-    print(f"  Knowledge sources: {len(result.knowledge_sources) if result.knowledge_sources else 0}")
+    print(
+        f"  Fields: {len(result.field_schema.fields) if result.field_schema and result.field_schema.fields else 0}"
+    )
+    print(
+        f"  Knowledge sources: {len(result.knowledge_sources) if result.knowledge_sources else 0}"
+    )
     # [END create_analyzer_with_labels]
 
     # Clean up - delete the analyzer
