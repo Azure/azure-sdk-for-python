@@ -29,7 +29,7 @@ from devtools_testutils import add_general_regex_sanitizer, test_proxy, set_bodi
 
 
 @pytest.fixture(scope="session", autouse=True)
-def add_sanitizers(test_proxy):
+def add_sanitizers(test_proxy, patch_sleep, patch_async_sleep):
     set_bodiless_matcher()
 
     client_id = os.environ.get("APPCONFIGURATION_CLIENT_ID", "client-id")
