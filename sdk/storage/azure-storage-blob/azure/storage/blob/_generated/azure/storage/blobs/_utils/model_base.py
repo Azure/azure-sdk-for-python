@@ -630,7 +630,10 @@ class Model(_MyMutableMapping):
                         if len(items) > 0:
                             existed_attr_keys.append(xml_name)
                             dict_to_pass[rf._rest_name] = _deserialize(rf._type, items)
+                        else: ## EHHH????
+                            dict_to_pass[rf._rest_name] = []
                         continue
+                        
 
                     # text element is primitive type
                     if prop_meta.get("text", False):
