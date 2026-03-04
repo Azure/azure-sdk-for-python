@@ -211,7 +211,7 @@ def get_blob_properties_from_generated_code(generated: "BlobItemInternal") -> Bl
     blob.is_current_version = generated.is_current_version
     blob.tag_count = generated.properties.tag_count
     blob.tags = parse_tags(generated.blob_tags)
-    blob.object_replication_source_properties = deserialize_ors_policies(generated.object_replication_metadata)
+    blob.object_replication_source_properties = deserialize_ors_policies(generated.object_replication_metadata.as_dict() if generated.object_replication_metadata else None)
     blob.last_accessed_on = generated.properties.last_accessed_on
     blob.immutability_policy = ImmutabilityPolicy._from_generated(generated)  # pylint: disable=protected-access
     blob.has_legal_hold = generated.properties.legal_hold
