@@ -393,8 +393,8 @@ class GrammarSyntax1(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """REGEX."""
 
 
-class ImageGenActionEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of ImageGenActionEnum."""
+class ImageGenAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of ImageGenAction."""
 
     GENERATE = "generate"
     """GENERATE."""
