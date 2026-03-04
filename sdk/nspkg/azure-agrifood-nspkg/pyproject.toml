@@ -3,24 +3,30 @@ requires = ["setuptools>=77.0.3", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "azure"
-version = "5.0.0"
+name = "azure-agrifood-nspkg"
+version = "1.0.0"
 authors = [
-  { name = "Microsoft Corporation", email = "azpysdkhelp@microsoft.com" },
+  { name = "Microsoft Corporation", email = "azurepysdk@microsoft.com" },
 ]
-description = "Microsoft Azure Client Libraries for Python"
+description = "Microsoft Azure AgriFood Namespace Package [Internal]"
 license = "MIT"
 classifiers = [
-    "Development Status :: 7 - Inactive",
+    "Development Status :: 5 - Production/Stable",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3 :: Only",
     "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.6",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
 ]
-requires-python = ">=3.8"
 keywords = ["azure", "azure sdk"]
-dependencies = []
 dynamic = [
 "readme"
+]
+
+dependencies = [
+    "azure-nspkg>=2.0.0",
 ]
 
 [project.urls]
@@ -29,21 +35,9 @@ repository = "https://github.com/Azure/azure-sdk-for-python"
 [tool.setuptools.dynamic]
 readme = {file = ["README.md"], content-type = "text/markdown"}
 
-[tool.setuptools.packages.find]
-exclude = [
-    "tests*",
-    "samples*",
-]
+[tool.setuptools]
+packages = ["azure.agrifood"]
 
 [tool.azure-sdk-build]
-type_check_samples = false
-verifytypes = false
-pyright = false
-mypy = false
 pylint = false
-regression = false
-sphinx = false
-black = false
-
-[tool.azure-sdk-conda]
-in_bundle = false
+pyright = false
