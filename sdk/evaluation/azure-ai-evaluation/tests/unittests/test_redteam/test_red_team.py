@@ -1930,3 +1930,57 @@ class TestRedTeamRoundRobinSampling:
         selected_objectives = red_team.attack_objectives[cached_key]["selected_objectives"]
         assert len(selected_objectives) == 1
         assert selected_objectives[0]["id"] == "a1"
+
+
+@pytest.mark.unittest
+class TestScanInputValidation:
+    """Test early input validation in RedTeam.scan()."""
+
+    @pytest.fixture
+    def red_team(self):
+        """Create a RedTeam instance with mocked dependencies."""
+        with patch("azure.ai.evaluation.simulator._model_tools._rai_client.RAIClient"), patch(
+            "azure.ai.evaluation.red_team._red_team.GeneratedRAIClient"
+        ), patch("azure.ai.evaluation.red_team._red_team.setup_logger") as mock_setup_logger, patch(
+            "azure.ai.evaluation.red_team._red_team.CentralMemory"
+        ), patch(
+            "os.makedirs"
+        ), patch(
+            "azure.ai.evaluation.red_team._red_team._AttackObjectiveGenerator"
+        ), patch(
+            "logging.FileHandler", MagicMock()
+        ):
+            mock_logger = MagicMock()
+            mock_logger.handlers = []
+            mock_setup_logger.return_value = mock_logger
+
+            rt = RedTeam(
+                azure_ai_project={
+                    "subscription_id": "test-subscription",
+                    "resource_group_name": "test-resource-group",
+                    "project_name": "test-project",
+                },
+                credential=MagicMock(spec=TokenCredential),
+                risk_categories=[RiskCategory.Violence],
+                num_objectives=1,
+            )
+            rt.logger = mock_logger
+            return rt
+
+    @pytest.mark.asyncio
+    async def test_scan_target_none_raises_value_error(self, red_team):
+        """Test that target=None raises ValueError with helpful message."""
+        with pytest.raises(ValueError, match="target is required"):
+            await red_team.scan(target=None)
+
+    @pytest.mark.asyncio
+    async def test_scan_target_integer_raises_value_error(self, red_team):
+        """Test that target=42 raises ValueError."""
+        with pytest.raises(ValueError, match="target must be"):
+            await red_team.scan(target=42)
+
+    @pytest.mark.asyncio
+    async def test_scan_target_string_raises_value_error(self, red_team):
+        """Test that target='string' raises ValueError."""
+        with pytest.raises(ValueError, match="target must be"):
+            await red_team.scan(target="not-a-target")
