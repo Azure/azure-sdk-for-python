@@ -9,12 +9,12 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 from typing import Any, List
 from ._patch_datasets import DatasetsOperations
+from ._patch_evaluators import EvaluatorsOperations as BetaEvaluatorsOperations
 from ._patch_telemetry import TelemetryOperations
 from ._patch_connections import ConnectionsOperations
 from ._patch_memories import BetaMemoryStoresOperations
 from ._operations import (
     BetaEvaluationTaxonomiesOperations,
-    BetaEvaluatorsOperations,
     BetaInsightsOperations,
     BetaRedTeamsOperations,
     BetaSchedulesOperations,
@@ -49,6 +49,8 @@ class BetaOperations(GeneratedBetaOperations):
         super().__init__(*args, **kwargs)
         # Replace with patched class that includes begin_update_memories
         self.memory_stores = BetaMemoryStoresOperations(self._client, self._config, self._serialize, self._deserialize)
+        # Replace with patched class that includes upload
+        self.evaluators = BetaEvaluatorsOperations(self._client, self._config, self._serialize, self._deserialize)
 
 
 __all__: List[str] = [
