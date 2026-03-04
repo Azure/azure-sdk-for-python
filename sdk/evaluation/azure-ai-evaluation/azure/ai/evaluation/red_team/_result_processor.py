@@ -199,7 +199,7 @@ class ResultProcessor:
                 # Process data file to extract conversations
                 if data_file and os.path.exists(data_file):
                     try:
-                        with open(data_file, "r") as f:
+                        with open(data_file, "r", encoding="utf-8") as f:
                             for line in f:
                                 try:
                                     conv_data = json.loads(line)

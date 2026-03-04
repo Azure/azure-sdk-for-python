@@ -303,7 +303,7 @@ def write_pyrit_outputs_to_file(
     if os.path.exists(output_path):
         existing_line_count = 0
         try:
-            with open(output_path, "r") as existing_file:
+            with open(output_path, "r", encoding="utf-8") as existing_file:
                 existing_line_count = sum(1 for _ in existing_file)
 
             if len(conversations) > existing_line_count:
@@ -335,7 +335,7 @@ def write_pyrit_outputs_to_file(
                         if risk_sub_type:
                             conv_dict["risk_sub_type"] = risk_sub_type
                     json_lines += json.dumps(conv_dict) + "\n"
-                with Path(output_path).open("w") as f:
+                with Path(output_path).open("w", encoding="utf-8") as f:
                     f.writelines(json_lines)
                 logger.debug(
                     f"Successfully wrote {len(conversations)-existing_line_count} new conversation(s) to {output_path}"
@@ -375,7 +375,7 @@ def write_pyrit_outputs_to_file(
                 if risk_sub_type:
                     conv_dict["risk_sub_type"] = risk_sub_type
             json_lines += json.dumps(conv_dict) + "\n"
-        with Path(output_path).open("w") as f:
+        with Path(output_path).open("w", encoding="utf-8") as f:
             f.writelines(json_lines)
         logger.debug(f"Successfully wrote {len(conversations)} conversations to {output_path}")
     return str(output_path)
