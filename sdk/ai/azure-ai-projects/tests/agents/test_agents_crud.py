@@ -16,6 +16,9 @@ class TestAgentCrud(TestBase):
 
     # To run this test:
     # pytest tests\agents\test_agents_crud.py::TestAgentCrud::test_agents_crud -s
+    @pytest.mark.skip(
+        reason="Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema"
+    )
     @servicePreparer()
     @recorded_by_proxy()
     def test_agents_crud(self, **kwargs):
