@@ -8,7 +8,7 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 
-from typing import List, Dict, Optional, Any, Tuple
+from typing import List, Dict, Mapping, Optional, Any, Tuple
 from azure.core.polling import LROPoller, AsyncLROPoller, PollingMethod, AsyncPollingMethod
 from azure.core.polling.base_polling import (
     LROBasePolling,
@@ -29,8 +29,15 @@ class CustomCredential(CustomCredentialGenerated):
     :vartype credential_keys: dict[str, str]
     """
 
-    credential_keys: Dict[str, str] = {}
+    credential_keys: Dict[str, str]
     """The secret custom credential keys. Required."""
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        if args and isinstance(args[0], Mapping):
+            self.credential_keys = {k: v for k, v in args[0].items() if k != "type"}
+        else:
+            self.credential_keys = {}
 
 
 _FINISHED = frozenset(["completed", "superseded", "failed"])
