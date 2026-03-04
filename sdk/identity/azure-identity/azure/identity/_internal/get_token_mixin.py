@@ -8,7 +8,8 @@ import time
 from typing import Any, Optional
 
 from azure.core.credentials import AccessToken, AccessTokenInfo, TokenRequestOptions
-from .utils import should_refresh, within_credential_chain
+from .utils import get_refresh_status, within_credential_chain
+from .._enums import TokenRefreshStatus
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -125,13 +126,19 @@ class GetTokenMixin(abc.ABC):
                 token = self._request_token(
                     *scopes, claims=claims, tenant_id=tenant_id, enable_cae=enable_cae, **kwargs
                 )
-            elif should_refresh(token, self._last_request_time):
-                try:
+            else:
+                refresh_status = get_refresh_status(token, self._last_request_time)
+                if refresh_status == TokenRefreshStatus.REQUIRED:
                     token = self._request_token(
                         *scopes, claims=claims, tenant_id=tenant_id, enable_cae=enable_cae, **kwargs
                     )
-                except Exception:  # pylint:disable=broad-except
-                    self._last_request_time = int(time.time())
+                elif refresh_status == TokenRefreshStatus.RECOMMENDED:
+                    try:
+                        token = self._request_token(
+                            *scopes, claims=claims, tenant_id=tenant_id, enable_cae=enable_cae, **kwargs
+                        )
+                    except Exception:  # pylint:disable=broad-except
+                        self._last_request_time = int(time.time())
             _LOGGER.log(
                 logging.DEBUG if within_credential_chain.get() else logging.INFO,
                 "%s.%s succeeded",

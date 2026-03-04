@@ -8,7 +8,7 @@ from unittest import mock
 from azure.core.credentials import AccessTokenInfo
 import pytest
 
-from azure.identity._constants import DEFAULT_REFRESH_OFFSET, DEFAULT_TOKEN_REFRESH_RETRY_DELAY
+from azure.identity._constants import DEFAULT_REFRESH_OFFSET
 from azure.identity.aio._internal.get_token_mixin import GetTokenMixin
 
 from helpers import GET_TOKEN_METHODS
@@ -192,3 +192,31 @@ async def test_refresh_on_respects_retry_delay(get_token_method):
     credential.acquire_token_silently.assert_called_once()
     assert credential.request_token.call_count == 0
     assert token.token == CACHED_TOKEN
+
+
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+async def test_expired_token_propagates_error(get_token_method):
+    """When a cached token is expired (required), request failures should propagate, not be swallowed."""
+
+    now = int(time.time())
+    expired = AccessTokenInfo(CACHED_TOKEN, now - 1)
+    credential = MockCredential(cached_token=expired)
+    credential.request_token = mock.Mock(side_effect=Exception("auth failed"))
+
+    with pytest.raises(Exception, match="auth failed"):
+        await getattr(credential, get_token_method)(SCOPE)
+
+
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+async def test_recommended_refresh_swallows_error(get_token_method):
+    """When a cached token is within the refresh window (recommended), request failures should be swallowed."""
+
+    credential = MockCredential(
+        cached_token=AccessTokenInfo(CACHED_TOKEN, int(time.time() + DEFAULT_REFRESH_OFFSET - 1))
+    )
+    credential.request_token = mock.Mock(side_effect=Exception("transient error"))
+    token = await getattr(credential, get_token_method)(SCOPE)
+
+    # The credential should swallow the error and return the cached token.
+    assert token.token == CACHED_TOKEN
+    credential.request_token.assert_called_once()

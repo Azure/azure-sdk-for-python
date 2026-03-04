@@ -8,7 +8,8 @@ import time
 from typing import Any, Optional
 
 from azure.core.credentials import AccessToken, AccessTokenInfo, TokenRequestOptions
-from ..._internal import within_credential_chain, should_refresh
+from ..._internal import within_credential_chain, get_refresh_status
+from ..._enums import TokenRefreshStatus
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -43,9 +44,6 @@ class GetTokenMixin(abc.ABC):
         :return: An access token with the desired scopes.
         :rtype: ~azure.core.credentials.AccessTokenInfo
         """
-
-    def _should_refresh(self, token: AccessTokenInfo) -> bool:
-        return should_refresh(token, self._last_request_time)
 
     async def get_token(
         self,
@@ -128,13 +126,19 @@ class GetTokenMixin(abc.ABC):
                 token = await self._request_token(
                     *scopes, claims=claims, tenant_id=tenant_id, enable_cae=enable_cae, **kwargs
                 )
-            elif should_refresh(token, self._last_request_time):
-                try:
+            else:
+                refresh_status = get_refresh_status(token, self._last_request_time)
+                if refresh_status == TokenRefreshStatus.REQUIRED:
                     token = await self._request_token(
                         *scopes, claims=claims, tenant_id=tenant_id, enable_cae=enable_cae, **kwargs
                     )
-                except Exception:  # pylint:disable=broad-except
-                    self._last_request_time = int(time.time())
+                elif refresh_status == TokenRefreshStatus.RECOMMENDED:
+                    try:
+                        token = await self._request_token(
+                            *scopes, claims=claims, tenant_id=tenant_id, enable_cae=enable_cae, **kwargs
+                        )
+                    except Exception:  # pylint:disable=broad-except
+                        self._last_request_time = int(time.time())
             _LOGGER.log(
                 logging.DEBUG if within_credential_chain.get() else logging.INFO,
                 "%s.%s succeeded",
