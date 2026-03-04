@@ -205,9 +205,7 @@ class ContentUnderstandingClient(GeneratedClient):
         # Call parent implementation
         # Only pass body if it's not _Unset (let parent construct from inputs if not provided)
         # Ensure content_type is always a string (not None)
-        content_type_str: str = (
-            content_type if content_type is not None else "application/json"
-        )
+        content_type_str: str = content_type if content_type is not None else "application/json"
         if body is not _Unset:
             poller = await super().begin_analyze(  # pyright: ignore[reportCallIssue]
                 analyzer_id=analyzer_id,

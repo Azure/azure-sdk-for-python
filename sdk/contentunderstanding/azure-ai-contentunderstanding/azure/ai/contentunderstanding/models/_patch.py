@@ -72,6 +72,7 @@ if TYPE_CHECKING:
         @property
         def value(self) -> Optional[Any]: ...
 
+
 PollingReturnType_co = TypeVar("PollingReturnType_co", covariant=True)
 
 __all__ = [
@@ -154,9 +155,7 @@ class AnalyzeLROPoller(LROPoller[PollingReturnType_co]):
             raise ValueError(f"Could not extract operation ID: {str(e)}") from e
 
     @classmethod
-    def from_poller(
-        cls, poller: LROPoller[PollingReturnType_co]
-    ) -> "AnalyzeLROPoller[PollingReturnType_co]":  # pyright: ignore[reportInvalidTypeArguments]  # fmt: skip
+    def from_poller(cls, poller: LROPoller[PollingReturnType_co]) -> "AnalyzeLROPoller[PollingReturnType_co]":  # pyright: ignore[reportInvalidTypeArguments]  # fmt: skip
         """Wrap an existing LROPoller without re-initializing the polling method.
 
         This avoids duplicate HTTP requests that would occur if we created a new
