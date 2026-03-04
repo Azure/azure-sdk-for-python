@@ -4,7 +4,7 @@
 # ------------------------------------
 
 import pytest
-from azure.ai.projects.models._enums import ConnectionType
+from azure.ai.projects.models import ConnectionType
 from test_base import TestBase, servicePreparer
 from devtools_testutils import recorded_by_proxy
 
