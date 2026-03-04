@@ -177,11 +177,6 @@ class TestBase(AzureRecordedTestCase):
         "model_deployment_name": "gpt-4o-mini",
     }
 
-    test_connections_params = {
-        "connection_name": "custom_keys_connection",
-        "connection_type": ConnectionType.CUSTOM,
-    }
-
     test_deployments_params = {
         "model_publisher": "Cohere",
         "model_name": "gpt-4o",
@@ -312,6 +307,7 @@ class TestBase(AzureRecordedTestCase):
         # fetch environment variables
         endpoint = kwargs.pop("azure_ai_project_endpoint")
         credential = self.get_credential(AIProjectClient, is_async=False)
+        allow_preview = kwargs.pop("allow_preview", operation_group in {"agents", "tracing"})
 
         print(f"Creating AIProjectClient with endpoint: {endpoint}")
 
@@ -319,6 +315,7 @@ class TestBase(AzureRecordedTestCase):
         client = AIProjectClient(
             endpoint=endpoint,
             credential=credential,
+            allow_preview=allow_preview,
         )
 
         return client
@@ -328,6 +325,7 @@ class TestBase(AzureRecordedTestCase):
         # fetch environment variables
         endpoint = kwargs.pop("azure_ai_project_endpoint")
         credential = self.get_credential(AsyncAIProjectClient, is_async=True)
+        allow_preview = kwargs.pop("allow_preview", operation_group in {"agents", "tracing"})
 
         print(f"Creating AsyncAIProjectClient with endpoint: {endpoint}")
 
@@ -335,6 +333,7 @@ class TestBase(AzureRecordedTestCase):
         client = AsyncAIProjectClient(
             endpoint=endpoint,
             credential=credential,
+            allow_preview=allow_preview,
         )
 
         return client

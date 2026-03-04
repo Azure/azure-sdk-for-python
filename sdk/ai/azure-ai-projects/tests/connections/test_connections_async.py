@@ -5,10 +5,14 @@
 
 import pytest
 from azure.ai.projects.aio import AIProjectClient
+from azure.ai.projects.models import ConnectionType
 from test_base import TestBase, servicePreparer
 from devtools_testutils.aio import recorded_by_proxy_async
 
 
+@pytest.mark.skip(
+    reason="Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema"
+)
 class TestConnectionsAsync(TestBase):
 
     # To run this test, use the following command in the \sdk\ai\azure-ai-projects folder:
@@ -17,8 +21,8 @@ class TestConnectionsAsync(TestBase):
     @recorded_by_proxy_async
     async def test_connections_async(self, **kwargs):
 
-        connection_name = self.test_connections_params["connection_name"]
-        connection_type = self.test_connections_params["connection_type"]
+        connection_name = kwargs["mcp_project_connection_id"].split("/")[-1]
+        connection_type = ConnectionType.AZURE_OPEN_AI
 
         async with self.create_async_client(**kwargs) as project_client:
 

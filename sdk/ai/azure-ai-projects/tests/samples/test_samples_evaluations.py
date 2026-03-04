@@ -117,6 +117,7 @@ class TestSamplesEvaluations(AzureRecordedTestCase):
                 "sample_evaluations_builtin_with_traces.py",  # Missing required env var APPINSIGHTS_RESOURCE_ID (KeyError)
                 "sample_evaluations_score_model_grader_with_image.py",  # Eval fails: image inputs not supported for configured grader model
                 "sample_scheduled_evaluations.py",  # Missing dependency azure.mgmt.resource (ModuleNotFoundError)
+                "sample_evaluation_cluster_insight.py",  # Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema
             ],
         ),
     )
