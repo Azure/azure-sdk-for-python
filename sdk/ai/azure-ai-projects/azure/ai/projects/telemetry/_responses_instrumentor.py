@@ -1751,7 +1751,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
         """Extract assistant/agent name from kwargs."""
         extra_body = kwargs.get("extra_body")
         if extra_body and isinstance(extra_body, dict):
-            agent_info = extra_body.get("agent")
+            agent_info = extra_body.get("agent_reference")
             if agent_info and isinstance(agent_info, dict):
                 return agent_info.get("name")
         return None
@@ -1760,7 +1760,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
         """Extract agent ID from kwargs."""
         extra_body = kwargs.get("extra_body")
         if extra_body and isinstance(extra_body, dict):
-            agent_info = extra_body.get("agent")
+            agent_info = extra_body.get("agent_reference")
             if agent_info and isinstance(agent_info, dict):
                 return agent_info.get("id")
         return None
