@@ -308,9 +308,6 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         assert attributes_match == True
 
     @pytest.mark.usefixtures("instrument_with_content")
-    @pytest.mark.skip(
-        reason="Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema"
-    )
     @servicePreparer()
     @recorded_by_proxy_async(RecordedTransport.HTTPX)
     async def test_async_list_conversation_items_with_content_recording(self, **kwargs):
@@ -908,9 +905,6 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         )
 
     @pytest.mark.usefixtures("instrument_with_content")
-    @pytest.mark.skip(
-        reason="Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema"
-    )
     @servicePreparer()
     @recorded_by_proxy_async(RecordedTransport.HTTPX)
     async def test_async_multiple_text_inputs_with_content_recording_non_streaming(self, **kwargs):
@@ -1008,9 +1002,6 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         assert events_match == True
 
     @pytest.mark.usefixtures("instrument_with_content")
-    @pytest.mark.skip(
-        reason="Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema"
-    )
     @servicePreparer()
     @recorded_by_proxy_async(RecordedTransport.HTTPX)
     async def test_async_multiple_text_inputs_with_content_recording_streaming(self, **kwargs):
@@ -1116,9 +1107,6 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         assert events_match == True
 
     @pytest.mark.usefixtures("instrument_without_content")
-    @pytest.mark.skip(
-        reason="Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema"
-    )
     @servicePreparer()
     @recorded_by_proxy_async(RecordedTransport.HTTPX)
     async def test_async_multiple_text_inputs_without_content_recording_non_streaming(self, **kwargs):
@@ -2467,14 +2455,12 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         assert events_match == True
 
     @pytest.mark.usefixtures("instrument_without_content")
-    @pytest.mark.skip(
-        reason="Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema"
-    )
     @servicePreparer()
     @recorded_by_proxy_async(RecordedTransport.HTTPX)
     async def test_async_multiple_text_inputs_without_content_recording_streaming(self, **kwargs):
         """Test asynchronous streaming responses with multiple text inputs and content recording disabled."""
         self.cleanup()
+        _set_use_message_events(True)
         os.environ.update(
             {
                 CONTENT_TRACING_ENV_VARIABLE: "False",
