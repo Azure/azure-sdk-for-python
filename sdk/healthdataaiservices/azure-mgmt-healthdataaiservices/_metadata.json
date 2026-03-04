@@ -2,5 +2,9 @@
   "apiVersion": "2024-09-20",
   "apiVersions": {
     "Microsoft.HealthDataAIServices": "2024-09-20"
-  }
+  },
+  "commit": "679ab44a8269a21b88fe9a3af893c9c5a435ba35",
+  "repository_url": "Azure/azure-rest-api-specs",
+  "typespec_src": "specification/healthdataaiservices/HealthDataAIServices.Management",
+  "emitterVersion": "0.60.2"
 }
