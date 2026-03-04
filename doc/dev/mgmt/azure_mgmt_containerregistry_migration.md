@@ -1,5 +1,7 @@
 # Azure SDK Migration Guide: `azure-mgmt-containerregistry`
 
+The direct link to this page can be found at aka.ms/azsdk/python/migrate/azure-mgmt-containerregistry
+
 This guide is for developers using `azure-mgmt-containerregistry` who need to migrate to the latest version.
 
 ## Summary of Changes
