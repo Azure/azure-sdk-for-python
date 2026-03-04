@@ -3,19 +3,30 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import functools
 import time
 import unittest
 from unittest.mock import Mock
-from devtools_testutils import recorded_by_proxy
-from preparers import app_config_decorator_aad
+from devtools_testutils import EnvironmentVariableLoader, recorded_by_proxy
 from testcase import AppConfigTestCase, has_feature_flag
-from test_constants import FEATURE_MANAGEMENT_KEY
+from test_constants import (
+    APPCONFIGURATION_ENDPOINT_STRING,
+    APPCONFIGURATION_KEYVAULT_SECRET_URL,
+    FEATURE_MANAGEMENT_KEY,
+)
+
+AppConfigProviderPreparer = functools.partial(
+    EnvironmentVariableLoader,
+    "appconfiguration",
+    appconfiguration_endpoint_string=APPCONFIGURATION_ENDPOINT_STRING,
+    appconfiguration_keyvault_secret_url=APPCONFIGURATION_KEYVAULT_SECRET_URL,
+)
 
 
 class TestAppConfigurationProviderWatchAll(AppConfigTestCase, unittest.TestCase):
     # method: refresh (watch all - no refresh_on keys, refresh_enabled=True)
+    @AppConfigProviderPreparer()
     @recorded_by_proxy
-    @app_config_decorator_aad
     def test_watch_all(self, appconfiguration_endpoint_string, appconfiguration_keyvault_secret_url):
         mock_callback = Mock()
         client = self.create_client(
@@ -56,8 +67,8 @@ class TestAppConfigurationProviderWatchAll(AppConfigTestCase, unittest.TestCase)
         assert mock_callback.call_count == 2
 
     # method: refresh (watch all - no changes should not trigger refresh)
+    @AppConfigProviderPreparer()
     @recorded_by_proxy
-    @app_config_decorator_aad
     def test_watch_all_no_change(self, appconfiguration_endpoint_string, appconfiguration_keyvault_secret_url):
         mock_callback = Mock()
         client = self.create_client(
@@ -80,8 +91,8 @@ class TestAppConfigurationProviderWatchAll(AppConfigTestCase, unittest.TestCase)
         assert mock_callback.call_count == 0
 
     # method: refresh (watch all - should not trigger before refresh interval)
+    @AppConfigProviderPreparer()
     @recorded_by_proxy
-    @app_config_decorator_aad
     def test_watch_all_before_interval(self, appconfiguration_endpoint_string, appconfiguration_keyvault_secret_url):
         mock_callback = Mock()
         client = self.create_client(
@@ -109,8 +120,8 @@ class TestAppConfigurationProviderWatchAll(AppConfigTestCase, unittest.TestCase)
         appconfig_client.set_configuration_setting(setting)
 
     # method: refresh (watch all disabled via refresh_enabled=False)
+    @AppConfigProviderPreparer()
     @recorded_by_proxy
-    @app_config_decorator_aad
     def test_watch_all_disabled(self, appconfiguration_endpoint_string, appconfiguration_keyvault_secret_url):
         mock_callback = Mock()
         client = self.create_client(
@@ -141,8 +152,8 @@ class TestAppConfigurationProviderWatchAll(AppConfigTestCase, unittest.TestCase)
         appconfig_client.set_configuration_setting(setting)
 
     # method: refresh (watch all refreshes all settings including non-watched ones)
+    @AppConfigProviderPreparer()
     @recorded_by_proxy
-    @app_config_decorator_aad
     def test_watch_all_refreshes_all_settings(
         self, appconfiguration_endpoint_string, appconfiguration_keyvault_secret_url
     ):
@@ -192,8 +203,8 @@ class TestAppConfigurationProviderWatchAll(AppConfigTestCase, unittest.TestCase)
         assert mock_callback.call_count == 2
 
     # method: refresh (empty refresh - no refresh_on and no refresh_interval should not trigger)
+    @AppConfigProviderPreparer()
     @recorded_by_proxy
-    @app_config_decorator_aad
     def test_empty_refresh(self, appconfiguration_endpoint_string, appconfiguration_keyvault_secret_url):
         mock_callback = Mock()
         client = self.create_client(
