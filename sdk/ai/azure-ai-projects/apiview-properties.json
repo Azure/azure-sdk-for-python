@@ -246,7 +246,7 @@
         "azure.ai.projects.models.GrammarSyntax1": "OpenAI.GrammarSyntax1",
         "azure.ai.projects.models.RankerVersionType": "OpenAI.RankerVersionType",
         "azure.ai.projects.models.InputFidelity": "OpenAI.InputFidelity",
-        "azure.ai.projects.models.ImageGenActionEnum": "OpenAI.ImageGenActionEnum",
+        "azure.ai.projects.models.ImageGenAction": "OpenAI.ImageGenActionEnum",
         "azure.ai.projects.models.OpenApiAuthType": "Azure.AI.Projects.OpenApiAuthType",
         "azure.ai.projects.models.FunctionShellToolParamEnvironmentType": "OpenAI.FunctionShellToolParamEnvironmentType",
         "azure.ai.projects.models.ContainerSkillType": "OpenAI.ContainerSkillType",
