@@ -4,8 +4,6 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-import os
-
 import pytest
 from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import AzureAISearchIndex, IndexType
