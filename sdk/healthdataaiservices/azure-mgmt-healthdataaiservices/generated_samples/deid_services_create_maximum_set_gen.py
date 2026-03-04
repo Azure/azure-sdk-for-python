@@ -37,6 +37,7 @@ def main():
             "identity": {"type": "None", "userAssignedIdentities": {}},
             "location": "qwyhvdwcsjulggagdqxlmazcl",
             "properties": {"publicNetworkAccess": "Enabled"},
+            "sku": {"name": "Free"},
             "tags": {},
         },
     ).result()

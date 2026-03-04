@@ -1,0 +1,6 @@
+{
+  "apiVersion": "2024-09-20",
+  "apiVersions": {
+    "Microsoft.HealthDataAIServices": "2024-09-20"
+  }
+}
