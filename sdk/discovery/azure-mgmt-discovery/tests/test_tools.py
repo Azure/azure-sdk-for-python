@@ -4,7 +4,6 @@
 # Licensed under the MIT License.
 # ------------------------------------
 """Tests for Tools operations."""
-import uuid
 import pytest
 from azure.mgmt.discovery import DiscoveryClient
 from devtools_testutils import recorded_by_proxy
@@ -46,7 +45,6 @@ class TestTools(DiscoveryMgmtTestCase):
     @recorded_by_proxy
     def test_create_tool(self):
         """Test creating a tool."""
-        unique_name = f"test-tool-{uuid.uuid4().hex[:8]}"
         tool_data = {
             "location": "uksouth",
             "properties": {
@@ -106,7 +104,7 @@ class TestTools(DiscoveryMgmtTestCase):
         }
         operation = self.client.tools.begin_create_or_update(
             resource_group_name="olawal",
-            tool_name=unique_name,
+            tool_name="test-tool-50d87c62",
             resource=tool_data,
         )
         tool = operation.result()

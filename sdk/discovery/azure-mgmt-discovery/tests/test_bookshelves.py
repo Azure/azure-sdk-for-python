@@ -3,7 +3,6 @@
 # Licensed under the MIT License.
 # ------------------------------------
 """Tests for Bookshelves operations."""
-import uuid
 import pytest
 from azure.mgmt.discovery import DiscoveryClient
 from devtools_testutils import recorded_by_proxy
@@ -39,11 +38,10 @@ class TestBookshelves(DiscoveryMgmtTestCase):
     @recorded_by_proxy
     def test_create_bookshelf(self):
         """Test creating a bookshelf."""
-        unique_name = f"test-bookshelf-{uuid.uuid4().hex[:8]}"
         bookshelf_data = {"location": "uksouth"}
         operation = self.client.bookshelves.begin_create_or_update(
             resource_group_name="olawal",
-            bookshelf_name=unique_name,
+            bookshelf_name="test-bookshelf-324938be",
             resource=bookshelf_data,
         )
         bookshelf = operation.result()

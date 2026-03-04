@@ -46,6 +46,7 @@ class TestPrivateEndpoints(DiscoveryMgmtTestCase):
         )
         assert connection is not None
         assert hasattr(connection, "name")
+    @pytest.mark.skip(reason="no recording")
     @recorded_by_proxy
     def test_create_workspace_private_endpoint_connection(self):
         """Test creating a workspace private endpoint connection."""
@@ -117,6 +118,7 @@ class TestPrivateEndpoints(DiscoveryMgmtTestCase):
         )
         assert connection is not None
         assert hasattr(connection, "name")
+    @pytest.mark.skip(reason="no recording")
     @recorded_by_proxy
     def test_create_bookshelf_private_endpoint_connection(self):
         """Test creating a bookshelf private endpoint connection."""

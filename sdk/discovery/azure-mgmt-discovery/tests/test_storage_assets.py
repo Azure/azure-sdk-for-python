@@ -4,7 +4,6 @@
 # Licensed under the MIT License.
 # ------------------------------------
 """Tests for Storage Assets operations."""
-import uuid
 import pytest
 from azure.mgmt.discovery import DiscoveryClient
 from devtools_testutils import recorded_by_proxy
@@ -39,7 +38,6 @@ class TestStorageAssets(DiscoveryMgmtTestCase):
     def test_create_storage_asset(self):
         """Test creating a storage asset."""
         storage_container_name = "test-sc-8bef0d1a"
-        unique_name = f"test-sa-{uuid.uuid4().hex[:8]}"
         asset_data = {
             "location": "uksouth",
             "properties": {
@@ -50,7 +48,7 @@ class TestStorageAssets(DiscoveryMgmtTestCase):
         operation = self.client.storage_assets.begin_create_or_update(
             resource_group_name="olawal",
             storage_container_name=storage_container_name,
-            storage_asset_name=unique_name,
+            storage_asset_name="test-sa-482ad005",
             resource=asset_data,
         )
         asset = operation.result()

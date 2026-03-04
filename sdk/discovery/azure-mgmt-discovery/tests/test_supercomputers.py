@@ -3,7 +3,6 @@
 # Licensed under the MIT License.
 # ------------------------------------
 """Tests for Supercomputers operations."""
-import uuid
 import pytest
 from azure.mgmt.discovery import DiscoveryClient
 from devtools_testutils import recorded_by_proxy
@@ -43,7 +42,6 @@ class TestSupercomputers(DiscoveryMgmtTestCase):
     def test_create_supercomputer(self):
         """Test creating a supercomputer."""
         mi_id = "/subscriptions/31b0b6a5-2647-47eb-8a38-7d12047ee8ec/resourcegroups/olawal/providers/Microsoft.ManagedIdentity/userAssignedIdentities/myidentity"
-        unique_name = f"test-sc-{uuid.uuid4().hex[:8]}"
         supercomputer_data = {
             "location": "uksouth",
             "properties": {
@@ -57,7 +55,7 @@ class TestSupercomputers(DiscoveryMgmtTestCase):
         }
         operation = self.client.supercomputers.begin_create_or_update(
             resource_group_name="olawal",
-            supercomputer_name=unique_name,
+            supercomputer_name="test-sc-2bbb25b8",
             resource=supercomputer_data,
         )
         supercomputer = operation.result()
@@ -77,6 +75,7 @@ class TestSupercomputers(DiscoveryMgmtTestCase):
         )
         updated_supercomputer = operation.result()
         assert updated_supercomputer is not None
+    @pytest.mark.skip(reason="no recording")
     @recorded_by_proxy
     def test_delete_supercomputer(self):
         """Test deleting a supercomputer."""

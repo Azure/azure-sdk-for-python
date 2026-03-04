@@ -3,7 +3,6 @@
 # Licensed under the MIT License.
 # ------------------------------------
 """Tests for Projects operations."""
-import uuid
 import pytest
 from azure.mgmt.discovery import DiscoveryClient
 from devtools_testutils import recorded_by_proxy
@@ -27,7 +26,7 @@ class TestProjects(DiscoveryMgmtTestCase):
     @recorded_by_proxy
     def test_list_projects_by_workspace(self):
         """Test listing projects in a workspace."""
-        projects = list(self.client.projects.list_by_workspace(self.resource_group, self.workspace_name))
+        projects = list(self.client.projects.list_by_workspace("newapiversiontest", self.workspace_name))
         assert isinstance(projects, list)
     @pytest.mark.skip(reason="no recording")
     @recorded_by_proxy
@@ -38,10 +37,11 @@ class TestProjects(DiscoveryMgmtTestCase):
         assert project is not None
         assert hasattr(project, "name")
         assert hasattr(project, "location")
+    @pytest.mark.skip(reason="no recording")
     @recorded_by_proxy
     def test_create_project(self):
         """Test creating a project."""
-        unique_name = f"test-proj-{uuid.uuid4().hex[:8]}"
+        unique_name = "test-proj-placeholder"
         project_data = {"location": "uksouth"}
         operation = self.client.projects.begin_create_or_update(
             resource_group_name="olawal",

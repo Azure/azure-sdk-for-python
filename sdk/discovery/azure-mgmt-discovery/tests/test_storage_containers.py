@@ -3,7 +3,6 @@
 # Licensed under the MIT License.
 # ------------------------------------
 """Tests for StorageContainers operations."""
-import uuid
 import pytest
 from azure.mgmt.discovery import DiscoveryClient
 from devtools_testutils import recorded_by_proxy
@@ -41,7 +40,6 @@ class TestStorageContainers(DiscoveryMgmtTestCase):
     @recorded_by_proxy
     def test_create_storage_container(self):
         """Test creating a storage container."""
-        unique_name = f"test-sc-{uuid.uuid4().hex[:8]}"
         container_data = {
             "location": "uksouth",
             "properties": {
@@ -53,7 +51,7 @@ class TestStorageContainers(DiscoveryMgmtTestCase):
         }
         operation = self.client.storage_containers.begin_create_or_update(
             resource_group_name="olawal",
-            storage_container_name=unique_name,
+            storage_container_name="test-sc-8bef0d1a",
             resource=container_data,
         )
         container = operation.result()

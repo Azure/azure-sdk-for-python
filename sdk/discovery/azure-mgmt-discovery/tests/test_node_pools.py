@@ -3,7 +3,6 @@
 # Licensed under the MIT License.
 # ------------------------------------
 """Tests for NodePools operations."""
-import uuid
 import pytest
 from azure.mgmt.discovery import DiscoveryClient
 from devtools_testutils import recorded_by_proxy
@@ -25,7 +24,7 @@ class TestNodePools(DiscoveryMgmtTestCase):
     @recorded_by_proxy
     def test_list_node_pools_by_supercomputer(self):
         """Test listing node pools in a supercomputer."""
-        node_pools = list(self.client.node_pools.list_by_supercomputer(self.resource_group, NODE_POOL_SUPERCOMPUTER_NAME))
+        node_pools = list(self.client.node_pools.list_by_supercomputer("rp114-rg", NODE_POOL_SUPERCOMPUTER_NAME))
         assert isinstance(node_pools, list)
     @pytest.mark.skip(reason="no recording")
     @recorded_by_proxy
@@ -39,7 +38,6 @@ class TestNodePools(DiscoveryMgmtTestCase):
     def test_create_node_pool(self):
         """Test creating a node pool."""
         supercomputer_name = "test-sc-2bbb25b8"
-        unique_name = f"test-np-{uuid.uuid4().hex[:8]}"
         node_pool_data = {
             "location": "uksouth",
             "properties": {
@@ -53,7 +51,7 @@ class TestNodePools(DiscoveryMgmtTestCase):
         operation = self.client.node_pools.begin_create_or_update(
             resource_group_name="olawal",
             supercomputer_name=supercomputer_name,
-            node_pool_name=unique_name,
+            node_pool_name="test-np-568f7883",
             resource=node_pool_data,
         )
         node_pool = operation.result()
