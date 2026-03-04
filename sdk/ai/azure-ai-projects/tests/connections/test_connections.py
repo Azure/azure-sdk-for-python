@@ -9,13 +9,13 @@ from test_base import TestBase, servicePreparer
 from devtools_testutils import recorded_by_proxy
 
 
-@pytest.mark.skip(
-    reason="Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema"
-)
 class TestConnections(TestBase):
 
     # To run this test, use the following command in the \sdk\ai\azure-ai-projects folder:
     # cls & pytest tests\connections\test_connections.py::TestConnections::test_connections -s
+    @pytest.mark.skip(
+        reason="Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema"
+    )
     @servicePreparer()
     @recorded_by_proxy
     def test_connections(self, **kwargs):
