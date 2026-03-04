@@ -93,7 +93,7 @@ def add_sanitizers(test_proxy, fake_datastore_key):
     add_remove_header_sanitizer(headers="x-azureml-token,Log-URL,Authorization")
     set_custom_default_matcher(
         # compare_bodies=False,
-        excluded_headers="x-ms-meta-name, x-ms-meta-version,x-ms-blob-type,If-None-Match,Content-Type,Content-MD5,Content-Length",
+        excluded_headers="x-ms-meta-name, x-ms-meta-version,x-ms-blob-type,If-None-Match,Content-Type,Content-MD5,Content-Length,Accept",
         ignored_query_parameters="api-version",
     )
 
