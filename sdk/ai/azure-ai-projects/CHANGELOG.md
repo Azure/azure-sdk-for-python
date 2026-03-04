@@ -22,6 +22,7 @@ instead on client constructor (see above).
 * Class `TextResponseFormatConfigurationResponseFormatJsonObject` renamed to `TextResponseFormatJsonObject`.
 * Class `CodeInterpreterContainerAuto` was renamed to `AutoCodeInterpreterToolParam`,
   and has a new optional property `network_policy` of type `ContainerNetworkPolicyParam`.
+* class `ImageGenActionEnum` was renamed to `ImageGenAction`.
 * Rename `ToolChoiceParamType.WEB_SEARCH_PREVIEW2025_03_11` to `ToolChoiceParamType.WEB_SEARCH_PREVIEW_2025_03_11`.
 * Rename `RankerVersionType.DEFAULT2024_11_15` to `RankerVersionType.DEFAULT_2024_11_15`.
 * Rename method `.beta.evaluators.list_latest_versions()` to `.beta.evaluators.list()`.
