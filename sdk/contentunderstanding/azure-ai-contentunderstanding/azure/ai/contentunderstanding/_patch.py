@@ -57,7 +57,6 @@ class ContentUnderstandingClient(GeneratedClient):
         kwargs.setdefault("polling_interval", 3)
         super().__init__(endpoint=endpoint, credential=credential, **kwargs)
 
-    # fmt: off
     @overload  # type: ignore[override]
     def begin_analyze(
         self,
@@ -67,8 +66,7 @@ class ContentUnderstandingClient(GeneratedClient):
         model_deployments: Optional[dict[str, str]] = None,
         processing_location: Optional[Union[str, _models.ProcessingLocation]] = None,
         **kwargs: Any,
-    ) -> "AnalyzeLROPoller[_models.AnalysisResult]":  # pyright: ignore[reportInvalidTypeArguments]
-        # fmt: on
+    ) -> "AnalyzeLROPoller[_models.AnalysisResult]":  # pyright: ignore[reportInvalidTypeArguments]  # fmt: skip
         """Extract content and fields from input.
 
         :param analyzer_id: The unique identifier of the analyzer. Required.
@@ -94,7 +92,6 @@ class ContentUnderstandingClient(GeneratedClient):
            This ensures ContentSpan offsets work correctly with Python string slicing.
         """
 
-    # fmt: off
     @overload  # type: ignore[override]
     def begin_analyze(
         self,
@@ -104,8 +101,7 @@ class ContentUnderstandingClient(GeneratedClient):
         processing_location: Optional[Union[str, _models.ProcessingLocation]] = None,
         content_type: str = "application/json",
         **kwargs: Any,
-    ) -> "AnalyzeLROPoller[_models.AnalysisResult]":  # pyright: ignore[reportInvalidTypeArguments]
-        # fmt: on
+    ) -> "AnalyzeLROPoller[_models.AnalysisResult]":  # pyright: ignore[reportInvalidTypeArguments]  # fmt: skip
         """Extract content and fields from input.
 
         :param analyzer_id: The unique identifier of the analyzer. Required.
@@ -129,7 +125,6 @@ class ContentUnderstandingClient(GeneratedClient):
            This ensures ContentSpan offsets work correctly with Python string slicing.
         """
 
-    # fmt: off
     @overload  # type: ignore[override]
     def begin_analyze(
         self,
@@ -139,8 +134,7 @@ class ContentUnderstandingClient(GeneratedClient):
         processing_location: Optional[Union[str, _models.ProcessingLocation]] = None,
         content_type: str = "application/json",
         **kwargs: Any,
-    ) -> "AnalyzeLROPoller[_models.AnalysisResult]":  # pyright: ignore[reportInvalidTypeArguments]
-        # fmt: on
+    ) -> "AnalyzeLROPoller[_models.AnalysisResult]":  # pyright: ignore[reportInvalidTypeArguments]  # fmt: skip
         """Extract content and fields from input.
 
         :param analyzer_id: The unique identifier of the analyzer. Required.
@@ -164,7 +158,6 @@ class ContentUnderstandingClient(GeneratedClient):
            This ensures ContentSpan offsets work correctly with Python string slicing.
         """
 
-    # fmt: off
     @distributed_trace
     def begin_analyze(  # type: ignore[override]  # pyright: ignore[reportIncompatibleMethodOverride]
         self,
@@ -176,8 +169,7 @@ class ContentUnderstandingClient(GeneratedClient):
         processing_location: Optional[Union[str, _models.ProcessingLocation]] = None,
         content_type: Optional[str] = None,
         **kwargs: Any,
-    ) -> "AnalyzeLROPoller[_models.AnalysisResult]":  # pyright: ignore[reportInvalidTypeArguments]
-        # fmt: on
+    ) -> "AnalyzeLROPoller[_models.AnalysisResult]":  # pyright: ignore[reportInvalidTypeArguments]  # fmt: skip
         """Extract content and fields from input.
 
         :param analyzer_id: The unique identifier of the analyzer. Required.
@@ -212,7 +204,9 @@ class ContentUnderstandingClient(GeneratedClient):
         # Call parent implementation
         # Only pass body if it's not _Unset (let parent construct from inputs if not provided)
         # Ensure content_type is always a string (not None)
-        content_type_str: str = content_type if content_type is not None else "application/json"
+        content_type_str: str = (
+            content_type if content_type is not None else "application/json"
+        )
         if body is not _Unset:
             poller = super().begin_analyze(  # pyright: ignore[reportCallIssue]
                 analyzer_id=analyzer_id,
@@ -236,7 +230,6 @@ class ContentUnderstandingClient(GeneratedClient):
         # Wrap in custom poller with .operation_id property (without re-initializing)
         return AnalyzeLROPoller.from_poller(poller)  # pyright: ignore[reportReturnType]
 
-    # fmt: off
     @distributed_trace
     def begin_analyze_binary(
         self,
@@ -247,8 +240,7 @@ class ContentUnderstandingClient(GeneratedClient):
         content_type: str = "application/octet-stream",
         processing_location: Optional[Union[str, _models.ProcessingLocation]] = None,
         **kwargs: Any,
-    ) -> "AnalyzeLROPoller[_models.AnalysisResult]":  # pyright: ignore[reportInvalidTypeArguments]
-        # fmt: on
+    ) -> "AnalyzeLROPoller[_models.AnalysisResult]":  # pyright: ignore[reportInvalidTypeArguments]  # fmt: skip
         """Extract content and fields from input.
 
         :param analyzer_id: The unique identifier of the analyzer. Required.
