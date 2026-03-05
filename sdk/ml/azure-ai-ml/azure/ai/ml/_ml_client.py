@@ -26,16 +26,11 @@ from azure.ai.ml._restclient.v2020_09_01_dataplanepreview import (
 )
 from azure.ai.ml._restclient.v2022_02_01_preview import AzureMachineLearningWorkspaces as ServiceClient022022Preview
 from azure.ai.ml._restclient.arm_ml_service import MachineLearningServicesMgmtClient
-ServiceClient052022 = partial(MachineLearningServicesMgmtClient, api_version="2022-05-01")
-ServiceClient102022 = partial(MachineLearningServicesMgmtClient, api_version="2022-10-01")
 from azure.ai.ml._restclient.v2022_10_01_preview import AzureMachineLearningWorkspaces as ServiceClient102022Preview
 from azure.ai.ml._restclient.v2023_02_01_preview import AzureMachineLearningWorkspaces as ServiceClient022023Preview
-ServiceClient042023 = partial(MachineLearningServicesMgmtClient, api_version="2023-04-01")
 from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042023Preview
 from azure.ai.ml._restclient.v2023_06_01_preview import AzureMachineLearningWorkspaces as ServiceClient062023Preview
 from azure.ai.ml._restclient.v2023_08_01_preview import AzureMachineLearningWorkspaces as ServiceClient082023Preview
-
-ServiceClient102023 = partial(MachineLearningServicesMgmtClient, api_version="2023-10-01")
 from azure.ai.ml._restclient.v2024_01_01_preview import AzureMachineLearningWorkspaces as ServiceClient012024Preview
 from azure.ai.ml._restclient.v2024_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042024Preview
 from azure.ai.ml._restclient.v2024_07_01_preview import AzureMachineLearningWorkspaces as ServiceClient072024Preview
@@ -117,6 +112,11 @@ from azure.ai.ml.operations._schedule_operations import ScheduleOperations
 from azure.ai.ml.operations._workspace_outbound_rule_operations import WorkspaceOutboundRuleOperations
 from azure.core.credentials import TokenCredential
 from azure.core.polling import LROPoller
+
+ServiceClient052022 = partial(MachineLearningServicesMgmtClient, api_version="2022-05-01")
+ServiceClient102022 = partial(MachineLearningServicesMgmtClient, api_version="2022-10-01")
+ServiceClient042023 = partial(MachineLearningServicesMgmtClient, api_version="2023-04-01")
+ServiceClient102023 = partial(MachineLearningServicesMgmtClient, api_version="2023-10-01")
 
 module_logger = logging.getLogger(__name__)
 

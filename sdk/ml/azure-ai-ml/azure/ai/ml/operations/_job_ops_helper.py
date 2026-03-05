@@ -513,7 +513,9 @@ def get_job_output_uris_from_dataplane(
         # Map the user-defined output name to the output uri
         # The service returns a mapping from internal asset id to output metadata, so we need the reverse map
         # defined above to get the user-defined output name from the internal asset id.
-        output_name_to_dataset_uri = {asset_id_to_output_name[k]: v.uri for k, v in dataset_uris.values_property.items()}
+        output_name_to_dataset_uri = {
+            asset_id_to_output_name[k]: v.uri for k, v in dataset_uris.values_property.items()
+        }
 
     # This is a repeat of the logic above for models.
     output_name_to_model_uri = {}

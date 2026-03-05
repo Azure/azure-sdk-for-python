@@ -167,7 +167,11 @@ class OnlineDeployment(Deployment):
 
     @staticmethod
     def _model_to_dict(obj):
-        """Serialize a model to dict, handling both msrest and TypeSpec models."""
+        """Serialize a model to dict, handling both msrest and TypeSpec models.
+
+        :param obj: The model object to serialize.
+        :type obj: Any
+        """
         if obj is None:
             return None
         if hasattr(obj, "_is_model"):
