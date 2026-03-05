@@ -19,7 +19,7 @@
   ([#45252](https://github.com/Azure/azure-sdk-for-python/pull/45252))
 
 ### Other Changes
-- Change import path for `LoggingHandler` to accomodate upstream breaking changes
+- Change import path for `LoggingHandler` to accommodate upstream breaking changes
 ([#45516](https://github.com/Azure/azure-sdk-for-python/pull/45516))
 
 ## 1.0.0b48 (2026-02-05)
