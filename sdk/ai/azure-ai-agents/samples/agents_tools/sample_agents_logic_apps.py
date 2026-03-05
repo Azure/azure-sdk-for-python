@@ -10,10 +10,9 @@ DESCRIPTION:
 
 PREREQUISITES:
     1) Create a Consumption logic app resource in the same resource group as your Microsoft Foundry project in Azure portal.
-    2) For the agent to run the logic app workflow, you must start the workflow with the HTTP **Request** trigger. 
-    To set up the trigger and workflow for sending emails, configure the trigger to accept JSON with the 'to', 'subject', 
-    and 'body' parameter values. To learn how to create a logic app resource and workflow, see: 
-    https://learn.microsoft.com/azure/foundry-classic/openai/how-to/assistants-logic-apps#create-logic-apps-workflows-for-function-calling
+    2) For the agent to run the logic app workflow, you must start the workflow with the HTTP **Request** trigger.
+    To set up the trigger and workflow for sending emails, configure the trigger to accept JSON with the 'to', 'subject', and 'body' parameter values. To learn how to create a logic app resource and workflow, see:
+    https://learn.microsoft.com/azure/foundry-classic/agents/how-to/tools-classic/logic-apps
 
 USAGE:
     python sample_agents_logic_apps.py
