@@ -3,6 +3,8 @@ name: next-version-update
 description: Automate promoting next-* tool versions (pylint, mypy, pyright) to become the current pinned versions in azure-sdk-for-python. Use this skill when the weekly next-* CI checks are passing and you want to update the pinned tool versions for all packages.
 ---
 
+<!-- cspell:words pylintrc vnext -->
+
 # Next Version Update
 
 Promote `next-*` tool versions (pylint, mypy, pyright) to become the current pinned versions, update all relevant configuration files, and set new next-* targets for tracking upcoming releases.
