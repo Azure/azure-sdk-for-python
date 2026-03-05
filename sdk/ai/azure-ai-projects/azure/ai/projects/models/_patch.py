@@ -20,7 +20,7 @@ from ._models import CustomCredential as CustomCredentialGenerated
 from ..models import MemoryStoreUpdateCompletedResult, MemoryStoreUpdateResult
 
 
-class CustomCredential(CustomCredentialGenerated):
+class CustomCredential(CustomCredentialGenerated, discriminator="CustomKeys"):
     """Custom credential definition.
 
     :ivar type: The credential type. Always equals CredentialType.CUSTOM. Required.

@@ -5,6 +5,8 @@
 
 import pytest
 from azure.ai.projects.models import ConnectionType, CredentialType, CustomCredential
+import azure.ai.projects.models as _models
+from azure.ai.projects._utils.model_base import _deserialize
 from test_base import TestBase, servicePreparer
 from devtools_testutils import recorded_by_proxy
 
@@ -83,3 +85,32 @@ class TestConnections(TestBase):
         cred_without_keys = CustomCredential(payload_without_keys)
         assert cred_without_keys.type == CredentialType.CUSTOM
         assert cred_without_keys.credential_keys == {}
+
+    # Unit-test for patched initialization method in CustomCredential class, via Connection deserialization.
+    # To run this test, use the following command in the \sdk\ai\azure-ai-projects folder:
+    # cls & pytest tests\connections\test_connections.py::TestConnections::test_custom_credential_deserialization_via_connection -s
+    def test_custom_credential_deserialization_via_connection(self):
+
+        payload = {
+            "name": "sanitized-mcp-connection",
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sanitized-resource-group-name/providers/Microsoft.CognitiveServices/accounts/sanitized-account-name/projects/sanitized-project-name/connections/mcp",
+            "type": "RemoteTool",
+            "target": "https://api.githubcopilot.com/mcp",
+            "isDefault": True,
+            "credentials": {
+                "key1": "value1",
+                "key2": "value2",
+                "type": "CustomKeys",
+            },
+            "metadata": {
+                "type": "custom_MCP",
+            },
+        }
+
+        connection = _deserialize(_models.Connection, payload)
+        assert connection.credentials.type == CredentialType.CUSTOM
+        assert connection.credentials.credential_keys == {
+            "authorization": "Bearer sanitized-github-pat",
+            "key1": "value1",
+            "key2": "value2",
+        }
