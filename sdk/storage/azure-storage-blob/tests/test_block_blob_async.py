@@ -2221,10 +2221,10 @@ class TestStorageBlockBlobAsync(AsyncStorageRecordedTestCase):
         await self._setup(storage_account_name, storage_account_key)
 
         data = b"abc123" * 4
-        src_blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference() + "src")
+        src_blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference("src"))
         await src_blob.upload_blob(data, standard_blob_tier=StandardBlobTier.SMART, overwrite=True)
 
-        dst_blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference() + "src")
+        dst_blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference("dst"))
         resp = await dst_blob.start_copy_from_url(src_blob.url)
         assert resp is not None
         assert resp['copy_status'] == 'success'

@@ -2097,10 +2097,10 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         self._setup(storage_account_name, storage_account_key)
 
         data = b"abc123" * 4
-        src_blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference() + "src")
+        src_blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference("src"))
         src_blob.upload_blob(data, standard_blob_tier=StandardBlobTier.SMART, overwrite=True)
 
-        dst_blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference() + "src")
+        dst_blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference("dst"))
         resp = dst_blob.start_copy_from_url(src_blob.url)
         assert resp is not None
         assert resp['copy_status'] == 'success'
@@ -2108,4 +2108,5 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         props = dst_blob.get_blob_properties()
         assert props is not None
         assert props.blob_tier == StandardBlobTier.SMART
+
 #------------------------------------------------------------------------------
