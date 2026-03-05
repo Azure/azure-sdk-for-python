@@ -39,7 +39,7 @@ from ._base import (_build_properties_cache, _deserialize_throughput, _replace_t
 from ._change_feed.feed_range_internal import FeedRangeInternalEpk
 from ._constants import _Constants as Constants, TimeoutScope
 from ._cosmos_client_connection import CosmosClientConnection
-from ._cosmos_responses import CosmosDict, CosmosList
+from ._cosmos_responses import CosmosDict, CosmosList, CosmosItemPaged
 from ._routing.routing_range import Range
 from ._session_token_helpers import get_latest_session_token
 from .exceptions import CosmosHttpResponseError
@@ -758,7 +758,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             throughput_bucket: Optional[int] = None,
             availability_strategy: Optional[Union[bool, dict[str, Any]]] = None,
             **kwargs: Any
-    ) -> ItemPaged[dict[str, Any]]:
+    ) -> CosmosItemPaged:
         """Return all results matching the given `query`.
 
         You can use any value for the container name in the FROM clause, but
@@ -810,7 +810,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             If not provided, uses the client's configured strategy.
         :paramtype availability_strategy: Union[bool, dict[str, Any]]
         :returns: An Iterable of items (dicts).
-        :rtype: ItemPaged[dict[str, Any]]
+        :rtype: CosmosItemPaged
 
         .. admonition:: Example:
 
@@ -851,7 +851,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             throughput_bucket: Optional[int] = None,
             availability_strategy: Optional[Union[bool, dict[str, Any]]] = None,
             **kwargs: Any
-    ) -> ItemPaged[dict[str, Any]]:
+    ) -> CosmosItemPaged:
         """Return all results matching the given `query`.
 
         You can use any value for the container name in the FROM clause, but
@@ -900,7 +900,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             If not provided, uses the client's configured strategy.
         :paramtype availability_strategy: Union[bool, dict[str, Any]]
         :returns: An Iterable of items (dicts).
-        :rtype: ItemPaged[dict[str, Any]]
+        :rtype: CosmosItemPaged
 
         .. admonition:: Example:
 
@@ -925,7 +925,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         self,
         *args: Any,
         **kwargs: Any
-    ) -> ItemPaged[dict[str, Any]]:
+    ) -> CosmosItemPaged:
         """Return all results matching the given `query`.
 
         You can use any value for the container name in the FROM clause, but
@@ -978,7 +978,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword str session_token: Token for use with Session consistency.
         :keyword int throughput_bucket: The desired throughput bucket for the client.
         :returns: An Iterable of items (dicts).
-        :rtype: ItemPaged[dict[str, Any]]
+        :rtype: CosmosItemPaged
 
         .. admonition:: Example:
 

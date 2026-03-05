@@ -5,6 +5,7 @@
 
 import pytest
 from azure.ai.projects.aio import AIProjectClient
+from azure.ai.projects.models import ConnectionType
 from test_base import TestBase, servicePreparer
 from devtools_testutils.aio import recorded_by_proxy_async
 
@@ -12,13 +13,12 @@ from devtools_testutils.aio import recorded_by_proxy_async
 class TestConnectionsAsync(TestBase):
 
     # To run this test, use the following command in the \sdk\ai\azure-ai-projects folder:
-    # cls & pytest tests\test_connections_async.py::TestConnectionsAsync::test_connections_async -s
+    # cls & pytest tests\connections\test_connections_async.py::TestConnectionsAsync::test_connections_async -s
     @servicePreparer()
     @recorded_by_proxy_async
     async def test_connections_async(self, **kwargs):
 
-        connection_name = self.test_connections_params["connection_name"]
-        connection_type = self.test_connections_params["connection_type"]
+        connection_type = ConnectionType.AZURE_OPEN_AI
 
         async with self.create_async_client(**kwargs) as project_client:
 
@@ -50,10 +50,10 @@ class TestConnectionsAsync(TestBase):
                 connection, True, expected_connection_type=connection_type, expected_is_default=True
             )
 
-            print(f"[test_connections_async] Get the connection named `{connection_name}`, without its credentials")
-            connection = await project_client.connections.get(connection_name)
-            TestBase.validate_connection(connection, False, expected_connection_name=connection_name)
+            print(f"[test_connections_async] Get the connection named `{connection.name}`, without its credentials")
+            connection = await project_client.connections.get(connection.name)
+            TestBase.validate_connection(connection, False, expected_connection_name=connection.name)
 
-            print(f"[test_connections_async] Get the connection named `{connection_name}`, with its credentials")
-            connection = await project_client.connections.get(connection_name, include_credentials=True)
-            TestBase.validate_connection(connection, True, expected_connection_name=connection_name)
+            print(f"[test_connections_async] Get the connection named `{connection.name}`, with its credentials")
+            connection = await project_client.connections.get(connection.name, include_credentials=True)
+            TestBase.validate_connection(connection, True, expected_connection_name=connection.name)

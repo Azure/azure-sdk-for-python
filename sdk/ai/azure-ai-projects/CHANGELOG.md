@@ -22,6 +22,7 @@ instead on client constructor (see above).
 * Class `TextResponseFormatConfigurationResponseFormatJsonObject` renamed to `TextResponseFormatJsonObject`.
 * Class `CodeInterpreterContainerAuto` was renamed to `AutoCodeInterpreterToolParam`,
   and has a new optional property `network_policy` of type `ContainerNetworkPolicyParam`.
+* class `ImageGenActionEnum` was renamed to `ImageGenAction`.
 * Rename `ToolChoiceParamType.WEB_SEARCH_PREVIEW2025_03_11` to `ToolChoiceParamType.WEB_SEARCH_PREVIEW_2025_03_11`.
 * Rename `RankerVersionType.DEFAULT2024_11_15` to `RankerVersionType.DEFAULT_2024_11_15`.
 * Rename method `.beta.evaluators.list_latest_versions()` to `.beta.evaluators.list()`.
@@ -29,6 +30,9 @@ instead on client constructor (see above).
 * Rename property `id` on class `Schedule` to `schedule_id`.
 * Rename input argument `id` to `insight_id` in `.beta.insights.get()` method.
 * Rename input argument `id` to `schedule_id` in `.beta.schedules` methods.
+* Updated datetime-typed fields (`start_time`, `end_time`, `trigger_at`, `trigger_time`, `created_at`, `modified_at`) 
+across `CronTrigger`, `RecurrenceTrigger`, `OneTimeTrigger`, `ScheduleRun`, and `EvaluatorVersion` classes from `str`
+to `datetime.datetime` with format="rfc3339".
 
 ### Other Changes
 

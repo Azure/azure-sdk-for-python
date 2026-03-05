@@ -17,9 +17,9 @@ class TestDeployments(TestBase):
     @recorded_by_proxy
     def test_deployments(self, **kwargs):
 
-        model_publisher = self.test_deployments_params["model_publisher"]
-        model_name = self.test_deployments_params["model_name"]
-        model_deployment_name = self.test_deployments_params["model_deployment_name"]
+        model_publisher = "OpenAI"
+        model_name = kwargs.get("azure_ai_model_deployment_name")
+        model_deployment_name = kwargs.get("azure_ai_model_deployment_name")
 
         with self.create_client(**kwargs) as project_client:
 
