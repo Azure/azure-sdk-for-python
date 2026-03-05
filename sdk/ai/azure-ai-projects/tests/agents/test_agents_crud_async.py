@@ -14,9 +14,6 @@ import pytest
 
 class TestAgentCrudAsync(TestBase):
 
-    @pytest.mark.skip(
-        reason="Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema"
-    )
     @servicePreparer()
     @recorded_by_proxy_async()
     async def test_agents_crud_async(self, **kwargs):
@@ -44,9 +41,7 @@ class TestAgentCrudAsync(TestBase):
             self._validate_agent_version(agent1_version1)
 
             # Create another version of the same Agent, using dictionary definition, with different instructions
-            body = {
-                "definition": {"model": "gpt-4o", "kind": "prompt", "instructions": "Second set of instructions here"}
-            }
+            body = {"definition": {"model": model, "kind": "prompt", "instructions": "Second set of instructions here"}}
             agent1_version2: AgentVersionDetails = await project_client.agents.create_version(
                 agent_name=first_agent_name, body=body
             )

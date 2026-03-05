@@ -177,12 +177,6 @@ class TestBase(AzureRecordedTestCase):
         "model_deployment_name": "gpt-4o-mini",
     }
 
-    test_deployments_params = {
-        "model_publisher": "Cohere",
-        "model_name": "gpt-4o",
-        "model_deployment_name": "DeepSeek-V3",
-    }
-
     test_agents_params = {
         "agent_name": "agent-for-python-projects-sdk-testing",
     }
@@ -371,12 +365,10 @@ class TestBase(AzureRecordedTestCase):
         if expected_is_default is not None:
             assert connection.is_default == expected_is_default
 
-        if isinstance(connection.credentials, ApiKeyCredentials):
-            assert connection.credentials.type == CredentialType.API_KEY
+        if connection.credentials.type == CredentialType.API_KEY:
             if include_credentials:
                 assert connection.credentials.api_key is not None
-        elif isinstance(connection.credentials, CustomCredential):
-            assert connection.credentials.type == CredentialType.CUSTOM
+        elif connection.credentials.type == CredentialType.CUSTOM:
             if include_credentials:
                 assert TestBase.is_valid_dict(connection.credentials.credential_keys)
 
