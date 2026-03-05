@@ -9,7 +9,6 @@ Provides a self-contained HR recruitment scenario with:
   scheduling, and communication
 """
 
-from datetime import datetime, timedelta
 from typing import Annotated
 
 from agent_framework import tool

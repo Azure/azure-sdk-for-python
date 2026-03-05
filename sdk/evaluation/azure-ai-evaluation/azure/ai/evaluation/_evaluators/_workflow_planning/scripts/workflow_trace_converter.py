@@ -82,13 +82,12 @@ def _wf_convert(spans: List[Dict]) -> Dict:
     chat_spans.sort(key=lambda s: s.get("timestamp", ""))
     executor_spans.sort(key=lambda s: s.get("timestamp", ""))
 
-    build_span = build_spans[0] if build_spans else None
     run_span = max(run_spans, key=lambda s: s.get("timestamp", "")) if run_spans else None
 
-    metadata = _wf_extract_workflow_metadata(build_span, run_span)
+    metadata = _wf_extract_workflow_metadata(build_spans, run_span)
     workflow_def = metadata.get("workflow_definition", {})
 
-    workflow_type = _wf_detect_workflow_type(workflow_def, executor_spans)
+    _ = _wf_detect_workflow_type(workflow_def, executor_spans)
     topology = _wf_build_topology(workflow_def)
     agents = _wf_extract_agents(invoke_spans, chat_spans, executor_spans)
     invocations = _wf_extract_invocations(invoke_spans)
@@ -97,7 +96,6 @@ def _wf_convert(spans: List[Dict]) -> Dict:
         "parse_failed": False,
         "workflow_id": metadata.get("workflow_id"),
         "workflow_name": metadata.get("workflow_name"),
-        "workflow_type": workflow_type,
         "topology": topology,
         "agents": agents,
         "invocations": invocations,
@@ -180,7 +178,7 @@ def _wf_wrap(value: Any, default: Any = None) -> Dict:
 
 
 def _wf_extract_workflow_metadata(
-    build_span: Optional[Dict],
+    build_spans: List[Dict],
     run_span: Optional[Dict],
 ) -> Dict:
     result: Dict[str, Any] = {
@@ -188,14 +186,39 @@ def _wf_extract_workflow_metadata(
         "workflow_name": None,
         "workflow_definition": {},
     }
-    if build_span:
+
+    run_workflow_id = None
+    if run_span:
+        cd = run_span.get("custom_dimensions", {})
+        run_workflow_id = cd.get("workflow.id")
+
+    candidates: List[Dict[str, Any]] = []
+    for build_span in build_spans:
         cd = build_span.get("custom_dimensions", {})
-        result["workflow_id"] = cd.get("workflow.id")
-        result["workflow_name"] = cd.get("workflow.name")
-        raw_def = cd.get("workflow.definition", "")
-        result["workflow_definition"] = _wf_safe_parse_json(raw_def)
-        if not isinstance(result["workflow_definition"], dict):
-            result["workflow_definition"] = {}
+        workflow_id = cd.get("workflow.id")
+        workflow_name = cd.get("workflow_builder.name") or cd.get("workflow.name")
+        parsed_definition = _wf_safe_parse_json(cd.get("workflow.definition", ""))
+        if not isinstance(parsed_definition, dict):
+            parsed_definition = {}
+        candidates.append({
+            "timestamp": build_span.get("timestamp", ""),
+            "workflow_id": workflow_id,
+            "workflow_name": workflow_name,
+            "workflow_definition": parsed_definition,
+        })
+
+    selected: Optional[Dict[str, Any]] = None
+    if run_workflow_id:
+        selected = next((c for c in candidates if c.get("workflow_id") == run_workflow_id), None)
+    if selected is None and candidates:
+        sorted_candidates = sorted(candidates, key=lambda c: c.get("timestamp", ""), reverse=True)
+        selected = next((c for c in sorted_candidates if c.get("workflow_definition")), sorted_candidates[0])
+
+    if selected:
+        result["workflow_id"] = selected.get("workflow_id")
+        result["workflow_name"] = selected.get("workflow_name")
+        result["workflow_definition"] = selected.get("workflow_definition") or {}
+
     if run_span:
         cd = run_span.get("custom_dimensions", {})
         if not result["workflow_id"]:
@@ -306,7 +329,6 @@ def _wf_build_topology(workflow_definition: Dict) -> Dict:
 
     return {
         "start_executor_id": workflow_definition.get("start_executor_id", ""),
-        "max_iterations": workflow_definition.get("max_iterations", 0),
         "executors": executors,
         "edges": edges,
     }
@@ -390,7 +412,7 @@ def _wf_extract_text_from_parts(value: Any) -> str:
     if isinstance(value, str):
         return value
     if isinstance(value, dict) and value.get("_truncated"):
-        return value
+        return str(value.get("_raw", ""))
     if isinstance(value, list):
         texts = []
         for item in value:

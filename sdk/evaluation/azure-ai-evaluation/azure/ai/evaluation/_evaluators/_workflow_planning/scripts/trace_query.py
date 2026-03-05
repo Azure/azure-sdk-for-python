@@ -12,34 +12,14 @@ Provides functions to:
 import json
 import logging
 from datetime import timedelta
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List
 
 from azure.identity import DefaultAzureCredential
 from azure.monitor.query import LogsQueryClient, LogsQueryStatus
 
-from .workflow_trace_converter import convert_workflow_traces
-
 logger = logging.getLogger(__name__)
 
 DEFAULT_LOOKBACK_HOURS = 24 * 7
-
-
-def build_trace_query(trace_ids: List[str]) -> str:
-    """Construct a KQL query that fetches ALL spans for the given trace IDs.
-
-    Unlike the service version, this does NOT filter on ``invoke_agent`` —
-    it returns all dependency spans so the workflow converter can see
-    workflow.build, executor.process, chat, and other span types.
-    """
-    trace_ids_json = json.dumps(trace_ids)
-    return f"""
-let trace_ids = dynamic({trace_ids_json});
-dependencies
-| extend trace_id = operation_Id
-| extend span_id = id
-| where trace_id in (trace_ids)
-| project timestamp, trace_id, span_id, target, duration, customDimensions
-| summarize arg_max(timestamp, *) by trace_id, span_id"""
 
 
 def build_full_workflow_query(trace_ids: List[str]) -> str:
@@ -79,33 +59,6 @@ def _normalize_dimension_value(value: Any) -> Any:
     return value
 
 
-def process_trace_rows(raw_rows: List[Dict[str, object]]) -> List[Dict[str, object]]:
-    """Process raw Application Insights data rows into intermediate format.
-
-    Extracts fields from customDimensions and normalizes values.
-    """
-    rows = []
-    for row_dict in raw_rows:
-        custom_dimensions = _normalize_dimension_value(row_dict.get("customDimensions", {}))
-        if not isinstance(custom_dimensions, dict):
-            custom_dimensions = {}
-        span_id = row_dict.get("span_id")
-        tool_definitions = _normalize_dimension_value(custom_dimensions.get("gen_ai.tool.definitions"))
-        rows.append(
-            {
-                "trace_id": row_dict.get("trace_id"),
-                "span_id": span_id,
-                "query": _normalize_dimension_value(custom_dimensions.get("gen_ai.input.messages")),
-                "response": _normalize_dimension_value(custom_dimensions.get("gen_ai.output.messages")),
-                "tool_definitions": tool_definitions,
-                "agent_id": custom_dimensions.get("gen_ai.agent.id"),
-                "agent_name": custom_dimensions.get("gen_ai.agent.name"),
-                "conversation_id": custom_dimensions.get("gen_ai.conversation.id"),
-            }
-        )
-    return rows
-
-
 def process_workflow_trace_rows(raw_rows: List[Dict[str, object]]) -> List[Dict[str, object]]:
     """Process raw App Insights rows into the span dict format expected by
     ``convert_workflow_traces``.
@@ -126,30 +79,6 @@ def process_workflow_trace_rows(raw_rows: List[Dict[str, object]]) -> List[Dict[
     return spans
 
 
-def query_and_convert_workflow_traces(
-    connection_string: str,
-    trace_ids: List[str],
-    lookback_hours: int = DEFAULT_LOOKBACK_HOURS,
-) -> Dict:
-    """Query App Insights for workflow traces and convert to structured format.
-
-    This is the main entry point for the notebook — it queries, processes,
-    and converts traces in one call.
-
-    Args:
-        connection_string: The Application Insights connection string
-            (NOT the resource ID — use the workspace ID from the connection string).
-        trace_ids: List of trace IDs to fetch.
-        lookback_hours: Hours to look back for traces.
-
-    Returns:
-        Structured workflow document from ``convert_workflow_traces``.
-    """
-    raw_rows = query_traces(connection_string, trace_ids, lookback_hours)
-    spans = process_workflow_trace_rows(raw_rows)
-    return convert_workflow_traces(spans)
-
-
 def query_traces(
     workspace_id: str,
     trace_ids: List[str],
@@ -158,9 +87,10 @@ def query_traces(
     """Query Application Insights for trace data.
 
     Args:
-        workspace_id: The Log Analytics workspace ID
-            (found in App Insights > Properties > Workspace ID, or from the
-            connection string's InstrumentationKey).
+        workspace_id: The Log Analytics workspace ID (GUID) or an ARM resource
+            path (e.g. ``/subscriptions/.../providers/microsoft.insights/components/...``).
+            When an ARM path is provided, ``query_resource`` is used instead of
+            ``query_workspace``.
         trace_ids: List of trace IDs to fetch.
         lookback_hours: Hours to look back for traces.
 
@@ -173,14 +103,30 @@ def query_traces(
     query = build_full_workflow_query(trace_ids)
     timespan = timedelta(hours=lookback_hours)
 
-    logger.info("Querying App Insights workspace %s for %s trace IDs...", workspace_id, len(trace_ids))
+    # Detect whether workspace_id is an ARM resource path or a GUID
+    is_resource_id = workspace_id.strip().startswith("/subscriptions/") or workspace_id.strip().startswith("subscriptions/")
+
+    if is_resource_id:
+        resource_id = workspace_id.strip()
+        if not resource_id.startswith("/"):
+            resource_id = "/" + resource_id
+        logger.info("Querying App Insights resource %s for %s trace IDs...", resource_id, len(trace_ids))
+    else:
+        logger.info("Querying App Insights workspace %s for %s trace IDs...", workspace_id, len(trace_ids))
 
     try:
-        response = client.query_workspace(
-            workspace_id=workspace_id,
-            query=query,
-            timespan=timespan,
-        )
+        if is_resource_id:
+            response = client.query_resource(
+                resource_id=resource_id,
+                query=query,
+                timespan=timespan,
+            )
+        else:
+            response = client.query_workspace(
+                workspace_id=workspace_id,
+                query=query,
+                timespan=timespan,
+            )
 
         if response.status != LogsQueryStatus.SUCCESS:
             raise RuntimeError("Application Insights query did not succeed.")

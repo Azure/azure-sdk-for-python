@@ -7,8 +7,11 @@ Each factory function creates an agent with appropriate instructions and tools.
 Agents are designed for an HR recruitment workflow scenario.
 """
 
+import os
+
 from agent_framework import Agent
 from agent_framework.azure import AzureAIClient
+from azure.identity import DefaultAzureCredential
 
 from .hr_tools import (
     book_interview,
@@ -139,6 +142,8 @@ Guidelines:
 - Use Evaluator to score and rank candidates
 - Only finish after a shortlist has been produced with clear recommendations
 - Keep the conversation focused on the hiring task
+
+IMPORTANT: Do not choose the same agent twice in a row.
 """
 
 MAGENTIC_MANAGER_INSTRUCTIONS = """You coordinate an HR recruitment team to complete hiring tasks efficiently.
@@ -161,9 +166,38 @@ Strategy:
 # Agent Factory Functions
 # ============================================================================
 
+# Track all created clients for cleanup
+_created_clients: list[AzureAIClient] = []
 
-def create_req_master(client: AzureAIClient) -> Agent:
+
+async def _create_client(agent_name: str) -> AzureAIClient:
+    """Create a new independent AzureAIClient instance for an agent.
+
+    Each agent gets its own client to ensure proper message isolation
+    in group chat and other multi-agent workflows.
+    """
+    client = AzureAIClient(
+        project_endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"],
+        model_deployment_name=os.environ.get("AZURE_AI_MODEL_DEPLOYMENT_NAME"),
+        credential=DefaultAzureCredential(),
+        agent_name=agent_name,
+    )
+    await client.__aenter__()
+    _created_clients.append(client)
+    return client
+
+
+async def cleanup_clients():
+    """Close all created clients. Call this when done with the agents."""
+    for client in _created_clients:
+        if hasattr(client, "__aexit__"):
+            await client.__aexit__(None, None, None)
+    _created_clients.clear()
+
+
+async def create_req_master() -> Agent:
     """Create a Requisition Master agent."""
+    client = await _create_client("ReqMaster")
     return Agent(
         name="ReqMaster",
         description="Extracts requisition requirements and hiring constraints from job postings.",
@@ -173,8 +207,9 @@ def create_req_master(client: AzureAIClient) -> Agent:
     )
 
 
-def create_talent_scout(client: AzureAIClient) -> Agent:
+async def create_talent_scout() -> Agent:
     """Create a Talent Scout agent for external candidate sourcing."""
+    client = await _create_client("TalentScout")
     return Agent(
         name="TalentScout",
         description="Sources external candidates from job boards.",
@@ -184,8 +219,9 @@ def create_talent_scout(client: AzureAIClient) -> Agent:
     )
 
 
-def create_mobility_scout(client: AzureAIClient) -> Agent:
+async def create_mobility_scout() -> Agent:
     """Create an Internal Mobility Scout agent."""
+    client = await _create_client("MobilityScout")
     return Agent(
         name="MobilityScout",
         description="Finds eligible internal transfer candidates from HRIS systems.",
@@ -195,8 +231,9 @@ def create_mobility_scout(client: AzureAIClient) -> Agent:
     )
 
 
-def create_evaluator(client: AzureAIClient) -> Agent:
+async def create_evaluator() -> Agent:
     """Create an Evaluator agent for candidate scoring and ranking."""
+    client = await _create_client("Evaluator")
     return Agent(
         name="Evaluator",
         description="Scores, ranks, and compares candidate fit against role requirements.",
@@ -206,8 +243,9 @@ def create_evaluator(client: AzureAIClient) -> Agent:
     )
 
 
-def create_compliance_guard(client: AzureAIClient) -> Agent:
+async def create_compliance_guard() -> Agent:
     """Create a Compliance Guard agent for bias and EEOC compliance."""
+    client = await _create_client("ComplianceGuard")
     return Agent(
         name="ComplianceGuard",
         description="Performs fairness and policy compliance checks on shortlists.",
@@ -217,8 +255,9 @@ def create_compliance_guard(client: AzureAIClient) -> Agent:
     )
 
 
-def create_scheduler(client: AzureAIClient) -> Agent:
+async def create_scheduler() -> Agent:
     """Create a Scheduler agent for interview coordination."""
+    client = await _create_client("Scheduler")
     return Agent(
         name="Scheduler",
         description="Coordinates interview slots and confirms interview logistics.",
@@ -228,8 +267,9 @@ def create_scheduler(client: AzureAIClient) -> Agent:
     )
 
 
-def create_orchestrator(client: AzureAIClient) -> Agent:
+async def create_orchestrator() -> Agent:
     """Create an Orchestrator agent for group chat management."""
+    client = await _create_client("Orchestrator")
     return Agent(
         name="Orchestrator",
         description="Coordinates multi-agent HR recruitment by selecting speakers.",
@@ -238,8 +278,9 @@ def create_orchestrator(client: AzureAIClient) -> Agent:
     )
 
 
-def create_magentic_manager(client: AzureAIClient) -> Agent:
+async def create_magentic_manager() -> Agent:
     """Create a Manager agent for Magentic orchestration."""
+    client = await _create_client("HiringManager")
     return Agent(
         name="HiringManager",
         description="Coordinates the HR recruitment workflow across multiple specialists.",

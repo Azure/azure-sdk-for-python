@@ -167,5 +167,10 @@ class _WorkflowPlanningEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 f"{self._result_key}_sample_output": prompty_output_dict.get("sample_output", ""),
             }
 
-        logger.warning("LLM output is not a dictionary, returning 0 for the success.")
-        return {self._result_key: 0}
+        else:
+            raise EvaluationException(
+                message="Evaluator returned invalid output.",
+                blame=ErrorBlame.SYSTEM_ERROR,
+                category=ErrorCategory.FAILED_EXECUTION,
+                target=ErrorTarget.EVALUATE,
+            )

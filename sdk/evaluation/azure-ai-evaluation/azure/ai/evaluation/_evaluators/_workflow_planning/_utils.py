@@ -190,7 +190,14 @@ def _format_parse_failed(data: Dict) -> str:
 
 def _format_workflow_definition(data: Dict) -> str:
     topo = data.get("topology", {})
-    executors = {e["id"]: e.get("type", "") for e in topo.get("executors", [])}
+    executors: Dict[str, str] = {}
+    for executor in topo.get("executors", []):
+        if not isinstance(executor, dict):
+            continue
+        executor_id = executor.get("id")
+        if not executor_id:
+            continue
+        executors[str(executor_id)] = str(executor.get("type", ""))
 
     lines = ["[Workflow Definition]"]
     if executors:
@@ -198,10 +205,10 @@ def _format_workflow_definition(data: Dict) -> str:
     edges = topo.get("edges", [])
     if edges:
         lines.append("Edges:")
-        lines.extend(f"  {e.get('source', '?')} -> {e.get('target', '?')}" for e in edges)
-    max_iter = topo.get("max_iterations")
-    if max_iter:
-        lines.append(f"Max iterations: {max_iter}")
+        for edge in edges:
+            if not isinstance(edge, dict):
+                continue
+            lines.append(f"  {edge.get('source', '?')} -> {edge.get('target', '?')}")
     return "\n".join(lines)
 
 
