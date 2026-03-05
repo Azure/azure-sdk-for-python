@@ -33,7 +33,7 @@ Use the returned token credential to authenticate the client:
 ```python
 >>> from azure.mgmt.discovery import DiscoveryClient
 >>> from azure.identity import DefaultAzureCredential
->>> client = DiscoveryClient(endpoint='<endpoint>', credential=DefaultAzureCredential())
+>>> client = DiscoveryClient(credential=DefaultAzureCredential(), subscription_id='<subscription_id>')
 ```
 
 ## Examples
@@ -43,9 +43,10 @@ Use the returned token credential to authenticate the client:
 >>> from azure.identity import DefaultAzureCredential
 >>> from azure.core.exceptions import HttpResponseError
 
->>> client = DiscoveryClient(endpoint='<endpoint>', credential=DefaultAzureCredential())
+>>> client = DiscoveryClient(credential=DefaultAzureCredential(), subscription_id='<subscription_id>')
 >>> try:
-        <!-- write test code here -->
+        for operation in client.operations.list():
+            print(operation.name)
     except HttpResponseError as e:
         print('service responds error: {}'.format(e.response.json()))
 
