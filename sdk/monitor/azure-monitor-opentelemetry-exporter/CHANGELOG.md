@@ -7,6 +7,8 @@
 ### Breaking Changes
 
 ### Bugs Fixed
+- Add environment variable to disable/enable custom properties truncation
+  ([#45479](https://github.com/Azure/azure-sdk-for-python/pull/45479))
 - Fix io counters import issue in performance counters
   ([#45286](https://github.com/Azure/azure-sdk-for-python/pull/45286))
 - Remove custom properties truncation
