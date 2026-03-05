@@ -8,7 +8,7 @@ import asyncio
 import os
 from typing import TYPE_CHECKING, Any, AsyncGenerator, Optional, Union
 
-from agent_framework import AgentSession, ResponseStream, SupportsAgentRun
+from agent_framework import AgentSession, BaseHistoryProvider, ResponseStream, SupportsAgentRun
 from opentelemetry import trace
 
 from azure.ai.agentserver.core import AgentRunContext, FoundryCBAgent
@@ -329,3 +329,10 @@ class AgentFrameworkAgent(FoundryCBAgent):
             return
 
         context_providers.append(self._session_repository.history_provider)
+
+    def _get_history_provider(self, agent: SupportsAgentRun) -> Optional[BaseHistoryProvider]:
+        """Return the first BaseHistoryProvider attached to the agent, if any."""
+        for provider in getattr(agent, "context_providers", None) or []:
+            if isinstance(provider, BaseHistoryProvider):
+                return provider
+        return None

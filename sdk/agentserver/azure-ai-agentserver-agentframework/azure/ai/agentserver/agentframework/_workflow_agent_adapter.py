@@ -79,7 +79,10 @@ class AgentFrameworkWorkflowAdapter(AgentFrameworkAgent):
                     await self._load_checkpoint(agent, selected_checkpoint, checkpoint_storage)
                     logger.info("Loaded checkpoint with ID: %s", selected_checkpoint.checkpoint_id)
 
-            input_converter = AgentFrameworkInputConverter(hitl_helper=self._hitl_helper)
+            input_converter = AgentFrameworkInputConverter(
+                hitl_helper=self._hitl_helper,
+                history_provider=self._get_history_provider(agent),
+            )
             message = await input_converter.transform_input(
                 request_input,
                 agent_session=agent_session,

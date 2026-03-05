@@ -48,8 +48,10 @@ class AgentFrameworkAIAgentAdapter(AgentFrameworkAgent):
             request_input = context.request.get("input")
 
             agent_session = await self._load_agent_session(context, self._agent)
-
-            input_converter = AgentFrameworkInputConverter(hitl_helper=self._hitl_helper)
+            input_converter = AgentFrameworkInputConverter(
+                hitl_helper=self._hitl_helper,
+                history_provider=self._get_history_provider(self._agent),
+            )
             message = await input_converter.transform_input(
                 request_input,
                 agent_session=agent_session,
