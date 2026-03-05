@@ -25,6 +25,8 @@ USAGE:
     Set the following environment variables with your own values:
     1) PROJECT_ENDPOINT - The Microsoft Foundry project endpoint. To find this value, in the Foundry portal, go to your project's "Overview" page.
     2) MODEL_DEPLOYMENT_NAME - The deployment name for the AI model. To find this value, in the Foundry portal, go to your project's "Models + endpoints" page, and look in the "Name" column.
+    3) SUBSCRIPTION_ID - The ID for your Azure subscription.
+    4) resource_group_name - The name for your Azure resource group.
 
     Replace the following values in the sample with your own values:
     1) <LOGIC_APP_NAME> - The name for the logic app you created.
