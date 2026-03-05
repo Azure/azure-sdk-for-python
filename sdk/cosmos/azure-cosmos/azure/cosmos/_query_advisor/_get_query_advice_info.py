@@ -31,4 +31,4 @@ def get_query_advice_info(header_value: Optional[str]) -> str:
         return ""
 
     # Format as string
-    return query_advice.to_string()
+    return str(query_advice)

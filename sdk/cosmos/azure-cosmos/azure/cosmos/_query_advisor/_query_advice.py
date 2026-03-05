@@ -33,18 +33,17 @@ class QueryAdviceEntry:
         self.id = rule_id
         self.parameters = parameters or []
 
-    def to_string(self, rule_directory: RuleDirectory) -> Optional[str]:
+    def __str__(self) -> str:
         """Format the query advice entry as a human-readable string.
 
-        :param rule_directory: Rule directory instance for looking up messages.
-        :type rule_directory: ~azure.cosmos._query_advisor._rule_directory.RuleDirectory
         :returns: Formatted string with rule ID, message, and documentation link,
-            or None if the rule message cannot be found.
-        :rtype: str or None
+            or empty string if the rule identifier is missing.
+        :rtype: str
         """
         if self.id is None:
-            return None
+            return ""
 
+        rule_directory = RuleDirectory()
         message = rule_directory.get_rule_message(self.id)
         if message is None:
             # Unknown rule — log it and return the public doc link as the fallback.
@@ -103,7 +102,7 @@ class QueryAdvice:
         """
         self.entries = [e for e in (entries or []) if e is not None]
 
-    def to_string(self) -> str:
+    def __str__(self) -> str:
         """Format all query advice entries as a multi-line string.
 
         :returns: Formatted string with each entry on a separate line.
@@ -112,11 +111,10 @@ class QueryAdvice:
         if not self.entries:
             return ""
 
-        rule_directory = RuleDirectory()
         lines = []
 
         for entry in self.entries:
-            formatted = entry.to_string(rule_directory)
+            formatted = str(entry)
             if formatted:
                 lines.append(formatted)
 
@@ -149,5 +147,5 @@ class QueryAdvice:
 
             return cls(entries)
         except (json.JSONDecodeError, ValueError, AttributeError) as e:
-            _LOGGER.warning("Failed to parse query advice from response header.", e)
+            _LOGGER.warning("Failed to parse query advice from response header: %s", e)
             return None

@@ -3178,6 +3178,14 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                     response_hook(self.last_response_headers, partial_result)
             # if the prefix partition query has results lets return it
             if results:
+                if self.last_response_headers.get(http_constants.HttpHeaders.IndexUtilization) is not None:
+                    index_metrics_raw = self.last_response_headers[http_constants.HttpHeaders.IndexUtilization]
+                    self.last_response_headers[http_constants.HttpHeaders.IndexUtilization] = (
+                        _utils.get_index_metrics_info(index_metrics_raw))
+                if self.last_response_headers.get(http_constants.HttpHeaders.QueryAdvice) is not None:
+                    query_advice_raw = self.last_response_headers[http_constants.HttpHeaders.QueryAdvice]
+                    self.last_response_headers[http_constants.HttpHeaders.QueryAdvice] = (
+                        get_query_advice_info(query_advice_raw))
                 return __GetBodiesFromQueryResult(results)
 
         result, last_response_headers = await self.__Post(path, request_params, query, req_headers, **kwargs)

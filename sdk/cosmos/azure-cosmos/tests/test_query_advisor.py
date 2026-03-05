@@ -46,12 +46,12 @@ class TestQueryAdvisor(unittest.TestCase):
         self.assertEqual(entry.id, "QA1000")
         self.assertEqual(entry.parameters, ["param1", "param2"])
 
-    def test_query_advice_entry_to_string(self):
+    def test_query_advice_entry_str(self):
         """Test formatting QueryAdviceEntry as string."""
         directory = RuleDirectory()
         entry = QueryAdviceEntry("QA1000", [])
         
-        result = entry.to_string(directory)
+        result = str(entry)
         
         self.assertIsNotNone(result)
         self.assertIn("QA1000:", result)
@@ -61,22 +61,20 @@ class TestQueryAdvisor(unittest.TestCase):
 
     def test_query_advice_entry_with_parameters(self):
         """Test formatting QueryAdviceEntry with parameters."""
-        directory = RuleDirectory()
         # Create a mock entry that would use parameters
         entry = QueryAdviceEntry("QA1000", ["field1", "field2"])
         
-        result = entry.to_string(directory)
+        result = str(entry)
         
         self.assertIsNotNone(result)
         self.assertIn("QA1000:", result)
 
     def test_query_advice_entry_unknown_rule_returns_fallback_link(self):
         """Test that an unknown rule ID returns a fallback doc link and logs a warning."""
-        directory = RuleDirectory()
         entry = QueryAdviceEntry("QA9999")
 
         with self.assertLogs("azure.cosmos._query_advisor._query_advice", level="WARNING") as cm:
-            result = entry.to_string(directory)
+            result = str(entry)
 
         directory = RuleDirectory()
         self.assertIsNotNone(result)
@@ -84,14 +82,14 @@ class TestQueryAdvisor(unittest.TestCase):
         self.assertIn(directory.url_prefix + "QA9999", result)
         self.assertTrue(any("QA9999" in msg for msg in cm.output))
 
-    def test_query_advice_to_string_unknown_rule_included(self):
-        """Test that QueryAdvice.to_string includes entries with unknown rule IDs."""
+    def test_query_advice_str_unknown_rule_included(self):
+        """Test that str(QueryAdvice) includes entries with unknown rule IDs."""
         data = [{"Id": "QA9999", "Params": []}]
         encoded = quote(json.dumps(data))
 
         advice = QueryAdvice.try_create_from_string(encoded)
         with self.assertLogs("azure.cosmos._query_advisor._query_advice", level="WARNING"):
-            result = advice.to_string()
+            result = str(advice)
 
         directory = RuleDirectory()
         self.assertIsInstance(result, str)
@@ -157,21 +155,21 @@ class TestQueryAdvisor(unittest.TestCase):
         advice = QueryAdvice.try_create_from_string("")
         self.assertIsNone(advice)
 
-    def test_query_advice_to_string_single_entry(self):
+    def test_query_advice_str_single_entry(self):
         """Test formatting QueryAdvice with single entry."""
         data = [{"Id": "QA1002", "Params": []}]
         json_str = json.dumps(data)
         encoded = quote(json_str)
         
         advice = QueryAdvice.try_create_from_string(encoded)
-        result = advice.to_string()
+        result = str(advice)
         
         self.assertIsInstance(result, str)
         self.assertIn("QA1002:", result)
         self.assertIn("STARTSWITH", result)
         self.assertIn("https://", result)
 
-    def test_query_advice_to_string_multiple_entries(self):
+    def test_query_advice_str_multiple_entries(self):
         """Test formatting QueryAdvice with multiple entries as multi-line string."""
         data = [
             {"Id": "QA1008", "Params": []},
@@ -181,7 +179,7 @@ class TestQueryAdvisor(unittest.TestCase):
         encoded = quote(json_str)
         
         advice = QueryAdvice.try_create_from_string(encoded)
-        result = advice.to_string()
+        result = str(advice)
         
         self.assertIsInstance(result, str)
         lines = result.split("\n")
@@ -191,10 +189,10 @@ class TestQueryAdvisor(unittest.TestCase):
         self.assertIn("GetCurrentTicks", lines[0])
         self.assertIn("GetCurrentTimestamp", lines[1])
 
-    def test_query_advice_to_string_empty(self):
+    def test_query_advice_str_empty(self):
         """Test formatting empty QueryAdvice."""
         advice = QueryAdvice([])
-        result = advice.to_string()
+        result = str(advice)
         self.assertIsInstance(result, str)
         self.assertEqual(result, "")
 
