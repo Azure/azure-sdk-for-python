@@ -1240,7 +1240,7 @@ class TestRealtimeService(AzureRecordedTestCase):
     @pytest.mark.parametrize(
         ("model", "sampling_rate"),
         [
-            pytest.param("gpt-4o-realtime-preview", 16000, id="gpt4o_realtime_16kHz_no_resample"),
+            pytest.param("gpt-4o-realtime", 16000, id="gpt4o_realtime_16kHz_no_resample"),
             pytest.param("gpt-4o-realtime", 44100, id="gpt4o_realtime_44kHz_no_resample"),
             pytest.param("gpt-4o-realtime", 8000, id="gpt4o_realtime_8kHz_no_resample"),
             pytest.param("gpt-4o", 16000, id="gpt4o_16kHz_no_resample"),
@@ -1279,7 +1279,7 @@ class TestRealtimeService(AzureRecordedTestCase):
                 input_audio_sampling_rate=sampling_rate,
                 input_audio_transcription=_get_speech_recognition_setting(model),
                 instructions="You are a helpful assistant. Please respond briefly to the user's question about lakes.",
-                turn_detection=ServerVad(),
+                turn_detection=ServerVad(silence_duration_ms=200),
             )
 
             await conn.session.update(session=session)
@@ -1291,7 +1291,7 @@ class TestRealtimeService(AzureRecordedTestCase):
             speech_started = await _wait_for_event(conn, {ServerEventType.INPUT_AUDIO_BUFFER_SPEECH_STARTED}, 10)
             assert speech_started.audio_start_ms == 0
             speech_stopped = await _wait_for_event(conn, {ServerEventType.INPUT_AUDIO_BUFFER_SPEECH_STOPPED}, 10)
-            assert speech_stopped.audio_end_ms == pytest.approx(1664, rel=2e-2)
+            assert speech_stopped.audio_end_ms == pytest.approx(1680, abs=50)
 
             _, audio_bytes = await _collect_event(conn, event_type=ServerEventType.RESPONSE_AUDIO_TRANSCRIPT_DELTA)
             assert audio_bytes > 50 * 1000, f"Output audio too short for {audio_file}: {audio_bytes} bytes"
