@@ -7,7 +7,7 @@ import os
 import unittest
 from unittest.mock import MagicMock, patch
 
-from azure.core.exceptions import ServiceRequestError
+from azure.core.exceptions import ServiceRequestError, ServiceResponseError
 
 import azure.cosmos.exceptions as exceptions
 
@@ -140,6 +140,48 @@ class TestInferenceServiceTimeout(unittest.TestCase):
                 call_kwargs = mock_run.call_args[1]
                 self.assertEqual(call_kwargs["connection_timeout"], 12)
                 self.assertEqual(call_kwargs["read_timeout"], 12)
+
+        asyncio.run(run_test())
+
+    def test_sync_inference_response_timeout_raises_408(self):
+        """Test that sync inference service converts ServiceResponseError to 408."""
+        from azure.cosmos._inference_service import _InferenceService
+
+        mock_connection = self._create_mock_connection()
+        service = _InferenceService(mock_connection)
+
+        with patch.object(
+            service._inference_pipeline_client._pipeline, "run",
+            side_effect=ServiceResponseError("Read timeout")
+        ):
+            with self.assertRaises(exceptions.CosmosHttpResponseError) as ctx:
+                service.rerank(
+                    reranking_context="test query",
+                    documents=["doc1", "doc2"]
+                )
+            self.assertEqual(ctx.exception.status_code, 408)
+            self.assertIn("Inference Service Request Timeout", str(ctx.exception))
+
+    def test_async_inference_response_timeout_raises_408(self):
+        """Test that async inference service converts ServiceResponseError to 408."""
+        async def run_test():
+            from azure.cosmos.aio._inference_service_async import _InferenceService
+
+            mock_connection = self._create_mock_connection()
+            mock_connection.connection_policy.DisableSSLVerification = False
+            service = _InferenceService(mock_connection)
+
+            with patch.object(
+                service._inference_pipeline_client._pipeline, "run",
+                side_effect=ServiceResponseError("Read timeout")
+            ):
+                with self.assertRaises(exceptions.CosmosHttpResponseError) as ctx:
+                    await service.rerank(
+                        reranking_context="test query",
+                        documents=["doc1", "doc2"]
+                    )
+                self.assertEqual(ctx.exception.status_code, 408)
+                self.assertIn("Inference Service Request Timeout", str(ctx.exception))
 
         asyncio.run(run_test())
 

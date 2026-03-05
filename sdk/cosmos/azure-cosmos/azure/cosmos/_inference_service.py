@@ -26,7 +26,7 @@ from typing import Any, cast, Optional
 from urllib3.util.retry import Retry
 
 from azure.core import PipelineClient
-from azure.core.exceptions import DecodeError, ServiceRequestError
+from azure.core.exceptions import DecodeError, ServiceRequestError, ServiceResponseError
 from azure.core.pipeline.policies import (ContentDecodePolicy, CustomHookPolicy, DistributedTracingPolicy,
                                           HeadersPolicy, HTTPPolicy, NetworkTraceLoggingPolicy, ProxyPolicy,
                                           UserAgentPolicy)
@@ -219,7 +219,7 @@ class _InferenceService:
 
             return CosmosDict(result, response_headers=response_headers)
 
-        except ServiceRequestError as e:
+        except (ServiceRequestError, ServiceResponseError) as e:
             raise exceptions.CosmosHttpResponseError(
                 status_code=408,
                 message="Inference Service Request Timeout",
