@@ -22,7 +22,7 @@ import os
 import pytest
 from devtools_testutils.aio import recorded_by_proxy_async
 from testpreparer_async import ContentUnderstandingPreparer, ContentUnderstandingClientTestBaseAsync
-from azure.ai.contentunderstanding.models import AnalyzeInput
+from azure.ai.contentunderstanding.models import AnalysisInput
 
 
 class TestSampleGetResultFileAsync(ContentUnderstandingClientTestBaseAsync):
@@ -57,7 +57,7 @@ class TestSampleGetResultFileAsync(ContentUnderstandingClientTestBaseAsync):
             document_data = f.read()
 
         # Start the analysis operation (WaitUntil.Started equivalent)
-        poller = await client.begin_analyze(analyzer_id="prebuilt-document", inputs=[AnalyzeInput(data=document_data)])
+        poller = await client.begin_analyze(analyzer_id="prebuilt-document", inputs=[AnalysisInput(data=document_data)])
 
         # Wait for completion
         result = await poller.result()

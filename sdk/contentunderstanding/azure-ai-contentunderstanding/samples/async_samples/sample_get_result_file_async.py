@@ -40,8 +40,8 @@ from pathlib import Path
 from dotenv import load_dotenv
 from azure.ai.contentunderstanding.aio import ContentUnderstandingClient
 from azure.ai.contentunderstanding.models import (
-    AnalyzeInput,
-    AnalyzeResult,
+    AnalysisInput,
+    AnalysisResult,
     AudioVisualContent,
 )
 from azure.core.credentials import AzureKeyCredential
@@ -67,7 +67,7 @@ async def main() -> None:
         # Analyze and wait for completion
         analyze_operation = await client.begin_analyze(
             analyzer_id="prebuilt-videoSearch",
-            inputs=[AnalyzeInput(url=video_url)],
+            inputs=[AnalysisInput(url=video_url)],
         )
 
         # Get the operation ID - this is needed to retrieve result files later
@@ -75,7 +75,7 @@ async def main() -> None:
         print(f"  Operation ID: {operation_id}")
 
         print("  Waiting for analysis to complete...")
-        result: AnalyzeResult = await analyze_operation.result()
+        result: AnalysisResult = await analyze_operation.result()
         # [END analyze_video_for_result_files]
 
         # [START get_result_file]
@@ -84,7 +84,7 @@ async def main() -> None:
             return
 
         # For video analysis, keyframes would be found in AudioVisualContent.key_frame_times_ms
-        # Cast MediaContent to AudioVisualContent to access video-specific properties
+        # Cast AnalysisContent to AudioVisualContent to access video-specific properties
         video_content: AudioVisualContent = result.contents[0]  # type: ignore
 
         # Print keyframe information

@@ -25,4 +25,9 @@ tests/recordings/
 # Environment variables
 .env
 
+# Logs
+*.log
+logs/
+
+# Local files
 .local_only/

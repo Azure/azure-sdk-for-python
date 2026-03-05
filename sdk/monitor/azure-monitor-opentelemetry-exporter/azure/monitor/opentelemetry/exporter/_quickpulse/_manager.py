@@ -44,7 +44,7 @@ from azure.monitor.opentelemetry.exporter._quickpulse._filter import (
     _check_filters,
     _check_metric_filters,
 )
-from azure.monitor.opentelemetry.exporter._quickpulse._generated.models import (
+from azure.monitor.opentelemetry.exporter._quickpulse._generated.livemetrics.models import (
     DerivedMetricInfo,
     FilterConjunctionGroupInfo,
     MonitoringDataPoint,

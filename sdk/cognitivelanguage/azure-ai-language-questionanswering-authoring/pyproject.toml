@@ -55,7 +55,6 @@ exclude = [
     "azure",
     "azure.ai",
     "azure.ai.language",
-    "azure.ai.language.questionanswering",
 ]
 
 [tool.setuptools.package-data]

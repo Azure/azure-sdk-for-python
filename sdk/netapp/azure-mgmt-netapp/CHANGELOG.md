@@ -1,5 +1,36 @@
 # Release History
 
+## 15.0.0 (2026-02-27)
+
+### Features Added
+
+  - Client `NetAppManagementClient` added operation group `ransomware_reports`
+  - Model `VolumePatchPropertiesDataProtection` added property `ransomware_protection`
+  - Model `VolumePropertiesDataProtection` added property `ransomware_protection`
+  - Added enum `ActualRansomwareProtectionState`
+  - Added enum `DesiredRansomwareProtectionState`
+  - Added model `ListQuotaReportResponse`
+  - Added model `ListQuotaReportResult`
+  - Added model `QuotaReport`
+  - Added model `QuotaReportFilterRequest`
+  - Added enum `QuotaType`
+  - Added model `RansomwareProtectionPatchSettings`
+  - Added model `RansomwareProtectionSettings`
+  - Added model `RansomwareReport`
+  - Added model `RansomwareReportProperties`
+  - Added enum `RansomwareReportSeverity`
+  - Added enum `RansomwareReportState`
+  - Added enum `RansomwareSuspectResolution`
+  - Added model `RansomwareSuspects`
+  - Added model `RansomwareSuspectsClearRequest`
+  - Added model `SuspectFile`
+  - Operation group `VolumesOperations` added method `begin_list_quota_report`
+  - Added operation group `RansomwareReportsOperations`
+
+### Breaking Changes
+
+  - Deleted or renamed model `Type`
+
 ## 14.1.0b1 (2025-12-02)
 
 ### Features Added
