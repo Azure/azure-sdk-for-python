@@ -34,7 +34,7 @@ resources in your Microsoft Foundry Project. Use it to:
 * **Upload documents and create Datasets** to reference them using `.datasets` operations.
 * **Create and enumerate Search Indexes** using methods `.indexes` operations.
 
-The client library uses version `v1` of the AI Foundry [data plane REST APIs](https://aka.ms/azsdk/azure-ai-projects-v2/api-reference-v1).
+The client library uses version `v1` of the Microsoft Foundry [data plane REST APIs](https://aka.ms/azsdk/azure-ai-projects-v2/api-reference-v1).
 
 [Product documentation](https://aka.ms/azsdk/azure-ai-projects-v2/product-doc)
 | [Samples][samples]
@@ -536,7 +536,7 @@ See the full sample in file `\agents\tools\sample_agent_azure_function.py` and t
 
 #### Connection-Based Tools
 
-These tools require configuring connections in your AI Foundry project and use `project_connection_id`.
+These tools require configuring connections in your Microsoft Foundry project and use `project_connection_id`.
 
 ##### **Azure AI Search** ([documentation](https://learn.microsoft.com/azure/foundry/agents/how-to/tools/ai-search?tabs=keys%2Cazurecli&pivots=python))
 
@@ -843,7 +843,10 @@ with (
 
 ### Deployments operations
 
-The code below shows some Deployments operations, which allow you to enumerate the AI models deployed to your AI Foundry Projects. These models can be seen in the "Models + endpoints" tab in your AI Foundry Project. Full samples can be found under the "deployment" folder in the [package samples][samples].
+The code below shows some Deployments operations, which allow you to enumerate the AI models deployed to your Microsoft Foundry Projects. These models can be seen in "Build" menu, under "Models" (First column of the "Deployments" table) in your Microsoft Foundry project portal. Full samples can be found under the "deployment" folder in the [package samples][samples].
+
+
+"Build" menu, under "Models" (First column of the "Deployments" table).
 
 <!-- SNIPPET:sample_deployments.deployments_sample-->
 
@@ -880,7 +883,7 @@ if isinstance(deployment, ModelDeployment):
 
 ### Connections operations
 
-The code below shows some Connection operations, which allow you to enumerate the Azure Resources connected to your AI Foundry Projects. These connections can be seen in the "Management Center", in the "Connected resources" tab in your AI Foundry Project. Full samples can be found under the "connections" folder in the [package samples][samples].
+The code below shows some Connection operations, which allow you to enumerate the Azure Resources connected to your Microsoft Foundry Projects. These connections can be seen in the "Management Center", in the "Connected resources" tab in your Microsoft Foundry Project. Full samples can be found under the "connections" folder in the [package samples][samples].
 
 <!-- SNIPPET:sample_connections.connections_sample-->
 
@@ -1096,7 +1099,7 @@ Only enable this feature after reviewing your requirements and understanding tha
 
 ### Getting Started with Tracing
 
-You can add an Application Insights Azure resource to your Microsoft Foundry project. See the Tracing tab in your AI Foundry project. If one was enabled, you can get the Application Insights connection string, configure your AI Projects client, and observe traces in Azure Monitor. Typically, you might want to start tracing before you create a client or Agent.
+You can add an Application Insights Azure resource to your Microsoft Foundry project. See the Tracing tab in your Microsoft Foundry project. If one was enabled, you can get the Application Insights connection string, configure your AI Projects client, and observe traces in Azure Monitor. Typically, you might want to start tracing before you create a client or Agent.
 
 ### Installation
 
