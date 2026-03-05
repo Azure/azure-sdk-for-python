@@ -38,7 +38,6 @@ from openai.types.eval_create_params import DataSourceConfigCustom
 from dotenv import load_dotenv
 from azure.identity import get_bearer_token_provider
 
-
 load_dotenv()
 
 client = OpenAI(

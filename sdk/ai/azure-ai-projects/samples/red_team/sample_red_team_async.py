@@ -13,7 +13,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b4" python-dotenv
+    pip install "azure-ai-projects>=2.0.0" python-dotenv
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
@@ -23,6 +23,7 @@ USAGE:
        Microsoft Foundry project. Example: https://<account_name>.services.ai.azure.com
     4) MODEL_API_KEY - Required. The API key for your Azure AI Model.
 """
+
 import os
 import asyncio
 from dotenv import load_dotenv
