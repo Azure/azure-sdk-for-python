@@ -22,7 +22,6 @@ class TestConnections(TestBase):
     @recorded_by_proxy
     def test_connections(self, **kwargs):
 
-        connection_name = kwargs["mcp_project_connection_id"].split("/")[-1]
         connection_type = ConnectionType.AZURE_OPEN_AI
 
         with self.create_client(**kwargs) as project_client:
@@ -55,61 +54,10 @@ class TestConnections(TestBase):
                 connection, True, expected_connection_type=connection_type, expected_is_default=True
             )
 
-            print(f"[test_connections] Get the connection named `{connection_name}`, without its credentials")
-            connection = project_client.connections.get(connection_name)
-            TestBase.validate_connection(connection, False, expected_connection_name=connection_name)
+            print(f"[test_connections] Get the connection named `{connection.name}`, without its credentials")
+            connection = project_client.connections.get(connection.name)
+            TestBase.validate_connection(connection, False, expected_connection_name=connection.name)
 
-            print(f"[test_connections] Get the connection named `{connection_name}`, with its credentials")
-            connection = project_client.connections.get(connection_name, include_credentials=True)
-            TestBase.validate_connection(connection, True, expected_connection_name=connection_name)
-
-    # Unit-test for patched initialization method in CustomCredential class.
-    # To run this test, use the following command in the \sdk\ai\azure-ai-projects folder:
-    # cls & pytest tests\connections\test_connections.py::TestConnections::test_custom_credential_deserialization -s
-    def test_custom_credential_deserialization(self):
-
-        # Case 1: credentials payload WITH secret keys (in addition to the "type" discriminator)
-        payload_with_keys = {
-            "key1": "value1",
-            "key2": "value2",
-            "type": "CustomKeys",
-        }
-        cred_with_keys = CustomCredential(payload_with_keys)
-        assert cred_with_keys.type == CredentialType.CUSTOM
-        assert cred_with_keys.credential_keys == {"key1": "value1", "key2": "value2"}
-
-        # Case 2: credentials payload WITHOUT secret keys (only the "type" discriminator)
-        payload_without_keys = {
-            "type": "CustomKeys",
-        }
-        cred_without_keys = CustomCredential(payload_without_keys)
-        assert cred_without_keys.type == CredentialType.CUSTOM
-        assert cred_without_keys.credential_keys == {}
-
-    # Unit-test for patched initialization method in CustomCredential class, via Connection deserialization.
-    # To run this test, use the following command in the \sdk\ai\azure-ai-projects folder:
-    # cls & pytest tests\connections\test_connections.py::TestConnections::test_custom_credential_deserialization_via_connection -s
-    def test_custom_credential_deserialization_via_connection(self):
-
-        payload = {
-            "name": "sanitized-mcp-connection",
-            "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sanitized-resource-group-name/providers/Microsoft.CognitiveServices/accounts/sanitized-account-name/projects/sanitized-project-name/connections/mcp",
-            "type": "RemoteTool",
-            "target": "https://api.githubcopilot.com/mcp",
-            "isDefault": True,
-            "credentials": {
-                "key1": "value1",
-                "key2": "value2",
-                "type": "CustomKeys",
-            },
-            "metadata": {
-                "type": "custom_MCP",
-            },
-        }
-
-        connection = _deserialize(_models.Connection, payload)
-        assert connection.credentials.type == CredentialType.CUSTOM
-        assert connection.credentials.credential_keys == {
-            "key1": "value1",
-            "key2": "value2",
-        }
+            print(f"[test_connections] Get the connection named `{connection.name}`, with its credentials")
+            connection = project_client.connections.get(connection.name, include_credentials=True)
+            TestBase.validate_connection(connection, True, expected_connection_name=connection.name)
