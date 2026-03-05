@@ -153,7 +153,7 @@ class _AsyncChunkDownloader(_ChunkDownloader):
 
             # This makes sure that if_match is set so that we can validate
             # that subsequent downloads are to an unmodified blob
-            if self.request_options.get('modified_access_conditions') is not None:
+            if self.request_options.get('modified_access_conditions'):
                 self.request_options['modified_access_conditions'].if_match = response.properties.etag
 
         return chunk_data, content_length
