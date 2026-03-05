@@ -353,4 +353,7 @@ _DEFAULT_LOG_MESSAGE = "n/a"
 # Resource attribute applicationId
 _APPLICATION_ID_RESOURCE_KEY = "microsoft.applicationId"
 
+# Custom dimensions limit truncation toggle
+AZURE_MONITOR_DISABLE_CUSTOM_DIMENSIONS_LIMIT = "AZURE_MONITOR_DISABLE_CUSTOM_DIMENSIONS_LIMIT"
+
 # cSpell:disable
