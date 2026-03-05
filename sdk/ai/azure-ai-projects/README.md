@@ -204,7 +204,7 @@ In the description below, tools are organized by their Foundry connection requir
 
 These tools work immediately without requiring external connections.
 
-**Code Interpreter**
+**Code Interpreter** ([documentation](https://learn.microsoft.com/azure/foundry/agents/how-to/tools/code-interpreter?pivots=python))
 
 Write and run Python code in a sandboxed environment, process files and work with diverse data formats. See See [OpenAI Documentation](https://platform.openai.com/docs/guides/tools-code-interpreter).
 
@@ -254,7 +254,7 @@ tool = CodeInterpreterTool(container=AutoCodeInterpreterToolParam(file_ids=[file
 
 See full sample file `\agents\tools\sample_agent_code_interpreter_with_files.py` in the [Samples][samples] folder.
 
-**File Search**
+**File Search** ([documentation](https://learn.microsoft.com/azure/foundry/agents/how-to/tools/file-search?pivots=python))
 
 Built-in RAG (Retrieval-Augmented Generation) tool to process and search through documents using vector stores for knowledge retrieval. See [OpenAI Documentation](https://platform.openai.com/docs/assistants/tools/file-search)
 
@@ -315,7 +315,7 @@ if image_data and image_data[0]:
 
 See the full sample in file `\agents\tools\sample_agent_image_generation.py` in the [Samples][samples] folder.
 
-**Web Search / Web Search (Preview)**
+**Web Search / Web Search (Preview)** ([documentation](https://learn.microsoft.com/azure/foundry/agents/how-to/tools/web-search?pivots=python))
 
 Discover up-to-date web content with the GA Web Search tool or try the Web Search Preview tool for the latest enhancements. Guidance on when to use each option [can be found here](https://learn.microsoft.com/azure/ai-foundry/agents/how-to/tools/web-overview?view=foundry#determine-the-best-tool-for-your-use-cases).
 
@@ -359,7 +359,7 @@ tool = WebSearchTool(
 
 See the full sample in file `\agents\tools\sample_agent_web_search_with_custom_search.py` in the [Samples][samples] folder.
 
-**Computer Use (Preview)**
+**Computer Use (Preview)** ([documentation](https://learn.microsoft.com/azure/foundry/agents/how-to/tools/computer-use?pivots=python))
 
 Enable agents to interact directly with computer systems for task automation and system operations:
 
@@ -375,7 +375,7 @@ tool = ComputerUsePreviewTool(display_width=1026, display_height=769, environmen
 
 See the full sample in file `\agents\tools\sample_agent_computer_use.py` in the [Samples][samples] folder.
 
-**Model Context Protocol (MCP)**
+**Model Context Protocol (MCP)** ([documentation](https://learn.microsoft.com/azure/foundry/agents/how-to/tools/model-context-protocol?pivots=python))
 
 Integrate MCP servers to extend agent capabilities with standardized tools and resources. See [OpenAI Documentation](https://platform.openai.com/docs/guides/tools-connectors-mcp)
 
@@ -395,7 +395,7 @@ mcp_tool = MCPTool(
 
 See the full sample in file `\agents\tools\sample_agent_mcp.py` in the [Samples][samples] folder.
 
-**OpenAPI**
+**OpenAPI** ([documentation](https://learn.microsoft.com/azure/foundry/agents/how-to/tools/openapi?pivots=python))
 
 Call external APIs defined by OpenAPI specifications without additional client-side code. See [OpenAI Documentation](https://platform.openai.com/docs/guides/tools-openapi)
 
@@ -419,7 +419,7 @@ tool = OpenApiTool(
 
 See the full sample in file `\agents\tools\sample_agent_openapi.py` in the [Samples][samples] folder.
 
-**Function Tool**
+**Function Tool** ([documentation](https://learn.microsoft.com/azure/foundry/agents/how-to/tools/function-calling?pivots=python))
 
 Define custom functions that allow agents to interact with external APIs, databases, or application logic. See [OpenAI Documentation](https://platform.openai.com/docs/guides/function-calling)
 
@@ -489,7 +489,7 @@ tool = AzureFunctionTool(
 
 See the full sample in file `\agents\tools\sample_agent_azure_function.py` and the Azure Function implementation in `\agents\tools\get_weather_func_app.py` in the [Samples][samples] folder.
 
-**Memory Search Tool (Preview)**
+**Memory Search Tool (Preview)** ([documentation](https://learn.microsoft.com/azure/foundry/agents/concepts/what-is-memory))
 
   The Memory Store Tool adds Memory to an Agent, allowing the Agent's AI model to search for past information related to the current user prompt.
 
@@ -516,7 +516,7 @@ See the full sample in file `\agents\tools\sample_agent_azure_function.py` and t
 
 These tools require configuring connections in your AI Foundry project and use `project_connection_id`.
 
-**Azure AI Search**
+**Azure AI Search** ([documentation](https://learn.microsoft.com/azure/foundry/agents/how-to/tools/ai-search?tabs=keys%2Cazurecli&pivots=python))
 
 Integrate with Azure AI Search indexes for powerful knowledge retrieval and semantic search capabilities:
 
@@ -540,7 +540,7 @@ tool = AzureAISearchTool(
 
 See the full sample in file `\agents\tools\sample_agent_ai_search.py` in the [Samples][samples] folder.
 
-**Bing Grounding**
+**Bing Grounding** ([documentation](https://learn.microsoft.com/azure/foundry/agents/how-to/tools/bing-tools?pivots=python))
 
 Warning: Grounding with Bing Search tool uses Grounding with Bing, which has additional costs and terms: [terms of use](https://www.microsoft.com/bing/apis/grounding-legal-enterprise) and [privacy statement](https://go.microsoft.com/fwlink/?LinkId=521839&clcid=0x409). Customer data will flow outside the Azure compliance boundary. Learn more [here](https://learn.microsoft.com/azure/ai-foundry/agents/how-to/tools/bing-tools).
 
@@ -562,7 +562,7 @@ tool = BingGroundingTool(
 
 See the full sample in file `\agents\tools\sample_agent_bing_grounding.py` in the [Samples][samples] folder.
 
-**Bing Custom Search (Preview)**
+**Bing Custom Search (Preview)** ([documentation](https://learn.microsoft.com/azure/foundry/agents/how-to/tools/bing-tools?pivots=python#grounding-with-bing-custom-search-preview))
 
 Warning: Grounding with Bing Custom Search tool uses Grounding with Bing, which has additional costs and terms: [terms of use](https://www.microsoft.com/bing/apis/grounding-legal-enterprise) and [privacy statement](https://go.microsoft.com/fwlink/?LinkId=521839&clcid=0x409). Customer data will flow outside the Azure compliance boundary. Learn more [here](https://learn.microsoft.com/azure/ai-foundry/agents/how-to/tools/web-search).
 
@@ -587,7 +587,7 @@ tool = BingCustomSearchPreviewTool(
 
 See the full sample in file `\agents\tools\sample_agent_bing_custom_search.py` in the [Samples][samples] folder.
 
-**Microsoft Fabric (Preview)**
+**Microsoft Fabric (Preview)** ([documentation](https://learn.microsoft.com/azure/foundry/agents/how-to/tools/fabric?pivots=python))
 
 Connect to and query Microsoft Fabric:
 
@@ -607,7 +607,7 @@ tool = MicrosoftFabricPreviewTool(
 
 See the full sample in file `\agents\tools\sample_agent_fabric.py` in the [Samples][samples] folder.
 
-**Microsoft SharePoint (Preview)**
+**Microsoft SharePoint (Preview)** ([documentation](https://learn.microsoft.com/azure/foundry/agents/how-to/tools/sharepoint?pivots=python))
 
 Access and search SharePoint documents, lists, and sites for enterprise knowledge integration:
 
@@ -627,7 +627,7 @@ tool = SharepointPreviewTool(
 
 See the full sample in file `\agents\tools\sample_agent_sharepoint.py` in the [Samples][samples] folder.
 
-**Browser Automation (Preview)**
+**Browser Automation (Preview)** ([documentation](https://learn.microsoft.com/azure/foundry/agents/how-to/tools/browser-automation?pivots=python))
 
 Automate browser interactions for web scraping, testing, and interaction with web applications:
 
@@ -647,8 +647,7 @@ tool = BrowserAutomationPreviewTool(
 
 See the full sample in file `\agents\tools\sample_agent_browser_automation.py` in the [Samples][samples] folder.
 
-
-**MCP with Project Connection**
+**MCP with Project Connection** ([documentation](https://learn.microsoft.com/azure/foundry/agents/how-to/tools/model-context-protocol?pivots=python))
 
 MCP integration using project-specific connections for accessing connected MCP servers:
 
@@ -667,7 +666,7 @@ tool = MCPTool(
 
 See the full sample in file `\agents\tools\sample_agent_mcp_with_project_connection.py` in the [Samples][samples] folder.
 
-**Agent-to-Agent (A2A) (Preview)**
+**Agent-to-Agent (A2A) (Preview)** ([documentation](https://learn.microsoft.com/azure/foundry/agents/how-to/tools/agent-to-agent?pivots=python))
 
 Enable multi-agent collaboration where agents can communicate and delegate tasks to other specialized agents:
 
@@ -686,7 +685,7 @@ if os.environ.get("A2A_ENDPOINT"):
 
 See the full sample in file `\agents\tools\sample_agent_to_agent.py` in the [Samples][samples] folder.
 
-**OpenAPI with Project Connection**
+**OpenAPI with Project Connection** ([documentation](https://learn.microsoft.com/azure/foundry/agents/how-to/tools/openapi?pivots=python))
 
 Call external APIs defined by OpenAPI specifications using project connection authentication:
 
