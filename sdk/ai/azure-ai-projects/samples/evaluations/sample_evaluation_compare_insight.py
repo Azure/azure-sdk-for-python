@@ -18,7 +18,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b4" python-dotenv
+    pip install "azure-ai-projects>=2.0.0" python-dotenv
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
@@ -142,10 +142,10 @@ with (
                 ),
             ),
         )
-        print(f"Started insight generation (id: {compareInsight.id})")
+        print(f"Started insight generation (id: {compareInsight.insight_id})")
 
         while compareInsight.state not in [OperationState.SUCCEEDED, OperationState.FAILED]:
-            compareInsight = project_client.beta.insights.get(id=compareInsight.id)
+            compareInsight = project_client.beta.insights.get(insight_id=compareInsight.insight_id)
             print(f"Waiting for insight to be generated...current status: {compareInsight.state}")
             time.sleep(5)
 

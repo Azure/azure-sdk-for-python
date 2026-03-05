@@ -239,7 +239,7 @@ asset_file_path = os.path.abspath(
 
 # Upload the CSV file for the code interpreter
 file = openai_client.files.create(purpose="assistants", file=open(asset_file_path, "rb"))
-tool = CodeInterpreterTool(container=CodeInterpreterContainerAuto(file_ids=[file.id]))
+tool = CodeInterpreterTool(container=AutoCodeInterpreterToolParam(file_ids=[file.id]))
 ```
 
 <!-- END SNIPPET -->
@@ -1214,7 +1214,7 @@ You can add custom attributes to spans by creating a custom span processor. Here
 
 ```python
 class CustomAttributeSpanProcessor(SpanProcessor):
-    def __init__(self):
+    def __init__(self) -> None:
         pass
 
     def on_start(self, span: Span, parent_context=None):
