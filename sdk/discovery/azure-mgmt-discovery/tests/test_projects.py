@@ -56,8 +56,7 @@ class TestProjects(DiscoveryMgmtTestCase):
     def test_update_project(self):
         """Test updating a project."""
         project_data = {
-            "location": "centraluseuap",
-            "tags": {"updated": "true"},
+            "tags": {"SkipAutoDeleteTill": "2026-12-31"},
         }
         operation = self.client.projects.begin_create_or_update(
             resource_group_name=self.resource_group,

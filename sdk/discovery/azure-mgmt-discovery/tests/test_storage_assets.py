@@ -53,31 +53,26 @@ class TestStorageAssets(DiscoveryMgmtTestCase):
         )
         asset = operation.result()
         assert asset is not None
-    @pytest.mark.skip(reason="no recording")
     @recorded_by_proxy
     def test_update_storage_asset(self):
         """Test updating a storage asset."""
-        storage_container_name = "test-storage-container"
         asset_data = {
-            "location": "centraluseuap",
-            "tags": {"updated": "true"},
+            "tags": {"SkipAutoDeleteTill": "2026-12-31"},
         }
-        operation = self.client.storage_assets.begin_create_or_update(
-            resource_group_name=self.resource_group,
-            storage_container_name=storage_container_name,
-            storage_asset_name="test-storage-asset",
-            resource=asset_data,
+        operation = self.client.storage_assets.begin_update(
+            resource_group_name="olawal",
+            storage_container_name="test-sc-8bef0d1a",
+            storage_asset_name="test-sa-482ad005",
+            properties=asset_data,
         )
         updated_asset = operation.result()
         assert updated_asset is not None
-    @pytest.mark.skip(reason="no recording")
     @recorded_by_proxy
     def test_delete_storage_asset(self):
         """Test deleting a storage asset."""
-        storage_container_name = "test-storage-container"
         operation = self.client.storage_assets.begin_delete(
-            resource_group_name=self.resource_group,
-            storage_container_name=storage_container_name,
-            storage_asset_name="storage-asset-to-delete",
+            resource_group_name="olawal",
+            storage_container_name="test-sc-8bef0d1a",
+            storage_asset_name="test-sa-482ad005",
         )
         operation.result()

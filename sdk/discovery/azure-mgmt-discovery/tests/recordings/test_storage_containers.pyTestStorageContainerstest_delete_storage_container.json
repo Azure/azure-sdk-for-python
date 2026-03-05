@@ -1,0 +1,32 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://Sanitized.management.azure.com/subscriptions/31b0b6a5-2647-47eb-8a38-7d12047ee8ec/resourceGroups/olawal/providers/Microsoft.Discovery/storageContainers/test-sc-8bef0d1a?api-version=2026-02-01-preview",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-mgmt-discovery/1.0.0b1 Python/3.11.9 (Windows-10-10.0.26200-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 204,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Date": "Thu, 05 Mar 2026 16:16:36 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "6aa0ee30-075f-4371-bcbe-fc7024a876b3",
+        "x-ms-ratelimit-remaining-subscription-deletes": "799",
+        "x-ms-routing-request-id": "EASTUS2EUAP:20260305T161637Z:6aa0ee30-075f-4371-bcbe-fc7024a876b3",
+        "x-ms-throttling-version": "v2",
+        "X-MSEdge-Ref": "Ref A: 56E0240202D740298DE1A112D472CA14 Ref B: SN4AA2022302047 Ref C: 2026-03-05T16:16:36Z"
+      },
+      "ResponseBody": null
+    }
+  ],
+  "Variables": {}
+}

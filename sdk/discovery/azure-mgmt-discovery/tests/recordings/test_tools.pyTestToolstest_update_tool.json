@@ -2,111 +2,57 @@
   "Entries": [
     {
       "RequestUri": "https://Sanitized.management.azure.com/subscriptions/31b0b6a5-2647-47eb-8a38-7d12047ee8ec/resourceGroups/olawal/providers/Microsoft.Discovery/tools/test-tool-50d87c62?api-version=2026-02-01-preview",
-      "RequestMethod": "PUT",
+      "RequestMethod": "PATCH",
       "RequestHeaders": {
         "Accept": "application/json",
         "Connection": "keep-alive",
-        "Content-Length": "959",
+        "Content-Length": "46",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-mgmt-discovery/1.0.0b1 Python/3.11.9 (Windows-10-10.0.26200-SP0)"
       },
       "RequestBody": {
-        "location": "uksouth",
-        "properties": {
-          "version": "1.0.0",
-          "definitionContent": {
-            "name": "Sanitized",
-            "description": "Molecular property prediction for single SMILES strings.",
-            "version": "1.0.0",
-            "category": "cheminformatics",
-            "license": "MIT",
-            "infra": [
-              {
-                "name": "Sanitized",
-                "infra_type": "container",
-                "image": {
-                  "acr": "demodiscoveryacr.azurecr.io/molpredictor:latest"
-                },
-                "compute": {
-                  "min_resources": {
-                    "cpu": "1",
-                    "ram": "1Gi",
-                    "storage": "32",
-                    "gpu": "0"
-                  },
-                  "max_resources": {
-                    "cpu": "2",
-                    "ram": "1Gi",
-                    "storage": "64",
-                    "gpu": "0"
-                  },
-                  "recommended_sku": [
-                    "Standard_D4s_v6"
-                  ],
-                  "pool_type": "static",
-                  "pool_size": 1
-                }
-              }
-            ],
-            "actions": [
-              {
-                "name": "Sanitized",
-                "description": "Predict molecular properties for SMILES strings.",
-                "input_schema": {
-                  "type": "object",
-                  "properties": {
-                    "action": {
-                      "type": "string",
-                      "description": "The property to predict. Must be one of [log_p, boiling_point, solubility, density, critical_point]"
-                    }
-                  },
-                  "required": [
-                    "action"
-                  ]
-                },
-                "command": "python molpredictor.py --action {{ action }}",
-                "infra_node": "worker"
-              }
-            ]
-          }
+        "tags": {
+          "SkipAutoDeleteTill": "2026-12-31"
         }
       },
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
-        "Content-Length": "1399",
+        "Content-Length": "1433",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 02 Mar 2026 21:02:34 GMT",
-        "ETag": "\"5202f689-0000-1000-0000-69a5faea0000\"",
+        "Date": "Thu, 05 Mar 2026 15:29:58 GMT",
+        "ETag": "\"530098c4-0000-1000-0000-69a9a1760000\"",
         "Expires": "-1",
-        "mise-correlation-id": "df95acd4-2805-47d7-935e-f90b98a20e12",
+        "mise-correlation-id": "065b16fe-308e-4d0b-98a5-91dd76d0fe5b",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "x-azure-ref": "Sanitized",
         "X-Cache": "CONFIG_NOCACHE",
         "X-Content-Type-Options": "nosniff",
         "x-ms-build-version": "1",
-        "x-ms-correlation-request-id": "6c02fc28-d2f7-42a0-9d7f-75e2865ca4ae",
-        "x-ms-operation-identifier": "tenantId=00000000-0000-0000-0000-000000000000,objectId=00000000-0000-0000-0000-000000000000/eastus2euap/129656c1-1656-49c7-a842-a7dbeb530c5f",
+        "x-ms-correlation-request-id": "8030a5e8-13b0-4b17-8825-0c57884f221b",
+        "x-ms-operation-identifier": "tenantId=00000000-0000-0000-0000-000000000000,objectId=00000000-0000-0000-0000-000000000000/eastus2euap/b7944970-25d4-42ad-a7b8-25a01a24a21e",
         "x-ms-providerhub-traffic": "True",
         "x-ms-ratelimit-remaining-subscription-writes": "799",
-        "x-ms-routing-request-id": "EASTUS2EUAP:20260302T210235Z:6c02fc28-d2f7-42a0-9d7f-75e2865ca4ae",
+        "x-ms-routing-request-id": "EASTUS2EUAP:20260305T152958Z:8030a5e8-13b0-4b17-8825-0c57884f221b",
         "x-ms-throttling-version": "v2",
-        "X-MSEdge-Ref": "Ref A: 9C4A47B80DDC43CBA5F21AC72A0BAFBC Ref B: SN4AA2022302033 Ref C: 2026-03-02T21:02:29Z"
+        "X-MSEdge-Ref": "Ref A: 2FC92E67AAD94952BE7DD9011315FF1D Ref B: SN4AA2022303047 Ref C: 2026-03-05T15:29:55Z"
       },
       "ResponseBody": {
         "id": "Sanitized",
         "name": "Sanitized",
         "type": "microsoft.discovery/tools",
         "location": "uksouth",
-        "tags": {},
+        "tags": {
+          "SkipAutoDeleteTill": "2026-12-31"
+        },
         "systemData": {
           "createdBy": "Sanitized",
           "createdByType": "User",
           "createdAt": "2026-03-02T21:02:33.801961Z",
           "lastModifiedBy": "Sanitized",
           "lastModifiedByType": "User",
-          "lastModifiedAt": "2026-03-02T21:02:33.801961Z"
+          "lastModifiedAt": "2026-03-05T15:29:56.920121Z"
         },
         "properties": {
           "version": "1.0.0",

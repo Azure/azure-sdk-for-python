@@ -46,19 +46,16 @@ class TestBookshelves(DiscoveryMgmtTestCase):
         )
         bookshelf = operation.result()
         assert bookshelf is not None
-    @pytest.mark.skip(reason="no recording")
     @recorded_by_proxy
     def test_update_bookshelf(self):
         """Test updating a bookshelf."""
-        # TODO: Get existing bookshelf and update
         bookshelf_data = {
-            "location": "centraluseuap",
-            "tags": {"updated": "true"},
+            "tags": {"SkipAutoDeleteTill": "2026-12-31"},
         }
-        operation = self.client.bookshelves.begin_create_or_update(
-            resource_group_name=self.resource_group,
-            bookshelf_name="test-bookshelf",
-            resource=bookshelf_data,
+        operation = self.client.bookshelves.begin_update(
+            resource_group_name="olawal",
+            bookshelf_name="test-bookshelf-05fbc43d",
+            properties=bookshelf_data,
         )
         updated_bookshelf = operation.result()
         assert updated_bookshelf is not None

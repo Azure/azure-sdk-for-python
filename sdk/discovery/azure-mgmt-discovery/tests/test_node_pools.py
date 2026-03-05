@@ -34,6 +34,7 @@ class TestNodePools(DiscoveryMgmtTestCase):
         node_pool = self.client.node_pools.get(self.resource_group, supercomputer_name, "test-nodepool")
         assert node_pool is not None
         assert hasattr(node_pool, "name")
+    @pytest.mark.skip(reason="no recording")
     @recorded_by_proxy
     def test_create_node_pool(self):
         """Test creating a node pool."""
@@ -62,8 +63,7 @@ class TestNodePools(DiscoveryMgmtTestCase):
         """Test updating a node pool."""
         supercomputer_name = "test-supercomputer"
         node_pool_data = {
-            "location": "centraluseuap",
-            "tags": {"updated": "true"},
+            "tags": {"SkipAutoDeleteTill": "2026-12-31"},
         }
         operation = self.client.node_pools.begin_create_or_update(
             resource_group_name=self.resource_group,

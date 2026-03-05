@@ -109,27 +109,24 @@ class TestTools(DiscoveryMgmtTestCase):
         )
         tool = operation.result()
         assert tool is not None
-    @pytest.mark.skip(reason="no recording")
     @recorded_by_proxy
     def test_update_tool(self):
         """Test updating a tool."""
         tool_data = {
-            "location": "centraluseuap",
-            "tags": {"updated": "true"},
+            "tags": {"SkipAutoDeleteTill": "2026-12-31"},
         }
-        operation = self.client.tools.begin_create_or_update(
-            resource_group_name=self.resource_group,
+        operation = self.client.tools.begin_update(
+            resource_group_name="olawal",
             tool_name=TOOL_NAME,
-            resource=tool_data,
+            properties=tool_data,
         )
         updated_tool = operation.result()
         assert updated_tool is not None
-    @pytest.mark.skip(reason="no recording")
     @recorded_by_proxy
     def test_delete_tool(self):
         """Test deleting a tool."""
         operation = self.client.tools.begin_delete(
-            resource_group_name=self.resource_group,
-            tool_name="tool-to-delete",
+            resource_group_name="olawal",
+            tool_name=TOOL_NAME,
         )
         operation.result()

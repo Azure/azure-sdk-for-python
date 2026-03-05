@@ -60,27 +60,25 @@ class TestSupercomputers(DiscoveryMgmtTestCase):
         )
         supercomputer = operation.result()
         assert supercomputer is not None
-    @pytest.mark.skip(reason="no recording")
+    @pytest.mark.skip(reason="server returns 400 on supercomputer PATCH - service-side bug")
     @recorded_by_proxy
     def test_update_supercomputer(self):
         """Test updating a supercomputer."""
         supercomputer_data = {
-            "location": "centraluseuap",
-            "tags": {"updated": "true"},
+            "tags": {"SkipAutoDeleteTill": "2026-12-31"},
         }
-        operation = self.client.supercomputers.begin_create_or_update(
-            resource_group_name=self.resource_group,
-            supercomputer_name="test-supercomputer",
-            resource=supercomputer_data,
+        operation = self.client.supercomputers.begin_update(
+            resource_group_name="olawal",
+            supercomputer_name="test-sc-2bbb25b8",
+            properties=supercomputer_data,
         )
         updated_supercomputer = operation.result()
         assert updated_supercomputer is not None
-    @pytest.mark.skip(reason="no recording")
     @recorded_by_proxy
     def test_delete_supercomputer(self):
         """Test deleting a supercomputer."""
         operation = self.client.supercomputers.begin_delete(
             resource_group_name="olawal",
-            supercomputer_name="test-sc-497dd382",
+            supercomputer_name="test-sc-2bbb25b8",
         )
         operation.result()

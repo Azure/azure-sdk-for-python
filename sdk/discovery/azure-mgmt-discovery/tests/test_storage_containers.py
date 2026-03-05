@@ -56,27 +56,24 @@ class TestStorageContainers(DiscoveryMgmtTestCase):
         )
         container = operation.result()
         assert container is not None
-    @pytest.mark.skip(reason="no recording")
     @recorded_by_proxy
     def test_update_storage_container(self):
         """Test updating a storage container."""
         container_data = {
-            "location": "centraluseuap",
-            "tags": {"updated": "true"},
+            "tags": {"SkipAutoDeleteTill": "2026-12-31"},
         }
-        operation = self.client.storage_containers.begin_create_or_update(
-            resource_group_name=self.resource_group,
-            storage_container_name="test-storage-container",
-            resource=container_data,
+        operation = self.client.storage_containers.begin_update(
+            resource_group_name="olawal",
+            storage_container_name="test-sc-8bef0d1a",
+            properties=container_data,
         )
         updated_container = operation.result()
         assert updated_container is not None
-    @pytest.mark.skip(reason="no recording")
     @recorded_by_proxy
     def test_delete_storage_container(self):
         """Test deleting a storage container."""
         operation = self.client.storage_containers.begin_delete(
-            resource_group_name=self.resource_group,
-            storage_container_name="storage-container-to-delete",
+            resource_group_name="olawal",
+            storage_container_name="test-sc-8bef0d1a",
         )
         operation.result()
