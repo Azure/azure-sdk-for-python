@@ -331,7 +331,14 @@ class AgentFrameworkAgent(FoundryCBAgent):
         context_providers.append(self._session_repository.history_provider)
 
     def _get_history_provider(self, agent: SupportsAgentRun) -> Optional[BaseHistoryProvider]:
-        """Return the first BaseHistoryProvider attached to the agent, if any."""
+        """
+        Return the first BaseHistoryProvider attached to the agent, if any.
+
+        :param agent: The agent instance to check for history providers.
+        :type agent: SupportsAgentRun
+        :return: The first BaseHistoryProvider found, or None if none are attached.
+        :rtype: Optional[BaseHistoryProvider]
+        """
         for provider in getattr(agent, "context_providers", None) or []:
             if isinstance(provider, BaseHistoryProvider):
                 return provider
