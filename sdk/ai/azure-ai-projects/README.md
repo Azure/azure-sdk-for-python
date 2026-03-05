@@ -78,7 +78,7 @@ pip show azure-ai-projects
 
 Entra ID is the only authentication method supported at the moment by the client.
 
-To construct a synchronous client as using context manager:
+To construct a synchronous client using context manager:
 
 ```python
 import os
