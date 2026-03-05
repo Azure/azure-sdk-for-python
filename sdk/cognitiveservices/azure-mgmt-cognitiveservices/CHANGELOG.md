@@ -1,5 +1,137 @@
 # Release History
 
+## 14.2.0b1 (2026-03-16)
+
+### Features Added
+
+  - Client `CognitiveServicesManagementClient` added operation group `subscription_rai_policy`
+  - Client `CognitiveServicesManagementClient` added operation group `rai_external_safety_providers`
+  - Client `CognitiveServicesManagementClient` added operation group `rai_external_safety_provider`
+  - Client `CognitiveServicesManagementClient` added operation group `test_rai_external_safety_provider`
+  - Client `CognitiveServicesManagementClient` added operation group `rai_tool_labels`
+  - Client `CognitiveServicesManagementClient` added operation group `outbound_rule`
+  - Client `CognitiveServicesManagementClient` added operation group `outbound_rules`
+  - Client `CognitiveServicesManagementClient` added operation group `managed_network_settings`
+  - Client `CognitiveServicesManagementClient` added operation group `managed_network_provisions`
+  - Client `CognitiveServicesManagementClient` added operation group `agent_applications`
+  - Client `CognitiveServicesManagementClient` added operation group `agent_deployments`
+  - Model `CapabilityHostProperties` added property `enable_public_hosting_environment`
+  - Enum `ConnectionAuthType` added member `ACCOUNT_MANAGED_IDENTITY`
+  - Enum `ConnectionAuthType` added member `AGENTIC_IDENTITY_TOKEN`
+  - Enum `ConnectionAuthType` added member `AGENTIC_USER`
+  - Enum `ConnectionAuthType` added member `AGENT_USER_IMPERSONATION`
+  - Enum `ConnectionAuthType` added member `DELEGATED_SAS`
+  - Enum `ConnectionAuthType` added member `PROJECT_MANAGED_IDENTITY`
+  - Enum `ConnectionAuthType` added member `USER_ENTRA_TOKEN`
+  - Enum `ConnectionCategory` added member `API_MANAGEMENT`
+  - Enum `ConnectionCategory` added member `APP_CONFIG`
+  - Enum `ConnectionCategory` added member `APP_INSIGHTS`
+  - Enum `ConnectionCategory` added member `AZURE_CONTAINER_APP_ENVIRONMENT`
+  - Enum `ConnectionCategory` added member `AZURE_KEY_VAULT`
+  - Enum `ConnectionCategory` added member `DATABRICKS`
+  - Enum `ConnectionCategory` added member `GROUNDING_WITH_BING_SEARCH`
+  - Enum `ConnectionCategory` added member `GROUNDING_WITH_CUSTOM_SEARCH`
+  - Enum `ConnectionCategory` added member `MICROSOFT_FABRIC`
+  - Enum `ConnectionCategory` added member `MODEL_GATEWAY`
+  - Enum `ConnectionCategory` added member `POWER_PLATFORM_ENVIRONMENT`
+  - Enum `ConnectionCategory` added member `REMOTE_A2_A`
+  - Enum `ConnectionCategory` added member `REMOTE_TOOL`
+  - Enum `ConnectionCategory` added member `SHAREPOINT`
+  - Model `DeploymentProperties` added property `service_tier`
+  - Model `DeploymentProperties` added property `deployment_state`
+  - Model `RaiPolicyContentFilter` added property `action`
+  - Enum `RaiPolicyContentSource` added member `POST_RUN`
+  - Enum `RaiPolicyContentSource` added member `POST_TOOL_CALL`
+  - Enum `RaiPolicyContentSource` added member `PRE_RUN`
+  - Enum `RaiPolicyContentSource` added member `PRE_TOOL_CALL`
+  - Model `RaiPolicyProperties` added property `safety_providers`
+  - Added model `AgentApplication`
+  - Added model `AgentApplicationResourceArmPaginatedResult`
+  - Added model `AgentCard`
+  - Added model `AgentDeployment`
+  - Added model `AgentDeploymentProperties`
+  - Added enum `AgentDeploymentProvisioningState`
+  - Added model `AgentDeploymentResourceArmPaginatedResult`
+  - Added enum `AgentDeploymentState`
+  - Added enum `AgentDeploymentType`
+  - Added enum `AgentProtocol`
+  - Added model `AgentProtocolVersion`
+  - Added model `AgentReference`
+  - Added model `AgentReferenceProperties`
+  - Added model `AgentReferenceResourceArmPaginatedResult`
+  - Added model `AgenticApplicationProperties`
+  - Added enum `AgenticApplicationProvisioningState`
+  - Added model `ApplicationAuthorizationPolicy`
+  - Added model `ApplicationTrafficRoutingPolicy`
+  - Added model `AssignedIdentity`
+  - Added enum `BuiltInAuthorizationScheme`
+  - Added model `CapabilityHostResourceArmPaginatedResult`
+  - Added model `ChannelsBuiltInAuthorizationPolicy`
+  - Added enum `DeploymentState`
+  - Added enum `FirewallSku`
+  - Added model `FqdnOutboundRule`
+  - Added model `HostedAgentDeployment`
+  - Added enum `IdentityKind`
+  - Added enum `IdentityManagementType`
+  - Added enum `IdentityProvisioningState`
+  - Added enum `IsolationMode`
+  - Added model `ManagedAgentDeployment`
+  - Added enum `ManagedNetworkKind`
+  - Added model `ManagedNetworkListResult`
+  - Added model `ManagedNetworkProvisionStatus`
+  - Added enum `ManagedNetworkProvisioningState`
+  - Added model `ManagedNetworkSettings`
+  - Added model `ManagedNetworkSettingsBasicResource`
+  - Added model `ManagedNetworkSettingsEx`
+  - Added model `ManagedNetworkSettingsProperties`
+  - Added model `ManagedNetworkSettingsPropertiesBasicResource`
+  - Added enum `ManagedNetworkStatus`
+  - Added model `OrganizationSharedBuiltInAuthorizationPolicy`
+  - Added model `OutboundRule`
+  - Added model `OutboundRuleBasicResource`
+  - Added model `OutboundRuleListResult`
+  - Added model `ProjectCapabilityHost`
+  - Added model `ProjectCapabilityHostProperties`
+  - Added model `ProjectCapabilityHostResourceArmPaginatedResult`
+  - Added model `ProviderInfo`
+  - Added enum `RaiActionType`
+  - Added model `RaiExternalSafetyProvider`
+  - Added model `RaiExternalSafetyProviderProperties`
+  - Added model `RaiExternalSafetyProviderResult`
+  - Added model `RaiExternalSafetyProviderSchema`
+  - Added model `RaiExternalSafetyProviderSchemaProperties`
+  - Added model `RaiSafetyProviderConfig`
+  - Added model `RaiToolLabel`
+  - Added model `RaiToolLabelProperties`
+  - Added model `RaiToolLabelPropertiesAccountScope`
+  - Added model `RaiToolLabelPropertiesProjectScopesItem`
+  - Added model `RaiToolLabelResult`
+  - Added model `RoleBasedBuiltInAuthorizationPolicy`
+  - Added enum `RuleCategory`
+  - Added enum `RuleStatus`
+  - Added enum `RuleType`
+  - Added model `SafetyProviderConfig`
+  - Added enum `ServiceTier`
+  - Added model `Skill`
+  - Added enum `TrafficRoutingProtocol`
+  - Added model `TrafficRoutingRule`
+  - Added model `VersionedAgentReference`
+  - Model `AccountCapabilityHostsOperations` added method `list`
+  - Model `DeploymentsOperations` added method `pause`
+  - Model `DeploymentsOperations` added method `resume`
+  - Model `ProjectCapabilityHostsOperations` added method `list`
+  - Added model `AgentApplicationsOperations`
+  - Added model `AgentDeploymentsOperations`
+  - Added model `ManagedNetworkProvisionsOperations`
+  - Added model `ManagedNetworkSettingsOperations`
+  - Added model `OutboundRuleOperations`
+  - Added model `OutboundRulesOperations`
+  - Added model `RaiExternalSafetyProviderOperations`
+  - Added model `RaiExternalSafetyProvidersOperations`
+  - Added model `RaiToolLabelsOperations`
+  - Added model `SubscriptionRaiPolicyOperations`
+  - Added model `TestRaiExternalSafetyProviderOperations`
+
 ## 14.1.0 (2025-10-24)
 
 ### Features Added

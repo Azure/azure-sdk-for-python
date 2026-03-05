@@ -24,7 +24,7 @@ class TestCognitiveServicesManagementCommitmentTiersOperationsAsync(AzureMgmtRec
     async def test_commitment_tiers_list(self, resource_group):
         response = self.client.commitment_tiers.list(
             location="str",
-            api_version="2025-09-01",
+            api_version="2025-10-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

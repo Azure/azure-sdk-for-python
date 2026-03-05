@@ -23,6 +23,98 @@ class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     INTERNAL = "Internal"
 
 
+class AgentDeploymentProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Provisioning state of an agentic deployment, as an Azure resource."""
+
+    SUCCEEDED = "Succeeded"
+    """The deployment was successfully completed."""
+    FAILED = "Failed"
+    """The deployment failed."""
+    CANCELED = "Canceled"
+    """The deployment was canceled."""
+    CREATING = "Creating"
+    """The deployment is being created."""
+    UPDATING = "Updating"
+    """The deployment is being updated."""
+    DELETING = "Deleting"
+    """The deployment is being deleted."""
+
+
+class AgentDeploymentState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Current operational state of the agentic functionality represented by this deployment."""
+
+    STARTING = "Starting"
+    """The deployment is starting."""
+    RUNNING = "Running"
+    """The deployment started/is operational."""
+    STOPPING = "Stopping"
+    """The deployment is being stopped."""
+    STOPPED = "Stopped"
+    """The deployment was stopped."""
+    FAILED = "Failed"
+    """The deployment failed."""
+    DELETING = "Deleting"
+    """The deployment is being deleted."""
+    DELETED = "Deleted"
+    """The deployment was deleted."""
+    UPDATING = "Updating"
+    """The deployment is being updated."""
+
+
+class AgentDeploymentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies the type of deployment for an agent, indicating how the underlying compute and
+    network infrastructure is managed.
+    """
+
+    MANAGED = "Managed"
+    """The underlying infra is managed by the platform in the deployer's subscription"""
+    HOSTED = "Hosted"
+    """The underlying infra is owned by the platform"""
+    CUSTOM = "Custom"
+    """The underlying infra is provisioned by the deployer (BYO)"""
+
+
+class AgenticApplicationProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Provisioning state of an agentic application."""
+
+    SUCCEEDED = "Succeeded"
+    """The application was successfully provisioned."""
+    FAILED = "Failed"
+    """The application provisioning failed."""
+    CANCELED = "Canceled"
+    """The application provisioning was canceled."""
+    CREATING = "Creating"
+    """The application is being created."""
+    UPDATING = "Updating"
+    """The application is being updated."""
+    DELETING = "Deleting"
+    """The application is being deleted."""
+
+
+class AgentProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Protocol used by the agent/exposed by a deployment."""
+
+    AGENT = "Agent"
+    """Agent protocol (aka Active)"""
+    A2_A = "A2A"
+    """Agent2Agent standard"""
+    RESPONSES = "Responses"
+    """OpenAI-compatible"""
+
+
+class BuiltInAuthorizationScheme(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Authorization scheme type."""
+
+    DEFAULT = "Default"
+    """Standard AzureML RBAC"""
+    ORGANIZATION_SCOPE = "OrganizationScope"
+    """Claim-based, requires membership in the tenant"""
+    CHANNELS = "Channels"
+    """Channels-specific (AzureBotService) authorization"""
+    CUSTOM = "Custom"
+    """Custom scheme defined by the application author"""
+
+
 class ByPassSelection(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Setting for trusted services."""
 
@@ -74,6 +166,13 @@ class ConnectionAuthType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CUSTOM_KEYS = "CustomKeys"
     O_AUTH2 = "OAuth2"
     AAD = "AAD"
+    DELEGATED_SAS = "DelegatedSAS"
+    PROJECT_MANAGED_IDENTITY = "ProjectManagedIdentity"
+    ACCOUNT_MANAGED_IDENTITY = "AccountManagedIdentity"
+    USER_ENTRA_TOKEN = "UserEntraToken"
+    AGENT_USER_IMPERSONATION = "AgentUserImpersonation"
+    AGENTIC_IDENTITY_TOKEN = "AgenticIdentityToken"
+    AGENTIC_USER = "AgenticUser"
 
 
 class ConnectionCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -84,11 +183,13 @@ class ConnectionCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     GIT = "Git"
     S3 = "S3"
     SNOWFLAKE = "Snowflake"
+    AZURE_KEY_VAULT = "AzureKeyVault"
     AZURE_SQL_DB = "AzureSqlDb"
     AZURE_SYNAPSE_ANALYTICS = "AzureSynapseAnalytics"
     AZURE_MY_SQL_DB = "AzureMySqlDb"
     AZURE_POSTGRES_DB = "AzurePostgresDb"
     ADLS_GEN2 = "ADLSGen2"
+    AZURE_CONTAINER_APP_ENVIRONMENT = "AzureContainerAppEnvironment"
     REDIS = "Redis"
     API_KEY = "ApiKey"
     AZURE_OPEN_AI = "AzureOpenAI"
@@ -97,6 +198,7 @@ class ConnectionCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     COGNITIVE_SERVICE = "CognitiveService"
     CUSTOM_KEYS = "CustomKeys"
     AZURE_BLOB = "AzureBlob"
+    AZURE_STORAGE_ACCOUNT = "AzureStorageAccount"
     AZURE_ONE_LAKE = "AzureOneLake"
     COSMOS_DB = "CosmosDb"
     COSMOS_DB_MONGO_DB_API = "CosmosDbMongoDbApi"
@@ -134,6 +236,7 @@ class ConnectionCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     TERADATA = "Teradata"
     VERTICA = "Vertica"
     PINECONE = "Pinecone"
+    DATABRICKS = "Databricks"
     CASSANDRA = "Cassandra"
     COUCHBASE = "Couchbase"
     MONGO_DB_V2 = "MongoDbV2"
@@ -149,6 +252,7 @@ class ConnectionCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     O_DATA_REST = "ODataRest"
     ODBC = "Odbc"
     GENERIC_REST = "GenericRest"
+    REMOTE_TOOL = "RemoteTool"
     AMAZON_MWS = "AmazonMws"
     CONCUR = "Concur"
     DYNAMICS = "Dynamics"
@@ -179,12 +283,21 @@ class ConnectionCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ZOHO = "Zoho"
     GENERIC_CONTAINER_REGISTRY = "GenericContainerRegistry"
     ELASTICSEARCH = "Elasticsearch"
+    APP_INSIGHTS = "AppInsights"
+    APP_CONFIG = "AppConfig"
     OPEN_AI = "OpenAI"
     SERP = "Serp"
     BING_LLM_SEARCH = "BingLLMSearch"
     SERVERLESS = "Serverless"
     MANAGED_ONLINE_ENDPOINT = "ManagedOnlineEndpoint"
-    AZURE_STORAGE_ACCOUNT = "AzureStorageAccount"
+    API_MANAGEMENT = "ApiManagement"
+    MODEL_GATEWAY = "ModelGateway"
+    GROUNDING_WITH_BING_SEARCH = "GroundingWithBingSearch"
+    GROUNDING_WITH_CUSTOM_SEARCH = "GroundingWithCustomSearch"
+    SHAREPOINT = "Sharepoint"
+    MICROSOFT_FABRIC = "MicrosoftFabric"
+    POWER_PLATFORM_ENVIRONMENT = "PowerPlatformEnvironment"
+    REMOTE_A2_A = "RemoteA2A"
 
 
 class ConnectionGroup(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -251,6 +364,18 @@ class DeploymentScaleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     MANUAL = "Manual"
 
 
+class DeploymentState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The state of the deployment. Controls whether the deployment is accepting inference requests.
+    Use 'Running' for active deployments that process requests, or 'Paused' to temporarily stop
+    inference while preserving the deployment configuration.
+    """
+
+    RUNNING = "Running"
+    """The deployment is running and accepting inference requests."""
+    PAUSED = "Paused"
+    """The deployment is paused and not accepting inference requests."""
+
+
 class DeprecationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Indicates whether the deprecation date is a confirmed planned end-of-life date or an estimated
     deprecation date. When 'Planned', the deprecation date represents a confirmed and communicated
@@ -281,6 +406,13 @@ class EncryptionScopeState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ENABLED = "Enabled"
 
 
+class FirewallSku(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Firewall Sku used for FQDN Rules."""
+
+    STANDARD = "Standard"
+    BASIC = "Basic"
+
+
 class HostingModel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Account hosting model."""
 
@@ -288,6 +420,57 @@ class HostingModel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CONNECTED_CONTAINER = "ConnectedContainer"
     DISCONNECTED_CONTAINER = "DisconnectedContainer"
     PROVISIONED_WEB = "ProvisionedWeb"
+
+
+class IdentityKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies the kind of Entra identity described by this object."""
+
+    AGENT_BLUEPRINT = "AgentBlueprint"
+    """Represents a class identity, used for agentic applications."""
+    AGENT_INSTANCE = "AgentInstance"
+    """Represents an instance identity."""
+    AGENTIC_USER = "AgenticUser"
+    """Represents an agentic instance identity with user-like traits."""
+    MANAGED = "Managed"
+    """Represents a classic managed identity."""
+    NONE = "None"
+    """No identity."""
+
+
+class IdentityManagementType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enumeration of identity types, from the perspective of management."""
+
+    SYSTEM = "System"
+    """Platform-managed identity."""
+    USER = "User"
+    """User-managed identity."""
+    NONE = "None"
+    """No identity."""
+
+
+class IdentityProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Represents the provisioning state of an identity resource."""
+
+    CREATING = "Creating"
+    """Identity is being created."""
+    UPDATING = "Updating"
+    """Identity is being updated."""
+    SUCCEEDED = "Succeeded"
+    """Identity has been successfully provisioned."""
+    FAILED = "Failed"
+    """Identity provisioning has failed."""
+    CANCELED = "Canceled"
+    """Identity provisioning has been canceled."""
+    DELETING = "Deleting"
+    """Identity is being deleted."""
+
+
+class IsolationMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Isolation mode for the managed network of a cognitive services account."""
+
+    DISABLED = "Disabled"
+    ALLOW_INTERNET_OUTBOUND = "AllowInternetOutbound"
+    ALLOW_ONLY_APPROVED_OUTBOUND = "AllowOnlyApprovedOutbound"
 
 
 class KeyName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -302,6 +485,33 @@ class KeySource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     MICROSOFT_COGNITIVE_SERVICES = "Microsoft.CognitiveServices"
     MICROSOFT_KEY_VAULT = "Microsoft.KeyVault"
+
+
+class ManagedNetworkKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The Kind of the managed network. Users can switch from V1 to V2 for granular access controls,
+    but cannot switch back to V1 once V2 is enabled.
+    """
+
+    V1 = "V1"
+    V2 = "V2"
+
+
+class ManagedNetworkProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """ManagedNetworkProvisioningState."""
+
+    DEFERRED = "Deferred"
+    UPDATING = "Updating"
+    SUCCEEDED = "Succeeded"
+    FAILED = "Failed"
+    DELETING = "Deleting"
+    DELETED = "Deleted"
+
+
+class ManagedNetworkStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Status for the managed network of a cognitive services account."""
+
+    INACTIVE = "Inactive"
+    ACTIVE = "Active"
 
 
 class ManagedPERequirement(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -366,7 +576,9 @@ class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     USER_SYSTEM = "user,system"
 
 
-class PrivateEndpointConnectionProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class PrivateEndpointConnectionProvisioningState(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """The current provisioning state."""
 
     SUCCEEDED = "Succeeded"
@@ -412,11 +624,25 @@ class QuotaUsageStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     UNKNOWN = "Unknown"
 
 
+class RaiActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The action types to apply to the content filters."""
+
+    NONE = "None"
+    BLOCKING = "BLOCKING"
+    ANNOTATING = "ANNOTATING"
+    HITL = "HITL"
+    RETRY = "RETRY"
+
+
 class RaiPolicyContentSource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Content source to apply the Content Filters."""
 
     PROMPT = "Prompt"
     COMPLETION = "Completion"
+    PRE_TOOL_CALL = "PreToolCall"
+    POST_TOOL_CALL = "PostToolCall"
+    PRE_RUN = "PreRun"
+    POST_RUN = "PostRun"
 
 
 class RaiPolicyMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -469,6 +695,33 @@ class RoutingMethods(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     PERFORMANCE = "Performance"
 
 
+class RuleCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Category of a managed network Outbound Rule of a cognitive services account."""
+
+    REQUIRED = "Required"
+    RECOMMENDED = "Recommended"
+    USER_DEFINED = "UserDefined"
+    DEPENDENCY = "Dependency"
+
+
+class RuleStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of a managed network Outbound Rule of a cognitive services account."""
+
+    INACTIVE = "Inactive"
+    ACTIVE = "Active"
+    PROVISIONING = "Provisioning"
+    DELETING = "Deleting"
+    FAILED = "Failed"
+
+
+class RuleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of a managed network Outbound Rule of a cognitive services account."""
+
+    FQDN = "FQDN"
+    PRIVATE_ENDPOINT = "PrivateEndpoint"
+    SERVICE_TAG = "ServiceTag"
+
+
 class ScenarioType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies what features in AI Foundry network injection applies to. Currently only supports
     'agent' for agent scenarios. 'none' means no network injection.
@@ -476,6 +729,21 @@ class ScenarioType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     NONE = "none"
     AGENT = "agent"
+
+
+class ServiceTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The service tier for the deployment. Determines the pricing and performance level for request
+    processing. Use 'Default' for standard pricing or 'Priority' for higher-priority processing
+    with premium pricing. Note: Pause operations are only supported on Standard, DataZoneStandard,
+    and GlobalStandard SKUs.
+    """
+
+    DEFAULT = "Default"
+    """Default service tier meaning the request will be processed with the standard pricing and
+    performance for the selected model."""
+    PRIORITY = "Priority"
+    """Priority service tier meaning the request will be processed with higher pricing and performance
+    for the selected model."""
 
 
 class SkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -495,6 +763,15 @@ class TierUpgradePolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     ONCE_UPGRADE_IS_AVAILABLE = "OnceUpgradeIsAvailable"
     NO_AUTO_UPGRADE = "NoAutoUpgrade"
+
+
+class TrafficRoutingProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Traffic routing protocol, used to distribute an application's inbound traffic to its
+    deployments.
+    """
+
+    FIXED_RATIO = "FixedRatio"
+    """Percentage based routing"""
 
 
 class UnitType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

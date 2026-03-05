@@ -23,7 +23,7 @@ class TestCognitiveServicesManagementQuotaTiersOperationsAsync(AzureMgmtRecorded
     @recorded_by_proxy_async
     async def test_quota_tiers_list_by_subscription(self, resource_group):
         response = self.client.quota_tiers.list_by_subscription(
-            api_version="2025-09-01",
+            api_version="2025-10-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -34,7 +34,7 @@ class TestCognitiveServicesManagementQuotaTiersOperationsAsync(AzureMgmtRecorded
     async def test_quota_tiers_get(self, resource_group):
         response = await self.client.quota_tiers.get(
             default="str",
-            api_version="2025-09-01",
+            api_version="2025-10-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -69,7 +69,7 @@ class TestCognitiveServicesManagementQuotaTiersOperationsAsync(AzureMgmtRecorded
                 },
                 "type": "str",
             },
-            api_version="2025-09-01",
+            api_version="2025-10-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -104,7 +104,7 @@ class TestCognitiveServicesManagementQuotaTiersOperationsAsync(AzureMgmtRecorded
                 },
                 "type": "str",
             },
-            api_version="2025-09-01",
+            api_version="2025-10-01-preview",
         )
 
         # please add some check logic here by yourself

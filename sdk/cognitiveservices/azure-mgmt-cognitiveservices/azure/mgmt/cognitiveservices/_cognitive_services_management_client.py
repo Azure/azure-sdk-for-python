@@ -24,6 +24,8 @@ from .operations import (
     AccountCapabilityHostsOperations,
     AccountConnectionsOperations,
     AccountsOperations,
+    AgentApplicationsOperations,
+    AgentDeploymentsOperations,
     CommitmentPlansOperations,
     CommitmentTiersOperations,
     DefenderForAISettingsOperations,
@@ -31,10 +33,14 @@ from .operations import (
     DeploymentsOperations,
     EncryptionScopesOperations,
     LocationBasedModelCapacitiesOperations,
+    ManagedNetworkProvisionsOperations,
+    ManagedNetworkSettingsOperations,
     ModelCapacitiesOperations,
     ModelsOperations,
     NetworkSecurityPerimeterConfigurationsOperations,
     Operations,
+    OutboundRuleOperations,
+    OutboundRulesOperations,
     PrivateEndpointConnectionsOperations,
     PrivateLinkResourcesOperations,
     ProjectCapabilityHostsOperations,
@@ -44,9 +50,14 @@ from .operations import (
     RaiBlocklistItemsOperations,
     RaiBlocklistsOperations,
     RaiContentFiltersOperations,
+    RaiExternalSafetyProviderOperations,
+    RaiExternalSafetyProvidersOperations,
     RaiPoliciesOperations,
+    RaiToolLabelsOperations,
     RaiTopicsOperations,
     ResourceSkusOperations,
+    SubscriptionRaiPolicyOperations,
+    TestRaiExternalSafetyProviderOperations,
     UsagesOperations,
     _CognitiveServicesManagementClientOperationsMixin,
 )
@@ -99,8 +110,22 @@ class CognitiveServicesManagementClient(
     :ivar rai_blocklist_items: RaiBlocklistItemsOperations operations
     :vartype rai_blocklist_items:
      azure.mgmt.cognitiveservices.operations.RaiBlocklistItemsOperations
+    :ivar subscription_rai_policy: SubscriptionRaiPolicyOperations operations
+    :vartype subscription_rai_policy:
+     azure.mgmt.cognitiveservices.operations.SubscriptionRaiPolicyOperations
     :ivar rai_topics: RaiTopicsOperations operations
     :vartype rai_topics: azure.mgmt.cognitiveservices.operations.RaiTopicsOperations
+    :ivar rai_external_safety_providers: RaiExternalSafetyProvidersOperations operations
+    :vartype rai_external_safety_providers:
+     azure.mgmt.cognitiveservices.operations.RaiExternalSafetyProvidersOperations
+    :ivar rai_external_safety_provider: RaiExternalSafetyProviderOperations operations
+    :vartype rai_external_safety_provider:
+     azure.mgmt.cognitiveservices.operations.RaiExternalSafetyProviderOperations
+    :ivar test_rai_external_safety_provider: TestRaiExternalSafetyProviderOperations operations
+    :vartype test_rai_external_safety_provider:
+     azure.mgmt.cognitiveservices.operations.TestRaiExternalSafetyProviderOperations
+    :ivar rai_tool_labels: RaiToolLabelsOperations operations
+    :vartype rai_tool_labels: azure.mgmt.cognitiveservices.operations.RaiToolLabelsOperations
     :ivar rai_content_filters: RaiContentFiltersOperations operations
     :vartype rai_content_filters:
      azure.mgmt.cognitiveservices.operations.RaiContentFiltersOperations
@@ -127,6 +152,21 @@ class CognitiveServicesManagementClient(
      azure.mgmt.cognitiveservices.operations.ProjectCapabilityHostsOperations
     :ivar quota_tiers: QuotaTiersOperations operations
     :vartype quota_tiers: azure.mgmt.cognitiveservices.operations.QuotaTiersOperations
+    :ivar outbound_rule: OutboundRuleOperations operations
+    :vartype outbound_rule: azure.mgmt.cognitiveservices.operations.OutboundRuleOperations
+    :ivar outbound_rules: OutboundRulesOperations operations
+    :vartype outbound_rules: azure.mgmt.cognitiveservices.operations.OutboundRulesOperations
+    :ivar managed_network_settings: ManagedNetworkSettingsOperations operations
+    :vartype managed_network_settings:
+     azure.mgmt.cognitiveservices.operations.ManagedNetworkSettingsOperations
+    :ivar managed_network_provisions: ManagedNetworkProvisionsOperations operations
+    :vartype managed_network_provisions:
+     azure.mgmt.cognitiveservices.operations.ManagedNetworkProvisionsOperations
+    :ivar agent_applications: AgentApplicationsOperations operations
+    :vartype agent_applications:
+     azure.mgmt.cognitiveservices.operations.AgentApplicationsOperations
+    :ivar agent_deployments: AgentDeploymentsOperations operations
+    :vartype agent_deployments: azure.mgmt.cognitiveservices.operations.AgentDeploymentsOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The ID of the target subscription. Required.
@@ -136,8 +176,8 @@ class CognitiveServicesManagementClient(
     :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
-    :keyword api_version: Api Version. Default value is "2025-09-01". Note that overriding this
-     default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2025-10-01-preview". Note that overriding
+     this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -224,7 +264,20 @@ class CognitiveServicesManagementClient(
         self.rai_blocklist_items = RaiBlocklistItemsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.subscription_rai_policy = SubscriptionRaiPolicyOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.rai_topics = RaiTopicsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.rai_external_safety_providers = RaiExternalSafetyProvidersOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.rai_external_safety_provider = RaiExternalSafetyProviderOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.test_rai_external_safety_provider = TestRaiExternalSafetyProviderOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.rai_tool_labels = RaiToolLabelsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.rai_content_filters = RaiContentFiltersOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -248,6 +301,20 @@ class CognitiveServicesManagementClient(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.quota_tiers = QuotaTiersOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.outbound_rule = OutboundRuleOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.outbound_rules = OutboundRulesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.managed_network_settings = ManagedNetworkSettingsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.managed_network_provisions = ManagedNetworkProvisionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.agent_applications = AgentApplicationsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.agent_deployments = AgentDeploymentsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
     def _send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.

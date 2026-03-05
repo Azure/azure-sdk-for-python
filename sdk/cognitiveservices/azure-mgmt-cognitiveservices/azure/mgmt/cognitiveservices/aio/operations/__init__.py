@@ -31,7 +31,12 @@ from ._encryption_scopes_operations import EncryptionScopesOperations  # type: i
 from ._rai_policies_operations import RaiPoliciesOperations  # type: ignore
 from ._rai_blocklists_operations import RaiBlocklistsOperations  # type: ignore
 from ._rai_blocklist_items_operations import RaiBlocklistItemsOperations  # type: ignore
+from ._subscription_rai_policy_operations import SubscriptionRaiPolicyOperations  # type: ignore
 from ._rai_topics_operations import RaiTopicsOperations  # type: ignore
+from ._rai_external_safety_providers_operations import RaiExternalSafetyProvidersOperations  # type: ignore
+from ._rai_external_safety_provider_operations import RaiExternalSafetyProviderOperations  # type: ignore
+from ._test_rai_external_safety_provider_operations import TestRaiExternalSafetyProviderOperations  # type: ignore
+from ._rai_tool_labels_operations import RaiToolLabelsOperations  # type: ignore
 from ._rai_content_filters_operations import RaiContentFiltersOperations  # type: ignore
 from ._network_security_perimeter_configurations_operations import NetworkSecurityPerimeterConfigurationsOperations  # type: ignore
 from ._defender_for_ai_settings_operations import DefenderForAISettingsOperations  # type: ignore
@@ -41,6 +46,12 @@ from ._project_connections_operations import ProjectConnectionsOperations  # typ
 from ._account_capability_hosts_operations import AccountCapabilityHostsOperations  # type: ignore
 from ._project_capability_hosts_operations import ProjectCapabilityHostsOperations  # type: ignore
 from ._quota_tiers_operations import QuotaTiersOperations  # type: ignore
+from ._outbound_rule_operations import OutboundRuleOperations  # type: ignore
+from ._outbound_rules_operations import OutboundRulesOperations  # type: ignore
+from ._managed_network_settings_operations import ManagedNetworkSettingsOperations  # type: ignore
+from ._managed_network_provisions_operations import ManagedNetworkProvisionsOperations  # type: ignore
+from ._agent_applications_operations import AgentApplicationsOperations  # type: ignore
+from ._agent_deployments_operations import AgentDeploymentsOperations  # type: ignore
 
 from ._patch import __all__ as _patch_all
 from ._patch import *
@@ -64,7 +75,12 @@ __all__ = [
     "RaiPoliciesOperations",
     "RaiBlocklistsOperations",
     "RaiBlocklistItemsOperations",
+    "SubscriptionRaiPolicyOperations",
     "RaiTopicsOperations",
+    "RaiExternalSafetyProvidersOperations",
+    "RaiExternalSafetyProviderOperations",
+    "TestRaiExternalSafetyProviderOperations",
+    "RaiToolLabelsOperations",
     "RaiContentFiltersOperations",
     "NetworkSecurityPerimeterConfigurationsOperations",
     "DefenderForAISettingsOperations",
@@ -74,6 +90,12 @@ __all__ = [
     "AccountCapabilityHostsOperations",
     "ProjectCapabilityHostsOperations",
     "QuotaTiersOperations",
+    "OutboundRuleOperations",
+    "OutboundRulesOperations",
+    "ManagedNetworkSettingsOperations",
+    "ManagedNetworkProvisionsOperations",
+    "AgentApplicationsOperations",
+    "AgentDeploymentsOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 _patch_sdk()
