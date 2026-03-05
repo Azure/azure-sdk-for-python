@@ -11,7 +11,7 @@
 
 ### Other Changes
 - Change import path for `LoggingHandler` to accomodate upstream breaking changes
-([#XXXXX](https://github.com/Azure/azure-sdk-for-python/pull/XXXXX))
+([#45539](https://github.com/Azure/azure-sdk-for-python/pull/45539))
 - Remove internal import from sample file
   ([#45619](https://github.com/Azure/azure-sdk-for-python/pull/45619))
 
