@@ -223,8 +223,7 @@ def _setup_logging(configurations: Dict[str, ConfigurationValue]):
     # Use try catch while signal is experimental
     try:
         from opentelemetry._logs import set_logger_provider
-        from opentelemetry.sdk._logs import LoggerProvider
-        from opentelemetry.instrumentation.logging.handler import LoggingHandler
+        from opentelemetry.sdk._logs import LoggerProvider, LoggingHandler
         from azure.monitor.opentelemetry.exporter.export.logs._processor import _AzureBatchLogRecordProcessor
 
         from azure.monitor.opentelemetry.exporter import (  # pylint: disable=import-error,no-name-in-module

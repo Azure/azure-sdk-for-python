@@ -579,8 +579,7 @@ class TestConfigure(unittest.TestCase):
             "sys.modules",
             {
                 "opentelemetry._logs": Mock(set_logger_provider=set_logger_provider_mock),
-                "opentelemetry.sdk._logs": Mock(LoggerProvider=lp_mock),
-                "opentelemetry.instrumentation.logging.handler": Mock(LoggingHandler=logging_handler_mock),
+                "opentelemetry.sdk._logs": Mock(LoggerProvider=lp_mock, LoggingHandler=logging_handler_mock),
                 "azure.monitor.opentelemetry.exporter.export.logs._processor": Mock(
                     _AzureBatchLogRecordProcessor=blrp_mock
                 ),
@@ -725,8 +724,7 @@ class TestConfigure(unittest.TestCase):
             "sys.modules",
             {
                 "opentelemetry._logs": Mock(set_logger_provider=set_logger_provider_mock),
-                "opentelemetry.sdk._logs": Mock(LoggerProvider=lp_mock),
-                "opentelemetry.instrumentation.logging.handler": Mock(LoggingHandler=logging_handler_mock),
+                "opentelemetry.sdk._logs": Mock(LoggerProvider=lp_mock, LoggingHandler=logging_handler_mock)
                 "azure.monitor.opentelemetry.exporter.export.logs._processor": Mock(
                     _AzureBatchLogRecordProcessor=blrp_mock
                 ),
