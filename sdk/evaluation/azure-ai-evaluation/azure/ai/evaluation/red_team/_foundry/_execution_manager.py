@@ -162,19 +162,32 @@ class FoundryExecutionManager:
                         include_baseline=include_baseline,
                     )
                 except Exception as e:
-                    self.logger.error(f"Error executing attacks for {risk_value}: {e}")
-                    # Use "Foundry" as fallback strategy name to match expected structure
-                    if "Foundry" not in red_team_info:
-                        red_team_info["Foundry"] = {}
-                    red_team_info["Foundry"][risk_value] = {
-                        "data_file": "",
-                        "status": "failed",
-                        "error": str(e),
-                        "asr": 0.0,
-                    }
-                    continue
+                    # Attempt to recover partial results before giving up
+                    partial_results = []
+                    try:
+                        partial_results = orchestrator.get_attack_results()
+                    except Exception:
+                        pass
 
-                # Process results
+                    if partial_results:
+                        self.logger.warning(
+                            f"Partial failure executing attacks for {risk_value}: {e}. "
+                            f"Recovered {len(partial_results)} partial results."
+                        )
+                    else:
+                        self.logger.error(f"Error executing attacks for {risk_value}: {e}")
+                        # No results recoverable — use empty fallback
+                        if "Foundry" not in red_team_info:
+                            red_team_info["Foundry"] = {}
+                        red_team_info["Foundry"][risk_value] = {
+                            "data_file": "",
+                            "status": "failed",
+                            "error": str(e),
+                            "asr": 0.0,
+                        }
+                        continue
+
+                # Process results (handles both full success and partial recovery)
                 result_processor = FoundryResultProcessor(
                     scenario=orchestrator,
                     dataset_config=dataset_config,
