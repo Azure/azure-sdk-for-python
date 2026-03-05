@@ -118,8 +118,8 @@ class TestData(AzureRecordedTestCase):
         tmp_folder = tmp_path / "tmp_folder"
         tmp_folder.mkdir()
         tmp_metadata_file = tmp_folder / "MLTable"
-        tmp_metadata_file.write_text(
-            """
+        tmp_metadata_file.write_bytes(
+            b"""
 paths:
   - file: ./tmp_file.csv
 transformations:
@@ -127,12 +127,11 @@ transformations:
       delimiter: ","
       encoding: ascii
       header: all_files_same_headers
-""",
-            newline="\n",
+"""
         )
         tmp_file = tmp_folder / "tmp_file.csv"
-        tmp_file.write_text(
-            """
+        tmp_file.write_bytes(
+            b"""
 sepal_length,sepal_width,petal_length,petal_width,species
 101,152,123,187,Iris-setosa
 4.9,3,1.4,0.2,Iris-setosa
@@ -146,8 +145,7 @@ sepal_length,sepal_width,petal_length,petal_width,species
 4.9,3.1,1.5,0.1,Iris-setosa
 5.4,3.7,1.5,0.2,Iris-setosa
 4.8,3.4,1.6,0.2,Iris-setosa
-""",
-            newline="\n",
+"""
         )
         name = randstr("name")
         data_path.write_text(
