@@ -177,12 +177,6 @@ class TestBase(AzureRecordedTestCase):
         "model_deployment_name": "gpt-4o-mini",
     }
 
-    test_deployments_params = {
-        "model_publisher": "Cohere",
-        "model_name": "gpt-4o",
-        "model_deployment_name": "DeepSeek-V3",
-    }
-
     test_agents_params = {
         "agent_name": "agent-for-python-projects-sdk-testing",
     }
