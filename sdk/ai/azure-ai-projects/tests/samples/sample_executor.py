@@ -22,7 +22,7 @@ from contextlib import contextmanager
 
 
 from dataclasses import dataclass, field
-from typing import overload, Union, Optional
+from typing import Callable, overload, Union, Optional
 from pydantic import BaseModel
 
 import json
@@ -185,6 +185,7 @@ class BaseSampleExecutor:
         *,
         env_vars: dict[str, str] = {},
         allowed_llm_validation_failures: Optional[set[str]] = None,
+        validation_text_preprocessor: Optional[Callable[[list[str]], str]] = None,
         **kwargs,
     ):
         self.test_instance = test_instance
@@ -192,6 +193,7 @@ class BaseSampleExecutor:
         self.print_calls: list[str] = []
         self._original_print = print
         self.allowed_llm_validation_failures = allowed_llm_validation_failures or set()
+        self._validation_text_preprocessor = validation_text_preprocessor
 
         # Prepare environment variables
         self.env_vars = {}
@@ -225,7 +227,8 @@ class BaseSampleExecutor:
 
     def _capture_print(self, *args, **kwargs):
         """Capture print calls while still outputting to console."""
-        self.print_calls.append(" ".join(str(arg) for arg in args))
+        text = " ".join(str(arg) for arg in args)
+        self.print_calls.append(text)
         self._original_print(*args, **kwargs)
 
     @contextmanager
@@ -442,7 +445,13 @@ class BaseSampleExecutor:
         }
 
     def _build_validation_text(self) -> str:
-        """Build plain-text validation log content from captured output."""
+        """Build plain-text validation log content from captured output.
+
+        Applies optional preprocessor for domain-specific entry filtering
+        and text transformations.
+        """
+        if self._validation_text_preprocessor:
+            return self._validation_text_preprocessor(self.print_calls)
         return "\n".join(self.print_calls)
 
     def _build_validation_txt_bytes(self, validation_log_text: str) -> bytes:
@@ -599,6 +608,7 @@ class SyncSampleExecutor(BaseSampleExecutor):
         *,
         env_vars: Optional[dict[str, str]] = None,
         allowed_llm_validation_failures: Optional[set[str]] = None,
+        validation_text_preprocessor: Optional[Callable[[list[str]], str]] = None,
         **kwargs,
     ):
         if env_vars is None:
@@ -608,6 +618,7 @@ class SyncSampleExecutor(BaseSampleExecutor):
             sample_path,
             env_vars=env_vars,
             allowed_llm_validation_failures=allowed_llm_validation_failures,
+            validation_text_preprocessor=validation_text_preprocessor,
             **kwargs,
         )
         self.tokenCredential: Optional[TokenCredential | FakeTokenCredential] = None
@@ -807,6 +818,7 @@ class AsyncSampleExecutor(BaseSampleExecutor):
         *,
         env_vars: dict[str, str] = {},
         allowed_llm_validation_failures: Optional[set[str]] = None,
+        validation_text_preprocessor: Optional[Callable[[list[str]], str]] = None,
         **kwargs,
     ):
         super().__init__(
@@ -814,6 +826,7 @@ class AsyncSampleExecutor(BaseSampleExecutor):
             sample_path,
             env_vars=env_vars,
             allowed_llm_validation_failures=allowed_llm_validation_failures,
+            validation_text_preprocessor=validation_text_preprocessor,
             **kwargs,
         )
         self.tokenCredential: Optional[AsyncTokenCredential | AsyncFakeCredential] = None
