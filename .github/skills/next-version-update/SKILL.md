@@ -11,6 +11,8 @@ Promote `next-*` tool versions (pylint, mypy, pyright) to become the current pin
 
 The repository pins specific versions of pylint, mypy, and pyright and runs weekly `next-*` jobs to proactively detect compatibility issues with upcoming versions. When CI confirms the next-* versions are clean, this skill promotes them to become the current pinned versions.
 
+> **Required cross-repo check (do not skip):** After updating `azure-sdk-for-python`, you must also check whether matching updates are required in **both** [azure-sdk-tools](https://github.com/Azure/azure-sdk-tools) and [Microsoft/TypeSpec](https://github.com/microsoft/typespec). Treat the version bump as complete only after those repositories are reviewed and, when needed, PRs are opened.
+
 Files updated in **azure-sdk-for-python**:
 - `eng/tox/tox.ini` – pinned versions for `[testenv:pylint]`, `[testenv:mypy]`, `[testenv:pyright]`
 - `eng/tools/azure-sdk-tools/azpysdk/pylint.py` – `PYLINT_VERSION` constant
@@ -241,10 +243,14 @@ gh pr create \
 ## Verification
 - [ ] Weekly next-pylint CI passes for http-client-python
 - [ ] Weekly next-mypy CI passes for http-client-python
-- [ ] Weekly next-pyright CI passes for http-client-python"
+- [ ] Weekly next-pyright CI passes for http-client-python
+- [ ] Checked **azure-sdk-tools** for matching tool-version updates; opened PR if needed
+- [ ] Checked **Microsoft/TypeSpec** for matching tool-version updates; opened PR if needed"
 ```
 
 ### 13. Update azure-sdk-tools Repository (Separate PR)
+
+> **Required review:** Always review this repo for every run of this skill. A PR is required whenever the version bump affects apiview parser dependencies/config.
 
 For a pylint **version** bump, create a separate PR in the [azure-sdk-tools](https://github.com/Azure/azure-sdk-tools) repository:
 
@@ -278,6 +284,8 @@ For a pylint **version** bump, create a separate PR in the [azure-sdk-tools](htt
    ```
 
 ### 14. Update Microsoft/TypeSpec Repository (Separate PR)
+
+> **Required review:** Always review this repo for every run of this skill. A PR is required whenever TypeSpec pins or tooling references the bumped versions.
 
 For **any** next-* version update (pylint, mypy, or pyright), create a separate PR in the [Microsoft/TypeSpec](https://github.com/microsoft/typespec) repository to keep the tool versions aligned. TypeSpec uses pyright for type-checking its TypeScript packages and may reference pylint/mypy in Python-based tooling.
 
