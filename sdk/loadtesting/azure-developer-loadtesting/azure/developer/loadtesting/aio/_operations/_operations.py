@@ -2555,7 +2555,7 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         interval: Optional[Union[str, _models.TimeGrain]] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncIterable["_models.TimeSeriesElement"]:
+    ) -> AsyncItemPaged["_models.TimeSeriesElement"]:
         """List the metric values for a load test run.
 
         List the metric values for a load test run.
@@ -2599,7 +2599,7 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         interval: Optional[Union[str, _models.TimeGrain]] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncIterable["_models.TimeSeriesElement"]:
+    ) -> AsyncItemPaged["_models.TimeSeriesElement"]:
         """List the metric values for a load test run.
 
         List the metric values for a load test run.
@@ -2643,7 +2643,7 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         interval: Optional[Union[str, _models.TimeGrain]] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncIterable["_models.TimeSeriesElement"]:
+    ) -> AsyncItemPaged["_models.TimeSeriesElement"]:
         """List the metric values for a load test run.
 
         List the metric values for a load test run.
@@ -2686,7 +2686,7 @@ class LoadTestRunClientOperationsMixin(LoadTestRunClientMixinABC):
         aggregation: Optional[str] = None,
         interval: Optional[Union[str, _models.TimeGrain]] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.TimeSeriesElement"]:
+    ) -> AsyncItemPaged["_models.TimeSeriesElement"]:
         """List the metric values for a load test run.
 
         List the metric values for a load test run.
