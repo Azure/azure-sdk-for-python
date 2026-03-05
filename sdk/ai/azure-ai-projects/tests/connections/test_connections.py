@@ -110,7 +110,6 @@ class TestConnections(TestBase):
         connection = _deserialize(_models.Connection, payload)
         assert connection.credentials.type == CredentialType.CUSTOM
         assert connection.credentials.credential_keys == {
-            "authorization": "Bearer sanitized-github-pat",
             "key1": "value1",
             "key2": "value2",
         }
