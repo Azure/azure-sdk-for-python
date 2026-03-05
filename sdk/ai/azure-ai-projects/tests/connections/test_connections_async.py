@@ -16,7 +16,7 @@ from devtools_testutils.aio import recorded_by_proxy_async
 class TestConnectionsAsync(TestBase):
 
     # To run this test, use the following command in the \sdk\ai\azure-ai-projects folder:
-    # cls & pytest tests\test_connections_async.py::TestConnectionsAsync::test_connections_async -s
+    # cls & pytest tests\connections\test_connections_async.py::TestConnectionsAsync::test_connections_async -s
     @servicePreparer()
     @recorded_by_proxy_async
     async def test_connections_async(self, **kwargs):
