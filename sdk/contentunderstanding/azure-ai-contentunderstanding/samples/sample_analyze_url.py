@@ -1,5 +1,6 @@
 # pylint: disable=line-too-long,useless-suppression
 # mypy: disable-error-code="assignment,union-attr,attr-defined"
+# pyright: reportAssignmentType=false, reportOptionalMemberAccess=false, reportAttributeAccessIssue=false
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.

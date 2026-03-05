@@ -1357,12 +1357,12 @@ def _get_element(
                 xml_name = prop_meta.get("name", k)
                 if prop_meta.get("ns"):
                     ET.register_namespace(
-                        prop_meta.get("prefix"),
+                        prop_meta.get("prefix"),  # pyright: ignore[reportArgumentType]
                         prop_meta.get("ns"),  # pyright: ignore[reportArgumentType]
                     )
                     xml_name = (
-                        "{" + prop_meta.get("ns") + "}" + xml_name
-                    )  # pyright: ignore[reportOperatorIssue]
+                        "{" + prop_meta.get("ns") + "}" + xml_name  # pyright: ignore[reportOperatorIssue]
+                    )
                 # attribute should be primitive type
                 wrapped_element.set(xml_name, _get_primitive_type_value(v))
             else:
