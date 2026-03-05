@@ -13,7 +13,6 @@ from .._util import _COMPONENT_TIMEOUT_SECOND
 class TestComponentWithoutMock(AzureRecordedTestCase):
     """Do not use component related mock here."""
 
-    @pytest.mark.skip(reason="Cannot re-record: requires testFeed registry not available in test environment")
     def test_get_client_key(
         self, client: MLClient, registry_client: MLClient, pipelines_registry_client: MLClient
     ) -> None:

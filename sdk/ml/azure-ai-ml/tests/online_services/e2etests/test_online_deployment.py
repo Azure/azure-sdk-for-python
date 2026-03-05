@@ -50,7 +50,6 @@ class TestOnlineDeployment(AzureRecordedTestCase):
         finally:
             client.online_endpoints.begin_delete(name=endpoint.name)
 
-    @pytest.mark.skip(reason="Cannot re-record: requires sdkv2-testFeed registry not available in test environment")
     def test_online_deployment_create_when_registry_assets(
         self,
         sdkv2_registry_client: MLClient,
