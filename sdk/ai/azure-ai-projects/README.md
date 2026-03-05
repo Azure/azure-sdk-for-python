@@ -204,7 +204,9 @@ In the description below, tools are organized by their Foundry connection requir
 
 These tools work immediately without requiring external connections.
 
-**Code Interpreter** ([documentation](https://learn.microsoft.com/azure/foundry/agents/how-to/tools/code-interpreter?pivots=python))
+---
+
+##### **Code Interpreter** ([documentation](https://learn.microsoft.com/azure/foundry/agents/how-to/tools/code-interpreter?pivots=python))
 
 Write and run Python code in a sandboxed environment, process files and work with diverse data formats. See See [OpenAI Documentation](https://platform.openai.com/docs/guides/tools-code-interpreter).
 
@@ -253,6 +255,8 @@ tool = CodeInterpreterTool(container=AutoCodeInterpreterToolParam(file_ids=[file
 *After calling `responses.create()`, check for generated files in response annotations (type `container_file_citation`) and download them using `openai_client.containers.files.content.retrieve()`.*
 
 See full sample file `\agents\tools\sample_agent_code_interpreter_with_files.py` in the [Samples][samples] folder.
+
+---
 
 **File Search** ([documentation](https://learn.microsoft.com/azure/foundry/agents/how-to/tools/file-search?pivots=python))
 
