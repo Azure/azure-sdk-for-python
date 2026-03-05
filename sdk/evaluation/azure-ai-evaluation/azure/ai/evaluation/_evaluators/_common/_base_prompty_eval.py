@@ -75,20 +75,28 @@ def _drop_mcp_approval_messages(messages):
 
 
 def _normalize_function_call_types(messages):
-    """Normalize function_call/function_call_output types to tool_call/tool_result."""
+    """Normalize function_call/function_call_output/openapi_call/openapi_call_output types to tool_call/tool_result."""
     if not isinstance(messages, list):
         return messages
     for msg in messages:
-        if isinstance(msg, dict) and isinstance(msg.get("content"), list):
-            for item in msg["content"]:
-                if isinstance(item, dict) and item.get("type") == "function_call":
-                    item["type"] = "tool_call"
-                    if "function_call" in item:
-                        item["tool_call"] = item.pop("function_call")
-                elif isinstance(item, dict) and item.get("type") == "function_call_output":
-                    item["type"] = "tool_result"
-                    if "function_call_output" in item:
-                        item["tool_result"] = item.pop("function_call_output")
+        if not isinstance(msg, dict) or not isinstance(msg.get("content"), list):
+            continue
+        for item in msg["content"]:
+            if not isinstance(item, dict):
+                continue
+            t = item.get("type")
+            if t == "function_call":
+                item["type"] = "tool_call"
+            elif t == "function_call_output":
+                item["type"] = "tool_result"
+                if "function_call_output" in item:
+                    item["tool_result"] = item.pop("function_call_output")
+            elif t == "openapi_call":
+                item["type"] = "tool_call"
+            elif t == "openapi_call_output":
+                item["type"] = "tool_result"
+                if "openapi_call_output" in item:
+                    item["tool_result"] = item.pop("openapi_call_output")
     return messages
 
 
