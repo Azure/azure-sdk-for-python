@@ -12,7 +12,7 @@ This section covers instructions for managing a quarterly conda release, which r
 ### Prerequisites
 - Create an account on https://anaconda.org/ 
    - Use the "sign up with email" option with your Microsoft email
-- Contact Steve Dower to join the AzureSDK group on https://anaconda.org/microsoft
+- Email or message Steve Dower with your Anaconda username, and request access to the AzureSDK group on https://anaconda.org/microsoft.
 
 ### Automated PR Creation
 
