@@ -244,6 +244,7 @@ class TestEnvironment(AzureRecordedTestCase):
         assert environment
         assert environment.id == environment_id
 
+    @pytest.mark.skip(reason="Cannot re-record: requires testFeed registry not available in test environment")
     def test_registry_environment_list(self, only_registry_client: MLClient) -> None:
         environment_list = only_registry_client._environments.list()
         assert environment_list
