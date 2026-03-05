@@ -10,7 +10,7 @@ from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import DatasetVersion, DatasetType
 from azure.ai.projects.models._enums import ConnectionType
 from test_base import TestBase, servicePreparer
-from devtools_testutils import recorded_by_proxy, is_live_and_not_recording, add_general_regex_sanitizer
+from devtools_testutils import recorded_by_proxy, is_live, add_general_regex_sanitizer
 from azure.core.exceptions import HttpResponseError
 
 # Construct the paths to the data folder and data file used in this test
@@ -30,7 +30,7 @@ class TestDatasets(TestBase):
 
         dataset_name = self.test_datasets_params["dataset_name_1"]
         dataset_version = self.test_datasets_params["dataset_version"]
-        expected_dataset_name = dataset_name if is_live_and_not_recording() else "sanitized-dataset-name"
+        expected_dataset_name = dataset_name if is_live() else "sanitized-dataset-name"
         add_general_regex_sanitizer(
             regex=r"test-dataset-name-\d{5}", value="sanitized-dataset-name", function_scoped=True
         )
@@ -142,7 +142,7 @@ class TestDatasets(TestBase):
 
         dataset_name = self.test_datasets_params["dataset_name_2"]
         dataset_version = self.test_datasets_params["dataset_version"]
-        expected_dataset_name = dataset_name if is_live_and_not_recording() else "sanitized-dataset-name"
+        expected_dataset_name = dataset_name if is_live() else "sanitized-dataset-name"
         add_general_regex_sanitizer(
             regex=r"test-dataset-name-\d{5}", value="sanitized-dataset-name", function_scoped=True
         )
