@@ -82,6 +82,7 @@ class TestCommandJob(AzureRecordedTestCase):
         check_tid_in_url(client, command_job_2)
 
     @pytest.mark.e2etest
+    @pytest.mark.skip(reason="Cannot re-record: requires singularity/virtual cluster compute not available in test environment")
     def test_command_job_with_singularity(self, randstr: Callable[[], str], client: MLClient) -> None:
         job_name = randstr("job_name")
         params_override = [{"name": job_name}]

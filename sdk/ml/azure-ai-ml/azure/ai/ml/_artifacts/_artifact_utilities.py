@@ -112,7 +112,7 @@ def get_datastore_info(
             datastore_info["credential"] = operations._credential
         else:
             credential = operations._list_secrets(name=name, expirable_secret=True)
-            datastore_info["credential"] = credential.sas_token
+            datastore_info["credential"] = getattr(credential, "sas_token", None) or getattr(credential, "key", None)
     except HttpResponseError:
         datastore_info["credential"] = operations._credential
 
