@@ -11,6 +11,7 @@ from test_base import TestBase, servicePreparer
 from devtools_testutils.aio import recorded_by_proxy_async
 
 
+@pytest.mark.skip(reason="Backend throw 400 on index list api")
 class TestIndexesAsync(TestBase):
 
     # To run this test, use the following command in the \sdk\ai\azure-ai-projects folder:
@@ -19,10 +20,10 @@ class TestIndexesAsync(TestBase):
     @recorded_by_proxy_async
     async def test_indexes_async(self, **kwargs):
 
-        index_name = self.test_indexes_params["index_name"]
-        index_version = self.test_indexes_params["index_version"]
-        ai_search_connection_name = self.test_indexes_params["ai_search_connection_name"]
-        ai_search_index_name = self.test_indexes_params["ai_search_index_name"]
+        index_name = kwargs.get("index_name", "index-test")
+        index_version = kwargs.get("index_version", "1.0")
+        ai_search_connection_name = kwargs.get("ai_search_project_connection_id").split("/")[-1]
+        ai_search_index_name = kwargs.get("ai_search_index_name")
 
         async with self.create_async_client(**kwargs) as project_client:
 

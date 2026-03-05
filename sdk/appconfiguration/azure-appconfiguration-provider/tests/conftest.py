@@ -16,18 +16,18 @@ import pytest
 @pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy):
     add_general_regex_sanitizer(
-        value="https://Sanitized.azconfig.io",
-        regex=os.environ.get("APPCONFIGURATION_ENDPOINT_STRING", "https://Sanitized.azconfig.io"),
+        value="https://sanitized.azconfig.io",
+        regex=os.environ.get("APPCONFIGURATION_ENDPOINT_STRING", "https://sanitized.azconfig.io"),
     )
     add_general_regex_sanitizer(
-        value="Sanitized",
-        regex=os.environ.get("APPCONFIGURATION_CONNECTION_STRING", "Sanitized"),
+        value="sanitized",
+        regex=os.environ.get("APPCONFIGURATION_CONNECTION_STRING", "https://sanitized.azconfig.io"),
     )
     add_uri_string_sanitizer()
     add_general_string_sanitizer(
-        value="https://Sanitized.vault.azure.net/secrets/fake-secret/",
+        value="https://sanitized.vault.azure.net/secrets/fake-secret/",
         target=os.environ.get(
-            "APPCONFIGURATION_KEY_VAULT_REFERENCE", "https://Sanitized.vault.azure.net/secrets/fake-secret/"
+            "APPCONFIGURATION_KEY_VAULT_REFERENCE", "https://sanitized.vault.azure.net/secrets/fake-secret/"
         ),
     )
     add_remove_header_sanitizer(headers="Correlation-Context")
