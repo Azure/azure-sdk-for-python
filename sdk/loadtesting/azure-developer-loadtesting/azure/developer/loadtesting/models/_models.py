@@ -1285,20 +1285,19 @@ class PassFailMetric(_Model):
      are: "response_time_ms", "latency", "error", "requests", and "requests_per_sec".
     :vartype client_metric: str or ~azure.developer.loadtesting.models.PFMetrics
     :ivar aggregate: The aggregation function to be applied on the client metric. Allowed functions
-
-     * ‘percentage’ - for error metric , ‘avg’, percentiles like ‘p50’, ‘p90’, & so on, ‘min’,
-     ‘max’ - for response_time_ms and latency metric, ‘avg’ - for requests_per_sec,
-     ‘count’ - for requests. Known values are: "count", "percentage", "avg", "p50", "p75",
+     - 'percentage' - for error metric , 'avg', percentiles like 'p50', 'p90', & so on, 'min',
+     'max' - for response_time_ms and latency metric, 'avg' - for requests_per_sec,
+     'count' - for requests. Known values are: "count", "percentage", "avg", "p50", "p75",
      "p90", "p95", "p96", "p97", "p98", "p99", "p99.9", "p99.99", "min", and "max".
     :vartype aggregate: str or ~azure.developer.loadtesting.models.PassFailAggregationFunction
-    :ivar condition: The comparison operator. Supported types ‘>’, ‘<’.
+    :ivar condition: The comparison operator. Supported types '>', '<'.
     :vartype condition: str
     :ivar request_name: Request name for which the Pass fail criteria has to be applied.
     :vartype request_name: str
-    :ivar value: The value to compare with the client metric. Allowed values - ‘error : [0.0 ,
-     100.0] unit- % ’, response_time_ms and latency : any integer value unit- ms.
+    :ivar value: The value to compare with the client metric. Allowed values - 'error : [0.0 ,
+     100.0] unit- % ', response_time_ms and latency : any integer value unit- ms.
     :vartype value: float
-    :ivar action: Action taken after the threshold is met. Default is ‘continue’. Known values are:
+    :ivar action: Action taken after the threshold is met. Default is 'continue'. Known values are:
      "continue" and "stop".
     :vartype action: str or ~azure.developer.loadtesting.models.PassFailAction
     :ivar actual_value: The actual value of the client metric for the test run.
@@ -1317,12 +1316,11 @@ class PassFailMetric(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The aggregation function to be applied on the client metric. Allowed functions
- 
-      * ‘percentage’ - for error metric , ‘avg’, percentiles like ‘p50’, ‘p90’, & so on, ‘min’,
-      ‘max’ - for response_time_ms and latency metric, ‘avg’ - for requests_per_sec,
-      ‘count’ - for requests. Known values are: \"count\", \"percentage\", \"avg\", \"p50\",
-      \"p75\", \"p90\", \"p95\", \"p96\", \"p97\", \"p98\", \"p99\", \"p99.9\", \"p99.99\", \"min\",
-      and \"max\"."""
+     - 'percentage' - for error metric , 'avg', percentiles like 'p50', 'p90', & so on, 'min',
+     'max' - for response_time_ms and latency metric, 'avg' - for requests_per_sec,
+     'count' - for requests. Known values are: \"count\", \"percentage\", \"avg\", \"p50\",
+     \"p75\", \"p90\", \"p95\", \"p96\", \"p97\", \"p98\", \"p99\", \"p99.9\", \"p99.99\", \"min\",
+     and \"max\"."""
     condition: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The comparison operator. Supported types ‘>’, ‘<’."""
     request_name: Optional[str] = rest_field(
