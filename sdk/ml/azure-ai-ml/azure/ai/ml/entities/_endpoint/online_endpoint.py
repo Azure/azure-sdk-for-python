@@ -14,7 +14,9 @@ from azure.ai.ml._restclient.v2022_02_01_preview.models import EndpointAuthMode
 from azure.ai.ml._restclient.v2022_02_01_preview.models import EndpointAuthToken as RestEndpointAuthToken
 from azure.ai.ml._restclient.v2022_02_01_preview.models import OnlineEndpointData
 from azure.ai.ml._restclient.v2022_02_01_preview.models import OnlineEndpointDetails as RestOnlineEndpoint
-from azure.ai.ml._restclient.arm_ml_service.models import ManagedServiceIdentity as RestManagedServiceIdentityConfiguration
+from azure.ai.ml._restclient.arm_ml_service.models import (
+    ManagedServiceIdentity as RestManagedServiceIdentityConfiguration,
+)
 from azure.ai.ml._schema._endpoint import KubernetesOnlineEndpointSchema, ManagedOnlineEndpointSchema
 from azure.ai.ml._utils.utils import dict_eq
 from azure.ai.ml.constants._common import (
