@@ -32,7 +32,7 @@ resources in your Microsoft Foundry Project. Use it to:
 * **Enumerate AI Models** deployed to your Foundry Project using `.deployments` operations.
 * **Enumerate connected Azure resources** in your Foundry project using `.connections` operations.
 * **Upload documents and create Datasets** to reference them using `.datasets` operations.
-* **Create and enumerate Search Indexes** using methods `.indexes` operations.
+* **Create and enumerate Search Indexes** using `.indexes` operations.
 
 The client library uses version `v1` of the Microsoft Foundry [data plane REST APIs](https://aka.ms/azsdk/azure-ai-projects-v2/api-reference-v1).
 
@@ -66,7 +66,7 @@ To report an issue with the client library, or request additional features, plea
 pip install azure-ai-projects
 ```
 
-Verify that you have version 2.0.0 or above installed
+Verify that you have version 2.0.0 or above installed by running:
 
 ```bash
 pip show azure-ai-projects
@@ -78,7 +78,7 @@ pip show azure-ai-projects
 
 Entra ID is the only authentication method supported at the moment by the client.
 
-To construct a synchronous client using context manager:
+To construct a synchronous client using a context manager:
 
 ```python
 import os
@@ -208,7 +208,7 @@ These tools work immediately without requiring external connections.
 
 ##### **Code Interpreter** ([documentation](https://learn.microsoft.com/azure/foundry/agents/how-to/tools/code-interpreter?pivots=python))
 
-Write and run Python code in a sandboxed environment, process files and work with diverse data formats. See See [OpenAI Documentation](https://platform.openai.com/docs/guides/tools-code-interpreter).
+Write and run Python code in a sandboxed environment, process files and work with diverse data formats. See [OpenAI Documentation](https://platform.openai.com/docs/guides/tools-code-interpreter).
 
 Basic tool declaration (no input files):
 
@@ -260,7 +260,7 @@ See full sample file `\agents\tools\sample_agent_code_interpreter_with_files.py`
 
 ##### **File Search** ([documentation](https://learn.microsoft.com/azure/foundry/agents/how-to/tools/file-search?pivots=python))
 
-Built-in RAG (Retrieval-Augmented Generation) tool to process and search through documents using vector stores for knowledge retrieval. See [OpenAI Documentation](https://platform.openai.com/docs/assistants/tools/file-search)
+Built-in RAG (Retrieval-Augmented Generation) tool to process and search through documents using vector stores for knowledge retrieval. See [OpenAI Documentation](https://platform.openai.com/docs/assistants/tools/file-search).
 
 <!-- SNIPPET:sample_agent_file_search.tool_declaration -->
 
@@ -389,7 +389,7 @@ See the full sample in file `\agents\tools\sample_agent_computer_use.py` in the 
 
 ##### **Model Context Protocol (MCP)** ([documentation](https://learn.microsoft.com/azure/foundry/agents/how-to/tools/model-context-protocol?pivots=python))
 
-Integrate MCP servers to extend agent capabilities with standardized tools and resources. See [OpenAI Documentation](https://platform.openai.com/docs/guides/tools-connectors-mcp)
+Integrate MCP servers to extend agent capabilities with standardized tools and resources. See [OpenAI Documentation](https://platform.openai.com/docs/guides/tools-connectors-mcp).
 
 <!-- SNIPPET:sample_agent_mcp.tool_declaration -->
 
@@ -411,7 +411,7 @@ See the full sample in file `\agents\tools\sample_agent_mcp.py` in the [Samples]
 
 ##### **OpenAPI** ([documentation](https://learn.microsoft.com/azure/foundry/agents/how-to/tools/openapi?pivots=python))
 
-Call external APIs defined by OpenAPI specifications without additional client-side code. See [OpenAI Documentation](https://platform.openai.com/docs/guides/tools-openapi)
+Call external APIs defined by OpenAPI specifications without additional client-side code. See [OpenAI Documentation](https://platform.openai.com/docs/guides/tools-openapi).
 
 <!-- SNIPPET:sample_agent_openapi.tool_declaration-->
 
@@ -437,7 +437,7 @@ See the full sample in file `\agents\tools\sample_agent_openapi.py` in the [Samp
 
 ##### **Function Tool** ([documentation](https://learn.microsoft.com/azure/foundry/agents/how-to/tools/function-calling?pivots=python))
 
-Define custom functions that allow agents to interact with external APIs, databases, or application logic. See [OpenAI Documentation](https://platform.openai.com/docs/guides/function-calling)
+Define custom functions that allow agents to interact with external APIs, databases, or application logic. See [OpenAI Documentation](https://platform.openai.com/docs/guides/function-calling).
 
 <!-- SNIPPET:sample_agent_function_tool.tool_declaration -->
 
@@ -845,9 +845,6 @@ with (
 
 The code below shows some Deployments operations, which allow you to enumerate the AI models deployed to your Microsoft Foundry Projects. These models can be seen in "Build" menu, under "Models" (First column of the "Deployments" table) in your Microsoft Foundry project portal. Full samples can be found under the "deployment" folder in the [package samples][samples].
 
-
-"Build" menu, under "Models" (First column of the "Deployments" table).
-
 <!-- SNIPPET:sample_deployments.deployments_sample-->
 
 ```python
@@ -1045,6 +1042,8 @@ print(f"Successfully deleted file: {deleted_file.id}")
 ### Fine-tuning operations
 
 The code below shows how to create fine-tuning jobs using the OpenAI client. These operations support various fine-tuning techniques like Supervised Fine-Tuning (SFT), Reinforcement Fine-Tuning (RFT), and Direct Performance Optimization (DPO). Full samples can be found under the "finetuning" folder in the [package samples][samples].
+
+See also the [Fine-Tuning in AI Foundry](https://github.com/microsoft-foundry/fine-tuning) repository.
 
 <!-- SNIPPET:sample_finetuning_oss_models_supervised_job.finetuning_oss_model_supervised_job_sample-->
 
