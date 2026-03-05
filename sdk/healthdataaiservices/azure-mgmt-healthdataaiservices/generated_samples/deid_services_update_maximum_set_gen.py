@@ -36,6 +36,7 @@ def main():
         properties={
             "identity": {"type": "None", "userAssignedIdentities": {}},
             "properties": {"publicNetworkAccess": "Enabled"},
+            "sku": {"name": "Standard", "tier": "Standard"},
             "tags": {},
         },
     ).result()

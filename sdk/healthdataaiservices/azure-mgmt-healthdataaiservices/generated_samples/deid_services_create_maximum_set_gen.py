@@ -37,6 +37,7 @@ def main():
             "identity": {"type": "None", "userAssignedIdentities": {}},
             "location": "qwyhvdwcsjulggagdqxlmazcl",
             "properties": {"publicNetworkAccess": "Enabled"},
+            "sku": {"name": "Standard", "tier": "Standard"},
             "tags": {},
         },
     ).result()

@@ -1,5 +1,12 @@
 # Release History
 
+## 1.1.0b1 (2026-03-05)
+
+### Features Added
+
+- Added `sku` property to `DeidService` resource model for SKU (Stock Keeping Unit) support with Free, Basic, and Standard tiers
+- Added `sku` property to `DeidUpdate` model for updating SKU on existing resources
+
 ## 1.0.0 (2024-11-21)
 
 ### Breaking Changes
