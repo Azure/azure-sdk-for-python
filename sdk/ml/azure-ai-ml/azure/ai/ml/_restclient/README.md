@@ -1,5 +1,6 @@
-# Arm_ml_service Management client library for Python
-<!-- write necessary description of service -->
+# Azure Machine Learning REST client library for Python
+
+Auto-generated REST clients for the Azure Machine Learning service, generated from TypeSpec using tsp-client.
 
 ## Getting started
 
@@ -50,6 +51,18 @@ Use the returned token credential to authenticate the client:
         print('service responds error: {}'.format(e.response.json()))
 
 ```
+
+## Key concepts
+
+These are internal REST clients used by the `azure-ai-ml` SDK. They are not intended to be used directly.
+
+## Troubleshooting
+
+For troubleshooting, see the [azure-ai-ml troubleshooting guide](https://learn.microsoft.com/azure/machine-learning/).
+
+## Next steps
+
+See the [azure-ai-ml documentation](https://learn.microsoft.com/python/api/azure-ai-ml/) for more information.
 
 ## Contributing
 
