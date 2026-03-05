@@ -15,7 +15,6 @@ from ..models._models import Connection
 from ..models._enums import ConnectionType
 
 
-
 class ConnectionsOperations(ConnectionsOperationsGenerated):
     """
     .. warning::
