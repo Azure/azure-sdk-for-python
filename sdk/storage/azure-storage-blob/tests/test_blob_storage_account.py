@@ -50,7 +50,7 @@ class TestBlobStorageAccount(StorageRecordedTestCase):
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
 
         self._setup(bsc)
-        tiers = [StandardBlobTier.Archive, StandardBlobTier.Cool, StandardBlobTier.Hot]
+        tiers = [StandardBlobTier.Archive, StandardBlobTier.Cool, StandardBlobTier.Hot, StandardBlobTier.SMART]
 
         for tier in tiers:
             blob_name = self.get_resource_name(tier.value)

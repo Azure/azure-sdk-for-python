@@ -2052,6 +2052,9 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         response_headers["x-ms-access-tier-change-time"] = self._deserialize(
             "rfc-1123", response.headers.get("x-ms-access-tier-change-time")
         )
+        response_headers["x-ms-smart-access-tier"] = self._deserialize(
+            "str", response.headers.get("x-ms-smart-access-tier")
+        )
         response_headers["x-ms-version-id"] = self._deserialize("str", response.headers.get("x-ms-version-id"))
         response_headers["x-ms-is-current-version"] = self._deserialize(
             "bool", response.headers.get("x-ms-is-current-version")
@@ -3647,8 +3650,8 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
          information. Default value is None.
         :type metadata: dict[str, str]
         :param tier: Optional. Indicates the tier to be set on the blob. Known values are: "P4", "P6",
-         "P10", "P15", "P20", "P30", "P40", "P50", "P60", "P70", "P80", "Hot", "Cool", "Archive", and
-         "Cold". Default value is None.
+         "P10", "P15", "P20", "P30", "P40", "P50", "P60", "P70", "P80", "Hot", "Cool", "Archive",
+         "Cold", and "Smart". Default value is None.
         :type tier: str or ~azure.storage.blob.models.AccessTierOptional
         :param rehydrate_priority: Optional: Indicates the priority with which to rehydrate an archived
          blob. Known values are: "High" and "Standard". Default value is None.
@@ -3826,8 +3829,8 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
          information. Default value is None.
         :type metadata: dict[str, str]
         :param tier: Optional. Indicates the tier to be set on the blob. Known values are: "P4", "P6",
-         "P10", "P15", "P20", "P30", "P40", "P50", "P60", "P70", "P80", "Hot", "Cool", "Archive", and
-         "Cold". Default value is None.
+         "P10", "P15", "P20", "P30", "P40", "P50", "P60", "P70", "P80", "Hot", "Cool", "Archive",
+         "Cold", and "Smart". Default value is None.
         :type tier: str or ~azure.storage.blob.models.AccessTierOptional
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
@@ -4094,8 +4097,8 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         update the blob's ETag.
 
         :param tier: Indicates the tier to be set on the blob. Known values are: "P4", "P6", "P10",
-         "P15", "P20", "P30", "P40", "P50", "P60", "P70", "P80", "Hot", "Cool", "Archive", and "Cold".
-         Required.
+         "P15", "P20", "P30", "P40", "P50", "P60", "P70", "P80", "Hot", "Cool", "Archive", "Cold", and
+         "Smart". Required.
         :type tier: str or ~azure.storage.blob.models.AccessTierRequired
         :param snapshot: The snapshot parameter is an opaque DateTime value that, when present,
          specifies the blob snapshot to retrieve. For more information on working with blob snapshots,
