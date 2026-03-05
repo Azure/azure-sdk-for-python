@@ -349,7 +349,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         ...
 
     @distributed_trace_async
-    @cosmos_span_attributes_async()
+    @cosmos_span_attributes_async(operation_type=Constants.OpenTelemetryOperationTypes.CREATE)
     async def create_database( # pylint:disable=docstring-should-be-keyword
         self,
         *args: Any,
