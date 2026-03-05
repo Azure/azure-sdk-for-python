@@ -6,24 +6,22 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: upload_test_file.py
+FILE: generate_test_plan_recommendations.py
 
 DESCRIPTION:
-    This sample shows how to upload a file to your existing load test. The file could be a test script file or any other input artifact
+    This sample shows how to generate test plan recommendations for an existing load test with browser recording.
+
 USAGE:
-    python upload_test_file.py
+    python generate_test_plan_recommendations.py
 
     Set the environment variables with your own values before running the sample:
     1)  AZURE_CLIENT_ID - client id
     2)  AZURE_CLIENT_SECRET - client secret
     3)  AZURE_TENANT_ID - tenant id for your Azure
     4)  LOADTESTSERVICE_ENDPOINT - Data Plane endpoint for Loadtestservice
-
-    Please ensure that correct file and path is used
+    5)  LOADTESTSERVICE_TEST_ID - The ID of the load test for which to generate recommendations, it should have browser recording file before generating recommendations.
 """
 from azure.developer.loadtesting import LoadTestAdministrationClient
-
-# for details refer: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/loadtesting/azure-developer-loadtesting/README.md
 from azure.identity import DefaultAzureCredential
 
 import os
@@ -31,15 +29,17 @@ from dotenv import load_dotenv
 
 load_dotenv()
 LOADTESTSERVICE_ENDPOINT = os.environ["LOADTESTSERVICE_ENDPOINT"]
+TEST_ID = os.environ["LOADTESTSERVICE_TEST_ID"]
 
-client = LoadTestAdministrationClient(credential=DefaultAzureCredential(), endpoint=LOADTESTSERVICE_ENDPOINT)
+client = LoadTestAdministrationClient(
+    credential=DefaultAzureCredential(), endpoint=LOADTESTSERVICE_ENDPOINT
+)
 
-TEST_ID = "my-sdk-test-id"
-FILE_NAME = "sample.jmx"
+# Generate test plan recommendations
+print("Generating test plan recommendations...")
+poller = client.begin_generate_test_plan_recommendations(TEST_ID)
 
-# uploading .jmx file to a test
-resultPoller = client.begin_upload_test_file(TEST_ID, FILE_NAME, open("sample.jmx", "rb"))
-
-# getting result of LRO poller with timeout of 600 secs
-validationResponse = resultPoller.result(600)
-print(validationResponse)
+# Wait for the operation to complete
+result = poller.result()
+print(f"Test plan recommendations generated: {result}")
+print(f"Operation status: {poller.status()}")
