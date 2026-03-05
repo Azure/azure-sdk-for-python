@@ -264,7 +264,7 @@ class TestLoadTestRunOperations(LoadTestingTest):
     def test_stop_test_run(self, loadtesting_endpoint, loadtesting_test_id):
         set_bodiless_matcher()
 
-        test_run_id = "some-test-run-id-stop-async"
+        test_run_id = "sample-stop-test-run-id-async"
         run_client = self.create_run_client(loadtesting_endpoint)
 
         run_client.begin_test_run(
