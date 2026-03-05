@@ -15,14 +15,10 @@ class TestConnections(TestBase):
 
     # To run this test, use the following command in the \sdk\ai\azure-ai-projects folder:
     # cls & pytest tests\connections\test_connections.py::TestConnections::test_connections -s
-    @pytest.mark.skip(
-        reason="Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema"
-    )
     @servicePreparer()
     @recorded_by_proxy
     def test_connections(self, **kwargs):
 
-        connection_name = kwargs["mcp_project_connection_id"].split("/")[-1]
         connection_type = ConnectionType.AZURE_OPEN_AI
 
         with self.create_client(**kwargs) as project_client:
@@ -55,13 +51,13 @@ class TestConnections(TestBase):
                 connection, True, expected_connection_type=connection_type, expected_is_default=True
             )
 
-            print(f"[test_connections] Get the connection named `{connection_name}`, without its credentials")
-            connection = project_client.connections.get(connection_name)
-            TestBase.validate_connection(connection, False, expected_connection_name=connection_name)
+            print(f"[test_connections] Get the connection named `{connection.name}`, without its credentials")
+            connection = project_client.connections.get(connection.name)
+            TestBase.validate_connection(connection, False, expected_connection_name=connection.name)
 
-            print(f"[test_connections] Get the connection named `{connection_name}`, with its credentials")
-            connection = project_client.connections.get(connection_name, include_credentials=True)
-            TestBase.validate_connection(connection, True, expected_connection_name=connection_name)
+            print(f"[test_connections] Get the connection named `{connection.name}`, with its credentials")
+            connection = project_client.connections.get(connection.name, include_credentials=True)
+            TestBase.validate_connection(connection, True, expected_connection_name=connection.name)
 
     # Unit-test for patched initialization method in CustomCredential class.
     # To run this test, use the following command in the \sdk\ai\azure-ai-projects folder:

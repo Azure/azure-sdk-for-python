@@ -58,18 +58,18 @@ def _preprocess_eval_validation(entries: list[str]) -> str:
     # --- Step 1: filter out debug/HTTP noise entries ---
     _NOISE = re.compile(
         r"^\[(?:azure\.|openai\.|httpx|httpcore|msrest)"  # debug logger prefix
-        r"|^==> Request:|^<== Response:"                   # HTTP request/response markers
-        r"|^Headers:|^Body:"                               # header/body sections
-        r"|^\s*x-stainless-|^\s*x-ms-|^\s*x-request-"     # x- prefixed headers
-        r"|^\s*apim-request-id:|^\s*azureml-served"        # Azure-specific headers
-        r"|^\s*mise-correlation-id:"                       # correlation headers
+        r"|^==> Request:|^<== Response:"  # HTTP request/response markers
+        r"|^Headers:|^Body:"  # header/body sections
+        r"|^\s*x-stainless-|^\s*x-ms-|^\s*x-request-"  # x- prefixed headers
+        r"|^\s*apim-request-id:|^\s*azureml-served"  # Azure-specific headers
+        r"|^\s*mise-correlation-id:"  # correlation headers
         r"|^\s*(?:accept|accept-encoding|authorization|connection|content-length"
         r"|content-type|content-encoding|host|user-agent|server|date|vary"
         r"|transfer-encoding|strict-transport-security|request-context"
         r"|x-content-type-options|api-supported-versions):"  # standard HTTP headers
-        r"|^(?:GET|POST|PUT|DELETE|PATCH) https?://"        # HTTP method lines
-        r"|^\d{3} (?:OK|Created|Accepted|No Content)"      # HTTP status lines
-        r"|^DEBUG |^INFO ",                                 # log level prefixes
+        r"|^(?:GET|POST|PUT|DELETE|PATCH) https?://"  # HTTP method lines
+        r"|^\d{3} (?:OK|Created|Accepted|No Content)"  # HTTP status lines
+        r"|^DEBUG |^INFO ",  # log level prefixes
         re.IGNORECASE,
     )
     kept = [e for e in entries if e.strip() and not _NOISE.match(e.strip())]
@@ -85,7 +85,7 @@ def _preprocess_eval_validation(entries: list[str]) -> str:
     # Python repr-style (field=value) — e.g. ResultCounts(failed=0, errored=0)
     text = re.sub(
         r"\b(?P<field>failed|errored|error|not_applicable)=(?P<value>\d+|None)",
-        r'\g<field>=\g<value>/* metric counter, not an error */',
+        r"\g<field>=\g<value>/* metric counter, not an error */",
         text,
     )
     return text
@@ -207,8 +207,11 @@ class TestSamplesEvaluations(AzureRecordedTestCase):
     def test_agentic_evaluator_samples(self, sample_path: str, **kwargs) -> None:
         env_vars = get_sample_env_vars(kwargs)
         executor = SyncSampleExecutor(
-            self, sample_path, env_vars=env_vars,
-            validation_text_preprocessor=_preprocess_eval_validation, **kwargs,
+            self,
+            sample_path,
+            env_vars=env_vars,
+            validation_text_preprocessor=_preprocess_eval_validation,
+            **kwargs,
         )
         executor.execute()
         executor.validate_print_calls_by_llm(
@@ -235,8 +238,11 @@ class TestSamplesEvaluations(AzureRecordedTestCase):
         )
         env_vars = get_sample_env_vars(kwargs)
         executor = SyncSampleExecutor(
-            self, sample_path, env_vars=env_vars,
-            validation_text_preprocessor=_preprocess_eval_validation, **kwargs,
+            self,
+            sample_path,
+            env_vars=env_vars,
+            validation_text_preprocessor=_preprocess_eval_validation,
+            **kwargs,
         )
         executor.execute()
         executor.validate_print_calls_by_llm(
