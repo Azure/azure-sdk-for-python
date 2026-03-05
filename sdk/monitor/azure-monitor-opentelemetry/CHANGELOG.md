@@ -10,7 +10,7 @@
 ### Bugs Fixed
 
 ### Other Changes
-- Change import path for `LoggingHandler` to accomodate upstream breaking changes
+- Change import path for `LoggingHandler` to accommodate upstream breaking changes
 ([#45539](https://github.com/Azure/azure-sdk-for-python/pull/45539))
 
 ## 1.8.6 (2026-02-05)
