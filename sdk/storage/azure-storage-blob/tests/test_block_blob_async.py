@@ -2212,4 +2212,25 @@ class TestStorageBlockBlobAsync(AsyncStorageRecordedTestCase):
         assert props.blob_tier == StandardBlobTier.SMART
         assert props.smart_access_tier is not None
 
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_start_copy_smart_access_tier(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        await self._setup(storage_account_name, storage_account_key)
+
+        data = b"abc123" * 4
+        src_blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference() + "src")
+        await src_blob.upload_blob(data, standard_blob_tier=StandardBlobTier.SMART, overwrite=True)
+
+        dst_blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference() + "src")
+        resp = await dst_blob.start_copy_from_url(src_blob.url)
+        assert resp is not None
+        assert resp['copy_status'] == 'success'
+
+        props = await dst_blob.get_blob_properties()
+        assert props is not None
+        assert props.blob_tier == StandardBlobTier.SMART
+
 # ------------------------------------------------------------------------------
