@@ -148,5 +148,6 @@ class QueryAdvice:
             entries = [QueryAdviceEntry.from_dict(item) for item in data if isinstance(item, dict)]
 
             return cls(entries)
-        except (json.JSONDecodeError, ValueError, AttributeError):
+        except (json.JSONDecodeError, ValueError, AttributeError) as e:
+            _LOGGER.warning("Failed to parse query advice from response header.", e)
             return None
