@@ -101,7 +101,7 @@ class LoadTestAdministrationClient(LoadTestAdministrationClientOperationsMixin):
         self._client.__exit__(*exc_details)
 
 
-class LoadTestRunClient(_LoadTestRunClientOperationsMixin):
+class LoadTestRunClient(LoadTestRunClientOperationsMixin):
     """LoadTestRunClient.
 
     :param endpoint: Required.
