@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 """Tests for the trace_function decorator with synchronous functions."""
+
 import pytest
 from opentelemetry import trace
 from opentelemetry.sdk.trace import TracerProvider
@@ -12,9 +13,6 @@ from gen_ai_trace_verifier import GenAiTraceVerifier
 from memory_trace_exporter import MemoryTraceExporter
 
 
-@pytest.mark.skip(
-    reason="Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema"
-)
 class TestTraceFunctionDecorator:
     """Tests for trace_function decorator with synchronous functions."""
 
