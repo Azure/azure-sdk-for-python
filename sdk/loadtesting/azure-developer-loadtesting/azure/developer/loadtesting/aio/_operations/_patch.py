@@ -28,6 +28,13 @@ logger = logging.getLogger(__name__)
 class AsyncLoadTestingPollingMethod(AsyncPollingMethod):
     """Base class for custom async polling methods."""
 
+    _status: Optional[str]
+    _termination_statuses: List[str]
+    _polling_interval: int
+    _resource: Optional[JSON]
+    _command: Any
+    _initial_response: Any
+
     def _update_status(self) -> None:
         raise NotImplementedError("This method needs to be implemented")
 
@@ -40,13 +47,13 @@ class AsyncLoadTestingPollingMethod(AsyncPollingMethod):
         self._resource = initial_response
 
     def status(self) -> str:
-        return self._status
+        return self._status # type: ignore[return-value]
 
     def finished(self) -> bool:
         return self._status in self._termination_statuses
 
     def resource(self) -> JSON:
-        return self._resource
+        return self._resource   # type: ignore[return-value]
 
     async def run(self) -> None:
         try:
@@ -76,7 +83,7 @@ class AsyncValidationCheckPoller(AsyncLoadTestingPollingMethod):
         ]
 
     def _update_status(self) -> None:
-        self._status = self._resource["validationStatus"]
+        self._status = self._resource["validationStatus"]  # type: ignore[index]
 
 
 class AsyncTestRunStatusPoller(AsyncLoadTestingPollingMethod):
@@ -89,7 +96,7 @@ class AsyncTestRunStatusPoller(AsyncLoadTestingPollingMethod):
         self._termination_statuses = ["DONE", "FAILED", "CANCELLED"]
 
     def _update_status(self) -> None:
-        self._status = self._resource["status"]
+        self._status = self._resource["status"]  # type: ignore[index]
 
 
 class AsyncTestProfileRunStatusPoller(AsyncLoadTestingPollingMethod):
@@ -102,7 +109,7 @@ class AsyncTestProfileRunStatusPoller(AsyncLoadTestingPollingMethod):
         self._termination_statuses = ["DONE", "FAILED", "CANCELLED"]
 
     def _update_status(self) -> None:
-        self._status = self._resource["status"]
+        self._status = self._resource["status"]  # type: ignore[index]
 
 
 class LoadTestAdministrationClientOperationsMixin(GeneratedAdministrationClientOperations):
@@ -215,7 +222,7 @@ class LoadTestAdministrationClientOperationsMixin(GeneratedAdministrationClientO
         if polling_interval is None:
             polling_interval = 5
         upload_test_file_operation = await super()._begin_upload_test_file(
-            test_id=test_id, file_name=file_name, body=body, file_type=file_type, **kwargs
+            test_id=test_id, file_name=file_name, body=body, file_type=file_type, **kwargs  # type: ignore[arg-type]
         )
 
         command = partial(self.get_test_file, test_id=test_id, file_name=file_name)

@@ -31,6 +31,13 @@ logger = logging.getLogger(__name__)
 class LoadTestingPollingMethod(PollingMethod):
     """Base class for custom sync polling methods."""
 
+    _status: Optional[str]
+    _termination_statuses: List[str]
+    _polling_interval: int
+    _resource: Optional[JSON]
+    _command: Any
+    _initial_response: Any
+
     def _update_status(self) -> None:
         raise NotImplementedError("This method needs to be implemented")
 
@@ -43,13 +50,13 @@ class LoadTestingPollingMethod(PollingMethod):
         self._resource = initial_response
 
     def status(self) -> str:
-        return self._status
+        return self._status  # type: ignore[return-value]
 
     def finished(self) -> bool:
         return self._status in self._termination_statuses
 
     def resource(self) -> JSON:
-        return self._resource
+        return self._resource  # type: ignore[return-value]
 
     def run(self) -> None:
         try:
@@ -81,7 +88,7 @@ class ValidationCheckPoller(LoadTestingPollingMethod):
         ]
 
     def _update_status(self) -> None:
-        self._status = self._resource["validationStatus"]
+        self._status = self._resource["validationStatus"]  # type: ignore[index]
 
 
 class TestRunStatusPoller(LoadTestingPollingMethod):
@@ -96,7 +103,7 @@ class TestRunStatusPoller(LoadTestingPollingMethod):
         self._termination_statuses = ["DONE", "FAILED", "CANCELLED"]
 
     def _update_status(self) -> None:
-        self._status = self._resource["status"]
+        self._status = self._resource["status"]  # type: ignore[index]
 
 
 class TestProfileRunStatusPoller(LoadTestingPollingMethod):
@@ -232,7 +239,7 @@ class LoadTestAdministrationClientOperationsMixin(
             test_id=test_id,
             file_name=file_name,
             file_type=file_type,
-            body=body,
+            body=body,  # type: ignore[arg-type]
             **kwargs
         )
 
