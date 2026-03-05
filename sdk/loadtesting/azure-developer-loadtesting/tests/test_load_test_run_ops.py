@@ -110,7 +110,7 @@ class TestLoadTestRunOperations(LoadTestingTest):
 
         run_client = self.create_run_client(loadtesting_endpoint)
 
-        result = run_client.begin_test_run(
+        run_poller = run_client.begin_test_run(
             loadtesting_test_run_id,
             {
                 "testId": loadtesting_test_id,
@@ -118,9 +118,11 @@ class TestLoadTestRunOperations(LoadTestingTest):
             },
         )
 
+        result = run_poller.result(10800)
         assert result is not None
 
-        assert result.status is not None
+        assert run_poller.status() is not None
+        assert run_poller.done() is True
 
     @LoadTestingPreparer()
     @recorded_by_proxy

@@ -16,8 +16,12 @@ from azure.core.polling import PollingMethod, LROPoller
 from azure.core.tracing.decorator import distributed_trace
 
 from ._operations import JSON
-from ._operations import _LoadTestAdministrationClientOperationsMixin as GeneratedAdministrationClientOperations
-from ._operations import _LoadTestRunClientOperationsMixin as GeneratedRunClientOperations
+from ._operations import (
+    _LoadTestAdministrationClientOperationsMixin as GeneratedAdministrationClientOperations,
+)
+from ._operations import (
+    _LoadTestRunClientOperationsMixin as GeneratedRunClientOperations,
+)
 
 from .. import models as _models
 
@@ -110,10 +114,14 @@ class TestProfileRunStatusPoller(LoadTestingPollingMethod):
         self._status = self._resource["status"]
 
 
-class LoadTestAdministrationClientOperationsMixin(GeneratedAdministrationClientOperations):
+class LoadTestAdministrationClientOperationsMixin(
+    GeneratedAdministrationClientOperations
+):
 
     def __init__(self, *args, **kwargs):
-        super(LoadTestAdministrationClientOperationsMixin, self).__init__(*args, **kwargs)
+        super(LoadTestAdministrationClientOperationsMixin, self).__init__(
+            *args, **kwargs
+        )
 
     @overload
     def begin_upload_test_file(
@@ -221,12 +229,23 @@ class LoadTestAdministrationClientOperationsMixin(GeneratedAdministrationClientO
         if polling_interval is None:
             polling_interval = 5
         upload_test_file_operation = super()._begin_upload_test_file(
-            test_id=test_id, file_name=file_name, file_type=file_type, body=body, **kwargs
+            test_id=test_id,
+            file_name=file_name,
+            file_type=file_type,
+            body=body,
+            **kwargs
         )
 
         command = partial(self.get_test_file, test_id=test_id, file_name=file_name)
-        file_validation_status_polling = ValidationCheckPoller(interval=polling_interval)
-        return LROPoller(command, upload_test_file_operation, lambda *_: None, file_validation_status_polling)
+        file_validation_status_polling = ValidationCheckPoller(
+            interval=polling_interval
+        )
+        return LROPoller(
+            command,
+            upload_test_file_operation,
+            lambda *_: None,
+            file_validation_status_polling,
+        )
 
 
 class LoadTestRunClientOperationsMixin(GeneratedRunClientOperations):
@@ -408,7 +427,12 @@ class LoadTestRunClientOperationsMixin(GeneratedRunClientOperations):
 
     @overload
     def begin_test_profile_run(
-        self, test_profile_run_id: str, body: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
+        self,
+        test_profile_run_id: str,
+        body: JSON,
+        *,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
     ) -> LROPoller[_models.TestProfileRun]:
         """Create and start a new test profile run.
 
@@ -455,7 +479,10 @@ class LoadTestRunClientOperationsMixin(GeneratedRunClientOperations):
 
     @distributed_trace
     def begin_test_profile_run(
-        self, test_profile_run_id: str, body: Union[_models.TestProfileRun, JSON, IO[bytes]], **kwargs: Any
+        self,
+        test_profile_run_id: str,
+        body: Union[_models.TestProfileRun, JSON, IO[bytes]],
+        **kwargs: Any
     ) -> LROPoller[_models.TestProfileRun]:
         """Create and start a new test profile run.
 
@@ -477,9 +504,13 @@ class LoadTestRunClientOperationsMixin(GeneratedRunClientOperations):
         create_or_update_test_profile_run_operation = super()._begin_test_profile_run(
             test_profile_run_id, body, **kwargs
         )
-        command = partial(self.get_test_profile_run, test_profile_run_id=test_profile_run_id)
+        command = partial(
+            self.get_test_profile_run, test_profile_run_id=test_profile_run_id
+        )
 
-        test_profile_run_status_polling = TestProfileRunStatusPoller(interval=polling_interval)
+        test_profile_run_status_polling = TestProfileRunStatusPoller(
+            interval=polling_interval
+        )
         return LROPoller(
             command,
             create_or_update_test_profile_run_operation,
@@ -489,7 +520,10 @@ class LoadTestRunClientOperationsMixin(GeneratedRunClientOperations):
 
 
 # Add all objects you want publicly available to users at this package level
-__all__: List[str] = ["LoadTestAdministrationClientOperationsMixin", "LoadTestRunClientOperationsMixin"]
+__all__: List[str] = [
+    "LoadTestAdministrationClientOperationsMixin",
+    "LoadTestRunClientOperationsMixin",
+]
 
 
 def patch_sdk():

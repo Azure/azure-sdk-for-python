@@ -249,7 +249,7 @@ class TestLoadTestAdministrationOperations(LoadTestingAsyncTest):
         set_bodiless_matcher()
 
         client = self.create_administration_client(loadtesting_endpoint)
-        trigger_id = "test-schedule-trigger-id-async"
+        trigger_id = "test-new-schedule-trigger-id-async"
         result = await client.create_or_update_trigger(
             trigger_id,
             {
@@ -276,7 +276,7 @@ class TestLoadTestAdministrationOperations(LoadTestingAsyncTest):
         set_bodiless_matcher()
 
         client = self.create_administration_client(loadtesting_endpoint)
-        trigger_id = "test-schedule-trigger-id-async"
+        trigger_id = "test-new-schedule-trigger-id-async"
         result = await client.get_trigger(trigger_id)
         assert result is not None
 
@@ -303,7 +303,7 @@ class TestLoadTestAdministrationOperations(LoadTestingAsyncTest):
         set_bodiless_matcher()
 
         client = self.create_administration_client(loadtesting_endpoint)
-        trigger_id = "test-schedule-trigger-id-async"
+        trigger_id = "test-new-schedule-trigger-id-async"
         result = await client.delete_trigger(trigger_id)
         assert result is None
 
@@ -319,7 +319,7 @@ class TestLoadTestAdministrationOperations(LoadTestingAsyncTest):
         set_bodiless_matcher()
 
         client = self.create_administration_client(loadtesting_endpoint)
-        notification_rule_id = "test-notification-id-async"
+        notification_rule_id = "test-new-notification-id-async"
         result = await client.create_or_update_notification_rule(
             notification_rule_id,
             {
@@ -352,7 +352,7 @@ class TestLoadTestAdministrationOperations(LoadTestingAsyncTest):
         set_bodiless_matcher()
 
         client = self.create_administration_client(loadtesting_endpoint)
-        notification_rule_id = "test-notification-id-async"
+        notification_rule_id = "test-new-notification-id-async"
         result = await client.get_notification_rule(notification_rule_id)
         assert result is not None
 
@@ -380,7 +380,7 @@ class TestLoadTestAdministrationOperations(LoadTestingAsyncTest):
         set_bodiless_matcher()
 
         client = self.create_administration_client(loadtesting_endpoint)
-        notification_rule_id = "test-notification-id-async"
+        notification_rule_id = "test-new-notification-id-async"
         result = await client.delete_notification_rule(notification_rule_id)
         assert result is None
 
@@ -410,7 +410,7 @@ class TestLoadTestAdministrationOperations(LoadTestingAsyncTest):
         set_bodiless_matcher()
 
         client = self.create_administration_client(loadtesting_endpoint)
-        new_test_id = "new-clone-test-id-async"
+        new_test_id = "new-cloned-test-id-async"
         
         poller = await client.begin_clone_test(
             loadtesting_test_id,

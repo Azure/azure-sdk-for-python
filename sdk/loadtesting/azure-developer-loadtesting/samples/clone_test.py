@@ -34,7 +34,7 @@ client = LoadTestAdministrationClient(
     credential=DefaultAzureCredential(), endpoint=LOADTESTSERVICE_ENDPOINT
 )
 
-SOURCE_TEST_ID = os.environ["SOURCE_TEST_ID"]
+SOURCE_TEST_ID = os.environ["LOADTESTSERVICE_SOURCE_TEST_ID"]
 NEW_TEST_ID = "my-cloned-test-id"
 
 # Clone the test

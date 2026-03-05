@@ -202,7 +202,7 @@ class TestLoadTestAdministrationOperations(LoadTestingTest):
         set_bodiless_matcher()
 
         client = self.create_administration_client(loadtesting_endpoint)
-        trigger_id = "test-schedule-trigger-id-sync"
+        trigger_id = "test-new-schedule-trigger-id-sync"
         result = client.create_or_update_trigger(
             trigger_id,
             {
@@ -226,7 +226,7 @@ class TestLoadTestAdministrationOperations(LoadTestingTest):
         set_bodiless_matcher()
 
         client = self.create_administration_client(loadtesting_endpoint)
-        trigger_id = "test-schedule-trigger-id-sync"
+        trigger_id = "test-new-schedule-trigger-id-sync"
         result = client.get_trigger(trigger_id)
         assert result is not None
 
@@ -247,7 +247,7 @@ class TestLoadTestAdministrationOperations(LoadTestingTest):
         set_bodiless_matcher()
 
         client = self.create_administration_client(loadtesting_endpoint)
-        trigger_id = "test-schedule-trigger-id-sync"
+        trigger_id = "test-new-schedule-trigger-id-sync"
         result = client.delete_trigger(trigger_id)
         assert result is None
 
@@ -258,7 +258,7 @@ class TestLoadTestAdministrationOperations(LoadTestingTest):
         set_bodiless_matcher()
 
         client = self.create_administration_client(loadtesting_endpoint)
-        notification_rule_id = "test-notification-id-sync"
+        notification_rule_id = "test-new-notification-id-sync"
         result = client.create_or_update_notification_rule(
             notification_rule_id,
             {
@@ -286,7 +286,7 @@ class TestLoadTestAdministrationOperations(LoadTestingTest):
         set_bodiless_matcher()
 
         client = self.create_administration_client(loadtesting_endpoint)
-        notification_rule_id = "test-notification-id-sync"
+        notification_rule_id = "test-new-notification-id-sync"
         result = client.get_notification_rule(notification_rule_id)
         assert result is not None
 
@@ -307,7 +307,7 @@ class TestLoadTestAdministrationOperations(LoadTestingTest):
         set_bodiless_matcher()
 
         client = self.create_administration_client(loadtesting_endpoint)
-        notification_rule_id = "test-notification-id-sync"
+        notification_rule_id = "test-new-notification-id-sync"
         result = client.delete_notification_rule(notification_rule_id)
         assert result is None
 
@@ -327,7 +327,7 @@ class TestLoadTestAdministrationOperations(LoadTestingTest):
         set_bodiless_matcher()
 
         client = self.create_administration_client(loadtesting_endpoint)
-        new_test_id = "new-clone-test-id-sync"
+        new_test_id = "new-cloned-test-id-sync"
         
         poller = client.begin_clone_test(
             loadtesting_test_id,
