@@ -24,15 +24,15 @@ resources in your Microsoft Foundry Project. Use it to:
   * Web Search
   * Web Search (Preview)
 * **Get an OpenAI client** using `.get_openai_client()` method to run Responses, Conversations, Evaluations and Fine-Tuning operations with your Agent.
-* **Manage memory stores (preview)** for Agent conversations, using the `.beta.memory_stores` operations.
-* **Explore additional evaluation tools (some in preview)** to assess the performance of your generative AI application, using the `.evaluation_rules`,
+* **Manage memory stores (preview)** for Agent conversations, using `.beta.memory_stores` operations.
+* **Explore additional evaluation tools (some in preview)** to assess the performance of your generative AI application, using `.evaluation_rules`,
 `.beta.evaluation_taxonomies`, `.beta.evaluators`, `.beta.insights`, and `.beta.schedules` operations.
-* **Run Red Team scans (preview)** to identify risks associated with your generative AI application, using the `.beta.red_teams` operations.
+* **Run Red Team scans (preview)** to identify risks associated with your generative AI application, using `.beta.red_teams` operations.
 * **Fine tune** AI Models on your data.
-* **Enumerate AI Models** deployed to your Foundry Project using the `.deployments` operations.
-* **Enumerate connected Azure resources** in your Foundry project using the `.connections` operations.
-* **Upload documents and create Datasets** to reference them using the `.datasets` operations.
-* **Create and enumerate Search Indexes** using methods the `.indexes` operations.
+* **Enumerate AI Models** deployed to your Foundry Project using `.deployments` operations.
+* **Enumerate connected Azure resources** in your Foundry project using `.connections` operations.
+* **Upload documents and create Datasets** to reference them using `.datasets` operations.
+* **Create and enumerate Search Indexes** using methods `.indexes` operations.
 
 The client library uses version `v1` of the AI Foundry [data plane REST APIs](https://aka.ms/azsdk/azure-ai-projects-v2/api-reference-v1).
 
@@ -54,7 +54,7 @@ To report an issue with the client library, or request additional features, plea
 * Python 3.9 or later.
 * An [Azure subscription][azure_sub].
 * A [project in Microsoft Foundry](https://learn.microsoft.com/azure/ai-studio/how-to/create-projects).
-* A Foundry project endpoint URL of the form `https://your-ai-services-account-name.services.ai.azure.com/api/projects/your-project-name`. It can be found in your Microsoft Foundry Project overview page. Below we will assume the environment variable `AZURE_AI_PROJECT_ENDPOINT` was defined to hold this value.
+* A Foundry project endpoint URL of the form `https://your-ai-services-account-name.services.ai.azure.com/api/projects/your-project-name`. It can be found in your Microsoft Foundry Project home page. Below we will assume the environment variable `AZURE_AI_PROJECT_ENDPOINT` was defined to hold this value.
 * An Entra ID token for authentication. Your application needs an object that implements the [TokenCredential](https://learn.microsoft.com/python/api/azure-core/azure.core.credentials.tokencredential) interface. Code samples here use [DefaultAzureCredential](https://learn.microsoft.com/python/api/azure-identity/azure.identity.defaultazurecredential). To get that working, you will need:
   * An appropriate role assignment. See [Role-based access control in Microsoft Foundry portal](https://learn.microsoft.com/azure/ai-foundry/concepts/rbac-foundry?view=foundry). Role assignment can be done via the "Access Control (IAM)" tab of your Azure AI Project resource in the Azure portal.
   * [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli) installed.
@@ -63,7 +63,13 @@ To report an issue with the client library, or request additional features, plea
 ### Install the package
 
 ```bash
-pip install --pre azure-ai-projects
+pip install azure-ai-projects
+```
+
+Verify that you have version 2.0.0 or above installed
+
+```bash
+pip show azure-ai-projects
 ```
 
 ## Key concepts
@@ -72,7 +78,7 @@ pip install --pre azure-ai-projects
 
 Entra ID is the only authentication method supported at the moment by the client.
 
-To construct a synchronous client as a context manager:
+To construct a synchronous client as using context manager:
 
 ```python
 import os
@@ -200,7 +206,7 @@ These tools work immediately without requiring external connections.
 
 **Code Interpreter**
 
-Write and run Python code in a sandboxed environment, process files and work with diverse data formats. [OpenAI Documentation](https://platform.openai.com/docs/guides/tools-code-interpreter)
+Write and run Python code in a sandboxed environment, process files and work with diverse data formats. See See [OpenAI Documentation](https://platform.openai.com/docs/guides/tools-code-interpreter).
 
 Basic tool declaration (no input files):
 
@@ -250,7 +256,7 @@ See full sample file `\agents\tools\sample_agent_code_interpreter_with_files.py`
 
 **File Search**
 
-Built-in RAG (Retrieval-Augmented Generation) tool to process and search through documents using vector stores for knowledge retrieval. [OpenAI Documentation](https://platform.openai.com/docs/assistants/tools/file-search)
+Built-in RAG (Retrieval-Augmented Generation) tool to process and search through documents using vector stores for knowledge retrieval. See [OpenAI Documentation](https://platform.openai.com/docs/assistants/tools/file-search)
 
 <!-- SNIPPET:sample_agent_file_search.tool_declaration -->
 
@@ -311,7 +317,7 @@ See the full sample in file `\agents\tools\sample_agent_image_generation.py` in 
 
 **Web Search / Web Search (Preview)**
 
-Discover up-to-date web content with the GA Web Search tool or try the Web Search Preview tool for the latest enhancements. Guidance on when to use each option is in the documentation: https://learn.microsoft.com/azure/ai-foundry/agents/how-to/tools/web-overview?view=foundry#determine-the-best-tool-for-your-use-cases.
+Discover up-to-date web content with the GA Web Search tool or try the Web Search Preview tool for the latest enhancements. Guidance on when to use each option [can be found here](https://learn.microsoft.com/azure/ai-foundry/agents/how-to/tools/web-overview?view=foundry#determine-the-best-tool-for-your-use-cases).
 
 Warning:
 Web Search tool uses Grounding with Bing, which has additional costs and terms: [terms of use](https://www.microsoft.com/bing/apis/grounding-legal-enterprise) and [privacy statement](https://go.microsoft.com/fwlink/?LinkId=521839&clcid=0x409). Customer data will flow outside the Azure compliance boundary. Learn more [here](https://learn.microsoft.com/azure/ai-foundry/agents/how-to/tools/web-search).
@@ -371,7 +377,7 @@ See the full sample in file `\agents\tools\sample_agent_computer_use.py` in the 
 
 **Model Context Protocol (MCP)**
 
-Integrate MCP servers to extend agent capabilities with standardized tools and resources. [OpenAI Documentation](https://platform.openai.com/docs/guides/tools-connectors-mcp)
+Integrate MCP servers to extend agent capabilities with standardized tools and resources. See [OpenAI Documentation](https://platform.openai.com/docs/guides/tools-connectors-mcp)
 
 <!-- SNIPPET:sample_agent_mcp.tool_declaration -->
 
@@ -391,7 +397,7 @@ See the full sample in file `\agents\tools\sample_agent_mcp.py` in the [Samples]
 
 **OpenAPI**
 
-Call external APIs defined by OpenAPI specifications without additional client-side code. [OpenAI Documentation](https://platform.openai.com/docs/guides/tools-openapi)
+Call external APIs defined by OpenAPI specifications without additional client-side code. See [OpenAI Documentation](https://platform.openai.com/docs/guides/tools-openapi)
 
 <!-- SNIPPET:sample_agent_openapi.tool_declaration-->
 
@@ -415,7 +421,7 @@ See the full sample in file `\agents\tools\sample_agent_openapi.py` in the [Samp
 
 **Function Tool**
 
-Define custom functions that allow agents to interact with external APIs, databases, or application logic. [OpenAI Documentation](https://platform.openai.com/docs/guides/function-calling)
+Define custom functions that allow agents to interact with external APIs, databases, or application logic. See [OpenAI Documentation](https://platform.openai.com/docs/guides/function-calling)
 
 <!-- SNIPPET:sample_agent_function_tool.tool_declaration -->
 
