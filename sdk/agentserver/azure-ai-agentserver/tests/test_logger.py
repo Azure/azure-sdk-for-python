@@ -3,16 +3,16 @@
 # ---------------------------------------------------------
 """Tests for the _logger module."""
 import logging
+import pytest
 
 
-def test_invalid_log_level_falls_back_to_warning(monkeypatch):
-    """An invalid AGENT_LOG_LEVEL value falls back to WARNING."""
+def test_invalid_log_level_raises(monkeypatch):
+    """An invalid AGENT_LOG_LEVEL value raises ValueError."""
     monkeypatch.setenv("AGENT_LOG_LEVEL", "BOGUS")
-    # Re-import to pick up the monkeypatched env
     from azure.ai.agentserver._logger import get_logger
 
-    logger = get_logger()
-    assert logger.level == logging.WARNING
+    with pytest.raises(ValueError, match="AGENT_LOG_LEVEL"):
+        get_logger()
 
 
 def test_valid_log_level_is_applied(monkeypatch):

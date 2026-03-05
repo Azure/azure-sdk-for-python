@@ -19,6 +19,7 @@ from starlette.routing import Route
 
 from .._access_log import AccessLogHelper
 from .._constants import Constants
+from .._errors import error_response
 from .._logger import get_logger
 from .._metrics import MetricsHelper
 from .._tracing import TracingHelper, extract_w3c_carrier
@@ -158,7 +159,7 @@ class AgentServer(ABC):
         :return: Any Starlette response.
         :rtype: starlette.responses.Response
         """
-        return JSONResponse({"error": "get_invocation not supported"}, status_code=404)
+        return error_response("not_supported", "get_invocation not supported", status_code=404)
 
     async def cancel_invocation(self, request: Request) -> Response:  # pylint: disable=unused-argument
         """Cancel an invocation.
@@ -173,7 +174,7 @@ class AgentServer(ABC):
         :return: Any Starlette response.
         :rtype: starlette.responses.Response
         """
-        return JSONResponse({"error": "cancel_invocation not supported"}, status_code=404)
+        return error_response("not_supported", "cancel_invocation not supported", status_code=404)
 
     async def on_shutdown(self) -> None:
         """Called during server shutdown after in-flight requests have drained.
@@ -353,7 +354,7 @@ class AgentServer(ABC):
         """
         spec = self.get_openapi_spec()
         if spec is None:
-            return JSONResponse({"error": "No OpenAPI spec registered"}, status_code=404)
+            return error_response("not_found", "No OpenAPI spec registered", status_code=404)
         return JSONResponse(spec)
 
     async def _create_invocation_endpoint(self, request: Request) -> Response:
@@ -373,9 +374,14 @@ class AgentServer(ABC):
             body = await request.body()
             errors = self._validator.validate_request(body, content_type)
             if errors:
-                return JSONResponse(
-                    {"error": "Request validation failed", "details": errors},
+                return error_response(
+                    "invalid_payload",
+                    "Request validation failed",
                     status_code=400,
+                    details=[
+                        {"code": "validation_error", "message": e}
+                        for e in errors
+                    ],
                 )
 
         carrier = extract_w3c_carrier(request.headers)
@@ -398,17 +404,19 @@ class AgentServer(ABC):
                 invocation_id,
                 self._request_timeout,
             )
-            return JSONResponse(
-                {"error": f"Invocation timed out after {self._request_timeout}s"},
+            return error_response(
+                "request_timeout",
+                f"Invocation timed out after {self._request_timeout}s",
                 status_code=504,
                 headers={Constants.INVOCATION_ID_HEADER: invocation_id},
             )
         except Exception as exc:  # pylint: disable=broad-exception-caught
             self._tracing.end_span(otel_span, exc=exc)
             logger.error("Error processing invocation %s: %s", invocation_id, exc, exc_info=True)
-            error_message = str(exc) if os.environ.get(Constants.AGENT_DEBUG_ERRORS) else "Internal server error"
-            return JSONResponse(
-                {"error": error_message},
+            message = str(exc) if os.environ.get(Constants.AGENT_DEBUG_ERRORS) else "Internal server error"
+            return error_response(
+                "internal_error",
+                message,
                 status_code=500,
                 headers={Constants.INVOCATION_ID_HEADER: invocation_id},
             )
@@ -447,9 +455,10 @@ class AgentServer(ABC):
             except Exception as exc:  # pylint: disable=broad-exception-caught
                 self._tracing.record_error(_otel_span, exc)
                 logger.error("Error in get_invocation %s: %s", invocation_id, exc, exc_info=True)
-                error_message = str(exc) if os.environ.get(Constants.AGENT_DEBUG_ERRORS) else "Internal server error"
-                return JSONResponse(
-                    {"error": error_message},
+                message = str(exc) if os.environ.get(Constants.AGENT_DEBUG_ERRORS) else "Internal server error"
+                return error_response(
+                    "internal_error",
+                    message,
                     status_code=500,
                 )
 
@@ -474,9 +483,10 @@ class AgentServer(ABC):
             except Exception as exc:  # pylint: disable=broad-exception-caught
                 self._tracing.record_error(_otel_span, exc)
                 logger.error("Error in cancel_invocation %s: %s", invocation_id, exc, exc_info=True)
-                error_message = str(exc) if os.environ.get(Constants.AGENT_DEBUG_ERRORS) else "Internal server error"
-                return JSONResponse(
-                    {"error": error_message},
+                message = str(exc) if os.environ.get(Constants.AGENT_DEBUG_ERRORS) else "Internal server error"
+                return error_response(
+                    "internal_error",
+                    message,
                     status_code=500,
                 )
 

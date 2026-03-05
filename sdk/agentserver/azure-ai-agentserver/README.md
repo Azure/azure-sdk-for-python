@@ -308,8 +308,8 @@ export AGENT_ENABLE_ACCESS_LOG=true
 
 One structured log record is emitted per request to the `azure.ai.agentserver.access`
 logger (separate from the library's main logger). Each entry includes: `method`, `path`,
-`status`, `duration_ms`, `request_size`, `response_size`, `invocation_id`, `client_ip`,
-and `user_agent`.
+`status`, `protocol`, `duration_ms`, `request_size`, `response_size`, `invocation_id`,
+`client_ip`, and `user_agent`.
 
 Optionally install `python-json-logger` for JSON-formatted output:
 

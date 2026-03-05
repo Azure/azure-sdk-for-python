@@ -78,7 +78,8 @@ async def test_get_invocation_error_returns_500():
     async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as client:
         resp = await client.get("/invocations/some-id")
         assert resp.status_code == 500
-        assert "Internal server error" in resp.json()["error"]
+        assert resp.json()["error"]["code"] == "internal_error"
+        assert resp.json()["error"]["message"] == "Internal server error"
 
 
 @pytest.mark.asyncio
@@ -102,4 +103,5 @@ async def test_cancel_invocation_error_returns_500():
     async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as client:
         resp = await client.post("/invocations/some-id/cancel")
         assert resp.status_code == 500
-        assert "Internal server error" in resp.json()["error"]
+        assert resp.json()["error"]["code"] == "internal_error"
+        assert resp.json()["error"]["message"] == "Internal server error"

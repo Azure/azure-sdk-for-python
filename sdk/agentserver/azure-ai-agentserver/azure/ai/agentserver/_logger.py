@@ -21,6 +21,9 @@ def get_logger() -> logging.Logger:
     logger = logging.getLogger("azure.ai.agentserver")
     level = os.getenv("AGENT_LOG_LEVEL", "WARNING").upper()
     if level not in _VALID_LEVELS:
-        level = "WARNING"
+        raise ValueError(
+            f"Invalid value for AGENT_LOG_LEVEL: {level!r} "
+            f"(expected one of {', '.join(_VALID_LEVELS)})"
+        )
     logger.setLevel(level)
     return logger

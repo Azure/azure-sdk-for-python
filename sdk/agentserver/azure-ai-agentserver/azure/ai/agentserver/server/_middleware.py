@@ -8,8 +8,9 @@ import asyncio  # pylint: disable=do-not-import-asyncio
 import time
 from typing import TYPE_CHECKING, Any
 
-from starlette.responses import JSONResponse
 from starlette.types import ASGIApp, Receive, Scope, Send
+
+from .._errors import error_response
 
 if TYPE_CHECKING:
     from .._access_log import AccessLogHelper
@@ -48,11 +49,9 @@ class MaxBodySizeMiddleware:
             except ValueError:
                 content_length = 0
             if content_length > self.max_body_size:
-                response = JSONResponse(
-                    {
-                        "error": "Payload Too Large",
-                        "max_bytes": self.max_body_size,
-                    },
+                response = error_response(
+                    "payload_too_large",
+                    f"Payload Too Large (max {self.max_body_size} bytes)",
                     status_code=413,
                 )
                 await response(scope, receive, send)
@@ -79,11 +78,9 @@ class MaxConcurrentRequestsMiddleware:
             return
 
         if self._semaphore.locked():
-            response = JSONResponse(
-                {
-                    "error": "Too Many Requests",
-                    "detail": f"Max concurrent requests ({self.max_concurrent}) exceeded",
-                },
+            response = error_response(
+                "too_many_requests",
+                f"Too Many Requests (max {self.max_concurrent} concurrent)",
                 status_code=429,
             )
             await response(scope, receive, send)

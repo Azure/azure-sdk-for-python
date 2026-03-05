@@ -248,8 +248,8 @@ class TestOpenAPIValidation:
         )
         assert resp.status_code == 400
         body = resp.json()
-        assert "error" in body
-        assert "details" in body
+        assert body["error"]["code"] == "invalid_payload"
+        assert "details" in body["error"]
 
     @pytest.mark.asyncio
     async def test_malformed_json_returns_400(self, validated_client):
@@ -260,7 +260,7 @@ class TestOpenAPIValidation:
             headers={"Content-Type": "application/json"},
         )
         assert resp.status_code == 400
-        assert "error" in resp.json()
+        assert resp.json()["error"]["code"] == "invalid_payload"
 
     @pytest.mark.asyncio
     async def test_extra_field_accepted(self, validated_client):
@@ -426,8 +426,7 @@ class TestDebugErrorsOnGetCancel:
         async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as client:
             resp = await client.get("/invocations/some-id")
         assert resp.status_code == 500
-        assert "get-debug-detail" not in resp.json()["error"]
-        assert "Internal server error" in resp.json()["error"]
+        assert resp.json()["error"]["message"] == "Internal server error"
 
     @pytest.mark.asyncio
     async def test_get_exposes_details_with_debug(self, monkeypatch):
@@ -438,7 +437,7 @@ class TestDebugErrorsOnGetCancel:
         async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as client:
             resp = await client.get("/invocations/some-id")
         assert resp.status_code == 500
-        assert "get-debug-detail" in resp.json()["error"]
+        assert resp.json()["error"]["message"] == "get-debug-detail"
 
     @pytest.mark.asyncio
     async def test_cancel_hides_details_by_default(self):
@@ -448,8 +447,7 @@ class TestDebugErrorsOnGetCancel:
         async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as client:
             resp = await client.post("/invocations/some-id/cancel")
         assert resp.status_code == 500
-        assert "cancel-debug-detail" not in resp.json()["error"]
-        assert "Internal server error" in resp.json()["error"]
+        assert resp.json()["error"]["message"] == "Internal server error"
 
     @pytest.mark.asyncio
     async def test_cancel_exposes_details_with_debug(self, monkeypatch):
@@ -460,7 +458,7 @@ class TestDebugErrorsOnGetCancel:
         async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as client:
             resp = await client.post("/invocations/some-id/cancel")
         assert resp.status_code == 500
-        assert "cancel-debug-detail" in resp.json()["error"]
+        assert resp.json()["error"]["message"] == "cancel-debug-detail"
 
 
 # ---------------------------------------------------------------------------

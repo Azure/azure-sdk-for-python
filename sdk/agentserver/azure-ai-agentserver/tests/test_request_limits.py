@@ -108,10 +108,10 @@ class TestMaxRequestBodySizeResolution:
             agent = _EchoAgent()
             assert agent._max_request_body_size == 2048
 
-    def test_invalid_env_var_falls_back_to_default(self):
+    def test_invalid_env_var_raises(self):
         with patch.dict(os.environ, {Constants.AGENT_MAX_REQUEST_BODY_SIZE: "abc"}):
-            agent = _EchoAgent()
-            assert agent._max_request_body_size == Constants.DEFAULT_MAX_REQUEST_BODY_SIZE
+            with pytest.raises(ValueError, match="AGENT_MAX_REQUEST_BODY_SIZE"):
+                _EchoAgent()
 
     def test_default_when_nothing_set(self):
         with patch.dict(os.environ, {}, clear=True):
@@ -141,8 +141,8 @@ class TestMaxRequestBodySizeEnforcement:
         resp = await small_limit_client.post("/invocations", content=body)
         assert resp.status_code == 413
         data = resp.json()
-        assert data["error"] == "Payload Too Large"
-        assert data["max_bytes"] == 1024
+        assert data["error"]["code"] == "payload_too_large"
+        assert data["error"]["code"] == "payload_too_large"
 
     @pytest.mark.asyncio
     async def test_limit_disabled_allows_large_body(self, no_limit_client):
@@ -217,10 +217,10 @@ class TestRequestTimeoutResolution:
             agent = _FastAgent()
             assert agent._request_timeout == 120
 
-    def test_invalid_env_var_falls_back_to_default(self):
+    def test_invalid_env_var_raises(self):
         with patch.dict(os.environ, {Constants.AGENT_REQUEST_TIMEOUT: "abc"}):
-            agent = _FastAgent()
-            assert agent._request_timeout == Constants.DEFAULT_REQUEST_TIMEOUT
+            with pytest.raises(ValueError, match="AGENT_REQUEST_TIMEOUT"):
+                _FastAgent()
 
     def test_default_when_nothing_set(self):
         with patch.dict(os.environ, {}, clear=True):
@@ -239,8 +239,9 @@ class TestInvokeTimeoutEnforcement:
             resp = await client.post("/invocations", content=b"{}")
             assert resp.status_code == 504
             data = resp.json()
-            assert "timed out" in data["error"].lower()
-            assert "1s" in data["error"]
+            assert data["error"]["code"] == "request_timeout"
+            assert "timed out" in data["error"]["message"].lower()
+            assert "1s" in data["error"]["message"]
 
     @pytest.mark.asyncio
     async def test_slow_invoke_includes_invocation_id_header(self):
@@ -331,10 +332,10 @@ class TestMaxConcurrentRequestsResolution:
             agent = _FastAgent()
             assert agent._max_concurrent_requests == 10
 
-    def test_invalid_env_var_falls_back_to_default(self):
+    def test_invalid_env_var_raises(self):
         with patch.dict(os.environ, {Constants.AGENT_MAX_CONCURRENT_REQUESTS: "abc"}):
-            agent = _FastAgent()
-            assert agent._max_concurrent_requests == Constants.DEFAULT_MAX_CONCURRENT_REQUESTS
+            with pytest.raises(ValueError, match="AGENT_MAX_CONCURRENT_REQUESTS"):
+                _FastAgent()
 
     def test_default_when_nothing_set(self):
         with patch.dict(os.environ, {}, clear=True):
@@ -358,7 +359,7 @@ class TestMaxConcurrentRequestsEnforcement:
             resp2 = await client.post("/invocations", content=b"{}")
             assert resp2.status_code == 429
             data = resp2.json()
-            assert "Too Many Requests" in data["error"]
+            assert data["error"]["code"] == "too_many_requests"
             # First request should still succeed
             resp1 = await task1
             assert resp1.status_code == 200
@@ -398,7 +399,7 @@ class TestMaxConcurrentRequestsEnforcement:
             # Verify the 429 response body structure.
             resp = await client.post("/invocations", content=b"{}")
             assert resp.status_code == 429
-            assert resp.json()["detail"] == "Max concurrent requests (1) exceeded"
+            assert resp.json()["error"]["code"] == "too_many_requests"
             resp1 = await task1
             assert resp1.status_code == 200
 

@@ -47,10 +47,14 @@ class TestResolveGracefulShutdownTimeout:
             agent = _StubAgent()
             assert agent._timeout_graceful_shutdown == 45
 
-    def test_invalid_env_var_falls_back_to_default(self):
+    def test_invalid_env_var_raises(self):
         with patch.dict(os.environ, {Constants.AGENT_GRACEFUL_SHUTDOWN_TIMEOUT: "not-a-number"}):
-            agent = _StubAgent()
-            assert agent._timeout_graceful_shutdown == Constants.DEFAULT_GRACEFUL_SHUTDOWN_TIMEOUT
+            with pytest.raises(ValueError, match="AGENT_GRACEFUL_SHUTDOWN_TIMEOUT"):
+                _StubAgent()
+
+    def test_non_int_explicit_value_raises(self):
+        with pytest.raises(ValueError, match="expected an integer"):
+            _StubAgent(timeout_graceful_shutdown="ten")  # type: ignore[arg-type]
 
     def test_default_when_nothing_set(self):
         with patch.dict(os.environ, {}, clear=True):

@@ -92,8 +92,8 @@ async def test_invoke_error_returns_500(failing_client):
     resp = await failing_client.post("/invocations", content=b'{"key":"value"}')
     assert resp.status_code == 500
     data = resp.json()
-    assert "error" in data
-    assert "Internal server error" in data["error"]
+    assert data["error"]["code"] == "internal_error"
+    assert data["error"]["message"] == "Internal server error"
     assert resp.headers.get("x-agent-invocation-id") is not None
 
 
@@ -102,7 +102,7 @@ async def test_invoke_error_hides_details_by_default(failing_client):
     """Without AGENT_DEBUG_ERRORS, the actual exception message is hidden."""
     resp = await failing_client.post("/invocations", content=b'{}')
     assert resp.status_code == 500
-    assert "something went wrong" not in resp.json()["error"]
+    assert resp.json()["error"]["message"] == "Internal server error"
 
 
 @pytest.mark.asyncio
@@ -111,4 +111,4 @@ async def test_invoke_error_exposes_details_with_debug(monkeypatch, failing_clie
     monkeypatch.setenv("AGENT_DEBUG_ERRORS", "1")
     resp = await failing_client.post("/invocations", content=b'{}')
     assert resp.status_code == 500
-    assert "something went wrong" in resp.json()["error"]
+    assert resp.json()["error"]["message"] == "something went wrong"
