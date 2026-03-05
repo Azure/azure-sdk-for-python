@@ -10,7 +10,6 @@ from typing import Optional
 
 from ._query_advice import QueryAdvice
 
-# cspell:ignore STARTSWTIH
 def get_query_advice_info(header_value: Optional[str]) -> str:
     """Process a query advice response header into a formatted human-readable string.
 

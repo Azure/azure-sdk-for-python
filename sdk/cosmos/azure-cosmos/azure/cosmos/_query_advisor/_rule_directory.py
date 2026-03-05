@@ -7,8 +7,11 @@
 """Rule directory singleton for loading and accessing query advice rules."""
 
 import json
+import logging
 from importlib.resources import files
 from typing import Any, Dict, Optional
+
+_LOGGER = logging.getLogger(__name__)
 
 
 class RuleDirectory:
@@ -49,8 +52,9 @@ class RuleDirectory:
             self._url_prefix = data.get("url_prefix", "")
             self._rules = data.get("rules", {})
         except Exception:  # pylint: disable=broad-except
-            # Silently fall back to empty rules so query execution
+            # Fall back to empty rules so query execution
             # is never blocked by an inability to load advice text.
+            _LOGGER.warning("Failed to load query_advice_rules.json, falling back to empty rules", exc_info=True)
             self._url_prefix = (
                 "https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/query/queryadvisor/"
             )

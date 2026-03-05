@@ -232,6 +232,7 @@ class TestQueryCrossPartitionAsync(unittest.IsolatedAsyncioTestCase):
         assert self.count == expected_count
         self.count = 0
 
+    @pytest.mark.skip(reason="Emulator does not support query advisor yet")
     async def test_populate_query_advice(self):
         doc_id = 'MyId' + str(uuid.uuid4())
         document_definition = {
