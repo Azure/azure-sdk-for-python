@@ -13,7 +13,6 @@ from typing import Annotated
 
 from agent_framework import tool
 
-
 # ============================================================================
 # Mock Data
 # ============================================================================
@@ -262,7 +261,8 @@ def query_external_candidates(
 ) -> str:
     """Query external candidates from job boards."""
     candidates = [
-        c for c in EXTERNAL_CANDIDATES.values()
+        c
+        for c in EXTERNAL_CANDIDATES.values()
         if job_id in c["applied_jobs"] and c["years_experience"] >= min_experience
     ]
     if not candidates:
@@ -291,10 +291,7 @@ def query_internal_employees(
     eligible_only: Annotated[bool, "Only return transfer-eligible employees"] = True,
 ) -> str:
     """Query internal employees for mobility."""
-    candidates = [
-        c for c in INTERNAL_CANDIDATES.values()
-        if job_id in c["applied_jobs"]
-    ]
+    candidates = [c for c in INTERNAL_CANDIDATES.values() if job_id in c["applied_jobs"]]
     if eligible_only:
         candidates = [c for c in candidates if c["transfer_eligible"]]
 
@@ -486,12 +483,14 @@ def book_interview(
     cand = EXTERNAL_CANDIDATES.get(candidate_id) or INTERNAL_CANDIDATES.get(candidate_id)
     name = cand["name"] if cand else candidate_id
 
-    _booked_interviews.append({
-        "candidate_id": candidate_id,
-        "manager": hiring_manager_id,
-        "date": date,
-        "time": time,
-    })
+    _booked_interviews.append(
+        {
+            "candidate_id": candidate_id,
+            "manager": hiring_manager_id,
+            "date": date,
+            "time": time,
+        }
+    )
 
     return f"""Interview Booked:
 Candidate: {name} ({candidate_id})

@@ -139,7 +139,9 @@ def _extract_normalized_output_parts(messages: List[Dict]) -> Set[str]:
     return normalized
 
 
-def _filter_messages_by_previous_output(messages: List[Dict], previous_output_texts: Set[str]) -> Tuple[List[Dict], bool]:
+def _filter_messages_by_previous_output(
+    messages: List[Dict], previous_output_texts: Set[str]
+) -> Tuple[List[Dict], bool]:
     if not previous_output_texts:
         return messages, False
 

@@ -134,11 +134,13 @@ def _wf_extract_errors(spans: List[Dict]) -> List[Dict]:
         cd = span.get("custom_dimensions") or {}
         msg = cd.get("error.message")
         if msg:
-            errors.append({
-                "message": str(msg),
-                "span_id": span.get("span_id", ""),
-                "timestamp": span.get("timestamp", ""),
-            })
+            errors.append(
+                {
+                    "message": str(msg),
+                    "span_id": span.get("span_id", ""),
+                    "timestamp": span.get("timestamp", ""),
+                }
+            )
     return errors
 
 
@@ -200,12 +202,14 @@ def _wf_extract_workflow_metadata(
         parsed_definition = _wf_safe_parse_json(cd.get("workflow.definition", ""))
         if not isinstance(parsed_definition, dict):
             parsed_definition = {}
-        candidates.append({
-            "timestamp": build_span.get("timestamp", ""),
-            "workflow_id": workflow_id,
-            "workflow_name": workflow_name,
-            "workflow_definition": parsed_definition,
-        })
+        candidates.append(
+            {
+                "timestamp": build_span.get("timestamp", ""),
+                "workflow_id": workflow_id,
+                "workflow_name": workflow_name,
+                "workflow_definition": parsed_definition,
+            }
+        )
 
     selected: Optional[Dict[str, Any]] = None
     if run_workflow_id:
@@ -228,9 +232,7 @@ def _wf_extract_workflow_metadata(
     return result
 
 
-def _wf_detect_workflow_type(
-    workflow_definition: Dict, executor_spans: List[Dict]
-) -> str:
+def _wf_detect_workflow_type(workflow_definition: Dict, executor_spans: List[Dict]) -> str:
     executor_types: set = set()
     for exec_info in workflow_definition.get("executors", {}).values():
         t = exec_info.get("type", "")
@@ -248,10 +250,7 @@ def _wf_detect_workflow_type(
         return "group_chat"
     if any("handoff" in t for t in lower_executor_types):
         return "handoff"
-    if any(
-        "dispatchtoallparticipants" in t or "dispatch_to_all_participants" in t
-        for t in lower_executor_types
-    ):
+    if any("dispatchtoallparticipants" in t or "dispatch_to_all_participants" in t for t in lower_executor_types):
         return "concurrent"
     if any("fanout" in t or "fanin" in t for t in lower_executor_types):
         return "workflow_dag"
@@ -259,9 +258,7 @@ def _wf_detect_workflow_type(
         if eg.get("type") == "SwitchCaseEdgeGroup":
             return "workflow_dag"
     if any(
-        "inputtoconversation" in t
-        or "responsetoconversation" in t
-        or "endwithconversation" in t
+        "inputtoconversation" in t or "responsetoconversation" in t or "endwithconversation" in t
         for t in lower_executor_types
     ):
         return "sequential"
@@ -303,11 +300,13 @@ def _wf_build_topology(workflow_definition: Dict) -> Dict:
             continue
         if eg_type in ("FanOutEdgeGroup", "FanInEdgeGroup"):
             for e in eg_edges:
-                edges.append({
-                    "type": eg_type,
-                    "source": e.get("source_id", ""),
-                    "target": e.get("target_id", ""),
-                })
+                edges.append(
+                    {
+                        "type": eg_type,
+                        "source": e.get("source_id", ""),
+                        "target": e.get("target_id", ""),
+                    }
+                )
         elif eg_type == "SwitchCaseEdgeGroup":
             for e in eg_edges:
                 edge_entry: Dict[str, Any] = {
@@ -321,11 +320,13 @@ def _wf_build_topology(workflow_definition: Dict) -> Dict:
                 edges.append(edge_entry)
         else:
             for e in eg_edges:
-                edges.append({
-                    "type": eg_type,
-                    "source": e.get("source_id", ""),
-                    "target": e.get("target_id", ""),
-                })
+                edges.append(
+                    {
+                        "type": eg_type,
+                        "source": e.get("source_id", ""),
+                        "target": e.get("target_id", ""),
+                    }
+                )
 
     return {
         "start_executor_id": workflow_definition.get("start_executor_id", ""),
@@ -379,9 +380,7 @@ def _wf_merge_chat_span_data(
             executor_id = cd.get("executor.id", "")
             matched_agent = None
             for aname in agents:
-                if (executor_id == aname
-                        or executor_id.endswith("_" + aname)
-                        or executor_id.endswith(":" + aname)):
+                if executor_id == aname or executor_id.endswith("_" + aname) or executor_id.endswith(":" + aname):
                     matched_agent = aname
                     break
             current_agent_name = matched_agent
@@ -437,17 +436,21 @@ def _wf_normalize_tool_definitions(tool_defs: Any) -> List[Dict]:
             continue
         if "function" in td:
             func = td.get("function", {})
-            result.append({
-                "name": func.get("name", ""),
-                "description": func.get("description", ""),
-                "parameters": func.get("parameters", {}),
-            })
+            result.append(
+                {
+                    "name": func.get("name", ""),
+                    "description": func.get("description", ""),
+                    "parameters": func.get("parameters", {}),
+                }
+            )
         else:
-            result.append({
-                "name": td.get("name", ""),
-                "description": td.get("description", ""),
-                "parameters": td.get("parameters", {}),
-            })
+            result.append(
+                {
+                    "name": td.get("name", ""),
+                    "description": td.get("description", ""),
+                    "parameters": td.get("parameters", {}),
+                }
+            )
     return result
 
 
@@ -458,15 +461,17 @@ def _wf_extract_invocations(invoke_agent_spans: List[Dict]) -> List[Dict]:
         input_msgs = _wf_safe_parse_json(cd.get("gen_ai.input.messages"))
         output_msgs = _wf_safe_parse_json(cd.get("gen_ai.output.messages"))
         sys_instrs = _wf_extract_system_instructions_from_input(input_msgs)
-        invocations.append({
-            "sequence": seq,
-            "timestamp": span.get("timestamp", ""),
-            "agent_name": cd.get("gen_ai.agent.name", ""),
-            "agent_id": cd.get("gen_ai.agent.id", ""),
-            "system_instructions": sys_instrs,
-            "input_messages": _wf_wrap(input_msgs, []),
-            "output_messages": _wf_wrap(output_msgs, []),
-        })
+        invocations.append(
+            {
+                "sequence": seq,
+                "timestamp": span.get("timestamp", ""),
+                "agent_name": cd.get("gen_ai.agent.name", ""),
+                "agent_id": cd.get("gen_ai.agent.id", ""),
+                "system_instructions": sys_instrs,
+                "input_messages": _wf_wrap(input_msgs, []),
+                "output_messages": _wf_wrap(output_msgs, []),
+            }
+        )
     return invocations
 
 

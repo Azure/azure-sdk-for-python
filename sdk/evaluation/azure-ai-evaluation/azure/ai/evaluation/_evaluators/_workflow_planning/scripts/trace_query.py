@@ -68,14 +68,16 @@ def process_workflow_trace_rows(raw_rows: List[Dict[str, object]]) -> List[Dict[
         custom_dims = _normalize_dimension_value(row.get("customDimensions", {}))
         if not isinstance(custom_dims, dict):
             custom_dims = {}
-        spans.append({
-            "timestamp": row.get("timestamp"),
-            "operation_id": row.get("operation_Id", ""),
-            "span_id": row.get("id", ""),
-            "target": row.get("target", ""),
-            "duration": row.get("duration", 0),
-            "custom_dimensions": custom_dims,
-        })
+        spans.append(
+            {
+                "timestamp": row.get("timestamp"),
+                "operation_id": row.get("operation_Id", ""),
+                "span_id": row.get("id", ""),
+                "target": row.get("target", ""),
+                "duration": row.get("duration", 0),
+                "custom_dimensions": custom_dims,
+            }
+        )
     return spans
 
 
@@ -104,7 +106,9 @@ def query_traces(
     timespan = timedelta(hours=lookback_hours)
 
     # Detect whether workspace_id is an ARM resource path or a GUID
-    is_resource_id = workspace_id.strip().startswith("/subscriptions/") or workspace_id.strip().startswith("subscriptions/")
+    is_resource_id = workspace_id.strip().startswith("/subscriptions/") or workspace_id.strip().startswith(
+        "subscriptions/"
+    )
 
     if is_resource_id:
         resource_id = workspace_id.strip()
