@@ -1,0 +1,403 @@
+{
+  "parse_failed": false,
+  "workflow_id": "25433c61-6268-4848-915c-82a300c5d236",
+  "workflow_name": "WorkflowBuilder-5f1cb9ca-6b1b-43f8-81cf-be16a2b503f4",
+  "workflow_type": "workflow_dag",
+  "topology": {
+    "start_executor_id": "TalentScout",
+    "max_iterations": 2,
+    "executors": [
+      {
+        "id": "TalentScout",
+        "type": "AgentExecutor"
+      },
+      {
+        "id": "MobilityScout",
+        "type": "AgentExecutor"
+      }
+    ],
+    "edges": [
+      {
+        "type": "SingleEdgeGroup",
+        "source": "TalentScout",
+        "target": "MobilityScout"
+      },
+      {
+        "type": "SingleEdgeGroup",
+        "source": "MobilityScout",
+        "target": "TalentScout"
+      }
+    ]
+  },
+  "agents": {
+    "TalentScout": {
+      "agent_id": "talent-scout",
+      "model": "gpt-4o-mini",
+      "system_instructions": "You are a Talent Scout agent specializing in external candidate sourcing.\n\nYour responsibilities:\n1. Search LinkedIn for candidate profiles matching job requirements\n2. Query external job boards for applicants (Indeed, LinkedIn Jobs, Glassdoor, etc.)\n3. Screen candidates against job requirements\n4. Filter based on experience, skills, and location\n5. Handle visa sponsorship considerations\n\nWhen processing external candidates:\n- Verify all required skills are present\n- Note any visa sponsorship requirements\n- Check salary expectations against job budget\n- Flag candidates with relevant industry experience\n- Prioritize candidates with shorter notice periods\n\nOutput Keywords:\n- When you find enough qualified candidates, explicitly state \"sufficient candidates found\"\n- If the candidate pool is limited or insufficient, state \"insufficient candidates\"\n- Always indicate the number of candidates found\n\nOutput format: Provide structured candidate profiles with skills match analysis.",
+      "tool_definitions": []
+    },
+    "MobilityScout": {
+      "agent_id": "mobility-scout",
+      "model": "gpt-4o-mini",
+      "system_instructions": "You are an Internal Mobility Scout agent specializing in internal transfers.\n\nYour responsibilities:\n1. Query the HRIS system for employees interested in the role\n2. Verify transfer eligibility (tenure, performance, no PIP)\n3. Check manager approval status\n4. Assess skills match with current role experience\n5. Coordinate with HR on internal transfer policies\n\nWhen processing internal candidates:\n- Verify minimum tenure requirement (usually 1+ year)\n- Check performance rating (must be meeting expectations or above)\n- Confirm employee is not on a Performance Improvement Plan\n- Note current team and potential backfill needs\n- Include manager feedback if available\n\nIMPORTANT - Output Keywords:\n- When you find enough qualified internal candidates, state \"found sufficient candidates\" or \"sufficient candidates found\"\n- If internal pool is limited, state \"no candidates\" or \"insufficient candidates\"\n\nOutput format: Provide structured profiles with eligibility status and current role context.",
+      "tool_definitions": [
+        {
+          "name": "query_internal_employees",
+          "description": "Queries the internal HRIS system for current employees who have expressed interest in a job opening and checks their transfer eligibility.",
+          "parameters": {
+            "properties": {
+              "job_id": {
+                "description": "The job ID to find internal candidates for",
+                "title": "Job Id",
+                "type": "string"
+              },
+              "eligible_only": {
+                "default": true,
+                "description": "Only return transfer-eligible employees",
+                "title": "Eligible Only",
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "job_id"
+            ],
+            "title": "query_internal_employees_input",
+            "type": "object"
+          }
+        }
+      ]
+    }
+  },
+  "invocations": [
+    {
+      "sequence": 1,
+      "timestamp": "2026-02-16T14:30:58.415935+00:00",
+      "agent_name": "TalentScout",
+      "agent_id": "talent-scout",
+      "system_instructions": [
+        "You are a Talent Scout agent specializing in external candidate sourcing.\n\nYour responsibilities:\n1. Search LinkedIn for candidate profiles matching job requirements\n2. Query external job boards for applicants (Indeed, LinkedIn Jobs, Glassdoor, etc.)\n3. Screen candidates against job requirements\n4. Filter based on experience, skills, and location\n5. Handle visa sponsorship considerations\n\nWhen processing external candidates:\n- Verify all required skills are present\n- Note any visa sponsorship requirements\n- Check salary expectations against job budget\n- Flag candidates with relevant industry experience\n- Prioritize candidates with shorter notice periods\n\nOutput Keywords:\n- When you find enough qualified candidates, explicitly state \"sufficient candidates found\"\n- If the candidate pool is limited or insufficient, state \"insufficient candidates\"\n- Always indicate the number of candidates found\n\nOutput format: Provide structured candidate profiles with skills match analysis."
+      ],
+      "input_messages": {
+        "value": [
+          {
+            "role": "system",
+            "parts": [
+              {
+                "type": "text",
+                "content": "You are a Talent Scout agent specializing in external candidate sourcing.\n\nYour responsibilities:\n1. Search LinkedIn for candidate profiles matching job requirements\n2. Query external job boards for applicants (Indeed, LinkedIn Jobs, Glassdoor, etc.)\n3. Screen candidates against job requirements\n4. Filter based on experience, skills, and location\n5. Handle visa sponsorship considerations\n\nWhen processing external candidates:\n- Verify all required skills are present\n- Note any visa sponsorship requirements\n- Check salary expectations against job budget\n- Flag candidates with relevant industry experience\n- Prioritize candidates with shorter notice periods\n\nOutput Keywords:\n- When you find enough qualified candidates, explicitly state \"sufficient candidates found\"\n- If the candidate pool is limited or insufficient, state \"insufficient candidates\"\n- Always indicate the number of candidates found\n\nOutput format: Provide structured candidate profiles with skills match analysis."
+              }
+            ]
+          },
+          {
+            "role": "user",
+            "parts": [
+              {
+                "type": "text",
+                "content": "Source candidates for job JOB-CLOSED-2024-050."
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      },
+      "output_messages": {
+        "value": [
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "tool_call",
+                "id": "call_vG5JmwMsDaOovHxCLTVqPIHs",
+                "name": "query_external_job_boards",
+                "arguments": "{\"job_id\":\"JOB-CLOSED-2024-050\"}"
+              }
+            ]
+          },
+          {
+            "role": "tool",
+            "parts": [
+              {
+                "type": "tool_call_response",
+                "id": "call_vG5JmwMsDaOovHxCLTVqPIHs",
+                "response": "Total Results: 0\n"
+              }
+            ]
+          },
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "tool_call",
+                "id": "call_5Z4T5lLPIQu6qtuBqr5mmK3b",
+                "name": "search_linkedin_profiles",
+                "arguments": "{\"skills\":[\"Python\",\"Data Analysis\"],\"location\":\"San Francisco, CA\",\"min_experience_years\":3,\"open_to_work_only\":true}"
+              }
+            ]
+          },
+          {
+            "role": "tool",
+            "parts": [
+              {
+                "type": "tool_call_response",
+                "id": "call_5Z4T5lLPIQu6qtuBqr5mmK3b",
+                "response": "Total Results: 0\n"
+              }
+            ]
+          },
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "text",
+                "content": "Insufficient candidates found for job ID JOB-CLOSED-2024-050. Total candidates found: 0."
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      }
+    },
+    {
+      "sequence": 2,
+      "timestamp": "2026-02-16T14:31:25.129726+00:00",
+      "agent_name": "MobilityScout",
+      "agent_id": "mobility-scout",
+      "system_instructions": [
+        "You are an Internal Mobility Scout agent specializing in internal transfers.\n\nYour responsibilities:\n1. Query the HRIS system for employees interested in the role\n2. Verify transfer eligibility (tenure, performance, no PIP)\n3. Check manager approval status\n4. Assess skills match with current role experience\n5. Coordinate with HR on internal transfer policies\n\nWhen processing internal candidates:\n- Verify minimum tenure requirement (usually 1+ year)\n- Check performance rating (must be meeting expectations or above)\n- Confirm employee is not on a Performance Improvement Plan\n- Note current team and potential backfill needs\n- Include manager feedback if available\n\nIMPORTANT - Output Keywords:\n- When you find enough qualified internal candidates, state \"found sufficient candidates\" or \"sufficient candidates found\"\n- If internal pool is limited, state \"no candidates\" or \"insufficient candidates\"\n\nOutput format: Provide structured profiles with eligibility status and current role context."
+      ],
+      "input_messages": {
+        "value": [
+          {
+            "role": "system",
+            "parts": [
+              {
+                "type": "text",
+                "content": "You are an Internal Mobility Scout agent specializing in internal transfers.\n\nYour responsibilities:\n1. Query the HRIS system for employees interested in the role\n2. Verify transfer eligibility (tenure, performance, no PIP)\n3. Check manager approval status\n4. Assess skills match with current role experience\n5. Coordinate with HR on internal transfer policies\n\nWhen processing internal candidates:\n- Verify minimum tenure requirement (usually 1+ year)\n- Check performance rating (must be meeting expectations or above)\n- Confirm employee is not on a Performance Improvement Plan\n- Note current team and potential backfill needs\n- Include manager feedback if available\n\nIMPORTANT - Output Keywords:\n- When you find enough qualified internal candidates, state \"found sufficient candidates\" or \"sufficient candidates found\"\n- If internal pool is limited, state \"no candidates\" or \"insufficient candidates\"\n\nOutput format: Provide structured profiles with eligibility status and current role context."
+              }
+            ]
+          },
+          {
+            "role": "user",
+            "parts": [
+              {
+                "type": "text",
+                "content": "Source candidates for job JOB-CLOSED-2024-050."
+              }
+            ]
+          },
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "tool_call",
+                "id": "call_vG5JmwMsDaOovHxCLTVqPIHs",
+                "name": "query_external_job_boards",
+                "arguments": "{\"job_id\":\"JOB-CLOSED-2024-050\"}"
+              }
+            ]
+          },
+          {
+            "role": "tool",
+            "parts": [
+              {
+                "type": "tool_call_response",
+                "id": "call_vG5JmwMsDaOovHxCLTVqPIHs",
+                "response": "Total Results: 0\n"
+              }
+            ]
+          },
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "tool_call",
+                "id": "call_5Z4T5lLPIQu6qtuBqr5mmK3b",
+                "name": "search_linkedin_profiles",
+                "arguments": "{\"skills\":[\"Python\",\"Data Analysis\"],\"location\":\"San Francisco, CA\",\"min_experience_years\":3,\"open_to_work_only\":true}"
+              }
+            ]
+          },
+          {
+            "role": "tool",
+            "parts": [
+              {
+                "type": "tool_call_response",
+                "id": "call_5Z4T5lLPIQu6qtuBqr5mmK3b",
+                "response": "Total Results: 0\n"
+              }
+            ]
+          },
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "text",
+                "content": "Insufficient candidates found for job ID JOB-CLOSED-2024-050. Total candidates found: 0."
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      },
+      "output_messages": {
+        "value": [
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "tool_call",
+                "id": "call_srRTKQUgLAZgwjEBNF9972ae",
+                "name": "query_internal_employees",
+                "arguments": "{\"job_id\":\"JOB-CLOSED-2024-050\"}"
+              }
+            ]
+          },
+          {
+            "role": "tool",
+            "parts": [
+              {
+                "type": "tool_call_response",
+                "id": "call_srRTKQUgLAZgwjEBNF9972ae",
+                "response": "No internal candidates found for job JOB-CLOSED-2024-050."
+              }
+            ]
+          },
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "text",
+                "content": "No internal candidates found for job ID JOB-CLOSED-2024-050."
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      }
+    },
+    {
+      "sequence": 3,
+      "timestamp": "2026-02-16T14:31:48.639364+00:00",
+      "agent_name": "TalentScout",
+      "agent_id": "talent-scout",
+      "system_instructions": [
+        "You are a Talent Scout agent specializing in external candidate sourcing.\n\nYour responsibilities:\n1. Search LinkedIn for candidate profiles matching job requirements\n2. Query external job boards for applicants (Indeed, LinkedIn Jobs, Glassdoor, etc.)\n3. Screen candidates against job requirements\n4. Filter based on experience, skills, and location\n5. Handle visa sponsorship considerations\n\nWhen processing external candidates:\n- Verify all required skills are present\n- Note any visa sponsorship requirements\n- Check salary expectations against job budget\n- Flag candidates with relevant industry experience\n- Prioritize candidates with shorter notice periods\n\nOutput Keywords:\n- When you find enough qualified candidates, explicitly state \"sufficient candidates found\"\n- If the candidate pool is limited or insufficient, state \"insufficient candidates\"\n- Always indicate the number of candidates found\n\nOutput format: Provide structured candidate profiles with skills match analysis."
+      ],
+      "input_messages": {
+        "value": [
+          {
+            "role": "system",
+            "parts": [
+              {
+                "type": "text",
+                "content": "You are a Talent Scout agent specializing in external candidate sourcing.\n\nYour responsibilities:\n1. Search LinkedIn for candidate profiles matching job requirements\n2. Query external job boards for applicants (Indeed, LinkedIn Jobs, Glassdoor, etc.)\n3. Screen candidates against job requirements\n4. Filter based on experience, skills, and location\n5. Handle visa sponsorship considerations\n\nWhen processing external candidates:\n- Verify all required skills are present\n- Note any visa sponsorship requirements\n- Check salary expectations against job budget\n- Flag candidates with relevant industry experience\n- Prioritize candidates with shorter notice periods\n\nOutput Keywords:\n- When you find enough qualified candidates, explicitly state \"sufficient candidates found\"\n- If the candidate pool is limited or insufficient, state \"insufficient candidates\"\n- Always indicate the number of candidates found\n\nOutput format: Provide structured candidate profiles with skills match analysis."
+              }
+            ]
+          },
+          {
+            "role": "user",
+            "parts": [
+              {
+                "type": "text",
+                "content": "Source candidates for job JOB-CLOSED-2024-050."
+              }
+            ]
+          },
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "tool_call",
+                "id": "call_vG5JmwMsDaOovHxCLTVqPIHs",
+                "name": "query_external_job_boards",
+                "arguments": "{\"job_id\":\"JOB-CLOSED-2024-050\"}"
+              }
+            ]
+          },
+          {
+            "role": "tool",
+            "parts": [
+              {
+                "type": "tool_call_response",
+                "id": "call_vG5JmwMsDaOovHxCLTVqPIHs",
+                "response": "Total Results: 0\n"
+              }
+            ]
+          },
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "tool_call",
+                "id": "call_5Z4T5lLPIQu6qtuBqr5mmK3b",
+                "name": "search_linkedin_profiles",
+                "arguments": "{\"skills\":[\"Python\",\"Data Analysis\"],\"location\":\"San Francisco, CA\",\"min_experience_years\":3,\"open_to_work_only\":true}"
+              }
+            ]
+          },
+          {
+            "role": "tool",
+            "parts": [
+              {
+                "type": "tool_call_response",
+                "id": "call_5Z4T5lLPIQu6qtuBqr5mmK3b",
+                "response": "Total Results: 0\n"
+              }
+            ]
+          },
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "text",
+                "content": "Insufficient candidates found for job ID JOB-CLOSED-2024-050. Total candidates found: 0."
+              }
+            ]
+          },
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "tool_call",
+                "id": "call_srRTKQUgLAZgwjEBNF9972ae",
+                "name": "query_internal_employees",
+                "arguments": "{\"job_id\":\"JOB-CLOSED-2024-050\"}"
+              }
+            ]
+          },
+          {
+            "role": "tool",
+            "parts": [
+              {
+                "type": "tool_call_response",
+                "id": "call_srRTKQUgLAZgwjEBNF9972ae",
+                "response": "No internal candidates found for job JOB-CLOSED-2024-050."
+              }
+            ]
+          },
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "text",
+                "content": "No internal candidates found for job ID JOB-CLOSED-2024-050."
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      },
+      "output_messages": {
+        "value": [],
+        "_truncated": false
+      }
+    }
+  ],
+  "errors": [
+    {
+      "message": "<class 'agent_framework_azure_ai._client.AzureAIClient'> service failed to complete the prompt: Error code: 400 - {'error': {'message': 'Duplicate item found with id fc_0d1671332fd73a990069932a2d9f248195819fd06345453ae3. Remove duplicate items from your input and try again.', 'type': 'invalid_request_error', 'param': 'input', 'code': None}}",
+      "span_id": "",
+      "timestamp": "2026-02-16T14:31:54.141136+00:00"
+    }
+  ]
+}

@@ -1,0 +1,671 @@
+{
+  "parse_failed": false,
+  "workflow_id": "6a7eee14-3a8d-4e79-870f-cba69048775f",
+  "workflow_name": "WorkflowBuilder-1ca966e5-a42d-494b-8495-5e1b85681d1d",
+  "workflow_type": "magentic",
+  "topology": {
+    "start_executor_id": "magentic_orchestrator",
+    "max_iterations": 100,
+    "executors": [
+      {
+        "id": "magentic_orchestrator",
+        "type": "MagenticOrchestrator"
+      },
+      {
+        "id": "ReqMaster",
+        "type": "MagenticAgentExecutor"
+      },
+      {
+        "id": "TalentScout",
+        "type": "MagenticAgentExecutor"
+      },
+      {
+        "id": "Evaluator",
+        "type": "MagenticAgentExecutor"
+      },
+      {
+        "id": "ComplianceGuard",
+        "type": "MagenticAgentExecutor"
+      },
+      {
+        "id": "Scheduler",
+        "type": "MagenticAgentExecutor"
+      }
+    ],
+    "edges": [
+      {
+        "type": "SingleEdgeGroup",
+        "source": "magentic_orchestrator",
+        "target": "ReqMaster"
+      },
+      {
+        "type": "SingleEdgeGroup",
+        "source": "ReqMaster",
+        "target": "magentic_orchestrator"
+      },
+      {
+        "type": "SingleEdgeGroup",
+        "source": "magentic_orchestrator",
+        "target": "TalentScout"
+      },
+      {
+        "type": "SingleEdgeGroup",
+        "source": "TalentScout",
+        "target": "magentic_orchestrator"
+      },
+      {
+        "type": "SingleEdgeGroup",
+        "source": "magentic_orchestrator",
+        "target": "Evaluator"
+      },
+      {
+        "type": "SingleEdgeGroup",
+        "source": "Evaluator",
+        "target": "magentic_orchestrator"
+      },
+      {
+        "type": "SingleEdgeGroup",
+        "source": "magentic_orchestrator",
+        "target": "ComplianceGuard"
+      },
+      {
+        "type": "SingleEdgeGroup",
+        "source": "ComplianceGuard",
+        "target": "magentic_orchestrator"
+      },
+      {
+        "type": "SingleEdgeGroup",
+        "source": "magentic_orchestrator",
+        "target": "Scheduler"
+      },
+      {
+        "type": "SingleEdgeGroup",
+        "source": "Scheduler",
+        "target": "magentic_orchestrator"
+      }
+    ]
+  },
+  "agents": {
+    "ReqMaster": {
+      "agent_id": "req-master",
+      "model": "gpt-4o-mini",
+      "system_instructions": "You are a Requisition Master agent handling job intake and requirements analysis.\n\nYour responsibilities:\n1. Retrieve and validate job posting details\n2. Extract structured requirements (must-have vs nice-to-have)\n3. Verify job is approved and open for sourcing\n4. Identify hiring manager and team context\n5. Set up screening criteria for candidate matching\n\nWhen processing job requisitions:\n- Validate the job ID exists and is in 'open' status\n- Extract all required and preferred skills\n- Note salary range and location requirements\n- Identify urgency level and time-to-fill targets\n- Flag any special requirements (clearance, certifications)\n\nIMPORTANT - Output Keywords:\n- If the position is time-sensitive or high priority, include the word \"urgent\" in your analysis\n- If the role requires international hiring or global compliance, include \"international\" in your response\n- Always clearly state the priority level (high/medium/low)\n\nOutput format: Provide structured job requirements ready for candidate sourcing.",
+      "tool_definitions": [
+        {
+          "name": "get_job_details",
+          "description": "Retrieves detailed information about a job posting including title, department, requirements, salary range, and hiring manager.",
+          "parameters": {
+            "properties": {
+              "job_id": {
+                "description": "The job ID to retrieve (e.g., JOB-SWE-2025-001)",
+                "title": "Job Id",
+                "type": "string"
+              }
+            },
+            "required": [
+              "job_id"
+            ],
+            "title": "get_job_details_input",
+            "type": "object"
+          }
+        },
+        {
+          "name": "extract_requirements",
+          "description": "Extracts and structures the requirements from a job posting, separating must-have from nice-to-have skills.",
+          "parameters": {
+            "properties": {
+              "job_id": {
+                "description": "The job ID to extract requirements from",
+                "title": "Job Id",
+                "type": "string"
+              }
+            },
+            "required": [
+              "job_id"
+            ],
+            "title": "extract_requirements_input",
+            "type": "object"
+          }
+        }
+      ]
+    },
+    "ComplianceGuard": {
+      "agent_id": "compliance-guard",
+      "model": "gpt-4o-mini",
+      "system_instructions": "You are a Compliance Guard agent ensuring fair hiring practices.\n\nYour responsibilities:\n1. Analyze shortlists for adverse impact using the 4/5ths rule\n2. Check demographic distribution of selections\n3. Verify selection criteria are job-related\n4. Flag potential bias in screening decisions\n5. Ensure EEOC compliance documentation\n\nWhen reviewing for compliance:\n- Calculate selection rates by demographic group\n- Compare rates using the 4/5ths (80%) rule\n- Flag any disparate impact concerns\n- Recommend adjustments if bias is detected\n- Document compliance review for audit trail\n\nIMPORTANT - Output Keywords:\n- If all compliance checks pass, explicitly state \"all requirements met\"\n- If documentation is incomplete, state \"missing documents\" and list what's needed\n- For complex cases needing legal review, state \"requires manual review\"\n\nOutput format: Provide compliance report with pass/fail status and recommendations.",
+      "tool_definitions": [
+        {
+          "name": "check_compliance",
+          "description": "Runs compliance checks on a candidate shortlist, analyzing for adverse impact, demographic bias, and EEOC compliance.",
+          "parameters": {
+            "properties": {
+              "job_id": {
+                "description": "The job ID",
+                "title": "Job Id",
+                "type": "string"
+              },
+              "shortlist_ids": {
+                "description": "Comma-separated list of shortlisted candidate IDs",
+                "title": "Shortlist Ids",
+                "type": "string"
+              }
+            },
+            "required": [
+              "job_id",
+              "shortlist_ids"
+            ],
+            "title": "check_compliance_input",
+            "type": "object"
+          }
+        }
+      ]
+    }
+  },
+  "invocations": [
+    {
+      "sequence": 1,
+      "timestamp": "2026-02-16T20:03:14.664288+00:00",
+      "agent_name": "ReqMaster",
+      "agent_id": "req-master",
+      "system_instructions": [
+        "You are a Requisition Master agent handling job intake and requirements analysis.\n\nYour responsibilities:\n1. Retrieve and validate job posting details\n2. Extract structured requirements (must-have vs nice-to-have)\n3. Verify job is approved and open for sourcing\n4. Identify hiring manager and team context\n5. Set up screening criteria for candidate matching\n\nWhen processing job requisitions:\n- Validate the job ID exists and is in 'open' status\n- Extract all required and preferred skills\n- Note salary range and location requirements\n- Identify urgency level and time-to-fill targets\n- Flag any special requirements (clearance, certifications)\n\nIMPORTANT - Output Keywords:\n- If the position is time-sensitive or high priority, include the word \"urgent\" in your analysis\n- If the role requires international hiring or global compliance, include \"international\" in your response\n- Always clearly state the priority level (high/medium/low)\n\nOutput format: Provide structured job requirements ready for candidate sourcing."
+      ],
+      "input_messages": {
+        "value": [
+          {
+            "role": "system",
+            "parts": [
+              {
+                "type": "text",
+                "content": "You are a Requisition Master agent handling job intake and requirements analysis.\n\nYour responsibilities:\n1. Retrieve and validate job posting details\n2. Extract structured requirements (must-have vs nice-to-have)\n3. Verify job is approved and open for sourcing\n4. Identify hiring manager and team context\n5. Set up screening criteria for candidate matching\n\nWhen processing job requisitions:\n- Validate the job ID exists and is in 'open' status\n- Extract all required and preferred skills\n- Note salary range and location requirements\n- Identify urgency level and time-to-fill targets\n- Flag any special requirements (clearance, certifications)\n\nIMPORTANT - Output Keywords:\n- If the position is time-sensitive or high priority, include the word \"urgent\" in your analysis\n- If the role requires international hiring or global compliance, include \"international\" in your response\n- Always clearly state the priority level (high/medium/low)\n\nOutput format: Provide structured job requirements ready for candidate sourcing."
+              }
+            ]
+          },
+          {
+            "role": "user",
+            "parts": [
+              {
+                "type": "text",
+                "content": "Verify the shortlist for JOB-DATA-2025-015 is compliant with EEOC guidelines. Candidates: CAND-EXT-1001, CAND-EXT-1002, CAND-EXT-1003."
+              }
+            ]
+          },
+          {
+            "role": "user",
+            "parts": [
+              {
+                "type": "text",
+                "content": "Below I will present you a request.\n\nBefore we begin addressing the request, please answer the following pre-survey to the best of your ability.\nKeep in mind that you are Ken Jennings-level with trivia, and Mensa-level with puzzles, so there should be\na deep well to draw from.\n\nHere is the request:\n\nVerify the shortlist for JOB-DATA-2025-015 is compliant with EEOC guidelines. Candidates: CAND-EXT-1001, CAND-EXT-1002, CAND-EXT-1003.\n\nHere is the pre-survey:\n\n    1. Please list any specific facts or figures that are GIVEN in the request itself. It is possible that\n       there are none.\n    2. Please list any facts that may need to be looked up, and WHERE SPECIFICALLY they might be found.\n       In some cases, authoritative sources are mentioned in the request itself.\n    3. Please list any facts that may need to be derived (e.g., via logical deduction, simulation, or computation)\n    4. Please list any facts that are recalled from memory, hunches, well-reasoned guesses, etc.\n\nWhen answering this survey, keep in mind that \"facts\" will typically be specific names, dates, statistics, etc.\nYour answer should use headings:\n\n    1. GIVEN OR VERIFIED FACTS\n    2. FACTS TO LOOK UP\n    3. FACTS TO DERIVE\n    4. EDUCATED GUESSES\n\nDO NOT include any other headings or sections in your response. DO NOT list next steps or plans until asked to do so.\n"
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      },
+      "output_messages": {
+        "value": [
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "text",
+                "content": "### 1. GIVEN OR VERIFIED FACTS\n- Job ID: JOB-DATA-2025-015\n- Candidates: CAND-EXT-1001, CAND-EXT-1002, CAND-EXT-1003\n\n### 2. FACTS TO LOOK UP\n- EEOC guidelines related to candidate selection and compliance standards.\n- Specifics of the job posting JOB-DATA-2025-015, including criteria and qualifications used for candidate selection.\n\n### 3. FACTS TO DERIVE\n- Compliance status of each candidate with respect to EEOC guidelines based on information about their qualifications and background compared to the job criteria.\n\n### 4. EDUCATED GUESSES\n- Candidates were shortlisted based on their qualifications and experiences relevant to the job, but the specific methods used for selection are unknown.\n- Compliance with EEOC guidelines may be influenced by factors such as diversity, equitable treatment, and non-discrimination principles in the hiring process."
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      }
+    },
+    {
+      "sequence": 2,
+      "timestamp": "2026-02-16T20:03:28.984522+00:00",
+      "agent_name": "ReqMaster",
+      "agent_id": "req-master",
+      "system_instructions": [
+        "You are a Requisition Master agent handling job intake and requirements analysis.\n\nYour responsibilities:\n1. Retrieve and validate job posting details\n2. Extract structured requirements (must-have vs nice-to-have)\n3. Verify job is approved and open for sourcing\n4. Identify hiring manager and team context\n5. Set up screening criteria for candidate matching\n\nWhen processing job requisitions:\n- Validate the job ID exists and is in 'open' status\n- Extract all required and preferred skills\n- Note salary range and location requirements\n- Identify urgency level and time-to-fill targets\n- Flag any special requirements (clearance, certifications)\n\nIMPORTANT - Output Keywords:\n- If the position is time-sensitive or high priority, include the word \"urgent\" in your analysis\n- If the role requires international hiring or global compliance, include \"international\" in your response\n- Always clearly state the priority level (high/medium/low)\n\nOutput format: Provide structured job requirements ready for candidate sourcing."
+      ],
+      "input_messages": {
+        "value": [
+          {
+            "role": "system",
+            "parts": [
+              {
+                "type": "text",
+                "content": "You are a Requisition Master agent handling job intake and requirements analysis.\n\nYour responsibilities:\n1. Retrieve and validate job posting details\n2. Extract structured requirements (must-have vs nice-to-have)\n3. Verify job is approved and open for sourcing\n4. Identify hiring manager and team context\n5. Set up screening criteria for candidate matching\n\nWhen processing job requisitions:\n- Validate the job ID exists and is in 'open' status\n- Extract all required and preferred skills\n- Note salary range and location requirements\n- Identify urgency level and time-to-fill targets\n- Flag any special requirements (clearance, certifications)\n\nIMPORTANT - Output Keywords:\n- If the position is time-sensitive or high priority, include the word \"urgent\" in your analysis\n- If the role requires international hiring or global compliance, include \"international\" in your response\n- Always clearly state the priority level (high/medium/low)\n\nOutput format: Provide structured job requirements ready for candidate sourcing."
+              }
+            ]
+          },
+          {
+            "role": "user",
+            "parts": [
+              {
+                "type": "text",
+                "content": "Verify the shortlist for JOB-DATA-2025-015 is compliant with EEOC guidelines. Candidates: CAND-EXT-1001, CAND-EXT-1002, CAND-EXT-1003."
+              }
+            ]
+          },
+          {
+            "role": "user",
+            "parts": [
+              {
+                "type": "text",
+                "content": "Below I will present you a request.\n\nBefore we begin addressing the request, please answer the following pre-survey to the best of your ability.\nKeep in mind that you are Ken Jennings-level with trivia, and Mensa-level with puzzles, so there should be\na deep well to draw from.\n\nHere is the request:\n\nVerify the shortlist for JOB-DATA-2025-015 is compliant with EEOC guidelines. Candidates: CAND-EXT-1001, CAND-EXT-1002, CAND-EXT-1003.\n\nHere is the pre-survey:\n\n    1. Please list any specific facts or figures that are GIVEN in the request itself. It is possible that\n       there are none.\n    2. Please list any facts that may need to be looked up, and WHERE SPECIFICALLY they might be found.\n       In some cases, authoritative sources are mentioned in the request itself.\n    3. Please list any facts that may need to be derived (e.g., via logical deduction, simulation, or computation)\n    4. Please list any facts that are recalled from memory, hunches, well-reasoned guesses, etc.\n\nWhen answering this survey, keep in mind that \"facts\" will typically be specific names, dates, statistics, etc.\nYour answer should use headings:\n\n    1. GIVEN OR VERIFIED FACTS\n    2. FACTS TO LOOK UP\n    3. FACTS TO DERIVE\n    4. EDUCATED GUESSES\n\nDO NOT include any other headings or sections in your response. DO NOT list next steps or plans until asked to do so.\n"
+              }
+            ]
+          },
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "text",
+                "content": "### 1. GIVEN OR VERIFIED FACTS\n- Job ID: JOB-DATA-2025-015\n- Candidates: CAND-EXT-1001, CAND-EXT-1002, CAND-EXT-1003\n\n### 2. FACTS TO LOOK UP\n- EEOC guidelines related to candidate selection and compliance standards.\n- Specifics of the job posting JOB-DATA-2025-015, including criteria and qualifications used for candidate selection.\n\n### 3. FACTS TO DERIVE\n- Compliance status of each candidate with respect to EEOC guidelines based on information about their qualifications and background compared to the job criteria.\n\n### 4. EDUCATED GUESSES\n- Candidates were shortlisted based on their qualifications and experiences relevant to the job, but the specific methods used for selection are unknown.\n- Compliance with EEOC guidelines may be influenced by factors such as diversity, equitable treatment, and non-discrimination principles in the hiring process."
+              }
+            ]
+          },
+          {
+            "role": "user",
+            "parts": [
+              {
+                "type": "text",
+                "content": "Fantastic. To address this request we have assembled the following team:\n\n- ReqMaster: <no description, use name to identify the purpose of this participant>\n- TalentScout: <no description, use name to identify the purpose of this participant>\n- Evaluator: <no description, use name to identify the purpose of this participant>\n- ComplianceGuard: <no description, use name to identify the purpose of this participant>\n- Scheduler: <no description, use name to identify the purpose of this participant>\n\nBased on the team composition, and known and unknown facts, please devise a short bullet-point plan for addressing the\noriginal request. Remember, there is no requirement to involve all team members. A team member's particular expertise\nmay not be needed for this task.\n"
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      },
+      "output_messages": {
+        "value": [
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "text",
+                "content": "- **ReqMaster**: Retrieve and review the job posting details for JOB-DATA-2025-015 to understand the selection criteria used for candidate shortlisting.\n  \n- **ComplianceGuard**: Research EEOC guidelines related to candidate selection and compliance to ensure all requirements are met.\n\n- **Evaluator**: Analyze the qualifications and backgrounds of the shortlisted candidates (CAND-EXT-1001, CAND-EXT-1002, CAND-EXT-1003) against the job requirements and EEOC guidelines.\n\n- **TalentScout**: If necessary, source additional candidates to ensure compliance with diversity and inclusion standards as outlined by EEOC.\n\n- **Scheduler**: Organize a review meeting once all assessments are completed to discuss findings and next steps."
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      }
+    },
+    {
+      "sequence": 3,
+      "timestamp": "2026-02-16T20:03:36.305506+00:00",
+      "agent_name": "ReqMaster",
+      "agent_id": "req-master",
+      "system_instructions": [
+        "You are a Requisition Master agent handling job intake and requirements analysis.\n\nYour responsibilities:\n1. Retrieve and validate job posting details\n2. Extract structured requirements (must-have vs nice-to-have)\n3. Verify job is approved and open for sourcing\n4. Identify hiring manager and team context\n5. Set up screening criteria for candidate matching\n\nWhen processing job requisitions:\n- Validate the job ID exists and is in 'open' status\n- Extract all required and preferred skills\n- Note salary range and location requirements\n- Identify urgency level and time-to-fill targets\n- Flag any special requirements (clearance, certifications)\n\nIMPORTANT - Output Keywords:\n- If the position is time-sensitive or high priority, include the word \"urgent\" in your analysis\n- If the role requires international hiring or global compliance, include \"international\" in your response\n- Always clearly state the priority level (high/medium/low)\n\nOutput format: Provide structured job requirements ready for candidate sourcing."
+      ],
+      "input_messages": {
+        "value": [
+          {
+            "role": "system",
+            "parts": [
+              {
+                "type": "text",
+                "content": "You are a Requisition Master agent handling job intake and requirements analysis.\n\nYour responsibilities:\n1. Retrieve and validate job posting details\n2. Extract structured requirements (must-have vs nice-to-have)\n3. Verify job is approved and open for sourcing\n4. Identify hiring manager and team context\n5. Set up screening criteria for candidate matching\n\nWhen processing job requisitions:\n- Validate the job ID exists and is in 'open' status\n- Extract all required and preferred skills\n- Note salary range and location requirements\n- Identify urgency level and time-to-fill targets\n- Flag any special requirements (clearance, certifications)\n\nIMPORTANT - Output Keywords:\n- If the position is time-sensitive or high priority, include the word \"urgent\" in your analysis\n- If the role requires international hiring or global compliance, include \"international\" in your response\n- Always clearly state the priority level (high/medium/low)\n\nOutput format: Provide structured job requirements ready for candidate sourcing."
+              }
+            ]
+          },
+          {
+            "role": "user",
+            "parts": [
+              {
+                "type": "text",
+                "content": "Verify the shortlist for JOB-DATA-2025-015 is compliant with EEOC guidelines. Candidates: CAND-EXT-1001, CAND-EXT-1002, CAND-EXT-1003."
+              }
+            ]
+          },
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "text",
+                "content": "\nWe are working to address the following user request:\n\nVerify the shortlist for JOB-DATA-2025-015 is compliant with EEOC guidelines. Candidates: CAND-EXT-1001, CAND-EXT-1002, CAND-EXT-1003.\n\n\nTo answer this request we have assembled the following team:\n\n- ReqMaster: <no description, use name to identify the purpose of this participant>\n- TalentScout: <no description, use name to identify the purpose of this participant>\n- Evaluator: <no description, use name to identify the purpose of this participant>\n- ComplianceGuard: <no description, use name to identify the purpose of this participant>\n- Scheduler: <no description, use name to identify the purpose of this participant>\n\n\nHere is an initial fact sheet to consider:\n\n### 1. GIVEN OR VERIFIED FACTS\n- Job ID: JOB-DATA-2025-015\n- Candidates: CAND-EXT-1001, CAND-EXT-1002, CAND-EXT-1003\n\n### 2. FACTS TO LOOK UP\n- EEOC guidelines related to candidate selection and compliance standards.\n- Specifics of the job posting JOB-DATA-2025-015, including criteria and qualifications used for candidate selection.\n\n### 3. FACTS TO DERIVE\n- Compliance status of each candidate with respect to EEOC guidelines based on information about their qualifications and background compared to the job criteria.\n\n### 4. EDUCATED GUESSES\n- Candidates were shortlisted based on their qualifications and experiences relevant to the job, but the specific methods used for selection are unknown.\n- Compliance with EEOC guidelines may be influenced by factors such as diversity, equitable treatment, and non-discrimination principles in the hiring process.\n\n\nHere is the plan to follow as best as possible:\n\n- **ReqMaster**: Retrieve and review the job posting details for JOB-DATA-2025-015 to understand the selection criteria used for candidate shortlisting.\n  \n- **ComplianceGuard**: Research EEOC guidelines related to candidate selection and compliance to ensure all requirements are met.\n\n- **Evaluator**: Analyze the qualifications and backgrounds of the shortlisted candidates (CAND-EXT-1001, CAND-EXT-1002, CAND-EXT-1003) against the job requirements and EEOC guidelines.\n\n- **TalentScout**: If necessary, source additional candidates to ensure compliance with diversity and inclusion standards as outlined by EEOC.\n\n- **Scheduler**: Organize a review meeting once all assessments are completed to discuss findings and next steps.\n"
+              }
+            ]
+          },
+          {
+            "role": "user",
+            "parts": [
+              {
+                "type": "text",
+                "content": "\nRecall we are working on the following request:\n\nVerify the shortlist for JOB-DATA-2025-015 is compliant with EEOC guidelines. Candidates: CAND-EXT-1001, CAND-EXT-1002, CAND-EXT-1003.\n\nAnd we have assembled the following team:\n\n- ReqMaster: <no description, use name to identify the purpose of this participant>\n- TalentScout: <no description, use name to identify the purpose of this participant>\n- Evaluator: <no description, use name to identify the purpose of this participant>\n- ComplianceGuard: <no description, use name to identify the purpose of this participant>\n- Scheduler: <no description, use name to identify the purpose of this participant>\n\nTo make progress on the request, please answer the following questions, including necessary reasoning:\n\n    - Is the request fully satisfied? (True if complete, or False if the original request has yet to be\n      SUCCESSFULLY and FULLY addressed)\n    - Are we in a loop where we are repeating the same requests and or getting the same responses as before?\n      Loops can span multiple turns, and can include repeated actions like scrolling up or down more than a\n      handful of times.\n    - Are we making forward progress? (True if just starting, or recent messages are adding value. False if recent\n      messages show evidence of being stuck in a loop or if there is evidence of significant barriers to success\n      such as the inability to read from a required file)\n    - Who should speak next? (select from: ReqMaster, TalentScout, Evaluator, ComplianceGuard, Scheduler)\n    - What instruction or question would you give this team member? (Phrase as if speaking directly to them, and\n      include any specific information they may need)\n\nPlease output an answer in pure JSON format according to the following schema. The JSON object must be parsable as-is.\nDO NOT OUTPUT ANYTHING OTHER THAN JSON, AND DO NOT DEVIATE FROM THIS SCHEMA:\n\n{\n    \"is_request_satisfied\": {\n\n        \"reason\": string,\n        \"answer\": boolean\n    },\n    \"is_in_loop\": {\n        \"reason\": string,\n        \"answer\": boolean\n    },\n    \"is_progress_being_made\": {\n        \"reason\": string,\n        \"answer\": boolean\n    },\n    \"next_speaker\": {\n        \"reason\": string,\n        \"answer\": string (select from: ReqMaster, TalentScout, Evaluator, ComplianceGuard, Scheduler)\n    },\n    \"instruction_or_question\": {\n        \"reason\": string,\n        \"answer\": string\n    }\n}\n"
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      },
+      "output_messages": {
+        "value": [
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "text",
+                "content": "```json\n{\n    \"is_request_satisfied\": {\n        \"reason\": \"The request for verifying EEOC compliance for the shortlisted candidates has not yet been fully addressed.\",\n        \"answer\": false\n    },\n    \"is_in_loop\": {\n        \"reason\": \"There is no evidence of repeating past requests or responses; the current process is structured to gather necessary information.\",\n        \"answer\": false\n    },\n    \"is_progress_being_made\": {\n        \"reason\": \"The team is organized to analyze candidates and gather job posting details, indicating forward motion.\",\n        \"answer\": true\n    },\n    \"next_speaker\": {\n        \"reason\": \"ReqMaster needs to retrieve and review the job posting details to provide clarity on the selection criteria used.\",\n        \"answer\": \"ReqMaster\"\n    },\n    \"instruction_or_question\": {\n        \"reason\": \"We need the specific criteria and qualifications of JOB-DATA-2025-015 to assess compliance.\",\n        \"answer\": \"Please retrieve the job posting details for JOB-DATA-2025-015 to understand the selection criteria.\"\n    }\n}\n```"
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      }
+    },
+    {
+      "sequence": 4,
+      "timestamp": "2026-02-16T20:03:45.147807+00:00",
+      "agent_name": "ReqMaster",
+      "agent_id": "req-master",
+      "system_instructions": [
+        "You are a Requisition Master agent handling job intake and requirements analysis.\n\nYour responsibilities:\n1. Retrieve and validate job posting details\n2. Extract structured requirements (must-have vs nice-to-have)\n3. Verify job is approved and open for sourcing\n4. Identify hiring manager and team context\n5. Set up screening criteria for candidate matching\n\nWhen processing job requisitions:\n- Validate the job ID exists and is in 'open' status\n- Extract all required and preferred skills\n- Note salary range and location requirements\n- Identify urgency level and time-to-fill targets\n- Flag any special requirements (clearance, certifications)\n\nIMPORTANT - Output Keywords:\n- If the position is time-sensitive or high priority, include the word \"urgent\" in your analysis\n- If the role requires international hiring or global compliance, include \"international\" in your response\n- Always clearly state the priority level (high/medium/low)\n\nOutput format: Provide structured job requirements ready for candidate sourcing."
+      ],
+      "input_messages": {
+        "value": [
+          {
+            "role": "system",
+            "parts": [
+              {
+                "type": "text",
+                "content": "You are a Requisition Master agent handling job intake and requirements analysis.\n\nYour responsibilities:\n1. Retrieve and validate job posting details\n2. Extract structured requirements (must-have vs nice-to-have)\n3. Verify job is approved and open for sourcing\n4. Identify hiring manager and team context\n5. Set up screening criteria for candidate matching\n\nWhen processing job requisitions:\n- Validate the job ID exists and is in 'open' status\n- Extract all required and preferred skills\n- Note salary range and location requirements\n- Identify urgency level and time-to-fill targets\n- Flag any special requirements (clearance, certifications)\n\nIMPORTANT - Output Keywords:\n- If the position is time-sensitive or high priority, include the word \"urgent\" in your analysis\n- If the role requires international hiring or global compliance, include \"international\" in your response\n- Always clearly state the priority level (high/medium/low)\n\nOutput format: Provide structured job requirements ready for candidate sourcing."
+              }
+            ]
+          },
+          {
+            "role": "user",
+            "parts": [
+              {
+                "type": "text",
+                "content": "Please retrieve the job posting details for JOB-DATA-2025-015 to understand the selection criteria."
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      },
+      "output_messages": {
+        "value": [
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "tool_call",
+                "id": "call_XrQAwo2II6vM9L0SrPb5rtcG",
+                "name": "get_job_details",
+                "arguments": "{\"job_id\":\"JOB-DATA-2025-015\"}"
+              }
+            ]
+          },
+          {
+            "role": "tool",
+            "parts": [
+              {
+                "type": "tool_call_response",
+                "id": "call_XrQAwo2II6vM9L0SrPb5rtcG",
+                "response": "Job Details for JOB-DATA-2025-015:\nTitle: Data Engineer\nDepartment: Data Platform\nLocation: Austin, TX\nRemote Allowed: Yes\nSalary Range: $130,000 - $170,000\nHiring Manager ID: EMP-MGR-003\nStatus: open\nCreated: 2025-01-15\n\nRequirements:\n  - Python (Required)\n  - SQL (Required)\n  - Spark (Required)\n  - 3+ years experience (Required)\n  - Cloud data platforms (Required)\n\nDescription: Data engineer for analytics pipeline"
+              }
+            ]
+          },
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "tool_call",
+                "id": "call_V5Hsfi0q8qtGhQatfY4xH0xZ",
+                "name": "extract_requirements",
+                "arguments": "{\"job_id\":\"JOB-DATA-2025-015\"}"
+              }
+            ]
+          },
+          {
+            "role": "tool",
+            "parts": [
+              {
+                "type": "tool_call_response",
+                "id": "call_V5Hsfi0q8qtGhQatfY4xH0xZ",
+                "response": "Structured Requirements for JOB-DATA-2025-015 (Data Engineer):\n\nMUST HAVE:\nPython, SQL, Spark, 3+ years experience, Cloud data platforms\n\nNICE TO HAVE:\nNone specified\n\nMinimum Salary: $130,000\nLocation Requirement: Austin, TX (Remote OK)"
+              }
+            ]
+          },
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "tool_call",
+                "id": "call_omRXSkvTTkPHQ1l1yCeskrgt",
+                "name": "get_job_details",
+                "arguments": "{\"job_id\":\"JOB-DATA-2025-015\"}"
+              }
+            ]
+          },
+          {
+            "role": "tool",
+            "parts": [
+              {
+                "type": "tool_call_response",
+                "id": "call_omRXSkvTTkPHQ1l1yCeskrgt",
+                "response": "Job Details for JOB-DATA-2025-015:\nTitle: Data Engineer\nDepartment: Data Platform\nLocation: Austin, TX\nRemote Allowed: Yes\nSalary Range: $130,000 - $170,000\nHiring Manager ID: EMP-MGR-003\nStatus: open\nCreated: 2025-01-15\n\nRequirements:\n  - Python (Required)\n  - SQL (Required)\n  - Spark (Required)\n  - 3+ years experience (Required)\n  - Cloud data platforms (Required)\n\nDescription: Data engineer for analytics pipeline"
+              }
+            ]
+          },
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "tool_call",
+                "id": "call_NPrTi8PJvBQCiJH1nAiJGwPW",
+                "name": "get_job_details",
+                "arguments": "{\"job_id\":\"JOB-DATA-2025-015\"}"
+              }
+            ]
+          },
+          {
+            "role": "tool",
+            "parts": [
+              {
+                "type": "tool_call_response",
+                "id": "call_NPrTi8PJvBQCiJH1nAiJGwPW",
+                "response": "Job Details for JOB-DATA-2025-015:\nTitle: Data Engineer\nDepartment: Data Platform\nLocation: Austin, TX\nRemote Allowed: Yes\nSalary Range: $130,000 - $170,000\nHiring Manager ID: EMP-MGR-003\nStatus: open\nCreated: 2025-01-15\n\nRequirements:\n  - Python (Required)\n  - SQL (Required)\n  - Spark (Required)\n  - 3+ years experience (Required)\n  - Cloud data platforms (Required)\n\nDescription: Data engineer for analytics pipeline"
+              }
+            ]
+          },
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "text",
+                "content": "### Job Requirements for Data Engineer (JOB-DATA-2025-015)\n\n**Position Title:** Data Engineer  \n**Department:** Data Platform  \n**Location:** Austin, TX (Remote Allowed)  \n**Salary Range:** $130,000 - $170,000  \n**Status:** Open  \n**Priority Level:** Medium  \n\n#### **Must-Have Requirements:**\n- **Technical Skills:**\n  - Python\n  - SQL\n  - Spark\n  - Experience with Cloud Data Platforms\n- **Experience:**\n  - Minimum of 3+ years in a relevant field\n\n#### **Nice-to-Have Requirements:**\n- None specified\n\n#### **Urgency and Special Considerations:**\n- No immediate urgency indicated, but should be filled in a timely manner to support team operations.\n  \n#### **Hiring Manager:**\n- **ID:** EMP-MGR-003 \n\nThis role is essential for developing analytics pipelines and requires strong technical capabilities in the data engineering domain. Ready for candidate sourcing!"
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      }
+    },
+    {
+      "sequence": 5,
+      "timestamp": "2026-02-16T20:04:17.796706+00:00",
+      "agent_name": "ReqMaster",
+      "agent_id": "req-master",
+      "system_instructions": [],
+      "input_messages": {
+        "_raw": "[{\"role\": \"system\", \"parts\": [{\"type\": \"text\", \"content\": \"You are a Requisition Master agent handling job intake and requirements analysis.\\n\\nYour responsibilities:\\n1. Retrieve and validate job posting details\\n2. Extract structured requirements (must-have vs nice-to-have)\\n3. Verify job is approved and open for sourcing\\n4. Identify hiring manager and team context\\n5. Set up screening criteria for candidate matching\\n\\nWhen processing job requisitions:\\n- Validate the job ID exists and is in 'open' status\\n- Extract all required and preferred skills\\n- Note salary range and location requirements\\n- Identify urgency level and time-to-fill targets\\n- Flag any special requirements (clearance, certifications)\\n\\nIMPORTANT - Output Keywords:\\n- If the position is time-sensitive or high priority, include the word \\\"urgent\\\" in your analysis\\n- If the role requires international hiring or global compliance, include \\\"international\\\" in your response\\n- Always clearly state the priority level (high/medium/low)\\n\\nOutput format: Provide structured job requirements ready for candidate sourcing.\"}]}, {\"role\": \"user\", \"parts\": [{\"type\": \"text\", \"content\": \"Verify the shortlist for JOB-DATA-2025-015 is compliant with EEOC guidelines. Candidates: CAND-EXT-1001, CAND-EXT-1002, CAND-EXT-1003.\"}]}, {\"role\": \"assistant\", \"parts\": [{\"type\": \"text\", \"content\": \"\\nWe are working to address the following user request:\\n\\nVerify the shortlist for JOB-DATA-2025-015 is compliant with EEOC guidelines. Candidates: CAND-EXT-1001, CAND-EXT-1002, CAND-EXT-1003.\\n\\n\\nTo answer this request we have assembled the following team:\\n\\n- ReqMaster: <no description, use name to identify the purpose of this participant>\\n- TalentScout: <no description, use name to identify the purpose of this participant>\\n- Evaluator: <no description, use name to identify the purpose of this participant>\\n- ComplianceGuard: <no description, use name to identify the purpose of this participant>\\n- Scheduler: <no description, use name to identify the purpose of this participant>\\n\\n\\nHere is an initial fact sheet to consider:\\n\\n### 1. GIVEN OR VERIFIED FACTS\\n- Job ID: JOB-DATA-2025-015\\n- Candidates: CAND-EXT-1001, CAND-EXT-1002, CAND-EXT-1003\\n\\n### 2. FACTS TO LOOK UP\\n- EEOC guidelines related to candidate selection and compliance standards.\\n- Specifics of the job posting JOB-DATA-2025-015, including criteria and qualifications used for candidate selection.\\n\\n### 3. FACTS TO DERIVE\\n- Compliance status of each candidate with respect to EEOC guidelines based on information about their qualifications and background compared to the job criteria.\\n\\n### 4. EDUCATED GUESSES\\n- Candidates were shortlisted based on their qualifications and experiences relevant to the job, but the specific methods used for selection are unknown.\\n- Compliance with EEOC guidelines may be influenced by factors such as diversity, equitable treatment, and non-discrimination principles in the hiring process.\\n\\n\\nHere is the plan to follow as best as possible:\\n\\n- **ReqMaster**: Retrieve and review the job posting details for JOB-DATA-2025-015 to understand the selection criteria used for candidate shortlisting.\\n  \\n- **ComplianceGuard**: Research EEOC guidelines related to candidate selection and compliance to ensure all requirements are met.\\n\\n- **Evaluator**: Analyze the qualifications and backgrounds of the shortlisted candidates (CAND-EXT-1001, CAND-EXT-1002, CAND-EXT-1003) against the job requirements and EEOC guidelines.\\n\\n- **TalentScout**: If necessary, source additional candidates to ensure compliance with diversity and inclusion standards as outlined by EEOC.\\n\\n- **Scheduler**: Organize a review meeting once all assessments are completed to discuss findings and next steps.\\n\"}]}, {\"role\": \"assistant\", \"parts\": [{\"type\": \"text\", \"content\": \"Please retrieve the job posting details for JOB-DATA-2025-015 to understand the selection criteria.\"}]}, {\"role\": \"assistant\", \"parts\": [{\"type\": \"tool_call\", \"id\": \"call_XrQAwo2II6vM9L0SrPb5rtcG\", \"name\": \"get_job_details\", \"arguments\": \"{\\\"job_id\\\":\\\"JOB-DATA-2025-015\\\"}\"}]}, {\"role\": \"tool\", \"parts\": [{\"type\": \"tool_call_response\", \"id\": \"call_XrQAwo2II6vM9L0SrPb5rtcG\", \"response\": \"Job Details for JOB-DATA-2025-015:\\nTitle: Data Engineer\\nDepartment: Data Platform\\nLocation: Austin, TX\\nRemote Allowed: Yes\\nSalary Range: $130,000 - $170,000\\nHiring Manager ID: EMP-MGR-003\\nStatus: open\\nCreated: 2025-01-15\\n\\nRequirements:\\n  - Python (Required)\\n  - SQL (Required)\\n  - Spark (Required)\\n  - 3+ years experience (Required)\\n  - Cloud data platforms (Required)\\n\\nDescription: Data engineer for analytics pipeline\"}]}, {\"role\": \"assistant\", \"parts\": [{\"type\": \"tool_call\", \"id\": \"call_V5Hsfi0q8qtGhQatfY4xH0xZ\", \"name\": \"extract_requirements\", \"arguments\": \"{\\\"job_id\\\":\\\"JOB-DATA-2025-015\\\"}\"}]}, {\"role\": \"tool\", \"parts\": [{\"type\": \"tool_call_response\", \"id\": \"call_V5Hsfi0q8qtGhQatfY4xH0xZ\", \"response\": \"Structured Requirements for JOB-DATA-2025-015 (Data Engineer):\\n\\nMUST HAVE:\\nPython, SQL, Spark, 3+ years experience, Cloud data platforms\\n\\nNICE TO HAVE:\\nNone specified\\n\\nMinimum Salary: $130,000\\nLocation Requirement: Austin, TX (Remote OK)\"}]}, {\"role\": \"assistant\", \"parts\": [{\"type\": \"tool_call\", \"id\": \"call_omRXSkvTTkPHQ1l1yCeskrgt\", \"name\": \"get_job_details\", \"arguments\": \"{\\\"job_id\\\":\\\"JOB-DATA-2025-015\\\"}\"}]}, {\"role\": \"tool\", \"parts\": [{\"type\": \"tool_call_response\", \"id\": \"call_omRXSkvTTkPHQ1l1yCeskrgt\", \"response\": \"Job Details for JOB-DATA-2025-015:\\nTitle: Data Engineer\\nDepartment: Data Platform\\nLocation: Austin, TX\\nRemote Allowed: Yes\\nSalary Range: $130,000 - $170,000\\nHiring Manager ID: EMP-MGR-003\\nStatus: open\\nCreated: 2025-01-15\\n\\nRequirements:\\n  - Python (Required)\\n  - SQL (Required)\\n  - Spark (Required)\\n  - 3+ years experience (Required)\\n  - Cloud data platforms (Required)\\n\\nDescription: Data engineer for analytics pipeline\"}]}, {\"role\": \"assistant\", \"parts\": [{\"type\": \"tool_call\", \"id\": \"call_NPrTi8PJvBQCiJH1nAiJGwPW\", \"name\": \"get_job_details\", \"arguments\": \"{\\\"job_id\\\":\\\"JOB-DATA-2025-015\\\"}\"}]}, {\"role\": \"tool\", \"parts\": [{\"type\": \"tool_call_response\", \"id\": \"call_NPrTi8PJvBQCiJH1nAiJGwPW\", \"response\": \"Job Details for JOB-DATA-2025-015:\\nTitle: Data Engineer\\nDepartment: Data Platform\\nLocation: Austin, TX\\nRemote Allowed: Yes\\nSalary Range: $130,000 - $170,000\\nHiring Manager ID: EMP-MGR-003\\nStatus: open\\nCreated: 2025-01-15\\n\\nRequirements:\\n  - Python (Required)\\n  - SQL (Required)\\n  - Spark (Required)\\n  - 3+ years experience (Required)\\n  - Cloud data platforms (Required)\\n\\nDescription: Data engineer for analytics pipeline\"}]}, {\"role\": \"assistant\", \"parts\": [{\"type\": \"text\", \"content\": \"### Job Requirements for Data Engineer (JOB-DATA-2025-015)\\n\\n**Position Title:** Data Engineer  \\n**Department:** Data Platform  \\n**Location:** Austin, TX (Remote Allowed)  \\n**Salary Range:** $130,000 - $170,000  \\n**Status:** Open  \\n**Priority Level:** Medium  \\n\\n#### **Must-Have Requirements:**\\n- **Technical Skills:**\\n  - Python\\n  - SQL\\n  - Spark\\n  - Experience with Cloud Data Platforms\\n- **Experience:**\\n  - Minimum of 3+ years in a relevant field\\n\\n#### **Nice-to-Have Requirements:**\\n- None specified\\n\\n#### **Urgency and Special Considerations:**\\n- No immediate urgency indicated, but should be filled in a timely manner to support team operations.\\n  \\n#### **Hiring Manager:**\\n- **ID:** EMP-MGR-003 \\n\\nThis role is essential for developing analytics pipelines and requires strong technical capabilities in the data engineering domain. Ready for candidate sourcing!\"}]}, {\"role\": \"user\", \"parts\": [{\"type\": \"text\", \"content\": \"\\nRecall we are working on the following request:\\n\\nVerify the shortlist for JOB-DATA-2025-015 is compliant with EEOC guidelines. Candidates: CAND-EXT-1001, CAND-EXT-1002, CAND-EXT-1003.\\n\\nAnd we have assembled the following team:\\n\\n- ReqMaster: <no description, use name to identify the purpose of this participant>\\n- TalentScout: <no description, use name to identify the purpose of this participant>\\n- Evaluator: <no description, use name to identify the purpose of this participant>\\n- Compl",
+        "_truncated": true
+      },
+      "output_messages": {
+        "value": [
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "text",
+                "content": "```json\n{\n    \"is_request_satisfied\": {\n        \"reason\": \"The request has not yet fully been addressed as the compliance verification regarding the candidates has not been completed.\",\n        \"answer\": false\n    },\n    \"is_in_loop\": {\n        \"reason\": \"There is no evidence of repeating the same requests or responses; however, the verification process is still ongoing.\",\n        \"answer\": false\n    },\n    \"is_progress_being_made\": {\n        \"reason\": \"Progress is being made as the job details and requirements have been successfully retrieved, but further analysis of candidate compliance is still needed.\",\n        \"answer\": true\n    },\n    \"next_speaker\": {\n        \"reason\": \"Compliance verification is the next step needed to address the request fully.\",\n        \"answer\": \"ComplianceGuard\"\n    },\n    \"instruction_or_question\": {\n        \"reason\": \"Compliance verification is critical to ensure adherence to EEOC guidelines for the shortlisted candidates.\",\n        \"answer\": \"Please analyze the qualifications and backgrounds of candidates CAND-EXT-1001, CAND-EXT-1002, and CAND-EXT-1003 against the EEOC guidelines to ensure they meet compliance standards.\"\n    }\n}\n```"
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      }
+    },
+    {
+      "sequence": 6,
+      "timestamp": "2026-02-16T20:04:26.214821+00:00",
+      "agent_name": "ComplianceGuard",
+      "agent_id": "compliance-guard",
+      "system_instructions": [
+        "You are a Compliance Guard agent ensuring fair hiring practices.\n\nYour responsibilities:\n1. Analyze shortlists for adverse impact using the 4/5ths rule\n2. Check demographic distribution of selections\n3. Verify selection criteria are job-related\n4. Flag potential bias in screening decisions\n5. Ensure EEOC compliance documentation\n\nWhen reviewing for compliance:\n- Calculate selection rates by demographic group\n- Compare rates using the 4/5ths (80%) rule\n- Flag any disparate impact concerns\n- Recommend adjustments if bias is detected\n- Document compliance review for audit trail\n\nIMPORTANT - Output Keywords:\n- If all compliance checks pass, explicitly state \"all requirements met\"\n- If documentation is incomplete, state \"missing documents\" and list what's needed\n- For complex cases needing legal review, state \"requires manual review\"\n\nOutput format: Provide compliance report with pass/fail status and recommendations."
+      ],
+      "input_messages": {
+        "value": [
+          {
+            "role": "system",
+            "parts": [
+              {
+                "type": "text",
+                "content": "You are a Compliance Guard agent ensuring fair hiring practices.\n\nYour responsibilities:\n1. Analyze shortlists for adverse impact using the 4/5ths rule\n2. Check demographic distribution of selections\n3. Verify selection criteria are job-related\n4. Flag potential bias in screening decisions\n5. Ensure EEOC compliance documentation\n\nWhen reviewing for compliance:\n- Calculate selection rates by demographic group\n- Compare rates using the 4/5ths (80%) rule\n- Flag any disparate impact concerns\n- Recommend adjustments if bias is detected\n- Document compliance review for audit trail\n\nIMPORTANT - Output Keywords:\n- If all compliance checks pass, explicitly state \"all requirements met\"\n- If documentation is incomplete, state \"missing documents\" and list what's needed\n- For complex cases needing legal review, state \"requires manual review\"\n\nOutput format: Provide compliance report with pass/fail status and recommendations."
+              }
+            ]
+          },
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "tool_call",
+                "id": "call_XrQAwo2II6vM9L0SrPb5rtcG",
+                "name": "get_job_details",
+                "arguments": "{\"job_id\":\"JOB-DATA-2025-015\"}"
+              }
+            ]
+          },
+          {
+            "role": "tool",
+            "parts": [
+              {
+                "type": "tool_call_response",
+                "id": "call_XrQAwo2II6vM9L0SrPb5rtcG",
+                "response": "Job Details for JOB-DATA-2025-015:\nTitle: Data Engineer\nDepartment: Data Platform\nLocation: Austin, TX\nRemote Allowed: Yes\nSalary Range: $130,000 - $170,000\nHiring Manager ID: EMP-MGR-003\nStatus: open\nCreated: 2025-01-15\n\nRequirements:\n  - Python (Required)\n  - SQL (Required)\n  - Spark (Required)\n  - 3+ years experience (Required)\n  - Cloud data platforms (Required)\n\nDescription: Data engineer for analytics pipeline"
+              }
+            ]
+          },
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "tool_call",
+                "id": "call_V5Hsfi0q8qtGhQatfY4xH0xZ",
+                "name": "extract_requirements",
+                "arguments": "{\"job_id\":\"JOB-DATA-2025-015\"}"
+              }
+            ]
+          },
+          {
+            "role": "tool",
+            "parts": [
+              {
+                "type": "tool_call_response",
+                "id": "call_V5Hsfi0q8qtGhQatfY4xH0xZ",
+                "response": "Structured Requirements for JOB-DATA-2025-015 (Data Engineer):\n\nMUST HAVE:\nPython, SQL, Spark, 3+ years experience, Cloud data platforms\n\nNICE TO HAVE:\nNone specified\n\nMinimum Salary: $130,000\nLocation Requirement: Austin, TX (Remote OK)"
+              }
+            ]
+          },
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "tool_call",
+                "id": "call_omRXSkvTTkPHQ1l1yCeskrgt",
+                "name": "get_job_details",
+                "arguments": "{\"job_id\":\"JOB-DATA-2025-015\"}"
+              }
+            ]
+          },
+          {
+            "role": "tool",
+            "parts": [
+              {
+                "type": "tool_call_response",
+                "id": "call_omRXSkvTTkPHQ1l1yCeskrgt",
+                "response": "Job Details for JOB-DATA-2025-015:\nTitle: Data Engineer\nDepartment: Data Platform\nLocation: Austin, TX\nRemote Allowed: Yes\nSalary Range: $130,000 - $170,000\nHiring Manager ID: EMP-MGR-003\nStatus: open\nCreated: 2025-01-15\n\nRequirements:\n  - Python (Required)\n  - SQL (Required)\n  - Spark (Required)\n  - 3+ years experience (Required)\n  - Cloud data platforms (Required)\n\nDescription: Data engineer for analytics pipeline"
+              }
+            ]
+          },
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "tool_call",
+                "id": "call_NPrTi8PJvBQCiJH1nAiJGwPW",
+                "name": "get_job_details",
+                "arguments": "{\"job_id\":\"JOB-DATA-2025-015\"}"
+              }
+            ]
+          },
+          {
+            "role": "tool",
+            "parts": [
+              {
+                "type": "tool_call_response",
+                "id": "call_NPrTi8PJvBQCiJH1nAiJGwPW",
+                "response": "Job Details for JOB-DATA-2025-015:\nTitle: Data Engineer\nDepartment: Data Platform\nLocation: Austin, TX\nRemote Allowed: Yes\nSalary Range: $130,000 - $170,000\nHiring Manager ID: EMP-MGR-003\nStatus: open\nCreated: 2025-01-15\n\nRequirements:\n  - Python (Required)\n  - SQL (Required)\n  - Spark (Required)\n  - 3+ years experience (Required)\n  - Cloud data platforms (Required)\n\nDescription: Data engineer for analytics pipeline"
+              }
+            ]
+          },
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "text",
+                "content": "### Job Requirements for Data Engineer (JOB-DATA-2025-015)\n\n**Position Title:** Data Engineer  \n**Department:** Data Platform  \n**Location:** Austin, TX (Remote Allowed)  \n**Salary Range:** $130,000 - $170,000  \n**Status:** Open  \n**Priority Level:** Medium  \n\n#### **Must-Have Requirements:**\n- **Technical Skills:**\n  - Python\n  - SQL\n  - Spark\n  - Experience with Cloud Data Platforms\n- **Experience:**\n  - Minimum of 3+ years in a relevant field\n\n#### **Nice-to-Have Requirements:**\n- None specified\n\n#### **Urgency and Special Considerations:**\n- No immediate urgency indicated, but should be filled in a timely manner to support team operations.\n  \n#### **Hiring Manager:**\n- **ID:** EMP-MGR-003 \n\nThis role is essential for developing analytics pipelines and requires strong technical capabilities in the data engineering domain. Ready for candidate sourcing!"
+              }
+            ]
+          },
+          {
+            "role": "user",
+            "parts": [
+              {
+                "type": "text",
+                "content": "Please analyze the qualifications and backgrounds of candidates CAND-EXT-1001, CAND-EXT-1002, and CAND-EXT-1003 against the EEOC guidelines to ensure they meet compliance standards."
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      },
+      "output_messages": {
+        "value": [
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "tool_call",
+                "id": "call_YycszR7sIUp7Th7k7dHY43bY",
+                "name": "check_compliance",
+                "arguments": "{\"job_id\":\"JOB-DATA-2025-015\",\"shortlist_ids\":\"CAND-EXT-1001,CAND-EXT-1002,CAND-EXT-1003\"}"
+              },
+              {
+                "type": "function_approval_request",
+                "function_call": {
+                  "type": "function_call",
+                  "call_id": "call_YycszR7sIUp7Th7k7dHY43bY",
+                  "name": "check_compliance",
+                  "arguments": "{\"job_id\":\"JOB-DATA-2025-015\",\"shortlist_ids\":\"CAND-EXT-1001,CAND-EXT-1002,CAND-EXT-1003\"}",
+                  "additional_properties": {
+                    "output_index": 0,
+                    "fc_id": "fc_0f251e2edb246268006993785467b48190a41fa30fb012a964"
+                  }
+                },
+                "user_input_request": true,
+                "id": "call_YycszR7sIUp7Th7k7dHY43bY",
+                "additional_properties": {}
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      }
+    }
+  ],
+  "errors": []
+}

@@ -1,0 +1,450 @@
+{
+  "parse_failed": false,
+  "workflow_id": "b0f2bc07-5812-4653-87d4-4481e64721b4",
+  "workflow_name": "hr_recruitment_handoff",
+  "workflow_type": "handoff",
+  "topology": {
+    "start_executor_id": "ReqMaster",
+    "max_iterations": 100,
+    "executors": [
+      {
+        "id": "ReqMaster",
+        "type": "HandoffAgentExecutor"
+      },
+      {
+        "id": "CommsBot",
+        "type": "HandoffAgentExecutor"
+      }
+    ],
+    "edges": [
+      {
+        "type": "SingleEdgeGroup",
+        "source": "ReqMaster",
+        "target": "CommsBot"
+      },
+      {
+        "type": "SingleEdgeGroup",
+        "source": "CommsBot",
+        "target": "ReqMaster"
+      }
+    ]
+  },
+  "agents": {
+    "ReqMaster": {
+      "agent_id": "req-master",
+      "model": "gpt-4o-mini",
+      "system_instructions": "You are a Requisition Master agent handling job intake and requirements analysis.\n\nYour responsibilities:\n1. Retrieve and validate job posting details\n2. Extract structured requirements (must-have vs nice-to-have)\n3. Verify job is approved and open for sourcing\n4. Identify hiring manager and team context\n5. Set up screening criteria for candidate matching\n\nWhen processing job requisitions:\n- Validate the job ID exists and is in 'open' status\n- Extract all required and preferred skills\n- Note salary range and location requirements\n- Identify urgency level and time-to-fill targets\n- Flag any special requirements (clearance, certifications)\n\nIMPORTANT - Output Keywords:\n- If the position is time-sensitive or high priority, include the word \"urgent\" in your analysis\n- If the role requires international hiring or global compliance, include \"international\" in your response\n- Always clearly state the priority level (high/medium/low)\n\nOutput format: Provide structured job requirements ready for candidate sourcing.",
+      "tool_definitions": [
+        {
+          "name": "get_job_details",
+          "description": "Retrieves detailed information about a job posting including title, department, requirements, salary range, and hiring manager.",
+          "parameters": {
+            "properties": {
+              "job_id": {
+                "description": "The job ID to retrieve (e.g., JOB-SWE-2025-001)",
+                "title": "Job Id",
+                "type": "string"
+              }
+            },
+            "required": [
+              "job_id"
+            ],
+            "title": "get_job_details_input",
+            "type": "object"
+          }
+        },
+        {
+          "name": "extract_requirements",
+          "description": "Extracts and structures the requirements from a job posting, separating must-have from nice-to-have skills.",
+          "parameters": {
+            "properties": {
+              "job_id": {
+                "description": "The job ID to extract requirements from",
+                "title": "Job Id",
+                "type": "string"
+              }
+            },
+            "required": [
+              "job_id"
+            ],
+            "title": "extract_requirements_input",
+            "type": "object"
+          }
+        },
+        {
+          "name": "handoff_to_CommsBot",
+          "description": "Handoff to the CommsBot agent.",
+          "parameters": {
+            "properties": {
+              "context": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Context"
+              }
+            },
+            "title": "handoff_to_CommsBot_input",
+            "type": "object"
+          }
+        }
+      ]
+    },
+    "CommsBot": {
+      "agent_id": "comms-bot",
+      "model": "gpt-4o-mini",
+      "system_instructions": "You are a Communications Bot handling candidate correspondence.\n\nYour responsibilities:\n1. Send interview invitation emails\n2. Provide application status updates\n3. Send rejection notifications professionally\n4. Coordinate offer letter delivery\n5. Handle candidate inquiries\n\nWhen communicating with candidates:\n- Use professional, warm tone\n- Include all relevant details (time, location, etc.)\n- Provide clear next steps\n- Respect candidate's time and privacy\n- Follow up on unanswered communications\n\nOutput format: Confirm email sent with recipient and template used.",
+      "tool_definitions": [
+        {
+          "name": "send_candidate_email",
+          "description": "Sends an email to a candidate. Use for interview invitations, rejections, or follow-ups.",
+          "parameters": {
+            "properties": {
+              "candidate_id": {
+                "description": "The candidate ID",
+                "title": "Candidate Id",
+                "type": "string"
+              },
+              "template": {
+                "description": "Email template (interview_invite, rejection, follow_up, offer)",
+                "title": "Template",
+                "type": "string"
+              },
+              "custom_message": {
+                "default": "",
+                "description": "Optional custom message to include",
+                "title": "Custom Message",
+                "type": "string"
+              }
+            },
+            "required": [
+              "candidate_id",
+              "template"
+            ],
+            "title": "send_candidate_email_input",
+            "type": "object"
+          }
+        }
+      ]
+    }
+  },
+  "invocations": [
+    {
+      "sequence": 1,
+      "timestamp": "2026-02-16T14:26:21.137080+00:00",
+      "agent_name": "ReqMaster",
+      "agent_id": "req-master",
+      "system_instructions": [
+        "You are a Requisition Master agent handling job intake and requirements analysis.\n\nYour responsibilities:\n1. Retrieve and validate job posting details\n2. Extract structured requirements (must-have vs nice-to-have)\n3. Verify job is approved and open for sourcing\n4. Identify hiring manager and team context\n5. Set up screening criteria for candidate matching\n\nWhen processing job requisitions:\n- Validate the job ID exists and is in 'open' status\n- Extract all required and preferred skills\n- Note salary range and location requirements\n- Identify urgency level and time-to-fill targets\n- Flag any special requirements (clearance, certifications)\n\nIMPORTANT - Output Keywords:\n- If the position is time-sensitive or high priority, include the word \"urgent\" in your analysis\n- If the role requires international hiring or global compliance, include \"international\" in your response\n- Always clearly state the priority level (high/medium/low)\n\nOutput format: Provide structured job requirements ready for candidate sourcing."
+      ],
+      "input_messages": {
+        "value": [
+          {
+            "role": "system",
+            "parts": [
+              {
+                "type": "text",
+                "content": "You are a Requisition Master agent handling job intake and requirements analysis.\n\nYour responsibilities:\n1. Retrieve and validate job posting details\n2. Extract structured requirements (must-have vs nice-to-have)\n3. Verify job is approved and open for sourcing\n4. Identify hiring manager and team context\n5. Set up screening criteria for candidate matching\n\nWhen processing job requisitions:\n- Validate the job ID exists and is in 'open' status\n- Extract all required and preferred skills\n- Note salary range and location requirements\n- Identify urgency level and time-to-fill targets\n- Flag any special requirements (clearance, certifications)\n\nIMPORTANT - Output Keywords:\n- If the position is time-sensitive or high priority, include the word \"urgent\" in your analysis\n- If the role requires international hiring or global compliance, include \"international\" in your response\n- Always clearly state the priority level (high/medium/low)\n\nOutput format: Provide structured job requirements ready for candidate sourcing."
+              }
+            ]
+          },
+          {
+            "role": "user",
+            "parts": [
+              {
+                "type": "text",
+                "content": "Send an interview invitation email to candidate CAND-EXT-001 for the Senior Software Engineer position."
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      },
+      "output_messages": {
+        "value": [
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "tool_call",
+                "id": "call_pWkBGTBilYaLjWRhNwsPO4Ct",
+                "name": "handoff_to_CommsBot",
+                "arguments": "{\"context\":\"Send an interview invitation email to candidate CAND-EXT-001 for the Senior Software Engineer position.\"}"
+              }
+            ]
+          },
+          {
+            "role": "tool",
+            "parts": [
+              {
+                "type": "tool_call_response",
+                "id": "call_pWkBGTBilYaLjWRhNwsPO4Ct",
+                "response": {
+                  "handoff_to": "CommsBot"
+                }
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      }
+    },
+    {
+      "sequence": 2,
+      "timestamp": "2026-02-16T14:26:33.855695+00:00",
+      "agent_name": "CommsBot",
+      "agent_id": "comms-bot",
+      "system_instructions": [
+        "You are a Communications Bot handling candidate correspondence.\n\nYour responsibilities:\n1. Send interview invitation emails\n2. Provide application status updates\n3. Send rejection notifications professionally\n4. Coordinate offer letter delivery\n5. Handle candidate inquiries\n\nWhen communicating with candidates:\n- Use professional, warm tone\n- Include all relevant details (time, location, etc.)\n- Provide clear next steps\n- Respect candidate's time and privacy\n- Follow up on unanswered communications\n\nOutput format: Confirm email sent with recipient and template used."
+      ],
+      "input_messages": {
+        "value": [
+          {
+            "role": "system",
+            "parts": [
+              {
+                "type": "text",
+                "content": "You are a Communications Bot handling candidate correspondence.\n\nYour responsibilities:\n1. Send interview invitation emails\n2. Provide application status updates\n3. Send rejection notifications professionally\n4. Coordinate offer letter delivery\n5. Handle candidate inquiries\n\nWhen communicating with candidates:\n- Use professional, warm tone\n- Include all relevant details (time, location, etc.)\n- Provide clear next steps\n- Respect candidate's time and privacy\n- Follow up on unanswered communications\n\nOutput format: Confirm email sent with recipient and template used."
+              }
+            ]
+          },
+          {
+            "role": "user",
+            "parts": [
+              {
+                "type": "text",
+                "content": "Send an interview invitation email to candidate CAND-EXT-001 for the Senior Software Engineer position."
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      },
+      "output_messages": {
+        "value": [
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "tool_call",
+                "id": "call_00cihQiBWo4FZx4BSTmezACb",
+                "name": "send_candidate_email",
+                "arguments": "{\"candidate_id\":\"CAND-EXT-001\",\"template\":\"interview_invite\",\"custom_message\":\"We are excited to invite you to interview for the Senior Software Engineer position. Please find the details below:\\n\\n**Date:** [Insert Date]  \\n**Time:** [Insert Time]  \\n**Location:** [Insert Location]  \\n**Duration:** [Insert Duration]  \\n\\nPlease confirm your availability at your earliest convenience. We look forward to speaking with you!\"}"
+              }
+            ]
+          },
+          {
+            "role": "tool",
+            "parts": [
+              {
+                "type": "tool_call_response",
+                "id": "call_00cihQiBWo4FZx4BSTmezACb",
+                "response": "Error: Candidate 'CAND-EXT-001' not found."
+              }
+            ]
+          },
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "text",
+                "content": "It seems that the candidate ID \"CAND-EXT-001\" is not found in the system. Please verify the ID or provide another candidate ID for the interview invitation email."
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      }
+    },
+    {
+      "sequence": 3,
+      "timestamp": "2026-02-16T14:26:53.392684+00:00",
+      "agent_name": "CommsBot",
+      "agent_id": "comms-bot",
+      "system_instructions": [
+        "You are a Communications Bot handling candidate correspondence.\n\nYour responsibilities:\n1. Send interview invitation emails\n2. Provide application status updates\n3. Send rejection notifications professionally\n4. Coordinate offer letter delivery\n5. Handle candidate inquiries\n\nWhen communicating with candidates:\n- Use professional, warm tone\n- Include all relevant details (time, location, etc.)\n- Provide clear next steps\n- Respect candidate's time and privacy\n- Follow up on unanswered communications\n\nOutput format: Confirm email sent with recipient and template used."
+      ],
+      "input_messages": {
+        "value": [
+          {
+            "role": "system",
+            "parts": [
+              {
+                "type": "text",
+                "content": "You are a Communications Bot handling candidate correspondence.\n\nYour responsibilities:\n1. Send interview invitation emails\n2. Provide application status updates\n3. Send rejection notifications professionally\n4. Coordinate offer letter delivery\n5. Handle candidate inquiries\n\nWhen communicating with candidates:\n- Use professional, warm tone\n- Include all relevant details (time, location, etc.)\n- Provide clear next steps\n- Respect candidate's time and privacy\n- Follow up on unanswered communications\n\nOutput format: Confirm email sent with recipient and template used."
+              }
+            ]
+          },
+          {
+            "role": "user",
+            "parts": [
+              {
+                "type": "text",
+                "content": "Can you provide more details about this?"
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      },
+      "output_messages": {
+        "value": [
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "text",
+                "content": "I currently don't have access to specific details about candidates or their status in the system. If you provide a valid candidate ID or further context (such as an updated ID), I can assist you in sending the interview invitation or any other related communications."
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      }
+    },
+    {
+      "sequence": 4,
+      "timestamp": "2026-02-16T14:27:00.031488+00:00",
+      "agent_name": "CommsBot",
+      "agent_id": "comms-bot",
+      "system_instructions": [
+        "You are a Communications Bot handling candidate correspondence.\n\nYour responsibilities:\n1. Send interview invitation emails\n2. Provide application status updates\n3. Send rejection notifications professionally\n4. Coordinate offer letter delivery\n5. Handle candidate inquiries\n\nWhen communicating with candidates:\n- Use professional, warm tone\n- Include all relevant details (time, location, etc.)\n- Provide clear next steps\n- Respect candidate's time and privacy\n- Follow up on unanswered communications\n\nOutput format: Confirm email sent with recipient and template used."
+      ],
+      "input_messages": {
+        "value": [
+          {
+            "role": "system",
+            "parts": [
+              {
+                "type": "text",
+                "content": "You are a Communications Bot handling candidate correspondence.\n\nYour responsibilities:\n1. Send interview invitation emails\n2. Provide application status updates\n3. Send rejection notifications professionally\n4. Coordinate offer letter delivery\n5. Handle candidate inquiries\n\nWhen communicating with candidates:\n- Use professional, warm tone\n- Include all relevant details (time, location, etc.)\n- Provide clear next steps\n- Respect candidate's time and privacy\n- Follow up on unanswered communications\n\nOutput format: Confirm email sent with recipient and template used."
+              }
+            ]
+          },
+          {
+            "role": "user",
+            "parts": [
+              {
+                "type": "text",
+                "content": "That makes sense. Please proceed with the recommended approach."
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      },
+      "output_messages": {
+        "value": [
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "text",
+                "content": "Please provide a valid candidate ID or any specific details you'd like me to use for sending the interview invitation. Once I have that, I can proceed with the request!"
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      }
+    },
+    {
+      "sequence": 5,
+      "timestamp": "2026-02-16T14:27:06.680861+00:00",
+      "agent_name": "CommsBot",
+      "agent_id": "comms-bot",
+      "system_instructions": [
+        "You are a Communications Bot handling candidate correspondence.\n\nYour responsibilities:\n1. Send interview invitation emails\n2. Provide application status updates\n3. Send rejection notifications professionally\n4. Coordinate offer letter delivery\n5. Handle candidate inquiries\n\nWhen communicating with candidates:\n- Use professional, warm tone\n- Include all relevant details (time, location, etc.)\n- Provide clear next steps\n- Respect candidate's time and privacy\n- Follow up on unanswered communications\n\nOutput format: Confirm email sent with recipient and template used."
+      ],
+      "input_messages": {
+        "value": [
+          {
+            "role": "system",
+            "parts": [
+              {
+                "type": "text",
+                "content": "You are a Communications Bot handling candidate correspondence.\n\nYour responsibilities:\n1. Send interview invitation emails\n2. Provide application status updates\n3. Send rejection notifications professionally\n4. Coordinate offer letter delivery\n5. Handle candidate inquiries\n\nWhen communicating with candidates:\n- Use professional, warm tone\n- Include all relevant details (time, location, etc.)\n- Provide clear next steps\n- Respect candidate's time and privacy\n- Follow up on unanswered communications\n\nOutput format: Confirm email sent with recipient and template used."
+              }
+            ]
+          },
+          {
+            "role": "user",
+            "parts": [
+              {
+                "type": "text",
+                "content": "I'd like to finalize this. What are the next steps?"
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      },
+      "output_messages": {
+        "value": [
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "text",
+                "content": "To finalize the interview invitation, please provide the following details:\n\n1. **Candidate ID**: A valid identifier for the candidate you wish to invite.\n2. **Interview Date**: The date you want to schedule the interview.\n3. **Interview Time**: The time of the interview, including time zone.\n4. **Location**: Where the interview will take place (e.g., online platform link or physical address).\n5. **Duration**: How long you expect the interview to last.\n\nOnce I have this information, I can send the interview invitation email promptly!"
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      }
+    },
+    {
+      "sequence": 6,
+      "timestamp": "2026-02-16T14:27:14.656384+00:00",
+      "agent_name": "CommsBot",
+      "agent_id": "comms-bot",
+      "system_instructions": [
+        "You are a Communications Bot handling candidate correspondence.\n\nYour responsibilities:\n1. Send interview invitation emails\n2. Provide application status updates\n3. Send rejection notifications professionally\n4. Coordinate offer letter delivery\n5. Handle candidate inquiries\n\nWhen communicating with candidates:\n- Use professional, warm tone\n- Include all relevant details (time, location, etc.)\n- Provide clear next steps\n- Respect candidate's time and privacy\n- Follow up on unanswered communications\n\nOutput format: Confirm email sent with recipient and template used."
+      ],
+      "input_messages": {
+        "value": [
+          {
+            "role": "system",
+            "parts": [
+              {
+                "type": "text",
+                "content": "You are a Communications Bot handling candidate correspondence.\n\nYour responsibilities:\n1. Send interview invitation emails\n2. Provide application status updates\n3. Send rejection notifications professionally\n4. Coordinate offer letter delivery\n5. Handle candidate inquiries\n\nWhen communicating with candidates:\n- Use professional, warm tone\n- Include all relevant details (time, location, etc.)\n- Provide clear next steps\n- Respect candidate's time and privacy\n- Follow up on unanswered communications\n\nOutput format: Confirm email sent with recipient and template used."
+              }
+            ]
+          },
+          {
+            "role": "user",
+            "parts": [
+              {
+                "type": "text",
+                "content": "Let's wrap this up. Please confirm the final outcome."
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      },
+      "output_messages": {
+        "value": [
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "text",
+                "content": "To send the interview invitation email, please provide the following details:\n\n1. **Candidate ID**: A valid identifier for the candidate.\n2. **Interview Date**: The date of the interview.\n3. **Interview Time**: The time of the interview, including time zone.\n4. **Location**: The interview location (online or physical).\n5. **Duration**: The expected length of the interview.\n\nOnce I receive this information, I will proceed to send the email and confirm the outcome."
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      }
+    }
+  ],
+  "errors": []
+}

@@ -1,0 +1,484 @@
+{
+  "parse_failed": false,
+  "workflow_id": "1cfd8f1d-9775-4d0e-9c19-ea3529f81e29",
+  "workflow_name": "WorkflowBuilder-363e6591-9283-4471-8096-f014e228a4c1",
+  "workflow_type": "concurrent",
+  "topology": {
+    "start_executor_id": "dispatcher",
+    "max_iterations": 100,
+    "executors": [
+      {
+        "id": "dispatcher",
+        "type": "_DispatchToAllParticipants"
+      },
+      {
+        "id": "TalentScout",
+        "type": "AgentExecutor"
+      },
+      {
+        "id": "MobilityScout",
+        "type": "AgentExecutor"
+      },
+      {
+        "id": "ReferralScout",
+        "type": "AgentExecutor"
+      },
+      {
+        "id": "agent_aggregator",
+        "type": "AgentAggregatorExecutor"
+      }
+    ],
+    "edges": [
+      {
+        "type": "FanOutEdgeGroup",
+        "source": "dispatcher",
+        "target": "TalentScout"
+      },
+      {
+        "type": "FanOutEdgeGroup",
+        "source": "dispatcher",
+        "target": "MobilityScout"
+      },
+      {
+        "type": "FanOutEdgeGroup",
+        "source": "dispatcher",
+        "target": "ReferralScout"
+      },
+      {
+        "type": "FanInEdgeGroup",
+        "source": "TalentScout",
+        "target": "agent_aggregator"
+      },
+      {
+        "type": "FanInEdgeGroup",
+        "source": "MobilityScout",
+        "target": "agent_aggregator"
+      },
+      {
+        "type": "FanInEdgeGroup",
+        "source": "ReferralScout",
+        "target": "agent_aggregator"
+      }
+    ]
+  },
+  "agents": {
+    "TalentScout": {
+      "agent_id": "talent-scout",
+      "model": "gpt-4o-mini",
+      "system_instructions": "You are a Talent Scout agent specializing in external candidate sourcing.\n\nYour responsibilities:\n1. Search LinkedIn for candidate profiles matching job requirements\n2. Query external job boards for applicants (Indeed, LinkedIn Jobs, Glassdoor, etc.)\n3. Screen candidates against job requirements\n4. Filter based on experience, skills, and location\n5. Handle visa sponsorship considerations\n\nWhen processing external candidates:\n- Verify all required skills are present\n- Note any visa sponsorship requirements\n- Check salary expectations against job budget\n- Flag candidates with relevant industry experience\n- Prioritize candidates with shorter notice periods\n\nOutput Keywords:\n- When you find enough qualified candidates, explicitly state \"sufficient candidates found\"\n- If the candidate pool is limited or insufficient, state \"insufficient candidates\"\n- Always indicate the number of candidates found\n\nOutput format: Provide structured candidate profiles with skills match analysis.",
+      "tool_definitions": [
+        {
+          "name": "query_external_candidates",
+          "description": "Queries the external candidate database (job board applicants) for candidates who applied to a specific job.",
+          "parameters": {
+            "properties": {
+              "job_id": {
+                "description": "The job ID to find candidates for",
+                "title": "Job Id",
+                "type": "string"
+              },
+              "min_experience": {
+                "default": 0,
+                "description": "Minimum years of experience required",
+                "title": "Min Experience",
+                "type": "integer"
+              },
+              "visa_ok": {
+                "default": true,
+                "description": "Whether to include candidates requiring visa sponsorship",
+                "title": "Visa Ok",
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "job_id"
+            ],
+            "title": "query_external_candidates_input",
+            "type": "object"
+          }
+        }
+      ]
+    },
+    "MobilityScout": {
+      "agent_id": "mobility-scout",
+      "model": "gpt-4o-mini",
+      "system_instructions": "You are an Internal Mobility Scout agent specializing in internal transfers.\n\nYour responsibilities:\n1. Query the HRIS system for employees interested in the role\n2. Verify transfer eligibility (tenure, performance, no PIP)\n3. Check manager approval status\n4. Assess skills match with current role experience\n5. Coordinate with HR on internal transfer policies\n\nWhen processing internal candidates:\n- Verify minimum tenure requirement (usually 1+ year)\n- Check performance rating (must be meeting expectations or above)\n- Confirm employee is not on a Performance Improvement Plan\n- Note current team and potential backfill needs\n- Include manager feedback if available\n\nIMPORTANT - Output Keywords:\n- When you find enough qualified internal candidates, state \"found sufficient candidates\" or \"sufficient candidates found\"\n- If internal pool is limited, state \"no candidates\" or \"insufficient candidates\"\n\nOutput format: Provide structured profiles with eligibility status and current role context.",
+      "tool_definitions": [
+        {
+          "name": "query_internal_employees",
+          "description": "Queries the internal HRIS system for current employees who have expressed interest in a job opening and checks their transfer eligibility.",
+          "parameters": {
+            "properties": {
+              "job_id": {
+                "description": "The job ID to find internal candidates for",
+                "title": "Job Id",
+                "type": "string"
+              },
+              "eligible_only": {
+                "default": true,
+                "description": "Only return transfer-eligible employees",
+                "title": "Eligible Only",
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "job_id"
+            ],
+            "title": "query_internal_employees_input",
+            "type": "object"
+          }
+        }
+      ]
+    },
+    "ReferralScout": {
+      "agent_id": "referral-scout",
+      "model": "gpt-4o-mini",
+      "system_instructions": "You are a Referral Scout agent specializing in employee referral candidates.\n\nYour responsibilities:\n1. Query the employee referral program database for candidates\n2. Verify referrer information and referral bonus eligibility\n3. Prioritize referrals based on referrer track record\n4. Include referrer context in candidate profiles\n5. Track referral source quality metrics\n\nWhen processing referrals:\n- Validate the referrer is a current employee in good standing\n- Note any previous successful referrals from the same employee\n- Flag referrals that may have conflicts of interest (e.g., direct reports)\n- Ensure referral bonus terms are documented\n\nIMPORTANT - Output Keywords:\n- When you find qualified referral candidates, state \"found sufficient candidates\" or \"found candidates\"\n- If no suitable referrals are available, state \"no candidates\" or \"insufficient candidates\"\n\nOutput format: Provide structured candidate profiles with referrer details.",
+      "tool_definitions": [
+        {
+          "name": "query_referrals",
+          "description": "Queries the employee referral program database for candidates referred by current employees.",
+          "parameters": {
+            "properties": {
+              "job_id": {
+                "description": "The job ID to find referral candidates for",
+                "title": "Job Id",
+                "type": "string"
+              }
+            },
+            "required": [
+              "job_id"
+            ],
+            "title": "query_referrals_input",
+            "type": "object"
+          }
+        }
+      ]
+    },
+    "ReqMaster": {
+      "agent_id": "req-master",
+      "model": "gpt-4o-mini",
+      "system_instructions": "You are a Requisition Master agent handling job intake and requirements analysis.\n\nYour responsibilities:\n1. Retrieve and validate job posting details\n2. Extract structured requirements (must-have vs nice-to-have)\n3. Verify job is approved and open for sourcing\n4. Identify hiring manager and team context\n5. Set up screening criteria for candidate matching\n\nWhen processing job requisitions:\n- Validate the job ID exists and is in 'open' status\n- Extract all required and preferred skills\n- Note salary range and location requirements\n- Identify urgency level and time-to-fill targets\n- Flag any special requirements (clearance, certifications)\n\nIMPORTANT - Output Keywords:\n- If the position is time-sensitive or high priority, include the word \"urgent\" in your analysis\n- If the role requires international hiring or global compliance, include \"international\" in your response\n- Always clearly state the priority level (high/medium/low)\n\nOutput format: Provide structured job requirements ready for candidate sourcing.",
+      "tool_definitions": [
+        {
+          "name": "get_job_details",
+          "description": "Retrieves detailed information about a job posting including title, department, requirements, salary range, and hiring manager.",
+          "parameters": {
+            "properties": {
+              "job_id": {
+                "description": "The job ID to retrieve (e.g., JOB-SWE-2025-001)",
+                "title": "Job Id",
+                "type": "string"
+              }
+            },
+            "required": [
+              "job_id"
+            ],
+            "title": "get_job_details_input",
+            "type": "object"
+          }
+        },
+        {
+          "name": "extract_requirements",
+          "description": "Extracts and structures the requirements from a job posting, separating must-have from nice-to-have skills.",
+          "parameters": {
+            "properties": {
+              "job_id": {
+                "description": "The job ID to extract requirements from",
+                "title": "Job Id",
+                "type": "string"
+              }
+            },
+            "required": [
+              "job_id"
+            ],
+            "title": "extract_requirements_input",
+            "type": "object"
+          }
+        }
+      ]
+    }
+  },
+  "invocations": [
+    {
+      "sequence": 1,
+      "timestamp": "2026-02-16T17:35:07.493990+00:00",
+      "agent_name": "TalentScout",
+      "agent_id": "talent-scout",
+      "system_instructions": [
+        "You are a Talent Scout agent specializing in external candidate sourcing.\n\nYour responsibilities:\n1. Search LinkedIn for candidate profiles matching job requirements\n2. Query external job boards for applicants (Indeed, LinkedIn Jobs, Glassdoor, etc.)\n3. Screen candidates against job requirements\n4. Filter based on experience, skills, and location\n5. Handle visa sponsorship considerations\n\nWhen processing external candidates:\n- Verify all required skills are present\n- Note any visa sponsorship requirements\n- Check salary expectations against job budget\n- Flag candidates with relevant industry experience\n- Prioritize candidates with shorter notice periods\n\nOutput Keywords:\n- When you find enough qualified candidates, explicitly state \"sufficient candidates found\"\n- If the candidate pool is limited or insufficient, state \"insufficient candidates\"\n- Always indicate the number of candidates found\n\nOutput format: Provide structured candidate profiles with skills match analysis."
+      ],
+      "input_messages": {
+        "value": [
+          {
+            "role": "system",
+            "parts": [
+              {
+                "type": "text",
+                "content": "You are a Talent Scout agent specializing in external candidate sourcing.\n\nYour responsibilities:\n1. Search LinkedIn for candidate profiles matching job requirements\n2. Query external job boards for applicants (Indeed, LinkedIn Jobs, Glassdoor, etc.)\n3. Screen candidates against job requirements\n4. Filter based on experience, skills, and location\n5. Handle visa sponsorship considerations\n\nWhen processing external candidates:\n- Verify all required skills are present\n- Note any visa sponsorship requirements\n- Check salary expectations against job budget\n- Flag candidates with relevant industry experience\n- Prioritize candidates with shorter notice periods\n\nOutput Keywords:\n- When you find enough qualified candidates, explicitly state \"sufficient candidates found\"\n- If the candidate pool is limited or insufficient, state \"insufficient candidates\"\n- Always indicate the number of candidates found\n\nOutput format: Provide structured candidate profiles with skills match analysis."
+              }
+            ]
+          },
+          {
+            "role": "user",
+            "parts": [
+              {
+                "type": "text",
+                "content": "Compare candidates from all sources for JOB-PM-2025-042. Identify duplicates and calculate total cost for agency candidates."
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      },
+      "output_messages": {
+        "value": [
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "tool_call",
+                "id": "call_q9CxhCSs3YdoF6zIWlwXFPNN",
+                "name": "query_external_candidates",
+                "arguments": "{\"job_id\":\"JOB-PM-2025-042\"}"
+              }
+            ]
+          },
+          {
+            "role": "tool",
+            "parts": [
+              {
+                "type": "tool_call_response",
+                "id": "call_q9CxhCSs3YdoF6zIWlwXFPNN",
+                "response": "Error: Function failed."
+              }
+            ]
+          },
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "tool_call",
+                "id": "call_6zOYsSGYB8WcYDTDEUMXrJz0",
+                "name": "query_external_candidates",
+                "arguments": "{\"job_id\":\"JOB-PM-2025-042\"}"
+              }
+            ]
+          },
+          {
+            "role": "tool",
+            "parts": [
+              {
+                "type": "tool_call_response",
+                "id": "call_6zOYsSGYB8WcYDTDEUMXrJz0",
+                "response": "Error: Function failed."
+              }
+            ]
+          },
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "text",
+                "content": "It seems I'm currently unable to retrieve external candidates for the job ID JOB-PM-2025-042 due to a system error. Without access to the candidate database, I cannot directly compare candidates or identify duplicates.\n\nIf you have a list of candidates or need assistance with other aspects of candidate sourcing or job requirements, please provide that information, and I'll be happy to help!"
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      }
+    },
+    {
+      "sequence": 2,
+      "timestamp": "2026-02-16T17:35:07.848918+00:00",
+      "agent_name": "MobilityScout",
+      "agent_id": "mobility-scout",
+      "system_instructions": [
+        "You are an Internal Mobility Scout agent specializing in internal transfers.\n\nYour responsibilities:\n1. Query the HRIS system for employees interested in the role\n2. Verify transfer eligibility (tenure, performance, no PIP)\n3. Check manager approval status\n4. Assess skills match with current role experience\n5. Coordinate with HR on internal transfer policies\n\nWhen processing internal candidates:\n- Verify minimum tenure requirement (usually 1+ year)\n- Check performance rating (must be meeting expectations or above)\n- Confirm employee is not on a Performance Improvement Plan\n- Note current team and potential backfill needs\n- Include manager feedback if available\n\nIMPORTANT - Output Keywords:\n- When you find enough qualified internal candidates, state \"found sufficient candidates\" or \"sufficient candidates found\"\n- If internal pool is limited, state \"no candidates\" or \"insufficient candidates\"\n\nOutput format: Provide structured profiles with eligibility status and current role context."
+      ],
+      "input_messages": {
+        "value": [
+          {
+            "role": "system",
+            "parts": [
+              {
+                "type": "text",
+                "content": "You are an Internal Mobility Scout agent specializing in internal transfers.\n\nYour responsibilities:\n1. Query the HRIS system for employees interested in the role\n2. Verify transfer eligibility (tenure, performance, no PIP)\n3. Check manager approval status\n4. Assess skills match with current role experience\n5. Coordinate with HR on internal transfer policies\n\nWhen processing internal candidates:\n- Verify minimum tenure requirement (usually 1+ year)\n- Check performance rating (must be meeting expectations or above)\n- Confirm employee is not on a Performance Improvement Plan\n- Note current team and potential backfill needs\n- Include manager feedback if available\n\nIMPORTANT - Output Keywords:\n- When you find enough qualified internal candidates, state \"found sufficient candidates\" or \"sufficient candidates found\"\n- If internal pool is limited, state \"no candidates\" or \"insufficient candidates\"\n\nOutput format: Provide structured profiles with eligibility status and current role context."
+              }
+            ]
+          },
+          {
+            "role": "user",
+            "parts": [
+              {
+                "type": "text",
+                "content": "Compare candidates from all sources for JOB-PM-2025-042. Identify duplicates and calculate total cost for agency candidates."
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      },
+      "output_messages": {
+        "value": [
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "tool_call",
+                "id": "call_iQTq1KxBvAfD13YLkDXCaVGC",
+                "name": "query_internal_employees",
+                "arguments": "{\"job_id\":\"JOB-PM-2025-042\",\"eligible_only\":true}"
+              },
+              {
+                "type": "tool_call",
+                "id": "call_t7VV4mbb8ZWhqrHKvLMjZAtc",
+                "name": "query_internal_employees",
+                "arguments": "{\"job_id\":\"JOB-PM-2025-042\",\"eligible_only\":false}"
+              }
+            ]
+          },
+          {
+            "role": "tool",
+            "parts": [
+              {
+                "type": "tool_call_response",
+                "id": "call_iQTq1KxBvAfD13YLkDXCaVGC",
+                "response": "Error: Function failed."
+              },
+              {
+                "type": "tool_call_response",
+                "id": "call_t7VV4mbb8ZWhqrHKvLMjZAtc",
+                "response": "Error: Function failed."
+              }
+            ]
+          },
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "text",
+                "content": "It seems there was an issue querying for the candidates. I’ll need to troubleshoot the request to gather the information for the job role \"JOB-PM-2025-042,\" including both internal and agency candidates.\n\nPlease provide details about any agency candidates you might have on hand, such as their profiles and associated costs, so I can assist you in comparing them with internal candidates."
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      }
+    },
+    {
+      "sequence": 3,
+      "timestamp": "2026-02-16T17:35:08.185020+00:00",
+      "agent_name": "ReferralScout",
+      "agent_id": "referral-scout",
+      "system_instructions": [
+        "You are a Referral Scout agent specializing in employee referral candidates.\n\nYour responsibilities:\n1. Query the employee referral program database for candidates\n2. Verify referrer information and referral bonus eligibility\n3. Prioritize referrals based on referrer track record\n4. Include referrer context in candidate profiles\n5. Track referral source quality metrics\n\nWhen processing referrals:\n- Validate the referrer is a current employee in good standing\n- Note any previous successful referrals from the same employee\n- Flag referrals that may have conflicts of interest (e.g., direct reports)\n- Ensure referral bonus terms are documented\n\nIMPORTANT - Output Keywords:\n- When you find qualified referral candidates, state \"found sufficient candidates\" or \"found candidates\"\n- If no suitable referrals are available, state \"no candidates\" or \"insufficient candidates\"\n\nOutput format: Provide structured candidate profiles with referrer details."
+      ],
+      "input_messages": {
+        "value": [
+          {
+            "role": "system",
+            "parts": [
+              {
+                "type": "text",
+                "content": "You are a Referral Scout agent specializing in employee referral candidates.\n\nYour responsibilities:\n1. Query the employee referral program database for candidates\n2. Verify referrer information and referral bonus eligibility\n3. Prioritize referrals based on referrer track record\n4. Include referrer context in candidate profiles\n5. Track referral source quality metrics\n\nWhen processing referrals:\n- Validate the referrer is a current employee in good standing\n- Note any previous successful referrals from the same employee\n- Flag referrals that may have conflicts of interest (e.g., direct reports)\n- Ensure referral bonus terms are documented\n\nIMPORTANT - Output Keywords:\n- When you find qualified referral candidates, state \"found sufficient candidates\" or \"found candidates\"\n- If no suitable referrals are available, state \"no candidates\" or \"insufficient candidates\"\n\nOutput format: Provide structured candidate profiles with referrer details."
+              }
+            ]
+          },
+          {
+            "role": "user",
+            "parts": [
+              {
+                "type": "text",
+                "content": "Compare candidates from all sources for JOB-PM-2025-042. Identify duplicates and calculate total cost for agency candidates."
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      },
+      "output_messages": {
+        "value": [
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "tool_call",
+                "id": "call_1yfKO2iJMXp88v7TlF7u3gGl",
+                "name": "query_referrals",
+                "arguments": "{\"job_id\":\"JOB-PM-2025-042\"}"
+              }
+            ]
+          },
+          {
+            "role": "tool",
+            "parts": [
+              {
+                "type": "tool_call_response",
+                "id": "call_1yfKO2iJMXp88v7TlF7u3gGl",
+                "response": "Error: Function failed."
+              }
+            ]
+          },
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "text",
+                "content": "It looks like there was an issue querying the candidate database for job ID JOB-PM-2025-042. Unfortunately, I can't proceed with comparing candidates or calculating costs without access to that data. \n\nPlease check if the job ID is correct or try again later. Do you have any specific information or candidates you'd like to compare?"
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      }
+    },
+    {
+      "sequence": 4,
+      "timestamp": "2026-02-16T17:36:00.534842+00:00",
+      "agent_name": "ReqMaster",
+      "agent_id": "req-master",
+      "system_instructions": [
+        "You are a Requisition Master agent handling job intake and requirements analysis.\n\nYour responsibilities:\n1. Retrieve and validate job posting details\n2. Extract structured requirements (must-have vs nice-to-have)\n3. Verify job is approved and open for sourcing\n4. Identify hiring manager and team context\n5. Set up screening criteria for candidate matching\n\nWhen processing job requisitions:\n- Validate the job ID exists and is in 'open' status\n- Extract all required and preferred skills\n- Note salary range and location requirements\n- Identify urgency level and time-to-fill targets\n- Flag any special requirements (clearance, certifications)\n\nIMPORTANT - Output Keywords:\n- If the position is time-sensitive or high priority, include the word \"urgent\" in your analysis\n- If the role requires international hiring or global compliance, include \"international\" in your response\n- Always clearly state the priority level (high/medium/low)\n\nOutput format: Provide structured job requirements ready for candidate sourcing."
+      ],
+      "input_messages": {
+        "value": [
+          {
+            "role": "system",
+            "parts": [
+              {
+                "type": "text",
+                "content": "You are a Requisition Master agent handling job intake and requirements analysis.\n\nYour responsibilities:\n1. Retrieve and validate job posting details\n2. Extract structured requirements (must-have vs nice-to-have)\n3. Verify job is approved and open for sourcing\n4. Identify hiring manager and team context\n5. Set up screening criteria for candidate matching\n\nWhen processing job requisitions:\n- Validate the job ID exists and is in 'open' status\n- Extract all required and preferred skills\n- Note salary range and location requirements\n- Identify urgency level and time-to-fill targets\n- Flag any special requirements (clearance, certifications)\n\nIMPORTANT - Output Keywords:\n- If the position is time-sensitive or high priority, include the word \"urgent\" in your analysis\n- If the role requires international hiring or global compliance, include \"international\" in your response\n- Always clearly state the priority level (high/medium/low)\n\nOutput format: Provide structured job requirements ready for candidate sourcing."
+              }
+            ]
+          },
+          {
+            "role": "user",
+            "parts": [
+              {
+                "type": "text",
+                "content": "Original query: Compare candidates from all sources for JOB-PM-2025-042. Identify duplicates and calculate total cost for agency candidates.\n\nResults from multiple sources:\nFrom TalentScout:\nIt seems I'm currently unable to retrieve external candidates for the job ID JOB-PM-2025-042 due to a system error. Without access to the candidate database, I cannot directly compare candidates or identify duplicates.\n\nIf you have a list of candidates or need assistance with other aspects of candidate sourcing or job requirements, please provide that information, and I'll be happy to help!\n\nFrom MobilityScout:\nIt seems there was an issue querying for the candidates. I’ll need to troubleshoot the request to gather the information for the job role \"JOB-PM-2025-042,\" including both internal and agency candidates.\n\nPlease provide details about any agency candidates you might have on hand, such as their profiles and associated costs, so I can assist you in comparing them with internal candidates.\n\nFrom ReferralScout:\nIt looks like there was an issue querying the candidate database for job ID JOB-PM-2025-042. Unfortunately, I can't proceed with comparing candidates or calculating costs without access to that data. \n\nPlease check if the job ID is correct or try again later. Do you have any specific information or candidates you'd like to compare?\n\nPlease analyze and synthesize these results into a comprehensive response."
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      },
+      "output_messages": {
+        "value": [
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "text",
+                "content": "### Summary of Candidate Comparison for JOB-PM-2025-042\n\n**Current Status:**\n- There are system errors across multiple sources (TalentScout, MobilityScout, and ReferralScout) preventing the retrieval of candidate data for the specified job ID (JOB-PM-2025-042).\n- No candidate profiles can be compared, and issues persist in identifying duplicates and calculating costs for agency candidates.\n\n**Next Steps:**\n1. **Verify Job ID:** Ensure that JOB-PM-2025-042 is correct and still open for sourcing.\n2. **Agency Candidate Information:** If you have any agency candidates on hand, please provide their details (profiles and associated costs) for comparison with internal candidates.\n3. **Candidate Profiles:** If you have a list of candidates, you can share that for an analysis, even if the systems are currently down for external querying.\n4. **Troubleshooting:** Ongoing work is needed to address the technical issues with candidate database access. \n\n**Assistance Available:**\n- If you would like support with setting up screening criteria or job requirements related to JOB-PM-2025-042, I’m here to help!\n- Providing any available candidate details will expedite the comparison process.\n\n**Conclusion:**\nCurrently unable to compare or analyze candidates due to system errors, but open to facilitating alternative solutions or gathering more information from you. Please advise how you'd like to proceed!"
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      }
+    }
+  ],
+  "errors": []
+}

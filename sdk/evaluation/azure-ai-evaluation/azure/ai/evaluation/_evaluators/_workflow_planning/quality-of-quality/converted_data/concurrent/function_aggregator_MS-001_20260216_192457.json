@@ -1,0 +1,446 @@
+{
+  "parse_failed": false,
+  "workflow_id": "a6e942d9-af48-4ed1-ac6f-94ed1581e584",
+  "workflow_name": "WorkflowBuilder-f73e0790-bdc1-4dd4-9fdb-7101829b6e91",
+  "workflow_type": "concurrent",
+  "topology": {
+    "start_executor_id": "dispatcher",
+    "max_iterations": 100,
+    "executors": [
+      {
+        "id": "dispatcher",
+        "type": "_DispatchToAllParticipants"
+      },
+      {
+        "id": "TalentScout",
+        "type": "AgentExecutor"
+      },
+      {
+        "id": "MobilityScout",
+        "type": "AgentExecutor"
+      },
+      {
+        "id": "ReferralScout",
+        "type": "AgentExecutor"
+      },
+      {
+        "id": "AgencyScout",
+        "type": "AgentExecutor"
+      },
+      {
+        "id": "aggregate_results",
+        "type": "_CallbackAggregator"
+      }
+    ],
+    "edges": [
+      {
+        "type": "FanOutEdgeGroup",
+        "source": "dispatcher",
+        "target": "TalentScout"
+      },
+      {
+        "type": "FanOutEdgeGroup",
+        "source": "dispatcher",
+        "target": "MobilityScout"
+      },
+      {
+        "type": "FanOutEdgeGroup",
+        "source": "dispatcher",
+        "target": "ReferralScout"
+      },
+      {
+        "type": "FanOutEdgeGroup",
+        "source": "dispatcher",
+        "target": "AgencyScout"
+      },
+      {
+        "type": "FanInEdgeGroup",
+        "source": "TalentScout",
+        "target": "aggregate_results"
+      },
+      {
+        "type": "FanInEdgeGroup",
+        "source": "MobilityScout",
+        "target": "aggregate_results"
+      },
+      {
+        "type": "FanInEdgeGroup",
+        "source": "ReferralScout",
+        "target": "aggregate_results"
+      },
+      {
+        "type": "FanInEdgeGroup",
+        "source": "AgencyScout",
+        "target": "aggregate_results"
+      }
+    ]
+  },
+  "agents": {
+    "TalentScout": {
+      "agent_id": "talent-scout",
+      "model": "gpt-4o-mini",
+      "system_instructions": "You are a Talent Scout agent specializing in external candidate sourcing.\n\nYour responsibilities:\n1. Search LinkedIn for candidate profiles matching job requirements\n2. Query external job boards for applicants (Indeed, LinkedIn Jobs, Glassdoor, etc.)\n3. Screen candidates against job requirements\n4. Filter based on experience, skills, and location\n5. Handle visa sponsorship considerations\n\nWhen processing external candidates:\n- Verify all required skills are present\n- Note any visa sponsorship requirements\n- Check salary expectations against job budget\n- Flag candidates with relevant industry experience\n- Prioritize candidates with shorter notice periods\n\nOutput Keywords:\n- When you find enough qualified candidates, explicitly state \"sufficient candidates found\"\n- If the candidate pool is limited or insufficient, state \"insufficient candidates\"\n- Always indicate the number of candidates found\n\nOutput format: Provide structured candidate profiles with skills match analysis.",
+      "tool_definitions": []
+    },
+    "MobilityScout": {
+      "agent_id": "mobility-scout",
+      "model": "gpt-4o-mini",
+      "system_instructions": "You are an Internal Mobility Scout agent specializing in internal transfers.\n\nYour responsibilities:\n1. Query the HRIS system for employees interested in the role\n2. Verify transfer eligibility (tenure, performance, no PIP)\n3. Check manager approval status\n4. Assess skills match with current role experience\n5. Coordinate with HR on internal transfer policies\n\nWhen processing internal candidates:\n- Verify minimum tenure requirement (usually 1+ year)\n- Check performance rating (must be meeting expectations or above)\n- Confirm employee is not on a Performance Improvement Plan\n- Note current team and potential backfill needs\n- Include manager feedback if available\n\nIMPORTANT - Output Keywords:\n- When you find enough qualified internal candidates, state \"found sufficient candidates\" or \"sufficient candidates found\"\n- If internal pool is limited, state \"no candidates\" or \"insufficient candidates\"\n\nOutput format: Provide structured profiles with eligibility status and current role context.",
+      "tool_definitions": [
+        {
+          "name": "query_internal_employees",
+          "description": "Queries the internal HRIS system for current employees who have expressed interest in a job opening and checks their transfer eligibility.",
+          "parameters": {
+            "properties": {
+              "job_id": {
+                "description": "The job ID to find internal candidates for",
+                "title": "Job Id",
+                "type": "string"
+              },
+              "eligible_only": {
+                "default": true,
+                "description": "Only return transfer-eligible employees",
+                "title": "Eligible Only",
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "job_id"
+            ],
+            "title": "query_internal_employees_input",
+            "type": "object"
+          }
+        }
+      ]
+    },
+    "ReferralScout": {
+      "agent_id": "referral-scout",
+      "model": "gpt-4o-mini",
+      "system_instructions": "You are a Referral Scout agent specializing in employee referral candidates.\n\nYour responsibilities:\n1. Query the employee referral program database for candidates\n2. Verify referrer information and referral bonus eligibility\n3. Prioritize referrals based on referrer track record\n4. Include referrer context in candidate profiles\n5. Track referral source quality metrics\n\nWhen processing referrals:\n- Validate the referrer is a current employee in good standing\n- Note any previous successful referrals from the same employee\n- Flag referrals that may have conflicts of interest (e.g., direct reports)\n- Ensure referral bonus terms are documented\n\nIMPORTANT - Output Keywords:\n- When you find qualified referral candidates, state \"found sufficient candidates\" or \"found candidates\"\n- If no suitable referrals are available, state \"no candidates\" or \"insufficient candidates\"\n\nOutput format: Provide structured candidate profiles with referrer details.",
+      "tool_definitions": [
+        {
+          "name": "query_referrals",
+          "description": "Queries the employee referral program database for candidates referred by current employees.",
+          "parameters": {
+            "properties": {
+              "job_id": {
+                "description": "The job ID to find referral candidates for",
+                "title": "Job Id",
+                "type": "string"
+              }
+            },
+            "required": [
+              "job_id"
+            ],
+            "title": "query_referrals_input",
+            "type": "object"
+          }
+        }
+      ]
+    },
+    "AgencyScout": {
+      "agent_id": "agency-scout",
+      "model": "gpt-4o-mini",
+      "system_instructions": "You are an Agency Scout agent specializing in recruitment agency candidates.\n\nYour responsibilities:\n1. Query recruitment agency submissions for candidates\n2. Track agency fees and contract terms for each candidate\n3. Verify agency-candidate exclusivity periods\n4. Compare candidates across different agencies\n5. Flag duplicate submissions from multiple agencies\n\nWhen processing agency candidates:\n- Always include the agency fee percentage in candidate details\n- Check if the candidate was previously submitted by another agency\n- Note the agency's track record and quality metrics\n- Flag any candidates approaching exclusivity expiration\n- Calculate total cost (salary + agency fee) for budget comparison\n\nIMPORTANT - Output Keywords:\n- When you find qualified agency candidates, state \"found sufficient candidates\" or \"found candidates\"\n- If agencies cannot provide suitable candidates, state \"no candidates\" or \"insufficient candidates\"\n\nOutput format: Provide structured profiles with full cost breakdown.",
+      "tool_definitions": [
+        {
+          "name": "query_agency_candidates",
+          "description": "Queries recruitment agency portals for candidates submitted by external recruiters. Includes agency fee information.",
+          "parameters": {
+            "properties": {
+              "job_id": {
+                "description": "The job ID to find agency candidates for",
+                "title": "Job Id",
+                "type": "string"
+              },
+              "agency_id": {
+                "default": "all",
+                "description": "Specific agency ID to query, or 'all' for all agencies",
+                "title": "Agency Id",
+                "type": "string"
+              }
+            },
+            "required": [
+              "job_id"
+            ],
+            "title": "query_agency_candidates_input",
+            "type": "object"
+          }
+        }
+      ]
+    }
+  },
+  "invocations": [
+    {
+      "sequence": 1,
+      "timestamp": "2026-02-16T17:24:59.404693+00:00",
+      "agent_name": "TalentScout",
+      "agent_id": "talent-scout",
+      "system_instructions": [
+        "You are a Talent Scout agent specializing in external candidate sourcing.\n\nYour responsibilities:\n1. Search LinkedIn for candidate profiles matching job requirements\n2. Query external job boards for applicants (Indeed, LinkedIn Jobs, Glassdoor, etc.)\n3. Screen candidates against job requirements\n4. Filter based on experience, skills, and location\n5. Handle visa sponsorship considerations\n\nWhen processing external candidates:\n- Verify all required skills are present\n- Note any visa sponsorship requirements\n- Check salary expectations against job budget\n- Flag candidates with relevant industry experience\n- Prioritize candidates with shorter notice periods\n\nOutput Keywords:\n- When you find enough qualified candidates, explicitly state \"sufficient candidates found\"\n- If the candidate pool is limited or insufficient, state \"insufficient candidates\"\n- Always indicate the number of candidates found\n\nOutput format: Provide structured candidate profiles with skills match analysis."
+      ],
+      "input_messages": {
+        "value": [
+          {
+            "role": "system",
+            "parts": [
+              {
+                "type": "text",
+                "content": "You are a Talent Scout agent specializing in external candidate sourcing.\n\nYour responsibilities:\n1. Search LinkedIn for candidate profiles matching job requirements\n2. Query external job boards for applicants (Indeed, LinkedIn Jobs, Glassdoor, etc.)\n3. Screen candidates against job requirements\n4. Filter based on experience, skills, and location\n5. Handle visa sponsorship considerations\n\nWhen processing external candidates:\n- Verify all required skills are present\n- Note any visa sponsorship requirements\n- Check salary expectations against job budget\n- Flag candidates with relevant industry experience\n- Prioritize candidates with shorter notice periods\n\nOutput Keywords:\n- When you find enough qualified candidates, explicitly state \"sufficient candidates found\"\n- If the candidate pool is limited or insufficient, state \"insufficient candidates\"\n- Always indicate the number of candidates found\n\nOutput format: Provide structured candidate profiles with skills match analysis."
+              }
+            ]
+          },
+          {
+            "role": "user",
+            "parts": [
+              {
+                "type": "text",
+                "content": "Simultaneously source candidates from job boards, internal mobility, employee referrals, and recruitment agencies for JOB-SWE-2025-001. Combine results into a unified candidate pool."
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      },
+      "output_messages": {
+        "_raw": "[{\"role\": \"assistant\", \"parts\": [{\"type\": \"tool_call\", \"id\": \"call_qTOP1xbvQkgPduV1C0wtjMFB\", \"name\": \"query_external_job_boards\", \"arguments\": \"{\\\"job_id\\\":\\\"JOB-SWE-2025-001\\\"}\"}, {\"type\": \"tool_call\", \"id\": \"call_2KGtWVQbbdoGvU8yLoImGQpU\", \"name\": \"search_linkedin_profiles\", \"arguments\": \"{\\\"skills\\\":[\\\"Software Development\\\",\\\"Python\\\",\\\"Java\\\",\\\"SQL\\\"],\\\"open_to_work_only\\\":true}\"}, {\"type\": \"tool_call\", \"id\": \"call_YCjGqjKN4VmxeR2lTlQNhOpN\", \"name\": \"query_external_job_boards\", \"arguments\": \"{\\\"job_id\\\":\\\"JOB-SWE-2025-001\\\",\\\"skills\\\":[\\\"Software Development\\\",\\\"Python\\\",\\\"Java\\\",\\\"SQL\\\"]}\"}]}, {\"role\": \"tool\", \"parts\": [{\"type\": \"tool_call_response\", \"id\": \"call_qTOP1xbvQkgPduV1C0wtjMFB\", \"response\": \"Total Results: 3\\n\\nCandidate ID: EXT-JB-001\\nSource: Indeed\\nName: John Chen\\nEmail: john.chen@email.com\\nPhone: +1-555-0101\\nSkills: Python, Azure, Kubernetes, Distributed Systems, Go\\nYears Experience: 7\\nEducation: MS Computer Science, Stanford\\nCurrent Company: TechCorp Inc\\nCurrent Title: Senior Software Engineer\\nLocation: Seattle, WA\\nVisa Required: False\\nSalary Expectation: $180,000\\nApplication Date: 2025-01-20\\nResume Summary: Experienced software engineer with 7 years in cloud platforms and distributed systems.\\n\\nCandidate ID: EXT-JB-005\\nSource: ZipRecruiter\\nName: James Park\\nEmail: james.park@email.com\\nPhone: +1-555-0105\\nSkills: Python, Azure, Distributed Systems, C++\\nYears Experience: 6\\nEducation: MS Computer Science, Carnegie Mellon\\nCurrent Company: CloudServices LLC\\nCurrent Title: Senior Developer\\nLocation: Seattle, WA\\nVisa Required: True\\nSalary Expectation: $175,000\\nApplication Date: 2025-01-23\\nResume Summary: Backend engineer with distributed systems experience, requires H1B sponsorship.\\n\\nCandidate ID: EXT-JB-002\\nSource: LinkedIn Jobs\\nName: Sarah Williams\\nEmail: sarah.w@email.com\\nPhone: +1-555-0102\\nSkills: Python, AWS, Docker, Machine Learning\\nYears Experience: 5\\nEducation: BS Computer Science, MIT\\nCurrent Company: DataStartup\\nCurrent Title: Software Engineer\\nLocation: Boston, MA\\nVisa Required: False\\nSalary Expectation: $165,000\\nApplication Date: 2025-01-22\\nResume Summary: Software engineer specializing in ML infrastructure and cloud-native applications.\\n\"}, {\"type\": \"tool_call_response\", \"id\": \"call_2KGtWVQbbdoGvU8yLoImGQpU\", \"response\": \"Total Results: 4\\n\\nProfile ID: LI-003\\nName: James Wilson\\nHeadline: Data Engineer at DataCorp\\nLocation: Austin, TX\\nSkills: Python, Spark, SQL, Databricks, Airflow\\nExperience Years: 5\\nCurrent Company: DataCorp\\nEducation: MS Data Science, UT Austin\\nOpen to Work: True\\nMatch Score: 0.5\\n\\nProfile ID: LI-005\\nName: Robert Chen\\nHeadline: Senior Backend Developer | Distributed Systems\\nLocation: Seattle, WA\\nSkills: Python, Java, Azure, Microservices, Distributed Systems\\nExperience Years: 6\\nCurrent Company: Enterprise Solutions Corp\\nEducation: BS Computer Engineering, Carnegie Mellon\\nOpen to Work: True\\nMatch Score: 0.5\\n\\nProfile ID: LI-001\\nName: Alex Thompson\\nHeadline: Senior Software Engineer at TechGiant\\nLocation: Seattle, WA\\nSkills: Python, Azure, Kubernetes, Distributed Systems, Go\\nExperience Years: 8\\nCurrent Company: TechGiant\\nEducation: MS Computer Science, University of Washington\\nOpen to Work: True\\nMatch Score: 0.25\\n\\nProfile ID: LI-006\\nName: Emily Davis\\nHeadline: ML Platform Engineer\\nLocation: New York, NY\\nSkills: Python, PyTorch, Kubernetes, MLOps, Data Engineering\\nExperience Years: 4\\nCurrent Company: AI Startup\\nEducation: MS Machine Learning, Columbia\\nOpen to Work: True\\nMatch Score: 0.25\\n\"}, {\"type\": \"tool_call_response\", \"id\": \"call_YCjGqjKN4VmxeR2lTlQNhOpN\", \"response\": \"Total Results: 3\\n\\nCandidate ID: EXT-JB-001\\nSource: Indeed\\nName: John Chen\\nEmail: john.chen@email.com\\nPhone: +1-555-0101\\nSkills: Python, Azure, Kubernetes, Distributed Systems, Go\\nYears Experience: 7\\nEducation: MS Computer Science, Stanford\\nCurrent Company: TechCorp Inc\\nCurrent Title: Senior Software Engineer\\nLocation: Seattle, WA\\nVisa Required: False\\nSalary Expectation: $180,000\\nApplication Date: 2025-01-20\\nResume Summary: Experienced software engineer with 7 years in cloud platforms and distributed systems.\\n\\nCandidate ID: EXT-JB-005\\nSource: ZipRecruiter\\nName: James Park\\nEmail: james.park@email.com\\nPhone: +1-555-0105\\nSkills: Python, Azure, Distributed Systems, C++\\nYears Experience: 6\\nEducation: MS Computer Science, Carnegie Mellon\\nCurrent Company: CloudServices LLC\\nCurrent Title: Senior Developer\\nLocation: Seattle, WA\\nVisa Required: True\\nSalary Expectation: $175,000\\nApplication Date: 2025-01-23\\nResume Summary: Backend engineer with distributed systems experience, requires H1B sponsorship.\\n\\nCandidate ID: EXT-JB-002\\nSource: LinkedIn Jobs\\nName: Sarah Williams\\nEmail: sarah.w@email.com\\nPhone: +1-555-0102\\nSkills: Python, AWS, Docker, Machine Learning\\nYears Experience: 5\\nEducation: BS Computer Science, MIT\\nCurrent Company: DataStartup\\nCurrent Title: Software Engineer\\nLocation: Boston, MA\\nVisa Required: False\\nSalary Expectation: $165,000\\nApplication Date: 2025-01-22\\nResume Summary: Software engineer specializing in ML infrastructure and cloud-native applications.\\n\"}]}, {\"role\": \"assistant\", \"parts\": [{\"type\": \"text\", \"content\": \"### Unified Candidate Pool for JOB-SWE-2025-001\\n\\n#### Candidates from Job Boards\\n\\n1. **John Chen**\\n   - **Source:** Indeed\\n   - **Email:** john.chen@email.com\\n   - **Phone:** +1-555-0101\\n   - **Skills:** Python, Azure, Kubernetes, Distributed Systems, Go\\n   - **Years Experience:** 7\\n   - **Education:** MS Computer Science, Stanford\\n   - **Current Company:** TechCorp Inc\\n   - **Current Title:** Senior Software Engineer\\n   - **Location:** Seattle, WA\\n   - **Visa Required:** No\\n   - **Salary Expectation:** $180,000\\n   - **Application Date:** 2025-01-20\\n   - **Resume Summary:** Experienced software engineer specializing in cloud platforms and distributed systems.\\n\\n2. **James Park**\\n   - **Source:** ZipRecruiter\\n   - **Email:** james.park@email.com\\n   - **Phone:** +1-555-0105\\n   - **Skills:** Python, Azure, Distributed Systems, C++\\n   - **Years Experience:** 6\\n   - **Education:** MS Computer Science, Carnegie Mellon\\n   - **Current Company:** CloudServices LLC\\n   - **Current Title:** Senior Developer\\n   - **Location:** Seattle, WA\\n   - **Visa Required:** Yes (H1B sponsorship)\\n   - **Salary Expectation:** $175,000\\n   - **Application Date:** 2025-01-23\\n   - **Resume Summary:** Backend engineer with a focus on distributed systems.\\n\\n3. **Sarah Williams**\\n   - **Source:** LinkedIn Jobs\\n   - **Email:** sarah.w@email.com\\n   - **Phone:** +1-555-0102\\n   - **Skills:** Python, AWS, Docker, Machine Learning\\n   - **Years Experience:** 5\\n   - **Education:** BS Computer Science, MIT\\n   - **Current Company:** DataStartup\\n   - **Current Title:** Software Engineer\\n   - **Location:** Boston, MA\\n   - **Visa Required:** No\\n   - **Salary Expectation:** $165,000\\n   - **Application Date:** 2025-01-22\\n   - **Resume Summary:** Software engineer specializing in ML infrastructure and cloud-native applications.\\n\\n#### Candidates from LinkedIn\\n\\n4. **James Wilson**\\n   - **Profile ID:** LI-003\\n   - **Location:** Austin, TX\\n   - **Skills:** Python, Spark, SQL, Databricks, Airflow\\n   - **Years Experience:** 5\\n   - **Current Company:** DataCorp\\n   - **Education:** MS Data Science, UT Austin\\n   - **Open to Work:** Yes\\n   - **Match Score:** 0.5\\n\\n5. **Robert Chen**\\n   - **Profile ID:** LI-005\\n   - **Location:** Seattle, WA\\n   - **Skills:** Python, Java, Azure, Microservices, Distributed Systems\\n   - **Years Experience:** 6\\n   - **Current Company:** Enterprise Solutions Corp\\n   - **Education:** BS Computer Engineering, Carnegie Mellon\\n   - **Open to Work:** Yes\\n   - **Match Score:** 0.5\\n\\n6. **Alex Thompson**\\n   - **Profile ID:** LI-001\\n   - **Location:** Seattle, WA\\n   - **Skills:** Python, Azure, Kubernetes, Distributed Systems, Go\\n   - **Years Experience:** 8\\n   - **Current Company:** TechGiant\\n   - **Education:** MS Computer Science, University of Washington\\n   - **Open to Work:** Yes\\n   - **Match Score:** 0.25\\n\\n7. **Emily Davis**\\n   - *",
+        "_truncated": true
+      }
+    },
+    {
+      "sequence": 2,
+      "timestamp": "2026-02-16T17:24:59.759006+00:00",
+      "agent_name": "MobilityScout",
+      "agent_id": "mobility-scout",
+      "system_instructions": [
+        "You are an Internal Mobility Scout agent specializing in internal transfers.\n\nYour responsibilities:\n1. Query the HRIS system for employees interested in the role\n2. Verify transfer eligibility (tenure, performance, no PIP)\n3. Check manager approval status\n4. Assess skills match with current role experience\n5. Coordinate with HR on internal transfer policies\n\nWhen processing internal candidates:\n- Verify minimum tenure requirement (usually 1+ year)\n- Check performance rating (must be meeting expectations or above)\n- Confirm employee is not on a Performance Improvement Plan\n- Note current team and potential backfill needs\n- Include manager feedback if available\n\nIMPORTANT - Output Keywords:\n- When you find enough qualified internal candidates, state \"found sufficient candidates\" or \"sufficient candidates found\"\n- If internal pool is limited, state \"no candidates\" or \"insufficient candidates\"\n\nOutput format: Provide structured profiles with eligibility status and current role context."
+      ],
+      "input_messages": {
+        "value": [
+          {
+            "role": "system",
+            "parts": [
+              {
+                "type": "text",
+                "content": "You are an Internal Mobility Scout agent specializing in internal transfers.\n\nYour responsibilities:\n1. Query the HRIS system for employees interested in the role\n2. Verify transfer eligibility (tenure, performance, no PIP)\n3. Check manager approval status\n4. Assess skills match with current role experience\n5. Coordinate with HR on internal transfer policies\n\nWhen processing internal candidates:\n- Verify minimum tenure requirement (usually 1+ year)\n- Check performance rating (must be meeting expectations or above)\n- Confirm employee is not on a Performance Improvement Plan\n- Note current team and potential backfill needs\n- Include manager feedback if available\n\nIMPORTANT - Output Keywords:\n- When you find enough qualified internal candidates, state \"found sufficient candidates\" or \"sufficient candidates found\"\n- If internal pool is limited, state \"no candidates\" or \"insufficient candidates\"\n\nOutput format: Provide structured profiles with eligibility status and current role context."
+              }
+            ]
+          },
+          {
+            "role": "user",
+            "parts": [
+              {
+                "type": "text",
+                "content": "Simultaneously source candidates from job boards, internal mobility, employee referrals, and recruitment agencies for JOB-SWE-2025-001. Combine results into a unified candidate pool."
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      },
+      "output_messages": {
+        "value": [
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "tool_call",
+                "id": "call_67a44RonI1Osa9dEw67IbSka",
+                "name": "query_internal_employees",
+                "arguments": "{\"job_id\":\"JOB-SWE-2025-001\",\"eligible_only\":true}"
+              }
+            ]
+          },
+          {
+            "role": "tool",
+            "parts": [
+              {
+                "type": "tool_call_response",
+                "id": "call_67a44RonI1Osa9dEw67IbSka",
+                "response": "Internal Candidates for JOB-SWE-2025-001 (1 found):\n\n- CAND-INT-2001 (Employee: EMP-INT-001): Lisa Zhang\n  Current Role: Software Engineer II\n  Tenure: 3.5 years | Performance: 4.2/5.0\n  Transfer Status: Eligible\n  Skills: Python, Azure, Kubernetes, Distributed systems"
+              }
+            ]
+          },
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "text",
+                "content": "### Unified Candidate Pool for JOB-SWE-2025-001\n\n#### Internal Candidates\n1. **Name:** Lisa Zhang  \n   **Employee ID:** EMP-INT-001  \n   **Current Role:** Software Engineer II  \n   **Tenure:** 3.5 years  \n   **Performance Rating:** 4.2/5.0  \n   **Transfer Status:** Eligible  \n   **Skills:** Python, Azure, Kubernetes, Distributed Systems\n\n### Summary\n- **Sufficient candidates found.** \n- Total Internal Candidates: 1\n- Next Steps: Proceed to source candidates from job boards, employee referrals, and recruitment agencies to further expand the candidate pool.\n\nWould you like me to initiate sourcing from those additional channels?"
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      }
+    },
+    {
+      "sequence": 3,
+      "timestamp": "2026-02-16T17:25:00.096958+00:00",
+      "agent_name": "ReferralScout",
+      "agent_id": "referral-scout",
+      "system_instructions": [
+        "You are a Referral Scout agent specializing in employee referral candidates.\n\nYour responsibilities:\n1. Query the employee referral program database for candidates\n2. Verify referrer information and referral bonus eligibility\n3. Prioritize referrals based on referrer track record\n4. Include referrer context in candidate profiles\n5. Track referral source quality metrics\n\nWhen processing referrals:\n- Validate the referrer is a current employee in good standing\n- Note any previous successful referrals from the same employee\n- Flag referrals that may have conflicts of interest (e.g., direct reports)\n- Ensure referral bonus terms are documented\n\nIMPORTANT - Output Keywords:\n- When you find qualified referral candidates, state \"found sufficient candidates\" or \"found candidates\"\n- If no suitable referrals are available, state \"no candidates\" or \"insufficient candidates\"\n\nOutput format: Provide structured candidate profiles with referrer details."
+      ],
+      "input_messages": {
+        "value": [
+          {
+            "role": "system",
+            "parts": [
+              {
+                "type": "text",
+                "content": "You are a Referral Scout agent specializing in employee referral candidates.\n\nYour responsibilities:\n1. Query the employee referral program database for candidates\n2. Verify referrer information and referral bonus eligibility\n3. Prioritize referrals based on referrer track record\n4. Include referrer context in candidate profiles\n5. Track referral source quality metrics\n\nWhen processing referrals:\n- Validate the referrer is a current employee in good standing\n- Note any previous successful referrals from the same employee\n- Flag referrals that may have conflicts of interest (e.g., direct reports)\n- Ensure referral bonus terms are documented\n\nIMPORTANT - Output Keywords:\n- When you find qualified referral candidates, state \"found sufficient candidates\" or \"found candidates\"\n- If no suitable referrals are available, state \"no candidates\" or \"insufficient candidates\"\n\nOutput format: Provide structured candidate profiles with referrer details."
+              }
+            ]
+          },
+          {
+            "role": "user",
+            "parts": [
+              {
+                "type": "text",
+                "content": "Simultaneously source candidates from job boards, internal mobility, employee referrals, and recruitment agencies for JOB-SWE-2025-001. Combine results into a unified candidate pool."
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      },
+      "output_messages": {
+        "value": [
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "tool_call",
+                "id": "call_p3mAvJtyT8FCNQhCQptFKOiJ",
+                "name": "query_referrals",
+                "arguments": "{\"job_id\":\"JOB-SWE-2025-001\"}"
+              },
+              {
+                "type": "tool_call",
+                "id": "call_lLFna8XgmBorSfDqPBhx2tsE",
+                "name": "query_referrals",
+                "arguments": "{\"job_id\":\"JOB-SWE-2025-001\"}"
+              },
+              {
+                "type": "tool_call",
+                "id": "call_6uwVFv18wzV8Gh8FHXgecyBh",
+                "name": "query_referrals",
+                "arguments": "{\"job_id\":\"JOB-SWE-2025-001\"}"
+              },
+              {
+                "type": "tool_call",
+                "id": "call_Qo9BnT2mKD2Rbwi5V8f4rWvv",
+                "name": "query_referrals",
+                "arguments": "{\"job_id\":\"JOB-SWE-2025-001\"}"
+              }
+            ]
+          },
+          {
+            "role": "tool",
+            "parts": [
+              {
+                "type": "tool_call_response",
+                "id": "call_p3mAvJtyT8FCNQhCQptFKOiJ",
+                "response": "Referral Candidates for JOB-SWE-2025-001 (1 found):\n\n- CAND-REF-3001: Daniel Kim\n  Referred by: Frank Wilson (EMP-001)\n  Experience: 6 years | Location: Seattle, WA\n  Skills: Python, Azure, Kubernetes, Terraform\n  Current: DevOps Engineer at InfraCloud Inc"
+              },
+              {
+                "type": "tool_call_response",
+                "id": "call_lLFna8XgmBorSfDqPBhx2tsE",
+                "response": "Referral Candidates for JOB-SWE-2025-001 (1 found):\n\n- CAND-REF-3001: Daniel Kim\n  Referred by: Frank Wilson (EMP-001)\n  Experience: 6 years | Location: Seattle, WA\n  Skills: Python, Azure, Kubernetes, Terraform\n  Current: DevOps Engineer at InfraCloud Inc"
+              },
+              {
+                "type": "tool_call_response",
+                "id": "call_6uwVFv18wzV8Gh8FHXgecyBh",
+                "response": "Referral Candidates for JOB-SWE-2025-001 (1 found):\n\n- CAND-REF-3001: Daniel Kim\n  Referred by: Frank Wilson (EMP-001)\n  Experience: 6 years | Location: Seattle, WA\n  Skills: Python, Azure, Kubernetes, Terraform\n  Current: DevOps Engineer at InfraCloud Inc"
+              },
+              {
+                "type": "tool_call_response",
+                "id": "call_Qo9BnT2mKD2Rbwi5V8f4rWvv",
+                "response": "Referral Candidates for JOB-SWE-2025-001 (1 found):\n\n- CAND-REF-3001: Daniel Kim\n  Referred by: Frank Wilson (EMP-001)\n  Experience: 6 years | Location: Seattle, WA\n  Skills: Python, Azure, Kubernetes, Terraform\n  Current: DevOps Engineer at InfraCloud Inc"
+              }
+            ]
+          },
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "text",
+                "content": "### Unified Candidate Pool for JOB-SWE-2025-001\n\n**Referral Candidates:**\n\n1. **Candidate Profile:**\n   - **Name:** Daniel Kim\n   - **Referrer:** Frank Wilson (EMP-001)\n   - **Experience:** 6 years\n   - **Location:** Seattle, WA\n   - **Skills:** Python, Azure, Kubernetes, Terraform\n   - **Current Role:** DevOps Engineer at InfraCloud Inc\n\n**Summary:**\n- Found **sufficient candidates** for the role via employee referrals. \n\nPlease provide further instructions for the next steps regarding sourcing from job boards, internal mobility, and recruitment agencies."
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      }
+    },
+    {
+      "sequence": 4,
+      "timestamp": "2026-02-16T17:25:00.465976+00:00",
+      "agent_name": "AgencyScout",
+      "agent_id": "agency-scout",
+      "system_instructions": [
+        "You are an Agency Scout agent specializing in recruitment agency candidates.\n\nYour responsibilities:\n1. Query recruitment agency submissions for candidates\n2. Track agency fees and contract terms for each candidate\n3. Verify agency-candidate exclusivity periods\n4. Compare candidates across different agencies\n5. Flag duplicate submissions from multiple agencies\n\nWhen processing agency candidates:\n- Always include the agency fee percentage in candidate details\n- Check if the candidate was previously submitted by another agency\n- Note the agency's track record and quality metrics\n- Flag any candidates approaching exclusivity expiration\n- Calculate total cost (salary + agency fee) for budget comparison\n\nIMPORTANT - Output Keywords:\n- When you find qualified agency candidates, state \"found sufficient candidates\" or \"found candidates\"\n- If agencies cannot provide suitable candidates, state \"no candidates\" or \"insufficient candidates\"\n\nOutput format: Provide structured profiles with full cost breakdown."
+      ],
+      "input_messages": {
+        "value": [
+          {
+            "role": "system",
+            "parts": [
+              {
+                "type": "text",
+                "content": "You are an Agency Scout agent specializing in recruitment agency candidates.\n\nYour responsibilities:\n1. Query recruitment agency submissions for candidates\n2. Track agency fees and contract terms for each candidate\n3. Verify agency-candidate exclusivity periods\n4. Compare candidates across different agencies\n5. Flag duplicate submissions from multiple agencies\n\nWhen processing agency candidates:\n- Always include the agency fee percentage in candidate details\n- Check if the candidate was previously submitted by another agency\n- Note the agency's track record and quality metrics\n- Flag any candidates approaching exclusivity expiration\n- Calculate total cost (salary + agency fee) for budget comparison\n\nIMPORTANT - Output Keywords:\n- When you find qualified agency candidates, state \"found sufficient candidates\" or \"found candidates\"\n- If agencies cannot provide suitable candidates, state \"no candidates\" or \"insufficient candidates\"\n\nOutput format: Provide structured profiles with full cost breakdown."
+              }
+            ]
+          },
+          {
+            "role": "user",
+            "parts": [
+              {
+                "type": "text",
+                "content": "Simultaneously source candidates from job boards, internal mobility, employee referrals, and recruitment agencies for JOB-SWE-2025-001. Combine results into a unified candidate pool."
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      },
+      "output_messages": {
+        "value": [
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "tool_call",
+                "id": "call_1S93d3JW1IUF9pdTkc1mYYSm",
+                "name": "query_agency_candidates",
+                "arguments": "{\"job_id\":\"JOB-SWE-2025-001\",\"agency_id\":\"all\"}"
+              }
+            ]
+          },
+          {
+            "role": "tool",
+            "parts": [
+              {
+                "type": "tool_call_response",
+                "id": "call_1S93d3JW1IUF9pdTkc1mYYSm",
+                "response": "Agency Candidates for JOB-SWE-2025-001 (1 found):\n\n- CAND-AGN-4001: Christopher Lee\n  Agency: TechRecruit Pro (Fee: 20.0%)\n  Experience: 10 years | Location: San Francisco, CA\n  Skills: Python, Azure, Distributed systems, System design\n  Current: Staff Engineer at FAANG Company\n  Salary Expectation: $220,000"
+              }
+            ]
+          },
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "text",
+                "content": "### Unified Candidate Pool for JOB-SWE-2025-001\n\n#### 1. Agency Candidate\n- **Name:** Christopher Lee\n- **Agency:** TechRecruit Pro\n- **Agency Fee Percentage:** 20.0%\n- **Experience:** 10 years\n- **Location:** San Francisco, CA\n- **Skills:** Python, Azure, Distributed systems, System design\n- **Current Position:** Staff Engineer at FAANG Company\n- **Salary Expectation:** $220,000\n- **Total Cost:** $220,000 + (20% of $220,000) = $220,000 + $44,000 = **$264,000**\n\n#### Summary\n- **Found Sufficient Candidates:** 1 agency candidate meets the criteria.\n- Candidates from job boards, internal mobility, and employee referrals are not yet included in the pool.\n\nNext steps could involve sourcing candidates from the additional channels mentioned: job boards, internal mobility, and employee referrals to complete the unified candidate pool. Would you like me to proceed with that?"
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      }
+    }
+  ],
+  "errors": []
+}

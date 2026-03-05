@@ -1,0 +1,268 @@
+{
+  "parse_failed": false,
+  "workflow_id": "57da1cb6-5855-470c-a8d7-58896885473d",
+  "workflow_name": "WorkflowBuilder-e220a598-176f-47b6-b2d7-5b21d209aef9",
+  "workflow_type": "workflow_dag",
+  "topology": {
+    "start_executor_id": "dispatcher",
+    "max_iterations": 100,
+    "executors": [
+      {
+        "id": "dispatcher",
+        "type": "FanOutDispatcher"
+      },
+      {
+        "id": "TalentScout",
+        "type": "AgentExecutor"
+      },
+      {
+        "id": "MobilityScout",
+        "type": "AgentExecutor"
+      },
+      {
+        "id": "aggregator",
+        "type": "FanInAggregator"
+      }
+    ],
+    "edges": [
+      {
+        "type": "FanOutEdgeGroup",
+        "source": "dispatcher",
+        "target": "TalentScout"
+      },
+      {
+        "type": "FanOutEdgeGroup",
+        "source": "dispatcher",
+        "target": "MobilityScout"
+      },
+      {
+        "type": "FanInEdgeGroup",
+        "source": "TalentScout",
+        "target": "aggregator"
+      },
+      {
+        "type": "FanInEdgeGroup",
+        "source": "MobilityScout",
+        "target": "aggregator"
+      }
+    ]
+  },
+  "agents": {
+    "TalentScout": {
+      "agent_id": "talent-scout",
+      "model": "gpt-4o-mini",
+      "system_instructions": "You are a Talent Scout agent specializing in external candidate sourcing.\n\nYour responsibilities:\n1. Search LinkedIn for candidate profiles matching job requirements\n2. Query external job boards for applicants (Indeed, LinkedIn Jobs, Glassdoor, etc.)\n3. Screen candidates against job requirements\n4. Filter based on experience, skills, and location\n5. Handle visa sponsorship considerations\n\nWhen processing external candidates:\n- Verify all required skills are present\n- Note any visa sponsorship requirements\n- Check salary expectations against job budget\n- Flag candidates with relevant industry experience\n- Prioritize candidates with shorter notice periods\n\nOutput Keywords:\n- When you find enough qualified candidates, explicitly state \"sufficient candidates found\"\n- If the candidate pool is limited or insufficient, state \"insufficient candidates\"\n- Always indicate the number of candidates found\n\nOutput format: Provide structured candidate profiles with skills match analysis.",
+      "tool_definitions": [
+        {
+          "name": "query_external_candidates",
+          "description": "Queries the external candidate database (job board applicants) for candidates who applied to a specific job.",
+          "parameters": {
+            "properties": {
+              "job_id": {
+                "description": "The job ID to find candidates for",
+                "title": "Job Id",
+                "type": "string"
+              },
+              "min_experience": {
+                "default": 0,
+                "description": "Minimum years of experience required",
+                "title": "Min Experience",
+                "type": "integer"
+              },
+              "visa_ok": {
+                "default": true,
+                "description": "Whether to include candidates requiring visa sponsorship",
+                "title": "Visa Ok",
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "job_id"
+            ],
+            "title": "query_external_candidates_input",
+            "type": "object"
+          }
+        }
+      ]
+    },
+    "MobilityScout": {
+      "agent_id": "mobility-scout",
+      "model": "gpt-4o-mini",
+      "system_instructions": "You are an Internal Mobility Scout agent specializing in internal transfers.\n\nYour responsibilities:\n1. Query the HRIS system for employees interested in the role\n2. Verify transfer eligibility (tenure, performance, no PIP)\n3. Check manager approval status\n4. Assess skills match with current role experience\n5. Coordinate with HR on internal transfer policies\n\nWhen processing internal candidates:\n- Verify minimum tenure requirement (usually 1+ year)\n- Check performance rating (must be meeting expectations or above)\n- Confirm employee is not on a Performance Improvement Plan\n- Note current team and potential backfill needs\n- Include manager feedback if available\n\nIMPORTANT - Output Keywords:\n- When you find enough qualified internal candidates, state \"found sufficient candidates\" or \"sufficient candidates found\"\n- If internal pool is limited, state \"no candidates\" or \"insufficient candidates\"\n\nOutput format: Provide structured profiles with eligibility status and current role context.",
+      "tool_definitions": [
+        {
+          "name": "query_internal_employees",
+          "description": "Queries the internal HRIS system for current employees who have expressed interest in a job opening and checks their transfer eligibility.",
+          "parameters": {
+            "properties": {
+              "job_id": {
+                "description": "The job ID to find internal candidates for",
+                "title": "Job Id",
+                "type": "string"
+              },
+              "eligible_only": {
+                "default": true,
+                "description": "Only return transfer-eligible employees",
+                "title": "Eligible Only",
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "job_id"
+            ],
+            "title": "query_internal_employees_input",
+            "type": "object"
+          }
+        }
+      ]
+    }
+  },
+  "invocations": [
+    {
+      "sequence": 1,
+      "timestamp": "2026-02-16T14:36:44.227556+00:00",
+      "agent_name": "TalentScout",
+      "agent_id": "talent-scout",
+      "system_instructions": [
+        "You are a Talent Scout agent specializing in external candidate sourcing.\n\nYour responsibilities:\n1. Search LinkedIn for candidate profiles matching job requirements\n2. Query external job boards for applicants (Indeed, LinkedIn Jobs, Glassdoor, etc.)\n3. Screen candidates against job requirements\n4. Filter based on experience, skills, and location\n5. Handle visa sponsorship considerations\n\nWhen processing external candidates:\n- Verify all required skills are present\n- Note any visa sponsorship requirements\n- Check salary expectations against job budget\n- Flag candidates with relevant industry experience\n- Prioritize candidates with shorter notice periods\n\nOutput Keywords:\n- When you find enough qualified candidates, explicitly state \"sufficient candidates found\"\n- If the candidate pool is limited or insufficient, state \"insufficient candidates\"\n- Always indicate the number of candidates found\n\nOutput format: Provide structured candidate profiles with skills match analysis."
+      ],
+      "input_messages": {
+        "value": [
+          {
+            "role": "system",
+            "parts": [
+              {
+                "type": "text",
+                "content": "You are a Talent Scout agent specializing in external candidate sourcing.\n\nYour responsibilities:\n1. Search LinkedIn for candidate profiles matching job requirements\n2. Query external job boards for applicants (Indeed, LinkedIn Jobs, Glassdoor, etc.)\n3. Screen candidates against job requirements\n4. Filter based on experience, skills, and location\n5. Handle visa sponsorship considerations\n\nWhen processing external candidates:\n- Verify all required skills are present\n- Note any visa sponsorship requirements\n- Check salary expectations against job budget\n- Flag candidates with relevant industry experience\n- Prioritize candidates with shorter notice periods\n\nOutput Keywords:\n- When you find enough qualified candidates, explicitly state \"sufficient candidates found\"\n- If the candidate pool is limited or insufficient, state \"insufficient candidates\"\n- Always indicate the number of candidates found\n\nOutput format: Provide structured candidate profiles with skills match analysis."
+              }
+            ]
+          },
+          {
+            "role": "user",
+            "parts": [
+              {
+                "type": "text",
+                "content": "Compare candidates from all sources for JOB-PM-2025-042. Identify duplicates and calculate total cost for agency candidates."
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      },
+      "output_messages": {
+        "value": [
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "tool_call",
+                "id": "call_bTe1MPIb2jYwqeudmSQIj4d0",
+                "name": "query_external_candidates",
+                "arguments": "{\"job_id\":\"JOB-PM-2025-042\"}"
+              }
+            ]
+          },
+          {
+            "role": "tool",
+            "parts": [
+              {
+                "type": "tool_call_response",
+                "id": "call_bTe1MPIb2jYwqeudmSQIj4d0",
+                "response": "No external candidates found for job JOB-PM-2025-042. The database returned empty results."
+              }
+            ]
+          },
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "text",
+                "content": "Insufficient candidates found for JOB-PM-2025-042. The external database returned no results. \n\nIf you have specific candidate profiles or additional sources to explore, please let me know!"
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      }
+    },
+    {
+      "sequence": 2,
+      "timestamp": "2026-02-16T14:36:44.561484+00:00",
+      "agent_name": "MobilityScout",
+      "agent_id": "mobility-scout",
+      "system_instructions": [
+        "You are an Internal Mobility Scout agent specializing in internal transfers.\n\nYour responsibilities:\n1. Query the HRIS system for employees interested in the role\n2. Verify transfer eligibility (tenure, performance, no PIP)\n3. Check manager approval status\n4. Assess skills match with current role experience\n5. Coordinate with HR on internal transfer policies\n\nWhen processing internal candidates:\n- Verify minimum tenure requirement (usually 1+ year)\n- Check performance rating (must be meeting expectations or above)\n- Confirm employee is not on a Performance Improvement Plan\n- Note current team and potential backfill needs\n- Include manager feedback if available\n\nIMPORTANT - Output Keywords:\n- When you find enough qualified internal candidates, state \"found sufficient candidates\" or \"sufficient candidates found\"\n- If internal pool is limited, state \"no candidates\" or \"insufficient candidates\"\n\nOutput format: Provide structured profiles with eligibility status and current role context."
+      ],
+      "input_messages": {
+        "value": [
+          {
+            "role": "system",
+            "parts": [
+              {
+                "type": "text",
+                "content": "You are an Internal Mobility Scout agent specializing in internal transfers.\n\nYour responsibilities:\n1. Query the HRIS system for employees interested in the role\n2. Verify transfer eligibility (tenure, performance, no PIP)\n3. Check manager approval status\n4. Assess skills match with current role experience\n5. Coordinate with HR on internal transfer policies\n\nWhen processing internal candidates:\n- Verify minimum tenure requirement (usually 1+ year)\n- Check performance rating (must be meeting expectations or above)\n- Confirm employee is not on a Performance Improvement Plan\n- Note current team and potential backfill needs\n- Include manager feedback if available\n\nIMPORTANT - Output Keywords:\n- When you find enough qualified internal candidates, state \"found sufficient candidates\" or \"sufficient candidates found\"\n- If internal pool is limited, state \"no candidates\" or \"insufficient candidates\"\n\nOutput format: Provide structured profiles with eligibility status and current role context."
+              }
+            ]
+          },
+          {
+            "role": "user",
+            "parts": [
+              {
+                "type": "text",
+                "content": "Compare candidates from all sources for JOB-PM-2025-042. Identify duplicates and calculate total cost for agency candidates."
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      },
+      "output_messages": {
+        "value": [
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "tool_call",
+                "id": "call_zyB8ltMlc2pZI7t0dFmdCgCJ",
+                "name": "query_internal_employees",
+                "arguments": "{\"job_id\":\"JOB-PM-2025-042\",\"eligible_only\":true}"
+              },
+              {
+                "type": "tool_call",
+                "id": "call_k4xWGnbIhi2pm7yqUhHcGMLY",
+                "name": "query_internal_employees",
+                "arguments": "{\"job_id\":\"JOB-PM-2025-042\",\"eligible_only\":false}"
+              }
+            ]
+          },
+          {
+            "role": "tool",
+            "parts": [
+              {
+                "type": "tool_call_response",
+                "id": "call_zyB8ltMlc2pZI7t0dFmdCgCJ",
+                "response": "No internal candidates found for job JOB-PM-2025-042. The HRIS system returned empty results."
+              },
+              {
+                "type": "tool_call_response",
+                "id": "call_k4xWGnbIhi2pm7yqUhHcGMLY",
+                "response": "No internal candidates found for job JOB-PM-2025-042. The HRIS system returned empty results."
+              }
+            ]
+          },
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "text",
+                "content": "No internal candidates were found for the position JOB-PM-2025-042. Therefore, there are no profiles to compare or duplicates to identify.\n\nIf you have agency candidate information available, please provide it so I can assist in calculating the total cost for the agency candidates."
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      }
+    }
+  ],
+  "errors": []
+}

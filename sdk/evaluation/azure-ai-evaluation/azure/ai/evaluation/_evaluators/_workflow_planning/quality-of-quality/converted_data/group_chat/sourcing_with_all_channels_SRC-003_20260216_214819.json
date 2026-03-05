@@ -1,0 +1,775 @@
+{
+  "parse_failed": false,
+  "workflow_id": "68c1da2c-bac0-48dc-80c1-ed604862f7d6",
+  "workflow_name": "WorkflowBuilder-724a7986-5a4c-41cc-a428-c1ee101cef80",
+  "workflow_type": "group_chat",
+  "topology": {
+    "start_executor_id": "Manager",
+    "max_iterations": 100,
+    "executors": [
+      {
+        "id": "Manager",
+        "type": "AgentBasedGroupChatOrchestrator"
+      },
+      {
+        "id": "TalentScout",
+        "type": "AgentExecutor"
+      },
+      {
+        "id": "MobilityScout",
+        "type": "AgentExecutor"
+      },
+      {
+        "id": "ReferralScout",
+        "type": "AgentExecutor"
+      },
+      {
+        "id": "AgencyScout",
+        "type": "AgentExecutor"
+      }
+    ],
+    "edges": [
+      {
+        "type": "SingleEdgeGroup",
+        "source": "Manager",
+        "target": "TalentScout"
+      },
+      {
+        "type": "SingleEdgeGroup",
+        "source": "TalentScout",
+        "target": "Manager"
+      },
+      {
+        "type": "SingleEdgeGroup",
+        "source": "Manager",
+        "target": "MobilityScout"
+      },
+      {
+        "type": "SingleEdgeGroup",
+        "source": "MobilityScout",
+        "target": "Manager"
+      },
+      {
+        "type": "SingleEdgeGroup",
+        "source": "Manager",
+        "target": "ReferralScout"
+      },
+      {
+        "type": "SingleEdgeGroup",
+        "source": "ReferralScout",
+        "target": "Manager"
+      },
+      {
+        "type": "SingleEdgeGroup",
+        "source": "Manager",
+        "target": "AgencyScout"
+      },
+      {
+        "type": "SingleEdgeGroup",
+        "source": "AgencyScout",
+        "target": "Manager"
+      }
+    ]
+  },
+  "agents": {
+    "Manager": {
+      "agent_id": "manager",
+      "model": "gpt-4o-mini",
+      "system_instructions": "You are coordinating a team conversation to solve the user's task.\n            \nReview the conversation history and select the most appropriate participant to speak next.\nConsider what expertise is needed and who has already contributed.\nIMPORTANT: Never select the same participant twice in a row. Always rotate to a different participant.\n\nWhen the task is complete, set finish=True and provide a summary.",
+      "tool_definitions": []
+    },
+    "TalentScout": {
+      "agent_id": "talent-scout",
+      "model": "gpt-4o-mini",
+      "system_instructions": "You are a Talent Scout agent specializing in external candidate sourcing.\n\nYour responsibilities:\n1. Search LinkedIn for candidate profiles matching job requirements\n2. Query external job boards for applicants (Indeed, LinkedIn Jobs, Glassdoor, etc.)\n3. Screen candidates against job requirements\n4. Filter based on experience, skills, and location\n5. Handle visa sponsorship considerations\n\nWhen processing external candidates:\n- Verify all required skills are present\n- Note any visa sponsorship requirements\n- Check salary expectations against job budget\n- Flag candidates with relevant industry experience\n- Prioritize candidates with shorter notice periods\n\nOutput Keywords:\n- When you find enough qualified candidates, explicitly state \"sufficient candidates found\"\n- If the candidate pool is limited or insufficient, state \"insufficient candidates\"\n- Always indicate the number of candidates found\n\nOutput format: Provide structured candidate profiles with skills match analysis.",
+      "tool_definitions": []
+    },
+    "ReferralScout": {
+      "agent_id": "referral-scout",
+      "model": "gpt-4o-mini",
+      "system_instructions": "You are a Referral Scout agent specializing in employee referral candidates.\n\nYour responsibilities:\n1. Query the employee referral program database for candidates\n2. Verify referrer information and referral bonus eligibility\n3. Prioritize referrals based on referrer track record\n4. Include referrer context in candidate profiles\n5. Track referral source quality metrics\n\nWhen processing referrals:\n- Validate the referrer is a current employee in good standing\n- Note any previous successful referrals from the same employee\n- Flag referrals that may have conflicts of interest (e.g., direct reports)\n- Ensure referral bonus terms are documented\n\nIMPORTANT - Output Keywords:\n- When you find qualified referral candidates, state \"found sufficient candidates\" or \"found candidates\"\n- If no suitable referrals are available, state \"no candidates\" or \"insufficient candidates\"\n\nOutput format: Provide structured candidate profiles with referrer details.",
+      "tool_definitions": [
+        {
+          "name": "query_referrals",
+          "description": "Queries the employee referral program database for candidates referred by current employees.",
+          "parameters": {
+            "properties": {
+              "job_id": {
+                "description": "The job ID to find referral candidates for",
+                "title": "Job Id",
+                "type": "string"
+              }
+            },
+            "required": [
+              "job_id"
+            ],
+            "title": "query_referrals_input",
+            "type": "object"
+          }
+        }
+      ]
+    },
+    "AgencyScout": {
+      "agent_id": "agency-scout",
+      "model": "gpt-4o-mini",
+      "system_instructions": "You are an Agency Scout agent specializing in recruitment agency candidates.\n\nYour responsibilities:\n1. Query recruitment agency submissions for candidates\n2. Track agency fees and contract terms for each candidate\n3. Verify agency-candidate exclusivity periods\n4. Compare candidates across different agencies\n5. Flag duplicate submissions from multiple agencies\n\nWhen processing agency candidates:\n- Always include the agency fee percentage in candidate details\n- Check if the candidate was previously submitted by another agency\n- Note the agency's track record and quality metrics\n- Flag any candidates approaching exclusivity expiration\n- Calculate total cost (salary + agency fee) for budget comparison\n\nIMPORTANT - Output Keywords:\n- When you find qualified agency candidates, state \"found sufficient candidates\" or \"found candidates\"\n- If agencies cannot provide suitable candidates, state \"no candidates\" or \"insufficient candidates\"\n\nOutput format: Provide structured profiles with full cost breakdown.",
+      "tool_definitions": [
+        {
+          "name": "query_agency_candidates",
+          "description": "Queries recruitment agency portals for candidates submitted by external recruiters. Includes agency fee information.",
+          "parameters": {
+            "properties": {
+              "job_id": {
+                "description": "The job ID to find agency candidates for",
+                "title": "Job Id",
+                "type": "string"
+              },
+              "agency_id": {
+                "default": "all",
+                "description": "Specific agency ID to query, or 'all' for all agencies",
+                "title": "Agency Id",
+                "type": "string"
+              }
+            },
+            "required": [
+              "job_id"
+            ],
+            "title": "query_agency_candidates_input",
+            "type": "object"
+          }
+        }
+      ]
+    },
+    "MobilityScout": {
+      "agent_id": "mobility-scout",
+      "model": "gpt-4o-mini",
+      "system_instructions": "You are an Internal Mobility Scout agent specializing in internal transfers.\n\nYour responsibilities:\n1. Query the HRIS system for employees interested in the role\n2. Verify transfer eligibility (tenure, performance, no PIP)\n3. Check manager approval status\n4. Assess skills match with current role experience\n5. Coordinate with HR on internal transfer policies\n\nWhen processing internal candidates:\n- Verify minimum tenure requirement (usually 1+ year)\n- Check performance rating (must be meeting expectations or above)\n- Confirm employee is not on a Performance Improvement Plan\n- Note current team and potential backfill needs\n- Include manager feedback if available\n\nIMPORTANT - Output Keywords:\n- When you find enough qualified internal candidates, state \"found sufficient candidates\" or \"sufficient candidates found\"\n- If internal pool is limited, state \"no candidates\" or \"insufficient candidates\"\n\nOutput format: Provide structured profiles with eligibility status and current role context.",
+      "tool_definitions": [
+        {
+          "name": "query_internal_employees",
+          "description": "Queries the internal HRIS system for current employees who have expressed interest in a job opening and checks their transfer eligibility.",
+          "parameters": {
+            "properties": {
+              "job_id": {
+                "description": "The job ID to find internal candidates for",
+                "title": "Job Id",
+                "type": "string"
+              },
+              "eligible_only": {
+                "default": true,
+                "description": "Only return transfer-eligible employees",
+                "title": "Eligible Only",
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "job_id"
+            ],
+            "title": "query_internal_employees_input",
+            "type": "object"
+          }
+        }
+      ]
+    }
+  },
+  "invocations": [
+    {
+      "sequence": 1,
+      "timestamp": "2026-02-16T19:48:20.559941+00:00",
+      "agent_name": "Manager",
+      "agent_id": "manager",
+      "system_instructions": [
+        "You are coordinating a team conversation to solve the user's task.\n            \nReview the conversation history and select the most appropriate participant to speak next.\nConsider what expertise is needed and who has already contributed.\nIMPORTANT: Never select the same participant twice in a row. Always rotate to a different participant.\n\nWhen the task is complete, set finish=True and provide a summary."
+      ],
+      "input_messages": {
+        "value": [
+          {
+            "role": "system",
+            "parts": [
+              {
+                "type": "text",
+                "content": "You are coordinating a team conversation to solve the user's task.\n            \nReview the conversation history and select the most appropriate participant to speak next.\nConsider what expertise is needed and who has already contributed.\nIMPORTANT: Never select the same participant twice in a row. Always rotate to a different participant.\n\nWhen the task is complete, set finish=True and provide a summary."
+              }
+            ]
+          },
+          {
+            "role": "user",
+            "parts": [
+              {
+                "type": "text",
+                "content": "Source candidates for job JOB-CLOSED-2024-050."
+              }
+            ]
+          },
+          {
+            "role": "user",
+            "parts": [
+              {
+                "type": "text",
+                "content": "Decide what to do next. Respond with a JSON object of the following format:\n{\n  \"terminate\": <true|false>,\n  \"reason\": \"<explanation for the decision>\",\n  \"next_speaker\": \"<name of the next participant to speak (if not terminating)>\",\n  \"final_message\": \"<optional final message if terminating>\"\n}\nIf not terminating, here are the valid participant names (case-sensitive) and their descriptions:\nTalentScout: <no description, use name to identify the purpose of this participant>\nMobilityScout: <no description, use name to identify the purpose of this participant>\nReferralScout: <no description, use name to identify the purpose of this participant>\nAgencyScout: <no description, use name to identify the purpose of this participant>"
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      },
+      "output_messages": {
+        "value": [
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "text",
+                "content": "{\n  \"terminate\": false,\n  \"reason\": \"The task involves sourcing candidates for a closed job, and the next speaker should be someone who can provide insights on candidate sourcing methods.\",\n  \"next_speaker\": \"TalentScout\",\n  \"final_message\": null\n}"
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      }
+    },
+    {
+      "sequence": 2,
+      "timestamp": "2026-02-16T19:48:32.010775+00:00",
+      "agent_name": "TalentScout",
+      "agent_id": "talent-scout",
+      "system_instructions": [
+        "You are a Talent Scout agent specializing in external candidate sourcing.\n\nYour responsibilities:\n1. Search LinkedIn for candidate profiles matching job requirements\n2. Query external job boards for applicants (Indeed, LinkedIn Jobs, Glassdoor, etc.)\n3. Screen candidates against job requirements\n4. Filter based on experience, skills, and location\n5. Handle visa sponsorship considerations\n\nWhen processing external candidates:\n- Verify all required skills are present\n- Note any visa sponsorship requirements\n- Check salary expectations against job budget\n- Flag candidates with relevant industry experience\n- Prioritize candidates with shorter notice periods\n\nOutput Keywords:\n- When you find enough qualified candidates, explicitly state \"sufficient candidates found\"\n- If the candidate pool is limited or insufficient, state \"insufficient candidates\"\n- Always indicate the number of candidates found\n\nOutput format: Provide structured candidate profiles with skills match analysis."
+      ],
+      "input_messages": {
+        "value": [
+          {
+            "role": "system",
+            "parts": [
+              {
+                "type": "text",
+                "content": "You are a Talent Scout agent specializing in external candidate sourcing.\n\nYour responsibilities:\n1. Search LinkedIn for candidate profiles matching job requirements\n2. Query external job boards for applicants (Indeed, LinkedIn Jobs, Glassdoor, etc.)\n3. Screen candidates against job requirements\n4. Filter based on experience, skills, and location\n5. Handle visa sponsorship considerations\n\nWhen processing external candidates:\n- Verify all required skills are present\n- Note any visa sponsorship requirements\n- Check salary expectations against job budget\n- Flag candidates with relevant industry experience\n- Prioritize candidates with shorter notice periods\n\nOutput Keywords:\n- When you find enough qualified candidates, explicitly state \"sufficient candidates found\"\n- If the candidate pool is limited or insufficient, state \"insufficient candidates\"\n- Always indicate the number of candidates found\n\nOutput format: Provide structured candidate profiles with skills match analysis."
+              }
+            ]
+          },
+          {
+            "role": "user",
+            "parts": [
+              {
+                "type": "text",
+                "content": "Source candidates for job JOB-CLOSED-2024-050."
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      },
+      "output_messages": {
+        "value": [
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "tool_call",
+                "id": "call_LtRCJFjfElGlnRuxmQYffheG",
+                "name": "query_external_job_boards",
+                "arguments": "{\"job_id\":\"JOB-CLOSED-2024-050\"}"
+              }
+            ]
+          },
+          {
+            "role": "tool",
+            "parts": [
+              {
+                "type": "tool_call_response",
+                "id": "call_LtRCJFjfElGlnRuxmQYffheG",
+                "response": "Total Results: 0\n"
+              }
+            ]
+          },
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "text",
+                "content": "Insufficient candidates found. \n\nNo applicants were identified for the job ID JOB-CLOSED-2024-050. If you have specific skills, location, or experience criteria, please provide them for a more targeted search."
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      }
+    },
+    {
+      "sequence": 3,
+      "timestamp": "2026-02-16T19:48:48.651861+00:00",
+      "agent_name": "Manager",
+      "agent_id": "manager",
+      "system_instructions": [
+        "You are coordinating a team conversation to solve the user's task.\n            \nReview the conversation history and select the most appropriate participant to speak next.\nConsider what expertise is needed and who has already contributed.\nIMPORTANT: Never select the same participant twice in a row. Always rotate to a different participant.\n\nWhen the task is complete, set finish=True and provide a summary."
+      ],
+      "input_messages": {
+        "value": [
+          {
+            "role": "system",
+            "parts": [
+              {
+                "type": "text",
+                "content": "You are coordinating a team conversation to solve the user's task.\n            \nReview the conversation history and select the most appropriate participant to speak next.\nConsider what expertise is needed and who has already contributed.\nIMPORTANT: Never select the same participant twice in a row. Always rotate to a different participant.\n\nWhen the task is complete, set finish=True and provide a summary."
+              }
+            ]
+          },
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "text",
+                "content": "Insufficient candidates found. \n\nNo applicants were identified for the job ID JOB-CLOSED-2024-050. If you have specific skills, location, or experience criteria, please provide them for a more targeted search."
+              }
+            ]
+          },
+          {
+            "role": "user",
+            "parts": [
+              {
+                "type": "text",
+                "content": "Decide what to do next. Respond with a JSON object of the following format:\n{\n  \"terminate\": <true|false>,\n  \"reason\": \"<explanation for the decision>\",\n  \"next_speaker\": \"<name of the next participant to speak (if not terminating)>\",\n  \"final_message\": \"<optional final message if terminating>\"\n}\nIf not terminating, here are the valid participant names (case-sensitive) and their descriptions:\nTalentScout: <no description, use name to identify the purpose of this participant>\nMobilityScout: <no description, use name to identify the purpose of this participant>\nReferralScout: <no description, use name to identify the purpose of this participant>\nAgencyScout: <no description, use name to identify the purpose of this participant>"
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      },
+      "output_messages": {
+        "value": [
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "text",
+                "content": "{\n  \"terminate\": false,\n  \"reason\": \"Further input on specific criteria is needed to narrow down the search for candidates.\",\n  \"next_speaker\": \"ReferralScout\",\n  \"final_message\": null\n}"
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      }
+    },
+    {
+      "sequence": 4,
+      "timestamp": "2026-02-16T19:48:54.734508+00:00",
+      "agent_name": "ReferralScout",
+      "agent_id": "referral-scout",
+      "system_instructions": [
+        "You are a Referral Scout agent specializing in employee referral candidates.\n\nYour responsibilities:\n1. Query the employee referral program database for candidates\n2. Verify referrer information and referral bonus eligibility\n3. Prioritize referrals based on referrer track record\n4. Include referrer context in candidate profiles\n5. Track referral source quality metrics\n\nWhen processing referrals:\n- Validate the referrer is a current employee in good standing\n- Note any previous successful referrals from the same employee\n- Flag referrals that may have conflicts of interest (e.g., direct reports)\n- Ensure referral bonus terms are documented\n\nIMPORTANT - Output Keywords:\n- When you find qualified referral candidates, state \"found sufficient candidates\" or \"found candidates\"\n- If no suitable referrals are available, state \"no candidates\" or \"insufficient candidates\"\n\nOutput format: Provide structured candidate profiles with referrer details."
+      ],
+      "input_messages": {
+        "value": [
+          {
+            "role": "system",
+            "parts": [
+              {
+                "type": "text",
+                "content": "You are a Referral Scout agent specializing in employee referral candidates.\n\nYour responsibilities:\n1. Query the employee referral program database for candidates\n2. Verify referrer information and referral bonus eligibility\n3. Prioritize referrals based on referrer track record\n4. Include referrer context in candidate profiles\n5. Track referral source quality metrics\n\nWhen processing referrals:\n- Validate the referrer is a current employee in good standing\n- Note any previous successful referrals from the same employee\n- Flag referrals that may have conflicts of interest (e.g., direct reports)\n- Ensure referral bonus terms are documented\n\nIMPORTANT - Output Keywords:\n- When you find qualified referral candidates, state \"found sufficient candidates\" or \"found candidates\"\n- If no suitable referrals are available, state \"no candidates\" or \"insufficient candidates\"\n\nOutput format: Provide structured candidate profiles with referrer details."
+              }
+            ]
+          },
+          {
+            "role": "user",
+            "parts": [
+              {
+                "type": "text",
+                "content": "Source candidates for job JOB-CLOSED-2024-050."
+              }
+            ]
+          },
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "text",
+                "content": "Insufficient candidates found. \n\nNo applicants were identified for the job ID JOB-CLOSED-2024-050. If you have specific skills, location, or experience criteria, please provide them for a more targeted search."
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      },
+      "output_messages": {
+        "value": [
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "tool_call",
+                "id": "call_OGzOg4fJkVAGEML84xbiKugr",
+                "name": "query_referrals",
+                "arguments": "{\"job_id\":\"JOB-CLOSED-2024-050\"}"
+              }
+            ]
+          },
+          {
+            "role": "tool",
+            "parts": [
+              {
+                "type": "tool_call_response",
+                "id": "call_OGzOg4fJkVAGEML84xbiKugr",
+                "response": "No referral candidates found for job JOB-CLOSED-2024-050."
+              }
+            ]
+          },
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "text",
+                "content": "No candidates found for job ID JOB-CLOSED-2024-050. If you need further assistance or wish to search for candidates for another position, please let me know!"
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      }
+    },
+    {
+      "sequence": 5,
+      "timestamp": "2026-02-16T19:49:10.550154+00:00",
+      "agent_name": "Manager",
+      "agent_id": "manager",
+      "system_instructions": [
+        "You are coordinating a team conversation to solve the user's task.\n            \nReview the conversation history and select the most appropriate participant to speak next.\nConsider what expertise is needed and who has already contributed.\nIMPORTANT: Never select the same participant twice in a row. Always rotate to a different participant.\n\nWhen the task is complete, set finish=True and provide a summary."
+      ],
+      "input_messages": {
+        "value": [
+          {
+            "role": "system",
+            "parts": [
+              {
+                "type": "text",
+                "content": "You are coordinating a team conversation to solve the user's task.\n            \nReview the conversation history and select the most appropriate participant to speak next.\nConsider what expertise is needed and who has already contributed.\nIMPORTANT: Never select the same participant twice in a row. Always rotate to a different participant.\n\nWhen the task is complete, set finish=True and provide a summary."
+              }
+            ]
+          },
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "text",
+                "content": "No candidates found for job ID JOB-CLOSED-2024-050. If you need further assistance or wish to search for candidates for another position, please let me know!"
+              }
+            ]
+          },
+          {
+            "role": "user",
+            "parts": [
+              {
+                "type": "text",
+                "content": "Decide what to do next. Respond with a JSON object of the following format:\n{\n  \"terminate\": <true|false>,\n  \"reason\": \"<explanation for the decision>\",\n  \"next_speaker\": \"<name of the next participant to speak (if not terminating)>\",\n  \"final_message\": \"<optional final message if terminating>\"\n}\nIf not terminating, here are the valid participant names (case-sensitive) and their descriptions:\nTalentScout: <no description, use name to identify the purpose of this participant>\nMobilityScout: <no description, use name to identify the purpose of this participant>\nReferralScout: <no description, use name to identify the purpose of this participant>\nAgencyScout: <no description, use name to identify the purpose of this participant>"
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      },
+      "output_messages": {
+        "value": [
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "text",
+                "content": "{\n  \"terminate\": false,\n  \"reason\": \"The ReferralScout may provide leads or recommendations for potential candidates based on their network.\",\n  \"next_speaker\": \"AgencyScout\",\n  \"final_message\": null\n}"
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      }
+    },
+    {
+      "sequence": 6,
+      "timestamp": "2026-02-16T19:49:17.492785+00:00",
+      "agent_name": "AgencyScout",
+      "agent_id": "agency-scout",
+      "system_instructions": [
+        "You are an Agency Scout agent specializing in recruitment agency candidates.\n\nYour responsibilities:\n1. Query recruitment agency submissions for candidates\n2. Track agency fees and contract terms for each candidate\n3. Verify agency-candidate exclusivity periods\n4. Compare candidates across different agencies\n5. Flag duplicate submissions from multiple agencies\n\nWhen processing agency candidates:\n- Always include the agency fee percentage in candidate details\n- Check if the candidate was previously submitted by another agency\n- Note the agency's track record and quality metrics\n- Flag any candidates approaching exclusivity expiration\n- Calculate total cost (salary + agency fee) for budget comparison\n\nIMPORTANT - Output Keywords:\n- When you find qualified agency candidates, state \"found sufficient candidates\" or \"found candidates\"\n- If agencies cannot provide suitable candidates, state \"no candidates\" or \"insufficient candidates\"\n\nOutput format: Provide structured profiles with full cost breakdown."
+      ],
+      "input_messages": {
+        "value": [
+          {
+            "role": "system",
+            "parts": [
+              {
+                "type": "text",
+                "content": "You are an Agency Scout agent specializing in recruitment agency candidates.\n\nYour responsibilities:\n1. Query recruitment agency submissions for candidates\n2. Track agency fees and contract terms for each candidate\n3. Verify agency-candidate exclusivity periods\n4. Compare candidates across different agencies\n5. Flag duplicate submissions from multiple agencies\n\nWhen processing agency candidates:\n- Always include the agency fee percentage in candidate details\n- Check if the candidate was previously submitted by another agency\n- Note the agency's track record and quality metrics\n- Flag any candidates approaching exclusivity expiration\n- Calculate total cost (salary + agency fee) for budget comparison\n\nIMPORTANT - Output Keywords:\n- When you find qualified agency candidates, state \"found sufficient candidates\" or \"found candidates\"\n- If agencies cannot provide suitable candidates, state \"no candidates\" or \"insufficient candidates\"\n\nOutput format: Provide structured profiles with full cost breakdown."
+              }
+            ]
+          },
+          {
+            "role": "user",
+            "parts": [
+              {
+                "type": "text",
+                "content": "Source candidates for job JOB-CLOSED-2024-050."
+              }
+            ]
+          },
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "text",
+                "content": "Insufficient candidates found. \n\nNo applicants were identified for the job ID JOB-CLOSED-2024-050. If you have specific skills, location, or experience criteria, please provide them for a more targeted search."
+              }
+            ]
+          },
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "text",
+                "content": "No candidates found for job ID JOB-CLOSED-2024-050. If you need further assistance or wish to search for candidates for another position, please let me know!"
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      },
+      "output_messages": {
+        "value": [
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "tool_call",
+                "id": "call_1PjwVSNH9AURwRWWreG3LxP6",
+                "name": "query_agency_candidates",
+                "arguments": "{\"job_id\":\"JOB-CLOSED-2024-050\"}"
+              }
+            ]
+          },
+          {
+            "role": "tool",
+            "parts": [
+              {
+                "type": "tool_call_response",
+                "id": "call_1PjwVSNH9AURwRWWreG3LxP6",
+                "response": "No agency candidates found for job JOB-CLOSED-2024-050."
+              }
+            ]
+          },
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "text",
+                "content": "No candidates found for job ID JOB-CLOSED-2024-050. If you need to search for other positions or adjust search criteria, please let me know!"
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      }
+    },
+    {
+      "sequence": 7,
+      "timestamp": "2026-02-16T19:49:34.527835+00:00",
+      "agent_name": "Manager",
+      "agent_id": "manager",
+      "system_instructions": [
+        "You are coordinating a team conversation to solve the user's task.\n            \nReview the conversation history and select the most appropriate participant to speak next.\nConsider what expertise is needed and who has already contributed.\nIMPORTANT: Never select the same participant twice in a row. Always rotate to a different participant.\n\nWhen the task is complete, set finish=True and provide a summary."
+      ],
+      "input_messages": {
+        "value": [
+          {
+            "role": "system",
+            "parts": [
+              {
+                "type": "text",
+                "content": "You are coordinating a team conversation to solve the user's task.\n            \nReview the conversation history and select the most appropriate participant to speak next.\nConsider what expertise is needed and who has already contributed.\nIMPORTANT: Never select the same participant twice in a row. Always rotate to a different participant.\n\nWhen the task is complete, set finish=True and provide a summary."
+              }
+            ]
+          },
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "text",
+                "content": "No candidates found for job ID JOB-CLOSED-2024-050. If you need to search for other positions or adjust search criteria, please let me know!"
+              }
+            ]
+          },
+          {
+            "role": "user",
+            "parts": [
+              {
+                "type": "text",
+                "content": "Decide what to do next. Respond with a JSON object of the following format:\n{\n  \"terminate\": <true|false>,\n  \"reason\": \"<explanation for the decision>\",\n  \"next_speaker\": \"<name of the next participant to speak (if not terminating)>\",\n  \"final_message\": \"<optional final message if terminating>\"\n}\nIf not terminating, here are the valid participant names (case-sensitive) and their descriptions:\nTalentScout: <no description, use name to identify the purpose of this participant>\nMobilityScout: <no description, use name to identify the purpose of this participant>\nReferralScout: <no description, use name to identify the purpose of this participant>\nAgencyScout: <no description, use name to identify the purpose of this participant>"
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      },
+      "output_messages": {
+        "value": [
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "text",
+                "content": "{\n  \"terminate\": false,\n  \"reason\": \"AgencyScout can assist with sourcing candidates through agencies or industry contacts, which may yield better results.\",\n  \"next_speaker\": \"MobilityScout\",\n  \"final_message\": null\n}"
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      }
+    },
+    {
+      "sequence": 8,
+      "timestamp": "2026-02-16T19:49:41.085315+00:00",
+      "agent_name": "MobilityScout",
+      "agent_id": "mobility-scout",
+      "system_instructions": [
+        "You are an Internal Mobility Scout agent specializing in internal transfers.\n\nYour responsibilities:\n1. Query the HRIS system for employees interested in the role\n2. Verify transfer eligibility (tenure, performance, no PIP)\n3. Check manager approval status\n4. Assess skills match with current role experience\n5. Coordinate with HR on internal transfer policies\n\nWhen processing internal candidates:\n- Verify minimum tenure requirement (usually 1+ year)\n- Check performance rating (must be meeting expectations or above)\n- Confirm employee is not on a Performance Improvement Plan\n- Note current team and potential backfill needs\n- Include manager feedback if available\n\nIMPORTANT - Output Keywords:\n- When you find enough qualified internal candidates, state \"found sufficient candidates\" or \"sufficient candidates found\"\n- If internal pool is limited, state \"no candidates\" or \"insufficient candidates\"\n\nOutput format: Provide structured profiles with eligibility status and current role context."
+      ],
+      "input_messages": {
+        "value": [
+          {
+            "role": "system",
+            "parts": [
+              {
+                "type": "text",
+                "content": "You are an Internal Mobility Scout agent specializing in internal transfers.\n\nYour responsibilities:\n1. Query the HRIS system for employees interested in the role\n2. Verify transfer eligibility (tenure, performance, no PIP)\n3. Check manager approval status\n4. Assess skills match with current role experience\n5. Coordinate with HR on internal transfer policies\n\nWhen processing internal candidates:\n- Verify minimum tenure requirement (usually 1+ year)\n- Check performance rating (must be meeting expectations or above)\n- Confirm employee is not on a Performance Improvement Plan\n- Note current team and potential backfill needs\n- Include manager feedback if available\n\nIMPORTANT - Output Keywords:\n- When you find enough qualified internal candidates, state \"found sufficient candidates\" or \"sufficient candidates found\"\n- If internal pool is limited, state \"no candidates\" or \"insufficient candidates\"\n\nOutput format: Provide structured profiles with eligibility status and current role context."
+              }
+            ]
+          },
+          {
+            "role": "user",
+            "parts": [
+              {
+                "type": "text",
+                "content": "Source candidates for job JOB-CLOSED-2024-050."
+              }
+            ]
+          },
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "text",
+                "content": "Insufficient candidates found. \n\nNo applicants were identified for the job ID JOB-CLOSED-2024-050. If you have specific skills, location, or experience criteria, please provide them for a more targeted search."
+              }
+            ]
+          },
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "text",
+                "content": "No candidates found for job ID JOB-CLOSED-2024-050. If you need further assistance or wish to search for candidates for another position, please let me know!"
+              }
+            ]
+          },
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "text",
+                "content": "No candidates found for job ID JOB-CLOSED-2024-050. If you need to search for other positions or adjust search criteria, please let me know!"
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      },
+      "output_messages": {
+        "value": [
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "tool_call",
+                "id": "call_eaabZEpDOp8yl73qcdZol9Od",
+                "name": "query_internal_employees",
+                "arguments": "{\"job_id\":\"JOB-CLOSED-2024-050\"}"
+              }
+            ]
+          },
+          {
+            "role": "tool",
+            "parts": [
+              {
+                "type": "tool_call_response",
+                "id": "call_eaabZEpDOp8yl73qcdZol9Od",
+                "response": "No internal candidates found for job JOB-CLOSED-2024-050."
+              }
+            ]
+          },
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "text",
+                "content": "No internal candidates were found for job ID JOB-CLOSED-2024-050. If you would like to explore other options or roles, please let me know!"
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      }
+    },
+    {
+      "sequence": 9,
+      "timestamp": "2026-02-16T19:49:56.904926+00:00",
+      "agent_name": "Manager",
+      "agent_id": "manager",
+      "system_instructions": [
+        "You are coordinating a team conversation to solve the user's task.\n            \nReview the conversation history and select the most appropriate participant to speak next.\nConsider what expertise is needed and who has already contributed.\nIMPORTANT: Never select the same participant twice in a row. Always rotate to a different participant.\n\nWhen the task is complete, set finish=True and provide a summary."
+      ],
+      "input_messages": {
+        "value": [
+          {
+            "role": "system",
+            "parts": [
+              {
+                "type": "text",
+                "content": "You are coordinating a team conversation to solve the user's task.\n            \nReview the conversation history and select the most appropriate participant to speak next.\nConsider what expertise is needed and who has already contributed.\nIMPORTANT: Never select the same participant twice in a row. Always rotate to a different participant.\n\nWhen the task is complete, set finish=True and provide a summary."
+              }
+            ]
+          },
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "text",
+                "content": "No internal candidates were found for job ID JOB-CLOSED-2024-050. If you would like to explore other options or roles, please let me know!"
+              }
+            ]
+          },
+          {
+            "role": "user",
+            "parts": [
+              {
+                "type": "text",
+                "content": "Decide what to do next. Respond with a JSON object of the following format:\n{\n  \"terminate\": <true|false>,\n  \"reason\": \"<explanation for the decision>\",\n  \"next_speaker\": \"<name of the next participant to speak (if not terminating)>\",\n  \"final_message\": \"<optional final message if terminating>\"\n}\nIf not terminating, here are the valid participant names (case-sensitive) and their descriptions:\nTalentScout: <no description, use name to identify the purpose of this participant>\nMobilityScout: <no description, use name to identify the purpose of this participant>\nReferralScout: <no description, use name to identify the purpose of this participant>\nAgencyScout: <no description, use name to identify the purpose of this participant>"
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      },
+      "output_messages": {
+        "value": [
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "text",
+                "content": "{\n  \"terminate\": true,\n  \"reason\": \"All potential sourcing avenues have been explored without success, and no candidates were identified for the position.\",\n  \"next_speaker\": null,\n  \"final_message\": \"The search for candidates for job ID JOB-CLOSED-2024-050 has concluded. Please let me know if you need assistance with another position.\"\n}"
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      }
+    }
+  ],
+  "errors": []
+}

@@ -1,0 +1,654 @@
+{
+  "parse_failed": false,
+  "workflow_id": "df9f1e0f-0687-4fe3-bdc7-e2243cd49386",
+  "workflow_name": "WorkflowBuilder-fc0626ad-623d-4e7d-9056-c3e2ab2948b3",
+  "workflow_type": "magentic",
+  "topology": {
+    "start_executor_id": "magentic_orchestrator",
+    "max_iterations": 100,
+    "executors": [
+      {
+        "id": "magentic_orchestrator",
+        "type": "MagenticOrchestrator"
+      },
+      {
+        "id": "ReqMaster",
+        "type": "MagenticAgentExecutor"
+      },
+      {
+        "id": "MobilityScout",
+        "type": "MagenticAgentExecutor"
+      }
+    ],
+    "edges": [
+      {
+        "type": "SingleEdgeGroup",
+        "source": "magentic_orchestrator",
+        "target": "ReqMaster"
+      },
+      {
+        "type": "SingleEdgeGroup",
+        "source": "ReqMaster",
+        "target": "magentic_orchestrator"
+      },
+      {
+        "type": "SingleEdgeGroup",
+        "source": "magentic_orchestrator",
+        "target": "MobilityScout"
+      },
+      {
+        "type": "SingleEdgeGroup",
+        "source": "MobilityScout",
+        "target": "magentic_orchestrator"
+      }
+    ]
+  },
+  "agents": {
+    "ReqMaster": {
+      "agent_id": "req-master",
+      "model": "gpt-4o-mini",
+      "system_instructions": "You are a Requisition Master agent handling job intake and requirements analysis.\n\nYour responsibilities:\n1. Retrieve and validate job posting details\n2. Extract structured requirements (must-have vs nice-to-have)\n3. Verify job is approved and open for sourcing\n4. Identify hiring manager and team context\n5. Set up screening criteria for candidate matching\n\nWhen processing job requisitions:\n- Validate the job ID exists and is in 'open' status\n- Extract all required and preferred skills\n- Note salary range and location requirements\n- Identify urgency level and time-to-fill targets\n- Flag any special requirements (clearance, certifications)\n\nIMPORTANT - Output Keywords:\n- If the position is time-sensitive or high priority, include the word \"urgent\" in your analysis\n- If the role requires international hiring or global compliance, include \"international\" in your response\n- Always clearly state the priority level (high/medium/low)\n\nOutput format: Provide structured job requirements ready for candidate sourcing.",
+      "tool_definitions": [
+        {
+          "name": "get_job_details",
+          "description": "Retrieves detailed information about a job posting including title, department, requirements, salary range, and hiring manager.",
+          "parameters": {
+            "properties": {
+              "job_id": {
+                "description": "The job ID to retrieve (e.g., JOB-SWE-2025-001)",
+                "title": "Job Id",
+                "type": "string"
+              }
+            },
+            "required": [
+              "job_id"
+            ],
+            "title": "get_job_details_input",
+            "type": "object"
+          }
+        },
+        {
+          "name": "extract_requirements",
+          "description": "Extracts and structures the requirements from a job posting, separating must-have from nice-to-have skills.",
+          "parameters": {
+            "properties": {
+              "job_id": {
+                "description": "The job ID to extract requirements from",
+                "title": "Job Id",
+                "type": "string"
+              }
+            },
+            "required": [
+              "job_id"
+            ],
+            "title": "extract_requirements_input",
+            "type": "object"
+          }
+        }
+      ]
+    }
+  },
+  "invocations": [
+    {
+      "sequence": 1,
+      "timestamp": "2026-02-16T14:34:04.954679+00:00",
+      "agent_name": "ReqMaster",
+      "agent_id": "req-master",
+      "system_instructions": [
+        "You are a Requisition Master agent handling job intake and requirements analysis.\n\nYour responsibilities:\n1. Retrieve and validate job posting details\n2. Extract structured requirements (must-have vs nice-to-have)\n3. Verify job is approved and open for sourcing\n4. Identify hiring manager and team context\n5. Set up screening criteria for candidate matching\n\nWhen processing job requisitions:\n- Validate the job ID exists and is in 'open' status\n- Extract all required and preferred skills\n- Note salary range and location requirements\n- Identify urgency level and time-to-fill targets\n- Flag any special requirements (clearance, certifications)\n\nIMPORTANT - Output Keywords:\n- If the position is time-sensitive or high priority, include the word \"urgent\" in your analysis\n- If the role requires international hiring or global compliance, include \"international\" in your response\n- Always clearly state the priority level (high/medium/low)\n\nOutput format: Provide structured job requirements ready for candidate sourcing."
+      ],
+      "input_messages": {
+        "value": [
+          {
+            "role": "system",
+            "parts": [
+              {
+                "type": "text",
+                "content": "You are a Requisition Master agent handling job intake and requirements analysis.\n\nYour responsibilities:\n1. Retrieve and validate job posting details\n2. Extract structured requirements (must-have vs nice-to-have)\n3. Verify job is approved and open for sourcing\n4. Identify hiring manager and team context\n5. Set up screening criteria for candidate matching\n\nWhen processing job requisitions:\n- Validate the job ID exists and is in 'open' status\n- Extract all required and preferred skills\n- Note salary range and location requirements\n- Identify urgency level and time-to-fill targets\n- Flag any special requirements (clearance, certifications)\n\nIMPORTANT - Output Keywords:\n- If the position is time-sensitive or high priority, include the word \"urgent\" in your analysis\n- If the role requires international hiring or global compliance, include \"international\" in your response\n- Always clearly state the priority level (high/medium/low)\n\nOutput format: Provide structured job requirements ready for candidate sourcing."
+              }
+            ]
+          },
+          {
+            "role": "user",
+            "parts": [
+              {
+                "type": "text",
+                "content": "Find all candidates for the Senior Software Engineer position (JOB-SWE-2025-001). Include external applicants, internal transfers, referrals, and agency candidates."
+              }
+            ]
+          },
+          {
+            "role": "user",
+            "parts": [
+              {
+                "type": "text",
+                "content": "Below I will present you a request.\n\nBefore we begin addressing the request, please answer the following pre-survey to the best of your ability.\nKeep in mind that you are Ken Jennings-level with trivia, and Mensa-level with puzzles, so there should be\na deep well to draw from.\n\nHere is the request:\n\nFind all candidates for the Senior Software Engineer position (JOB-SWE-2025-001). Include external applicants, internal transfers, referrals, and agency candidates.\n\nHere is the pre-survey:\n\n    1. Please list any specific facts or figures that are GIVEN in the request itself. It is possible that\n       there are none.\n    2. Please list any facts that may need to be looked up, and WHERE SPECIFICALLY they might be found.\n       In some cases, authoritative sources are mentioned in the request itself.\n    3. Please list any facts that may need to be derived (e.g., via logical deduction, simulation, or computation)\n    4. Please list any facts that are recalled from memory, hunches, well-reasoned guesses, etc.\n\nWhen answering this survey, keep in mind that \"facts\" will typically be specific names, dates, statistics, etc.\nYour answer should use headings:\n\n    1. GIVEN OR VERIFIED FACTS\n    2. FACTS TO LOOK UP\n    3. FACTS TO DERIVE\n    4. EDUCATED GUESSES\n\nDO NOT include any other headings or sections in your response. DO NOT list next steps or plans until asked to do so.\n"
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      },
+      "output_messages": {
+        "value": [
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "text",
+                "content": "### GIVEN OR VERIFIED FACTS\n1. The request is for candidates for the position titled \"Senior Software Engineer.\"\n2. The job ID for this position is JOB-SWE-2025-001.\n\n### FACTS TO LOOK UP\n1. The current status of the job posting associated with JOB-SWE-2025-001 (whether it is open, closed, or in progress).\n2. Details on candidates who have applied (external applicants), as well as internal transfers, referrals, and agency candidates for this specific position.\n\n### FACTS TO DERIVE\n1. Potential eligibility of internal candidates based on their skills and experience relevant to the Senior Software Engineer role.\n2. The number of candidates needed to meet any specific sourcing goals or quotas, if applicable.\n\n### EDUCATED GUESSES\n1. It’s likely that some internal candidates may have prior experience or skills that align with the requirements of the Senior Software Engineer position.\n2. Given the nature of software engineering, candidates may come from diverse educational and professional backgrounds; hence, a variety of sourcing channels would yield a broader candidate pool."
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      }
+    },
+    {
+      "sequence": 2,
+      "timestamp": "2026-02-16T14:34:18.901114+00:00",
+      "agent_name": "ReqMaster",
+      "agent_id": "req-master",
+      "system_instructions": [
+        "You are a Requisition Master agent handling job intake and requirements analysis.\n\nYour responsibilities:\n1. Retrieve and validate job posting details\n2. Extract structured requirements (must-have vs nice-to-have)\n3. Verify job is approved and open for sourcing\n4. Identify hiring manager and team context\n5. Set up screening criteria for candidate matching\n\nWhen processing job requisitions:\n- Validate the job ID exists and is in 'open' status\n- Extract all required and preferred skills\n- Note salary range and location requirements\n- Identify urgency level and time-to-fill targets\n- Flag any special requirements (clearance, certifications)\n\nIMPORTANT - Output Keywords:\n- If the position is time-sensitive or high priority, include the word \"urgent\" in your analysis\n- If the role requires international hiring or global compliance, include \"international\" in your response\n- Always clearly state the priority level (high/medium/low)\n\nOutput format: Provide structured job requirements ready for candidate sourcing."
+      ],
+      "input_messages": {
+        "value": [
+          {
+            "role": "system",
+            "parts": [
+              {
+                "type": "text",
+                "content": "You are a Requisition Master agent handling job intake and requirements analysis.\n\nYour responsibilities:\n1. Retrieve and validate job posting details\n2. Extract structured requirements (must-have vs nice-to-have)\n3. Verify job is approved and open for sourcing\n4. Identify hiring manager and team context\n5. Set up screening criteria for candidate matching\n\nWhen processing job requisitions:\n- Validate the job ID exists and is in 'open' status\n- Extract all required and preferred skills\n- Note salary range and location requirements\n- Identify urgency level and time-to-fill targets\n- Flag any special requirements (clearance, certifications)\n\nIMPORTANT - Output Keywords:\n- If the position is time-sensitive or high priority, include the word \"urgent\" in your analysis\n- If the role requires international hiring or global compliance, include \"international\" in your response\n- Always clearly state the priority level (high/medium/low)\n\nOutput format: Provide structured job requirements ready for candidate sourcing."
+              }
+            ]
+          },
+          {
+            "role": "user",
+            "parts": [
+              {
+                "type": "text",
+                "content": "Find all candidates for the Senior Software Engineer position (JOB-SWE-2025-001). Include external applicants, internal transfers, referrals, and agency candidates."
+              }
+            ]
+          },
+          {
+            "role": "user",
+            "parts": [
+              {
+                "type": "text",
+                "content": "Below I will present you a request.\n\nBefore we begin addressing the request, please answer the following pre-survey to the best of your ability.\nKeep in mind that you are Ken Jennings-level with trivia, and Mensa-level with puzzles, so there should be\na deep well to draw from.\n\nHere is the request:\n\nFind all candidates for the Senior Software Engineer position (JOB-SWE-2025-001). Include external applicants, internal transfers, referrals, and agency candidates.\n\nHere is the pre-survey:\n\n    1. Please list any specific facts or figures that are GIVEN in the request itself. It is possible that\n       there are none.\n    2. Please list any facts that may need to be looked up, and WHERE SPECIFICALLY they might be found.\n       In some cases, authoritative sources are mentioned in the request itself.\n    3. Please list any facts that may need to be derived (e.g., via logical deduction, simulation, or computation)\n    4. Please list any facts that are recalled from memory, hunches, well-reasoned guesses, etc.\n\nWhen answering this survey, keep in mind that \"facts\" will typically be specific names, dates, statistics, etc.\nYour answer should use headings:\n\n    1. GIVEN OR VERIFIED FACTS\n    2. FACTS TO LOOK UP\n    3. FACTS TO DERIVE\n    4. EDUCATED GUESSES\n\nDO NOT include any other headings or sections in your response. DO NOT list next steps or plans until asked to do so.\n"
+              }
+            ]
+          },
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "text",
+                "content": "### GIVEN OR VERIFIED FACTS\n1. The request is for candidates for the position titled \"Senior Software Engineer.\"\n2. The job ID for this position is JOB-SWE-2025-001.\n\n### FACTS TO LOOK UP\n1. The current status of the job posting associated with JOB-SWE-2025-001 (whether it is open, closed, or in progress).\n2. Details on candidates who have applied (external applicants), as well as internal transfers, referrals, and agency candidates for this specific position.\n\n### FACTS TO DERIVE\n1. Potential eligibility of internal candidates based on their skills and experience relevant to the Senior Software Engineer role.\n2. The number of candidates needed to meet any specific sourcing goals or quotas, if applicable.\n\n### EDUCATED GUESSES\n1. It’s likely that some internal candidates may have prior experience or skills that align with the requirements of the Senior Software Engineer position.\n2. Given the nature of software engineering, candidates may come from diverse educational and professional backgrounds; hence, a variety of sourcing channels would yield a broader candidate pool."
+              }
+            ]
+          },
+          {
+            "role": "user",
+            "parts": [
+              {
+                "type": "text",
+                "content": "Fantastic. To address this request we have assembled the following team:\n\n- ReqMaster: <no description, use name to identify the purpose of this participant>\n- MobilityScout: <no description, use name to identify the purpose of this participant>\n\nBased on the team composition, and known and unknown facts, please devise a short bullet-point plan for addressing the\noriginal request. Remember, there is no requirement to involve all team members. A team member's particular expertise\nmay not be needed for this task.\n"
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      },
+      "output_messages": {
+        "value": [
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "text",
+                "content": "- **Verify Job Status**: \n  - ReqMaster checks the status of the job posting JOB-SWE-2025-001 to confirm it is open for sourcing.\n\n- **Candidate Retrieval**:\n  - ReqMaster retrieves all candidate details related to the Senior Software Engineer position, including:\n    - External applicants\n    - Internal transfers\n    - Referrals\n    - Agency candidates\n\n- **Compile Candidate Profiles**:\n  - Create a structured list of candidates with relevant qualifications and application status.\n\n- **Identify Gaps**:\n  - Evaluate the candidate pool for any missing skills or experience that may need to be addressed through additional sourcing.\n\n- **Report Findings**:\n  - ReqMaster summarizes findings and prepares a report highlighting the candidate pool, qualifications, and any areas for additional sourcing strategy. \n\n- **Optional Follow-Up**:\n  - Consider involving MobilityScout if assessing internal mobility among current employees is necessary to enhance the candidate list."
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      }
+    },
+    {
+      "sequence": 3,
+      "timestamp": "2026-02-16T14:34:26.698270+00:00",
+      "agent_name": "ReqMaster",
+      "agent_id": "req-master",
+      "system_instructions": [
+        "You are a Requisition Master agent handling job intake and requirements analysis.\n\nYour responsibilities:\n1. Retrieve and validate job posting details\n2. Extract structured requirements (must-have vs nice-to-have)\n3. Verify job is approved and open for sourcing\n4. Identify hiring manager and team context\n5. Set up screening criteria for candidate matching\n\nWhen processing job requisitions:\n- Validate the job ID exists and is in 'open' status\n- Extract all required and preferred skills\n- Note salary range and location requirements\n- Identify urgency level and time-to-fill targets\n- Flag any special requirements (clearance, certifications)\n\nIMPORTANT - Output Keywords:\n- If the position is time-sensitive or high priority, include the word \"urgent\" in your analysis\n- If the role requires international hiring or global compliance, include \"international\" in your response\n- Always clearly state the priority level (high/medium/low)\n\nOutput format: Provide structured job requirements ready for candidate sourcing."
+      ],
+      "input_messages": {
+        "value": [
+          {
+            "role": "system",
+            "parts": [
+              {
+                "type": "text",
+                "content": "You are a Requisition Master agent handling job intake and requirements analysis.\n\nYour responsibilities:\n1. Retrieve and validate job posting details\n2. Extract structured requirements (must-have vs nice-to-have)\n3. Verify job is approved and open for sourcing\n4. Identify hiring manager and team context\n5. Set up screening criteria for candidate matching\n\nWhen processing job requisitions:\n- Validate the job ID exists and is in 'open' status\n- Extract all required and preferred skills\n- Note salary range and location requirements\n- Identify urgency level and time-to-fill targets\n- Flag any special requirements (clearance, certifications)\n\nIMPORTANT - Output Keywords:\n- If the position is time-sensitive or high priority, include the word \"urgent\" in your analysis\n- If the role requires international hiring or global compliance, include \"international\" in your response\n- Always clearly state the priority level (high/medium/low)\n\nOutput format: Provide structured job requirements ready for candidate sourcing."
+              }
+            ]
+          },
+          {
+            "role": "user",
+            "parts": [
+              {
+                "type": "text",
+                "content": "Find all candidates for the Senior Software Engineer position (JOB-SWE-2025-001). Include external applicants, internal transfers, referrals, and agency candidates."
+              }
+            ]
+          },
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "text",
+                "content": "\nWe are working to address the following user request:\n\nFind all candidates for the Senior Software Engineer position (JOB-SWE-2025-001). Include external applicants, internal transfers, referrals, and agency candidates.\n\n\nTo answer this request we have assembled the following team:\n\n- ReqMaster: <no description, use name to identify the purpose of this participant>\n- MobilityScout: <no description, use name to identify the purpose of this participant>\n\n\nHere is an initial fact sheet to consider:\n\n### GIVEN OR VERIFIED FACTS\n1. The request is for candidates for the position titled \"Senior Software Engineer.\"\n2. The job ID for this position is JOB-SWE-2025-001.\n\n### FACTS TO LOOK UP\n1. The current status of the job posting associated with JOB-SWE-2025-001 (whether it is open, closed, or in progress).\n2. Details on candidates who have applied (external applicants), as well as internal transfers, referrals, and agency candidates for this specific position.\n\n### FACTS TO DERIVE\n1. Potential eligibility of internal candidates based on their skills and experience relevant to the Senior Software Engineer role.\n2. The number of candidates needed to meet any specific sourcing goals or quotas, if applicable.\n\n### EDUCATED GUESSES\n1. It’s likely that some internal candidates may have prior experience or skills that align with the requirements of the Senior Software Engineer position.\n2. Given the nature of software engineering, candidates may come from diverse educational and professional backgrounds; hence, a variety of sourcing channels would yield a broader candidate pool.\n\n\nHere is the plan to follow as best as possible:\n\n- **Verify Job Status**: \n  - ReqMaster checks the status of the job posting JOB-SWE-2025-001 to confirm it is open for sourcing.\n\n- **Candidate Retrieval**:\n  - ReqMaster retrieves all candidate details related to the Senior Software Engineer position, including:\n    - External applicants\n    - Internal transfers\n    - Referrals\n    - Agency candidates\n\n- **Compile Candidate Profiles**:\n  - Create a structured list of candidates with relevant qualifications and application status.\n\n- **Identify Gaps**:\n  - Evaluate the candidate pool for any missing skills or experience that may need to be addressed through additional sourcing.\n\n- **Report Findings**:\n  - ReqMaster summarizes findings and prepares a report highlighting the candidate pool, qualifications, and any areas for additional sourcing strategy. \n\n- **Optional Follow-Up**:\n  - Consider involving MobilityScout if assessing internal mobility among current employees is necessary to enhance the candidate list.\n"
+              }
+            ]
+          },
+          {
+            "role": "user",
+            "parts": [
+              {
+                "type": "text",
+                "content": "\nRecall we are working on the following request:\n\nFind all candidates for the Senior Software Engineer position (JOB-SWE-2025-001). Include external applicants, internal transfers, referrals, and agency candidates.\n\nAnd we have assembled the following team:\n\n- ReqMaster: <no description, use name to identify the purpose of this participant>\n- MobilityScout: <no description, use name to identify the purpose of this participant>\n\nTo make progress on the request, please answer the following questions, including necessary reasoning:\n\n    - Is the request fully satisfied? (True if complete, or False if the original request has yet to be\n      SUCCESSFULLY and FULLY addressed)\n    - Are we in a loop where we are repeating the same requests and or getting the same responses as before?\n      Loops can span multiple turns, and can include repeated actions like scrolling up or down more than a\n      handful of times.\n    - Are we making forward progress? (True if just starting, or recent messages are adding value. False if recent\n      messages show evidence of being stuck in a loop or if there is evidence of significant barriers to success\n      such as the inability to read from a required file)\n    - Who should speak next? (select from: ReqMaster, MobilityScout)\n    - What instruction or question would you give this team member? (Phrase as if speaking directly to them, and\n      include any specific information they may need)\n\nPlease output an answer in pure JSON format according to the following schema. The JSON object must be parsable as-is.\nDO NOT OUTPUT ANYTHING OTHER THAN JSON, AND DO NOT DEVIATE FROM THIS SCHEMA:\n\n{\n    \"is_request_satisfied\": {\n\n        \"reason\": string,\n        \"answer\": boolean\n    },\n    \"is_in_loop\": {\n        \"reason\": string,\n        \"answer\": boolean\n    },\n    \"is_progress_being_made\": {\n        \"reason\": string,\n        \"answer\": boolean\n    },\n    \"next_speaker\": {\n        \"reason\": string,\n        \"answer\": string (select from: ReqMaster, MobilityScout)\n    },\n    \"instruction_or_question\": {\n        \"reason\": string,\n        \"answer\": string\n    }\n}\n"
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      },
+      "output_messages": {
+        "value": [
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "text",
+                "content": "{\n    \"is_request_satisfied\": {\n        \"reason\": \"The request has not been fully addressed as we have yet to retrieve candidate information for the Senior Software Engineer position.\",\n        \"answer\": false\n    },\n    \"is_in_loop\": {\n        \"reason\": \"There is no evidence of a loop; we are still gathering necessary information to fulfill the request.\",\n        \"answer\": false\n    },\n    \"is_progress_being_made\": {\n        \"reason\": \"We are preparing to retrieve candidate data, which indicates a step toward fulfilling the request.\",\n        \"answer\": true\n    },\n    \"next_speaker\": {\n        \"reason\": \"ReqMaster is responsible for verifying the job status and retrieving candidate details next.\",\n        \"answer\": \"ReqMaster\"\n    },\n    \"instruction_or_question\": {\n        \"reason\": \"ReqMaster needs to confirm the job posting status and gather candidate information.\",\n        \"answer\": \"Please verify the job status for JOB-SWE-2025-001 and retrieve all candidate details including external applicants, internal transfers, referrals, and agency candidates.\"\n    }\n}"
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      }
+    },
+    {
+      "sequence": 4,
+      "timestamp": "2026-02-16T14:34:39.841347+00:00",
+      "agent_name": "ReqMaster",
+      "agent_id": "req-master",
+      "system_instructions": [
+        "You are a Requisition Master agent handling job intake and requirements analysis.\n\nYour responsibilities:\n1. Retrieve and validate job posting details\n2. Extract structured requirements (must-have vs nice-to-have)\n3. Verify job is approved and open for sourcing\n4. Identify hiring manager and team context\n5. Set up screening criteria for candidate matching\n\nWhen processing job requisitions:\n- Validate the job ID exists and is in 'open' status\n- Extract all required and preferred skills\n- Note salary range and location requirements\n- Identify urgency level and time-to-fill targets\n- Flag any special requirements (clearance, certifications)\n\nIMPORTANT - Output Keywords:\n- If the position is time-sensitive or high priority, include the word \"urgent\" in your analysis\n- If the role requires international hiring or global compliance, include \"international\" in your response\n- Always clearly state the priority level (high/medium/low)\n\nOutput format: Provide structured job requirements ready for candidate sourcing."
+      ],
+      "input_messages": {
+        "value": [
+          {
+            "role": "system",
+            "parts": [
+              {
+                "type": "text",
+                "content": "You are a Requisition Master agent handling job intake and requirements analysis.\n\nYour responsibilities:\n1. Retrieve and validate job posting details\n2. Extract structured requirements (must-have vs nice-to-have)\n3. Verify job is approved and open for sourcing\n4. Identify hiring manager and team context\n5. Set up screening criteria for candidate matching\n\nWhen processing job requisitions:\n- Validate the job ID exists and is in 'open' status\n- Extract all required and preferred skills\n- Note salary range and location requirements\n- Identify urgency level and time-to-fill targets\n- Flag any special requirements (clearance, certifications)\n\nIMPORTANT - Output Keywords:\n- If the position is time-sensitive or high priority, include the word \"urgent\" in your analysis\n- If the role requires international hiring or global compliance, include \"international\" in your response\n- Always clearly state the priority level (high/medium/low)\n\nOutput format: Provide structured job requirements ready for candidate sourcing."
+              }
+            ]
+          },
+          {
+            "role": "user",
+            "parts": [
+              {
+                "type": "text",
+                "content": "Please verify the job status for JOB-SWE-2025-001 and retrieve all candidate details including external applicants, internal transfers, referrals, and agency candidates."
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      },
+      "output_messages": {
+        "value": [
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "tool_call",
+                "id": "call_Va82vc4rlqV9mGrHfTf5rY6E",
+                "name": "get_job_details",
+                "arguments": "{\"job_id\":\"JOB-SWE-2025-001\"}"
+              }
+            ]
+          },
+          {
+            "role": "tool",
+            "parts": [
+              {
+                "type": "tool_call_response",
+                "id": "call_Va82vc4rlqV9mGrHfTf5rY6E",
+                "response": "Job Details for JOB-SWE-2025-001:\nTitle: Senior Software Engineer\nDepartment: Engineering\nLocation: Seattle, WA\nRemote Allowed: Yes\nSalary Range: $150,000 - $200,000\nHiring Manager ID: EMP-MGR-001\nStatus: open\nCreated: 2025-01-10\n\nRequirements:\n  - Python (Required)\n  - Azure (Required)\n  - Kubernetes (Preferred)\n  - 5+ years experience (Required)\n  - CS degree (Preferred)\n  - Distributed systems (Required)\n\nDescription: Senior engineer for cloud platform team"
+              }
+            ]
+          },
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "tool_call",
+                "id": "call_8MNZfGTSoLaI1Tx5mOIVgTBY",
+                "name": "extract_requirements",
+                "arguments": "{\"job_id\":\"JOB-SWE-2025-001\"}"
+              }
+            ]
+          },
+          {
+            "role": "tool",
+            "parts": [
+              {
+                "type": "tool_call_response",
+                "id": "call_8MNZfGTSoLaI1Tx5mOIVgTBY",
+                "response": "Structured Requirements for JOB-SWE-2025-001 (Senior Software Engineer):\n\nMUST HAVE:\nPython, Azure, 5+ years experience, Distributed systems\n\nNICE TO HAVE:\nKubernetes, CS degree\n\nMinimum Salary: $150,000\nLocation Requirement: Seattle, WA (Remote OK)"
+              }
+            ]
+          },
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "tool_call",
+                "id": "call_pmXIjyl8A0KuuOq5I3ZLeeIQ",
+                "name": "get_job_details",
+                "arguments": "{\"job_id\":\"JOB-SWE-2025-001\"}"
+              }
+            ]
+          },
+          {
+            "role": "tool",
+            "parts": [
+              {
+                "type": "tool_call_response",
+                "id": "call_pmXIjyl8A0KuuOq5I3ZLeeIQ",
+                "response": "Job Details for JOB-SWE-2025-001:\nTitle: Senior Software Engineer\nDepartment: Engineering\nLocation: Seattle, WA\nRemote Allowed: Yes\nSalary Range: $150,000 - $200,000\nHiring Manager ID: EMP-MGR-001\nStatus: open\nCreated: 2025-01-10\n\nRequirements:\n  - Python (Required)\n  - Azure (Required)\n  - Kubernetes (Preferred)\n  - 5+ years experience (Required)\n  - CS degree (Preferred)\n  - Distributed systems (Required)\n\nDescription: Senior engineer for cloud platform team"
+              }
+            ]
+          },
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "text",
+                "content": "### Job Analysis for JOB-SWE-2025-001\n\n**Job Title**: Senior Software Engineer  \n**Department**: Engineering  \n**Location**: Seattle, WA (Remote Allowed)  \n**Salary Range**: $150,000 - $200,000  \n**Status**: Open  \n**Created Date**: January 10, 2025  \n\n#### Requirements\n- **Must Have**:\n  - Python\n  - Azure\n  - 5+ years of experience\n  - Distributed systems\n- **Nice to Have**:\n  - Kubernetes\n  - Computer Science degree\n\n#### Additional Information\n- **Urgency Level**: Medium (Open status indicates need for sourcing, but no immediate urgency flagged)\n- **Priority**: Medium\n\n### Summary\nThis job requisition is currently open and available for candidate sourcing. There are no additional details provided about candidate sources (external applicants, internal transfers, referrals, or agency candidates) in the job information retrieved.\n\nIf you need assistance with further inquiries or actions regarding candidate sourcing, please let me know!"
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      }
+    },
+    {
+      "sequence": 5,
+      "timestamp": "2026-02-16T14:35:09.501685+00:00",
+      "agent_name": "ReqMaster",
+      "agent_id": "req-master",
+      "system_instructions": [],
+      "input_messages": {
+        "_raw": "[{\"role\": \"system\", \"parts\": [{\"type\": \"text\", \"content\": \"You are a Requisition Master agent handling job intake and requirements analysis.\\n\\nYour responsibilities:\\n1. Retrieve and validate job posting details\\n2. Extract structured requirements (must-have vs nice-to-have)\\n3. Verify job is approved and open for sourcing\\n4. Identify hiring manager and team context\\n5. Set up screening criteria for candidate matching\\n\\nWhen processing job requisitions:\\n- Validate the job ID exists and is in 'open' status\\n- Extract all required and preferred skills\\n- Note salary range and location requirements\\n- Identify urgency level and time-to-fill targets\\n- Flag any special requirements (clearance, certifications)\\n\\nIMPORTANT - Output Keywords:\\n- If the position is time-sensitive or high priority, include the word \\\"urgent\\\" in your analysis\\n- If the role requires international hiring or global compliance, include \\\"international\\\" in your response\\n- Always clearly state the priority level (high/medium/low)\\n\\nOutput format: Provide structured job requirements ready for candidate sourcing.\"}]}, {\"role\": \"user\", \"parts\": [{\"type\": \"text\", \"content\": \"Find all candidates for the Senior Software Engineer position (JOB-SWE-2025-001). Include external applicants, internal transfers, referrals, and agency candidates.\"}]}, {\"role\": \"assistant\", \"parts\": [{\"type\": \"text\", \"content\": \"\\nWe are working to address the following user request:\\n\\nFind all candidates for the Senior Software Engineer position (JOB-SWE-2025-001). Include external applicants, internal transfers, referrals, and agency candidates.\\n\\n\\nTo answer this request we have assembled the following team:\\n\\n- ReqMaster: <no description, use name to identify the purpose of this participant>\\n- MobilityScout: <no description, use name to identify the purpose of this participant>\\n\\n\\nHere is an initial fact sheet to consider:\\n\\n### GIVEN OR VERIFIED FACTS\\n1. The request is for candidates for the position titled \\\"Senior Software Engineer.\\\"\\n2. The job ID for this position is JOB-SWE-2025-001.\\n\\n### FACTS TO LOOK UP\\n1. The current status of the job posting associated with JOB-SWE-2025-001 (whether it is open, closed, or in progress).\\n2. Details on candidates who have applied (external applicants), as well as internal transfers, referrals, and agency candidates for this specific position.\\n\\n### FACTS TO DERIVE\\n1. Potential eligibility of internal candidates based on their skills and experience relevant to the Senior Software Engineer role.\\n2. The number of candidates needed to meet any specific sourcing goals or quotas, if applicable.\\n\\n### EDUCATED GUESSES\\n1. It’s likely that some internal candidates may have prior experience or skills that align with the requirements of the Senior Software Engineer position.\\n2. Given the nature of software engineering, candidates may come from diverse educational and professional backgrounds; hence, a variety of sourcing channels would yield a broader candidate pool.\\n\\n\\nHere is the plan to follow as best as possible:\\n\\n- **Verify Job Status**: \\n  - ReqMaster checks the status of the job posting JOB-SWE-2025-001 to confirm it is open for sourcing.\\n\\n- **Candidate Retrieval**:\\n  - ReqMaster retrieves all candidate details related to the Senior Software Engineer position, including:\\n    - External applicants\\n    - Internal transfers\\n    - Referrals\\n    - Agency candidates\\n\\n- **Compile Candidate Profiles**:\\n  - Create a structured list of candidates with relevant qualifications and application status.\\n\\n- **Identify Gaps**:\\n  - Evaluate the candidate pool for any missing skills or experience that may need to be addressed through additional sourcing.\\n\\n- **Report Findings**:\\n  - ReqMaster summarizes findings and prepares a report highlighting the candidate pool, qualifications, and any areas for additional sourcing strategy. \\n\\n- **Optional Follow-Up**:\\n  - Consider involving MobilityScout if assessing internal mobility among current employees is necessary to enhance the candidate list.\\n\"}]}, {\"role\": \"assistant\", \"parts\": [{\"type\": \"text\", \"content\": \"Please verify the job status for JOB-SWE-2025-001 and retrieve all candidate details including external applicants, internal transfers, referrals, and agency candidates.\"}]}, {\"role\": \"assistant\", \"parts\": [{\"type\": \"tool_call\", \"id\": \"call_Va82vc4rlqV9mGrHfTf5rY6E\", \"name\": \"get_job_details\", \"arguments\": \"{\\\"job_id\\\":\\\"JOB-SWE-2025-001\\\"}\"}]}, {\"role\": \"tool\", \"parts\": [{\"type\": \"tool_call_response\", \"id\": \"call_Va82vc4rlqV9mGrHfTf5rY6E\", \"response\": \"Job Details for JOB-SWE-2025-001:\\nTitle: Senior Software Engineer\\nDepartment: Engineering\\nLocation: Seattle, WA\\nRemote Allowed: Yes\\nSalary Range: $150,000 - $200,000\\nHiring Manager ID: EMP-MGR-001\\nStatus: open\\nCreated: 2025-01-10\\n\\nRequirements:\\n  - Python (Required)\\n  - Azure (Required)\\n  - Kubernetes (Preferred)\\n  - 5+ years experience (Required)\\n  - CS degree (Preferred)\\n  - Distributed systems (Required)\\n\\nDescription: Senior engineer for cloud platform team\"}]}, {\"role\": \"assistant\", \"parts\": [{\"type\": \"tool_call\", \"id\": \"call_8MNZfGTSoLaI1Tx5mOIVgTBY\", \"name\": \"extract_requirements\", \"arguments\": \"{\\\"job_id\\\":\\\"JOB-SWE-2025-001\\\"}\"}]}, {\"role\": \"tool\", \"parts\": [{\"type\": \"tool_call_response\", \"id\": \"call_8MNZfGTSoLaI1Tx5mOIVgTBY\", \"response\": \"Structured Requirements for JOB-SWE-2025-001 (Senior Software Engineer):\\n\\nMUST HAVE:\\nPython, Azure, 5+ years experience, Distributed systems\\n\\nNICE TO HAVE:\\nKubernetes, CS degree\\n\\nMinimum Salary: $150,000\\nLocation Requirement: Seattle, WA (Remote OK)\"}]}, {\"role\": \"assistant\", \"parts\": [{\"type\": \"tool_call\", \"id\": \"call_pmXIjyl8A0KuuOq5I3ZLeeIQ\", \"name\": \"get_job_details\", \"arguments\": \"{\\\"job_id\\\":\\\"JOB-SWE-2025-001\\\"}\"}]}, {\"role\": \"tool\", \"parts\": [{\"type\": \"tool_call_response\", \"id\": \"call_pmXIjyl8A0KuuOq5I3ZLeeIQ\", \"response\": \"Job Details for JOB-SWE-2025-001:\\nTitle: Senior Software Engineer\\nDepartment: Engineering\\nLocation: Seattle, WA\\nRemote Allowed: Yes\\nSalary Range: $150,000 - $200,000\\nHiring Manager ID: EMP-MGR-001\\nStatus: open\\nCreated: 2025-01-10\\n\\nRequirements:\\n  - Python (Required)\\n  - Azure (Required)\\n  - Kubernetes (Preferred)\\n  - 5+ years experience (Required)\\n  - CS degree (Preferred)\\n  - Distributed systems (Required)\\n\\nDescription: Senior engineer for cloud platform team\"}]}, {\"role\": \"assistant\", \"parts\": [{\"type\": \"text\", \"content\": \"### Job Analysis for JOB-SWE-2025-001\\n\\n**Job Title**: Senior Software Engineer  \\n**Department**: Engineering  \\n**Location**: Seattle, WA (Remote Allowed)  \\n**Salary Range**: $150,000 - $200,000  \\n**Status**: Open  \\n**Created Date**: January 10, 2025  \\n\\n#### Requirements\\n- **Must Have**:\\n  - Python\\n  - Azure\\n  - 5+ years of experience\\n  - Distributed systems\\n- **Nice to Have**:\\n  - Kubernetes\\n  - Computer Science degree\\n\\n#### Additional Information\\n- **Urgency Level**: Medium (Open status indicates need for sourcing, but no immediate urgency flagged)\\n- **Priority**: Medium\\n\\n### Summary\\nThis job requisition is currently open and available for candidate sourcing. There are no additional details provided about candidate sources (external applicants, internal transfers, referrals, or agency candidates) in the job information retrieved.\\n\\nIf you need assistance with further inquiries or actions regarding candidate sourcing, please let me know!\"}]}, {\"role\": \"user\", \"parts\": [{\"type\": \"text\", \"content\": \"\\nRecall we are working on the following request:\\n\\nFind all candidates for the Senior Software Engineer position (JOB-SWE-2025-001). Include external applicants, internal transfers, referrals, and agency candidates.\\n\\nAnd we have assembled the following team:\\n\\n- ReqMaster: <no description, use name to identify the purpose of this participant>\\n- MobilityScout: <no description, use name to identify the purpose of this participant>\\n\\nTo make progress on the request, please answer the following questions, including necessary reasoning:\\n\\n    - Is the request fully satisfied? (True if complete, or False if the original request has yet to be\\n      SUCCESSFULLY and FULLY ",
+        "_truncated": true
+      },
+      "output_messages": {
+        "value": [
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "text",
+                "content": "{\n    \"is_request_satisfied\": {\n        \"reason\": \"The job details have been retrieved, but candidate information has not yet been obtained, so the request is not fully satisfied.\",\n        \"answer\": false\n    },\n    \"is_in_loop\": {\n        \"reason\": \"Repeatedly retrieving the same job details without progressing towards candidate sourcing indicates a loop.\",\n        \"answer\": true\n    },\n    \"is_progress_being_made\": {\n        \"reason\": \"While job details were acquired, no candidate sourcing information has been obtained, which shows that we are not making clear progress.\",\n        \"answer\": false\n    },\n    \"next_speaker\": {\n        \"reason\": \"ReqMaster should lead the next step to request candidate details.\",\n        \"answer\": \"ReqMaster\"\n    },\n    \"instruction_or_question\": {\n        \"reason\": \"ReqMaster should initiate the search for candidates based on the job ID and requested categories.\",\n        \"answer\": \"Please retrieve all candidates for the Senior Software Engineer position (JOB-SWE-2025-001), including external applicants, internal transfers, referrals, and agency candidates.\"\n    }\n}"
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      }
+    },
+    {
+      "sequence": 6,
+      "timestamp": "2026-02-16T14:35:17.922185+00:00",
+      "agent_name": "ReqMaster",
+      "agent_id": "req-master",
+      "system_instructions": [
+        "You are a Requisition Master agent handling job intake and requirements analysis.\n\nYour responsibilities:\n1. Retrieve and validate job posting details\n2. Extract structured requirements (must-have vs nice-to-have)\n3. Verify job is approved and open for sourcing\n4. Identify hiring manager and team context\n5. Set up screening criteria for candidate matching\n\nWhen processing job requisitions:\n- Validate the job ID exists and is in 'open' status\n- Extract all required and preferred skills\n- Note salary range and location requirements\n- Identify urgency level and time-to-fill targets\n- Flag any special requirements (clearance, certifications)\n\nIMPORTANT - Output Keywords:\n- If the position is time-sensitive or high priority, include the word \"urgent\" in your analysis\n- If the role requires international hiring or global compliance, include \"international\" in your response\n- Always clearly state the priority level (high/medium/low)\n\nOutput format: Provide structured job requirements ready for candidate sourcing."
+      ],
+      "input_messages": {
+        "value": [
+          {
+            "role": "system",
+            "parts": [
+              {
+                "type": "text",
+                "content": "You are a Requisition Master agent handling job intake and requirements analysis.\n\nYour responsibilities:\n1. Retrieve and validate job posting details\n2. Extract structured requirements (must-have vs nice-to-have)\n3. Verify job is approved and open for sourcing\n4. Identify hiring manager and team context\n5. Set up screening criteria for candidate matching\n\nWhen processing job requisitions:\n- Validate the job ID exists and is in 'open' status\n- Extract all required and preferred skills\n- Note salary range and location requirements\n- Identify urgency level and time-to-fill targets\n- Flag any special requirements (clearance, certifications)\n\nIMPORTANT - Output Keywords:\n- If the position is time-sensitive or high priority, include the word \"urgent\" in your analysis\n- If the role requires international hiring or global compliance, include \"international\" in your response\n- Always clearly state the priority level (high/medium/low)\n\nOutput format: Provide structured job requirements ready for candidate sourcing."
+              }
+            ]
+          },
+          {
+            "role": "user",
+            "parts": [
+              {
+                "type": "text",
+                "content": "Please retrieve all candidates for the Senior Software Engineer position (JOB-SWE-2025-001), including external applicants, internal transfers, referrals, and agency candidates."
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      },
+      "output_messages": {
+        "value": [
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "tool_call",
+                "id": "call_a4RAiqB3IL9M7JK8WD7I10t7",
+                "name": "get_job_details",
+                "arguments": "{\"job_id\":\"JOB-SWE-2025-001\"}"
+              }
+            ]
+          },
+          {
+            "role": "tool",
+            "parts": [
+              {
+                "type": "tool_call_response",
+                "id": "call_a4RAiqB3IL9M7JK8WD7I10t7",
+                "response": "Job Details for JOB-SWE-2025-001:\nTitle: Senior Software Engineer\nDepartment: Engineering\nLocation: Seattle, WA\nRemote Allowed: Yes\nSalary Range: $150,000 - $200,000\nHiring Manager ID: EMP-MGR-001\nStatus: open\nCreated: 2025-01-10\n\nRequirements:\n  - Python (Required)\n  - Azure (Required)\n  - Kubernetes (Preferred)\n  - 5+ years experience (Required)\n  - CS degree (Preferred)\n  - Distributed systems (Required)\n\nDescription: Senior engineer for cloud platform team"
+              }
+            ]
+          },
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "text",
+                "content": "It seems I cannot directly retrieve specific candidates for the Senior Software Engineer position (JOB-SWE-2025-001). However, you can typically find candidates through your applicant tracking system or recruitment database by searching for applicants under this job posting ID. \n\nWould you like assistance with another aspect of this job requisition, such as setting up screening criteria or contacting the hiring manager?"
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      }
+    },
+    {
+      "sequence": 7,
+      "timestamp": "2026-02-16T14:35:32.507490+00:00",
+      "agent_name": "ReqMaster",
+      "agent_id": "req-master",
+      "system_instructions": [],
+      "input_messages": {
+        "_raw": "[{\"role\": \"system\", \"parts\": [{\"type\": \"text\", \"content\": \"You are a Requisition Master agent handling job intake and requirements analysis.\\n\\nYour responsibilities:\\n1. Retrieve and validate job posting details\\n2. Extract structured requirements (must-have vs nice-to-have)\\n3. Verify job is approved and open for sourcing\\n4. Identify hiring manager and team context\\n5. Set up screening criteria for candidate matching\\n\\nWhen processing job requisitions:\\n- Validate the job ID exists and is in 'open' status\\n- Extract all required and preferred skills\\n- Note salary range and location requirements\\n- Identify urgency level and time-to-fill targets\\n- Flag any special requirements (clearance, certifications)\\n\\nIMPORTANT - Output Keywords:\\n- If the position is time-sensitive or high priority, include the word \\\"urgent\\\" in your analysis\\n- If the role requires international hiring or global compliance, include \\\"international\\\" in your response\\n- Always clearly state the priority level (high/medium/low)\\n\\nOutput format: Provide structured job requirements ready for candidate sourcing.\"}]}, {\"role\": \"user\", \"parts\": [{\"type\": \"text\", \"content\": \"Find all candidates for the Senior Software Engineer position (JOB-SWE-2025-001). Include external applicants, internal transfers, referrals, and agency candidates.\"}]}, {\"role\": \"assistant\", \"parts\": [{\"type\": \"text\", \"content\": \"\\nWe are working to address the following user request:\\n\\nFind all candidates for the Senior Software Engineer position (JOB-SWE-2025-001). Include external applicants, internal transfers, referrals, and agency candidates.\\n\\n\\nTo answer this request we have assembled the following team:\\n\\n- ReqMaster: <no description, use name to identify the purpose of this participant>\\n- MobilityScout: <no description, use name to identify the purpose of this participant>\\n\\n\\nHere is an initial fact sheet to consider:\\n\\n### GIVEN OR VERIFIED FACTS\\n1. The request is for candidates for the position titled \\\"Senior Software Engineer.\\\"\\n2. The job ID for this position is JOB-SWE-2025-001.\\n\\n### FACTS TO LOOK UP\\n1. The current status of the job posting associated with JOB-SWE-2025-001 (whether it is open, closed, or in progress).\\n2. Details on candidates who have applied (external applicants), as well as internal transfers, referrals, and agency candidates for this specific position.\\n\\n### FACTS TO DERIVE\\n1. Potential eligibility of internal candidates based on their skills and experience relevant to the Senior Software Engineer role.\\n2. The number of candidates needed to meet any specific sourcing goals or quotas, if applicable.\\n\\n### EDUCATED GUESSES\\n1. It’s likely that some internal candidates may have prior experience or skills that align with the requirements of the Senior Software Engineer position.\\n2. Given the nature of software engineering, candidates may come from diverse educational and professional backgrounds; hence, a variety of sourcing channels would yield a broader candidate pool.\\n\\n\\nHere is the plan to follow as best as possible:\\n\\n- **Verify Job Status**: \\n  - ReqMaster checks the status of the job posting JOB-SWE-2025-001 to confirm it is open for sourcing.\\n\\n- **Candidate Retrieval**:\\n  - ReqMaster retrieves all candidate details related to the Senior Software Engineer position, including:\\n    - External applicants\\n    - Internal transfers\\n    - Referrals\\n    - Agency candidates\\n\\n- **Compile Candidate Profiles**:\\n  - Create a structured list of candidates with relevant qualifications and application status.\\n\\n- **Identify Gaps**:\\n  - Evaluate the candidate pool for any missing skills or experience that may need to be addressed through additional sourcing.\\n\\n- **Report Findings**:\\n  - ReqMaster summarizes findings and prepares a report highlighting the candidate pool, qualifications, and any areas for additional sourcing strategy. \\n\\n- **Optional Follow-Up**:\\n  - Consider involving MobilityScout if assessing internal mobility among current employees is necessary to enhance the candidate list.\\n\"}]}, {\"role\": \"assistant\", \"parts\": [{\"type\": \"text\", \"content\": \"Please verify the job status for JOB-SWE-2025-001 and retrieve all candidate details including external applicants, internal transfers, referrals, and agency candidates.\"}]}, {\"role\": \"assistant\", \"parts\": [{\"type\": \"tool_call\", \"id\": \"call_Va82vc4rlqV9mGrHfTf5rY6E\", \"name\": \"get_job_details\", \"arguments\": \"{\\\"job_id\\\":\\\"JOB-SWE-2025-001\\\"}\"}]}, {\"role\": \"tool\", \"parts\": [{\"type\": \"tool_call_response\", \"id\": \"call_Va82vc4rlqV9mGrHfTf5rY6E\", \"response\": \"Job Details for JOB-SWE-2025-001:\\nTitle: Senior Software Engineer\\nDepartment: Engineering\\nLocation: Seattle, WA\\nRemote Allowed: Yes\\nSalary Range: $150,000 - $200,000\\nHiring Manager ID: EMP-MGR-001\\nStatus: open\\nCreated: 2025-01-10\\n\\nRequirements:\\n  - Python (Required)\\n  - Azure (Required)\\n  - Kubernetes (Preferred)\\n  - 5+ years experience (Required)\\n  - CS degree (Preferred)\\n  - Distributed systems (Required)\\n\\nDescription: Senior engineer for cloud platform team\"}]}, {\"role\": \"assistant\", \"parts\": [{\"type\": \"tool_call\", \"id\": \"call_8MNZfGTSoLaI1Tx5mOIVgTBY\", \"name\": \"extract_requirements\", \"arguments\": \"{\\\"job_id\\\":\\\"JOB-SWE-2025-001\\\"}\"}]}, {\"role\": \"tool\", \"parts\": [{\"type\": \"tool_call_response\", \"id\": \"call_8MNZfGTSoLaI1Tx5mOIVgTBY\", \"response\": \"Structured Requirements for JOB-SWE-2025-001 (Senior Software Engineer):\\n\\nMUST HAVE:\\nPython, Azure, 5+ years experience, Distributed systems\\n\\nNICE TO HAVE:\\nKubernetes, CS degree\\n\\nMinimum Salary: $150,000\\nLocation Requirement: Seattle, WA (Remote OK)\"}]}, {\"role\": \"assistant\", \"parts\": [{\"type\": \"tool_call\", \"id\": \"call_pmXIjyl8A0KuuOq5I3ZLeeIQ\", \"name\": \"get_job_details\", \"arguments\": \"{\\\"job_id\\\":\\\"JOB-SWE-2025-001\\\"}\"}]}, {\"role\": \"tool\", \"parts\": [{\"type\": \"tool_call_response\", \"id\": \"call_pmXIjyl8A0KuuOq5I3ZLeeIQ\", \"response\": \"Job Details for JOB-SWE-2025-001:\\nTitle: Senior Software Engineer\\nDepartment: Engineering\\nLocation: Seattle, WA\\nRemote Allowed: Yes\\nSalary Range: $150,000 - $200,000\\nHiring Manager ID: EMP-MGR-001\\nStatus: open\\nCreated: 2025-01-10\\n\\nRequirements:\\n  - Python (Required)\\n  - Azure (Required)\\n  - Kubernetes (Preferred)\\n  - 5+ years experience (Required)\\n  - CS degree (Preferred)\\n  - Distributed systems (Required)\\n\\nDescription: Senior engineer for cloud platform team\"}]}, {\"role\": \"assistant\", \"parts\": [{\"type\": \"text\", \"content\": \"### Job Analysis for JOB-SWE-2025-001\\n\\n**Job Title**: Senior Software Engineer  \\n**Department**: Engineering  \\n**Location**: Seattle, WA (Remote Allowed)  \\n**Salary Range**: $150,000 - $200,000  \\n**Status**: Open  \\n**Created Date**: January 10, 2025  \\n\\n#### Requirements\\n- **Must Have**:\\n  - Python\\n  - Azure\\n  - 5+ years of experience\\n  - Distributed systems\\n- **Nice to Have**:\\n  - Kubernetes\\n  - Computer Science degree\\n\\n#### Additional Information\\n- **Urgency Level**: Medium (Open status indicates need for sourcing, but no immediate urgency flagged)\\n- **Priority**: Medium\\n\\n### Summary\\nThis job requisition is currently open and available for candidate sourcing. There are no additional details provided about candidate sources (external applicants, internal transfers, referrals, or agency candidates) in the job information retrieved.\\n\\nIf you need assistance with further inquiries or actions regarding candidate sourcing, please let me know!\"}]}, {\"role\": \"assistant\", \"parts\": [{\"type\": \"text\", \"content\": \"Please retrieve all candidates for the Senior Software Engineer position (JOB-SWE-2025-001), including external applicants, internal transfers, referrals, and agency candidates.\"}]}, {\"role\": \"assistant\", \"parts\": [{\"type\": \"tool_call\", \"id\": \"call_a4RAiqB3IL9M7JK8WD7I10t7\", \"name\": \"get_job_details\", \"arguments\": \"{\\\"job_id\\\":\\\"JOB-SWE-2025-001\\\"}\"}]}, {\"role\": \"tool\", \"parts\": [{\"type\": \"tool_call_response\", \"id\": \"call_a4RAiqB3IL9M7JK8WD7I10t7\", \"response\": \"Job Details for JOB-SWE-2025-001:\\nTitle: Senior Software Engineer\\nDepartment: Engineering\\nLocation: Seattle, WA\\nRemote Allowed: Yes\\nSalary Range: $150,000 - $200,000\\nHiring Manager ID: EMP-MGR-001\\nStatus:",
+        "_truncated": true
+      },
+      "output_messages": {
+        "value": [
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "text",
+                "content": "{\n    \"is_request_satisfied\": {\n        \"reason\": \"The request for candidates for the Senior Software Engineer position has not yet been fulfilled as we lack the data for specific candidates.\",\n        \"answer\": false\n    },\n    \"is_in_loop\": {\n        \"reason\": \"We are repeating requests to fetch candidate information without progress, leading to redundant inquiries.\",\n        \"answer\": true\n    },\n    \"is_progress_being_made\": {\n        \"reason\": \"Recent messages have not introduced new information or actionable steps toward obtaining the candidate list.\",\n        \"answer\": false\n    },\n    \"next_speaker\": {\n        \"reason\": \"MobilityScout should provide insights on internal transfers and potential referrals.\",\n        \"answer\": \"MobilityScout\"\n    },\n    \"instruction_or_question\": {\n        \"reason\": \"MobilityScout needs to facilitate the search for internal candidates and referrals for the position.\",\n        \"answer\": \"Please gather information on potential internal transfers and referrals for the Senior Software Engineer position and present any available candidates.\"\n    }\n}"
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      }
+    },
+    {
+      "sequence": 8,
+      "timestamp": "2026-02-16T14:35:43.375977+00:00",
+      "agent_name": "ReqMaster",
+      "agent_id": "req-master",
+      "system_instructions": [
+        "You are a Requisition Master agent handling job intake and requirements analysis.\n\nYour responsibilities:\n1. Retrieve and validate job posting details\n2. Extract structured requirements (must-have vs nice-to-have)\n3. Verify job is approved and open for sourcing\n4. Identify hiring manager and team context\n5. Set up screening criteria for candidate matching\n\nWhen processing job requisitions:\n- Validate the job ID exists and is in 'open' status\n- Extract all required and preferred skills\n- Note salary range and location requirements\n- Identify urgency level and time-to-fill targets\n- Flag any special requirements (clearance, certifications)\n\nIMPORTANT - Output Keywords:\n- If the position is time-sensitive or high priority, include the word \"urgent\" in your analysis\n- If the role requires international hiring or global compliance, include \"international\" in your response\n- Always clearly state the priority level (high/medium/low)\n\nOutput format: Provide structured job requirements ready for candidate sourcing."
+      ],
+      "input_messages": {
+        "value": [
+          {
+            "role": "system",
+            "parts": [
+              {
+                "type": "text",
+                "content": "You are a Requisition Master agent handling job intake and requirements analysis.\n\nYour responsibilities:\n1. Retrieve and validate job posting details\n2. Extract structured requirements (must-have vs nice-to-have)\n3. Verify job is approved and open for sourcing\n4. Identify hiring manager and team context\n5. Set up screening criteria for candidate matching\n\nWhen processing job requisitions:\n- Validate the job ID exists and is in 'open' status\n- Extract all required and preferred skills\n- Note salary range and location requirements\n- Identify urgency level and time-to-fill targets\n- Flag any special requirements (clearance, certifications)\n\nIMPORTANT - Output Keywords:\n- If the position is time-sensitive or high priority, include the word \"urgent\" in your analysis\n- If the role requires international hiring or global compliance, include \"international\" in your response\n- Always clearly state the priority level (high/medium/low)\n\nOutput format: Provide structured job requirements ready for candidate sourcing."
+              }
+            ]
+          },
+          {
+            "role": "user",
+            "parts": [
+              {
+                "type": "text",
+                "content": "As a reminder, we are working to solve the following task:\n\nFind all candidates for the Senior Software Engineer position (JOB-SWE-2025-001). Include external applicants, internal transfers, referrals, and agency candidates.\n\nIt is clear we are not making as much progress as we would like, but we may have learned something new.\nPlease rewrite the following fact sheet, updating it to include anything new we have learned that may be helpful.\n\nExample edits can include (but are not limited to) adding new guesses, moving educated guesses to verified facts\nif appropriate, etc. Updates may be made to any section of the fact sheet, and more than one section of the fact\nsheet can be edited. This is an especially good time to update educated guesses, so please at least add or update\none educated guess or hunch, and explain your reasoning.\n\nHere is the old fact sheet:\n\n### GIVEN OR VERIFIED FACTS\n1. The request is for candidates for the position titled \"Senior Software Engineer.\"\n2. The job ID for this position is JOB-SWE-2025-001.\n\n### FACTS TO LOOK UP\n1. The current status of the job posting associated with JOB-SWE-2025-001 (whether it is open, closed, or in progress).\n2. Details on candidates who have applied (external applicants), as well as internal transfers, referrals, and agency candidates for this specific position.\n\n### FACTS TO DERIVE\n1. Potential eligibility of internal candidates based on their skills and experience relevant to the Senior Software Engineer role.\n2. The number of candidates needed to meet any specific sourcing goals or quotas, if applicable.\n\n### EDUCATED GUESSES\n1. It’s likely that some internal candidates may have prior experience or skills that align with the requirements of the Senior Software Engineer position.\n2. Given the nature of software engineering, candidates may come from diverse educational and professional backgrounds; hence, a variety of sourcing channels would yield a broader candidate pool.\n"
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      },
+      "output_messages": {
+        "value": [
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "tool_call",
+                "id": "call_AcmKqpsGTlu9C3J3Age5lq4G",
+                "name": "get_job_details",
+                "arguments": "{\"job_id\":\"JOB-SWE-2025-001\"}"
+              },
+              {
+                "type": "tool_call",
+                "id": "call_F1r9pNnbmDtfs6Z0I09nYh3f",
+                "name": "extract_requirements",
+                "arguments": "{\"job_id\":\"JOB-SWE-2025-001\"}"
+              }
+            ]
+          },
+          {
+            "role": "tool",
+            "parts": [
+              {
+                "type": "tool_call_response",
+                "id": "call_AcmKqpsGTlu9C3J3Age5lq4G",
+                "response": "Job Details for JOB-SWE-2025-001:\nTitle: Senior Software Engineer\nDepartment: Engineering\nLocation: Seattle, WA\nRemote Allowed: Yes\nSalary Range: $150,000 - $200,000\nHiring Manager ID: EMP-MGR-001\nStatus: open\nCreated: 2025-01-10\n\nRequirements:\n  - Python (Required)\n  - Azure (Required)\n  - Kubernetes (Preferred)\n  - 5+ years experience (Required)\n  - CS degree (Preferred)\n  - Distributed systems (Required)\n\nDescription: Senior engineer for cloud platform team"
+              },
+              {
+                "type": "tool_call_response",
+                "id": "call_F1r9pNnbmDtfs6Z0I09nYh3f",
+                "response": "Structured Requirements for JOB-SWE-2025-001 (Senior Software Engineer):\n\nMUST HAVE:\nPython, Azure, 5+ years experience, Distributed systems\n\nNICE TO HAVE:\nKubernetes, CS degree\n\nMinimum Salary: $150,000\nLocation Requirement: Seattle, WA (Remote OK)"
+              }
+            ]
+          },
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "text",
+                "content": "Here's the updated fact sheet with new information incorporated and sections refined for clarity:\n\n### GIVEN OR VERIFIED FACTS\n1. The request is for candidates for the position titled \"Senior Software Engineer.\"\n2. The job ID for this position is JOB-SWE-2025-001.\n3. The current status of the job posting for JOB-SWE-2025-001 is **open**.\n4. The salary range for this position is **$150,000 - $200,000**.\n5. The position allows for **remote work**, but is based in **Seattle, WA**.\n6. Key requirements include **Python**, **Azure**, and experience in **distributed systems**, with a preference for **Kubernetes** and a **Computer Science degree**.\n\n### FACTS TO LOOK UP\n1. Details on candidates who have applied (external applicants), as well as internal transfers, referrals, and agency candidates for this specific position.\n\n### FACTS TO DERIVE\n1. Potential eligibility of internal candidates based on their skills and experience relevant to the Senior Software Engineer role.\n2. The number of candidates needed to meet any specific sourcing goals or quotas, if applicable.\n\n### EDUCATED GUESSES\n1. **Internal Candidates:** Given that the job is open and related to the Engineering department, it's likely that some internal candidates may have prior experience or skills that align with the requirements of the Senior Software Engineer position, particularly in **Python** and **Azure**.\n2. **Candidate Diversity:** Given the nature of software engineering, candidates may come from diverse educational and professional backgrounds; hence, a variety of sourcing channels would likely yield a broader candidate pool.\n3. **Urgency Level:** Since this position is crucial for a cloud platform team, the urgency level can be inferred as **high**, leading us to assume a priority in filling this role promptly.\n4. **Hiring Manager Context:** As the position is open, identifying the hiring manager (Employee ID: EMP-MGR-001) could provide insights into the team dynamics and alignment with sourcing efforts.\n\nThis updated fact sheet contains critical information for sourcing efforts and ensures that all relevant details are taken into account to optimize candidate searches for the Senior Software Engineer role."
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      }
+    },
+    {
+      "sequence": 9,
+      "timestamp": "2026-02-16T14:36:01.076419+00:00",
+      "agent_name": "ReqMaster",
+      "agent_id": "req-master",
+      "system_instructions": [
+        "You are a Requisition Master agent handling job intake and requirements analysis.\n\nYour responsibilities:\n1. Retrieve and validate job posting details\n2. Extract structured requirements (must-have vs nice-to-have)\n3. Verify job is approved and open for sourcing\n4. Identify hiring manager and team context\n5. Set up screening criteria for candidate matching\n\nWhen processing job requisitions:\n- Validate the job ID exists and is in 'open' status\n- Extract all required and preferred skills\n- Note salary range and location requirements\n- Identify urgency level and time-to-fill targets\n- Flag any special requirements (clearance, certifications)\n\nIMPORTANT - Output Keywords:\n- If the position is time-sensitive or high priority, include the word \"urgent\" in your analysis\n- If the role requires international hiring or global compliance, include \"international\" in your response\n- Always clearly state the priority level (high/medium/low)\n\nOutput format: Provide structured job requirements ready for candidate sourcing."
+      ],
+      "input_messages": {
+        "value": [
+          {
+            "role": "system",
+            "parts": [
+              {
+                "type": "text",
+                "content": "You are a Requisition Master agent handling job intake and requirements analysis.\n\nYour responsibilities:\n1. Retrieve and validate job posting details\n2. Extract structured requirements (must-have vs nice-to-have)\n3. Verify job is approved and open for sourcing\n4. Identify hiring manager and team context\n5. Set up screening criteria for candidate matching\n\nWhen processing job requisitions:\n- Validate the job ID exists and is in 'open' status\n- Extract all required and preferred skills\n- Note salary range and location requirements\n- Identify urgency level and time-to-fill targets\n- Flag any special requirements (clearance, certifications)\n\nIMPORTANT - Output Keywords:\n- If the position is time-sensitive or high priority, include the word \"urgent\" in your analysis\n- If the role requires international hiring or global compliance, include \"international\" in your response\n- Always clearly state the priority level (high/medium/low)\n\nOutput format: Provide structured job requirements ready for candidate sourcing."
+              }
+            ]
+          },
+          {
+            "role": "user",
+            "parts": [
+              {
+                "type": "text",
+                "content": "As a reminder, we are working to solve the following task:\n\nFind all candidates for the Senior Software Engineer position (JOB-SWE-2025-001). Include external applicants, internal transfers, referrals, and agency candidates.\n\nIt is clear we are not making as much progress as we would like, but we may have learned something new.\nPlease rewrite the following fact sheet, updating it to include anything new we have learned that may be helpful.\n\nExample edits can include (but are not limited to) adding new guesses, moving educated guesses to verified facts\nif appropriate, etc. Updates may be made to any section of the fact sheet, and more than one section of the fact\nsheet can be edited. This is an especially good time to update educated guesses, so please at least add or update\none educated guess or hunch, and explain your reasoning.\n\nHere is the old fact sheet:\n\n### GIVEN OR VERIFIED FACTS\n1. The request is for candidates for the position titled \"Senior Software Engineer.\"\n2. The job ID for this position is JOB-SWE-2025-001.\n\n### FACTS TO LOOK UP\n1. The current status of the job posting associated with JOB-SWE-2025-001 (whether it is open, closed, or in progress).\n2. Details on candidates who have applied (external applicants), as well as internal transfers, referrals, and agency candidates for this specific position.\n\n### FACTS TO DERIVE\n1. Potential eligibility of internal candidates based on their skills and experience relevant to the Senior Software Engineer role.\n2. The number of candidates needed to meet any specific sourcing goals or quotas, if applicable.\n\n### EDUCATED GUESSES\n1. It’s likely that some internal candidates may have prior experience or skills that align with the requirements of the Senior Software Engineer position.\n2. Given the nature of software engineering, candidates may come from diverse educational and professional backgrounds; hence, a variety of sourcing channels would yield a broader candidate pool.\n"
+              }
+            ]
+          },
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "text",
+                "content": "Here's the updated fact sheet with new information incorporated and sections refined for clarity:\n\n### GIVEN OR VERIFIED FACTS\n1. The request is for candidates for the position titled \"Senior Software Engineer.\"\n2. The job ID for this position is JOB-SWE-2025-001.\n3. The current status of the job posting for JOB-SWE-2025-001 is **open**.\n4. The salary range for this position is **$150,000 - $200,000**.\n5. The position allows for **remote work**, but is based in **Seattle, WA**.\n6. Key requirements include **Python**, **Azure**, and experience in **distributed systems**, with a preference for **Kubernetes** and a **Computer Science degree**.\n\n### FACTS TO LOOK UP\n1. Details on candidates who have applied (external applicants), as well as internal transfers, referrals, and agency candidates for this specific position.\n\n### FACTS TO DERIVE\n1. Potential eligibility of internal candidates based on their skills and experience relevant to the Senior Software Engineer role.\n2. The number of candidates needed to meet any specific sourcing goals or quotas, if applicable.\n\n### EDUCATED GUESSES\n1. **Internal Candidates:** Given that the job is open and related to the Engineering department, it's likely that some internal candidates may have prior experience or skills that align with the requirements of the Senior Software Engineer position, particularly in **Python** and **Azure**.\n2. **Candidate Diversity:** Given the nature of software engineering, candidates may come from diverse educational and professional backgrounds; hence, a variety of sourcing channels would likely yield a broader candidate pool.\n3. **Urgency Level:** Since this position is crucial for a cloud platform team, the urgency level can be inferred as **high**, leading us to assume a priority in filling this role promptly.\n4. **Hiring Manager Context:** As the position is open, identifying the hiring manager (Employee ID: EMP-MGR-001) could provide insights into the team dynamics and alignment with sourcing efforts.\n\nThis updated fact sheet contains critical information for sourcing efforts and ensures that all relevant details are taken into account to optimize candidate searches for the Senior Software Engineer role."
+              }
+            ]
+          },
+          {
+            "role": "user",
+            "parts": [
+              {
+                "type": "text",
+                "content": "Please briefly explain what went wrong on this last run\n(the root cause of the failure), and then come up with a new plan that takes steps and includes hints to overcome prior\nchallenges and especially avoids repeating the same mistakes. As before, the new plan should be concise, expressed in\nbullet-point form, and consider the following team composition:\n\n- ReqMaster: <no description, use name to identify the purpose of this participant>\n- MobilityScout: <no description, use name to identify the purpose of this participant>\n"
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      },
+      "output_messages": {
+        "value": [
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "text",
+                "content": "### Root Cause of Failure\n- Insufficient clarity on the current status and requirements of the Senior Software Engineer position caused delays in identifying and sourcing the right candidates.\n- Lack of coordination between team members led to missed opportunities in leveraging existing internal candidates and clarifying specific sourcing goals.\n\n### New Plan\n1. **Clarify Job Posting Status**\n   - Confirm and document the current status of the job posting for JOB-SWE-2025-001, including salary and location specifics.\n   - *Hint: Use a centralized tracking tool for real-time updates.*\n\n2. **Coordinate with Hiring Manager**\n   - Schedule a brief meeting (or send an email) with the hiring manager to discuss team dynamics, urgency of the position, and specific requirements.\n   - *Hint: Prepare a list of questions to understand the team’s immediate needs better.*\n\n3. **Leverage Internal Talent**\n   - Review internal candidates and their skill sets against the job requirements to identify potential fits.\n   - *Hint: Use employee performance metrics to assess alignment with required skills.*\n\n4. **Diversified Sourcing Strategy**\n   - Revise the sourcing strategy to include multiple channels (referrals, agency, and direct outreach) for a broader candidate pool.\n   - *Hint: Consider specialized job boards and community forums related to software engineering.*\n\n5. **Set Clear Sourcing Goals**\n   - Establish specific targets for the number of candidates to be sourced each week, including both internal and external talent.\n   - *Hint: Use past hiring metrics to set realistic and achievable goals.*\n\n6. **Regular Check-ins**\n   - Implement weekly check-ins between ReqMaster and MobilityScout to track progress, adjust strategies as necessary, and ensure alignment on sourcing approaches.\n   - *Hint: Use a simple shared dashboard for transparency in the hiring process.*\n\nThis structured approach aims to enhance clarity, communication, and proactive sourcing, mitigating the issues experienced in the last run."
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      }
+    }
+  ],
+  "errors": []
+}

@@ -1,0 +1,424 @@
+{
+  "parse_failed": false,
+  "workflow_id": "f7b889d1-e651-4e8f-878b-da7a0772cb46",
+  "workflow_name": "WorkflowBuilder-23aed309-8399-4b11-abbb-1eedaf4390c0",
+  "workflow_type": "magentic",
+  "topology": {
+    "start_executor_id": "magentic_orchestrator",
+    "max_iterations": 100,
+    "executors": [
+      {
+        "id": "magentic_orchestrator",
+        "type": "MagenticOrchestrator"
+      },
+      {
+        "id": "ReqMaster",
+        "type": "MagenticAgentExecutor"
+      },
+      {
+        "id": "TalentScout",
+        "type": "MagenticAgentExecutor"
+      },
+      {
+        "id": "MobilityScout",
+        "type": "MagenticAgentExecutor"
+      },
+      {
+        "id": "ReferralScout",
+        "type": "MagenticAgentExecutor"
+      },
+      {
+        "id": "AgencyScout",
+        "type": "MagenticAgentExecutor"
+      }
+    ],
+    "edges": [
+      {
+        "type": "SingleEdgeGroup",
+        "source": "magentic_orchestrator",
+        "target": "ReqMaster"
+      },
+      {
+        "type": "SingleEdgeGroup",
+        "source": "ReqMaster",
+        "target": "magentic_orchestrator"
+      },
+      {
+        "type": "SingleEdgeGroup",
+        "source": "magentic_orchestrator",
+        "target": "TalentScout"
+      },
+      {
+        "type": "SingleEdgeGroup",
+        "source": "TalentScout",
+        "target": "magentic_orchestrator"
+      },
+      {
+        "type": "SingleEdgeGroup",
+        "source": "magentic_orchestrator",
+        "target": "MobilityScout"
+      },
+      {
+        "type": "SingleEdgeGroup",
+        "source": "MobilityScout",
+        "target": "magentic_orchestrator"
+      },
+      {
+        "type": "SingleEdgeGroup",
+        "source": "magentic_orchestrator",
+        "target": "ReferralScout"
+      },
+      {
+        "type": "SingleEdgeGroup",
+        "source": "ReferralScout",
+        "target": "magentic_orchestrator"
+      },
+      {
+        "type": "SingleEdgeGroup",
+        "source": "magentic_orchestrator",
+        "target": "AgencyScout"
+      },
+      {
+        "type": "SingleEdgeGroup",
+        "source": "AgencyScout",
+        "target": "magentic_orchestrator"
+      }
+    ]
+  },
+  "agents": {
+    "ReqMaster": {
+      "agent_id": "req-master",
+      "model": "gpt-4o-mini",
+      "system_instructions": "You are a Requisition Master agent handling job intake and requirements analysis.\n\nYour responsibilities:\n1. Retrieve and validate job posting details\n2. Extract structured requirements (must-have vs nice-to-have)\n3. Verify job is approved and open for sourcing\n4. Identify hiring manager and team context\n5. Set up screening criteria for candidate matching\n\nWhen processing job requisitions:\n- Validate the job ID exists and is in 'open' status\n- Extract all required and preferred skills\n- Note salary range and location requirements\n- Identify urgency level and time-to-fill targets\n- Flag any special requirements (clearance, certifications)\n\nIMPORTANT - Output Keywords:\n- If the position is time-sensitive or high priority, include the word \"urgent\" in your analysis\n- If the role requires international hiring or global compliance, include \"international\" in your response\n- Always clearly state the priority level (high/medium/low)\n\nOutput format: Provide structured job requirements ready for candidate sourcing.",
+      "tool_definitions": [
+        {
+          "name": "get_job_details",
+          "description": "Retrieves detailed information about a job posting including title, department, requirements, salary range, and hiring manager.",
+          "parameters": {
+            "properties": {
+              "job_id": {
+                "description": "The job ID to retrieve (e.g., JOB-SWE-2025-001)",
+                "title": "Job Id",
+                "type": "string"
+              }
+            },
+            "required": [
+              "job_id"
+            ],
+            "title": "get_job_details_input",
+            "type": "object"
+          }
+        },
+        {
+          "name": "extract_requirements",
+          "description": "Extracts and structures the requirements from a job posting, separating must-have from nice-to-have skills.",
+          "parameters": {
+            "properties": {
+              "job_id": {
+                "description": "The job ID to extract requirements from",
+                "title": "Job Id",
+                "type": "string"
+              }
+            },
+            "required": [
+              "job_id"
+            ],
+            "title": "extract_requirements_input",
+            "type": "object"
+          }
+        }
+      ]
+    }
+  },
+  "invocations": [
+    {
+      "sequence": 1,
+      "timestamp": "2026-02-16T20:06:42.327188+00:00",
+      "agent_name": "ReqMaster",
+      "agent_id": "req-master",
+      "system_instructions": [
+        "You are a Requisition Master agent handling job intake and requirements analysis.\n\nYour responsibilities:\n1. Retrieve and validate job posting details\n2. Extract structured requirements (must-have vs nice-to-have)\n3. Verify job is approved and open for sourcing\n4. Identify hiring manager and team context\n5. Set up screening criteria for candidate matching\n\nWhen processing job requisitions:\n- Validate the job ID exists and is in 'open' status\n- Extract all required and preferred skills\n- Note salary range and location requirements\n- Identify urgency level and time-to-fill targets\n- Flag any special requirements (clearance, certifications)\n\nIMPORTANT - Output Keywords:\n- If the position is time-sensitive or high priority, include the word \"urgent\" in your analysis\n- If the role requires international hiring or global compliance, include \"international\" in your response\n- Always clearly state the priority level (high/medium/low)\n\nOutput format: Provide structured job requirements ready for candidate sourcing."
+      ],
+      "input_messages": {
+        "value": [
+          {
+            "role": "system",
+            "parts": [
+              {
+                "type": "text",
+                "content": "You are a Requisition Master agent handling job intake and requirements analysis.\n\nYour responsibilities:\n1. Retrieve and validate job posting details\n2. Extract structured requirements (must-have vs nice-to-have)\n3. Verify job is approved and open for sourcing\n4. Identify hiring manager and team context\n5. Set up screening criteria for candidate matching\n\nWhen processing job requisitions:\n- Validate the job ID exists and is in 'open' status\n- Extract all required and preferred skills\n- Note salary range and location requirements\n- Identify urgency level and time-to-fill targets\n- Flag any special requirements (clearance, certifications)\n\nIMPORTANT - Output Keywords:\n- If the position is time-sensitive or high priority, include the word \"urgent\" in your analysis\n- If the role requires international hiring or global compliance, include \"international\" in your response\n- Always clearly state the priority level (high/medium/low)\n\nOutput format: Provide structured job requirements ready for candidate sourcing."
+              }
+            ]
+          },
+          {
+            "role": "user",
+            "parts": [
+              {
+                "type": "text",
+                "content": "Source candidates for job JOB-CLOSED-2024-050."
+              }
+            ]
+          },
+          {
+            "role": "user",
+            "parts": [
+              {
+                "type": "text",
+                "content": "Below I will present you a request.\n\nBefore we begin addressing the request, please answer the following pre-survey to the best of your ability.\nKeep in mind that you are Ken Jennings-level with trivia, and Mensa-level with puzzles, so there should be\na deep well to draw from.\n\nHere is the request:\n\nSource candidates for job JOB-CLOSED-2024-050.\n\nHere is the pre-survey:\n\n    1. Please list any specific facts or figures that are GIVEN in the request itself. It is possible that\n       there are none.\n    2. Please list any facts that may need to be looked up, and WHERE SPECIFICALLY they might be found.\n       In some cases, authoritative sources are mentioned in the request itself.\n    3. Please list any facts that may need to be derived (e.g., via logical deduction, simulation, or computation)\n    4. Please list any facts that are recalled from memory, hunches, well-reasoned guesses, etc.\n\nWhen answering this survey, keep in mind that \"facts\" will typically be specific names, dates, statistics, etc.\nYour answer should use headings:\n\n    1. GIVEN OR VERIFIED FACTS\n    2. FACTS TO LOOK UP\n    3. FACTS TO DERIVE\n    4. EDUCATED GUESSES\n\nDO NOT include any other headings or sections in your response. DO NOT list next steps or plans until asked to do so.\n"
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      },
+      "output_messages": {
+        "value": [
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "text",
+                "content": "### 1. GIVEN OR VERIFIED FACTS\n- Job ID: JOB-CLOSED-2024-050\n  \n### 2. FACTS TO LOOK UP\n- Status of the job posting (whether it is indeed closed, as suggested by the job ID).\n- Details of the job posting (requirements, salary range, location, hiring manager).\n\n### 3. FACTS TO DERIVE\n- Potential urgency level for sourcing candidates based on the status and typical hiring timelines.\n- Possible candidate qualifications based on typical roles associated with similar job postings.\n\n### 4. EDUCATED GUESSES\n- The closed status of the job suggests that it might no longer be open for candidate sourcing.\n- It is likely that specific candidate profiles and required skills can be inferred based on common job roles in the industry associated with this job ID."
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      }
+    },
+    {
+      "sequence": 2,
+      "timestamp": "2026-02-16T20:06:57.380223+00:00",
+      "agent_name": "ReqMaster",
+      "agent_id": "req-master",
+      "system_instructions": [
+        "You are a Requisition Master agent handling job intake and requirements analysis.\n\nYour responsibilities:\n1. Retrieve and validate job posting details\n2. Extract structured requirements (must-have vs nice-to-have)\n3. Verify job is approved and open for sourcing\n4. Identify hiring manager and team context\n5. Set up screening criteria for candidate matching\n\nWhen processing job requisitions:\n- Validate the job ID exists and is in 'open' status\n- Extract all required and preferred skills\n- Note salary range and location requirements\n- Identify urgency level and time-to-fill targets\n- Flag any special requirements (clearance, certifications)\n\nIMPORTANT - Output Keywords:\n- If the position is time-sensitive or high priority, include the word \"urgent\" in your analysis\n- If the role requires international hiring or global compliance, include \"international\" in your response\n- Always clearly state the priority level (high/medium/low)\n\nOutput format: Provide structured job requirements ready for candidate sourcing."
+      ],
+      "input_messages": {
+        "value": [
+          {
+            "role": "system",
+            "parts": [
+              {
+                "type": "text",
+                "content": "You are a Requisition Master agent handling job intake and requirements analysis.\n\nYour responsibilities:\n1. Retrieve and validate job posting details\n2. Extract structured requirements (must-have vs nice-to-have)\n3. Verify job is approved and open for sourcing\n4. Identify hiring manager and team context\n5. Set up screening criteria for candidate matching\n\nWhen processing job requisitions:\n- Validate the job ID exists and is in 'open' status\n- Extract all required and preferred skills\n- Note salary range and location requirements\n- Identify urgency level and time-to-fill targets\n- Flag any special requirements (clearance, certifications)\n\nIMPORTANT - Output Keywords:\n- If the position is time-sensitive or high priority, include the word \"urgent\" in your analysis\n- If the role requires international hiring or global compliance, include \"international\" in your response\n- Always clearly state the priority level (high/medium/low)\n\nOutput format: Provide structured job requirements ready for candidate sourcing."
+              }
+            ]
+          },
+          {
+            "role": "user",
+            "parts": [
+              {
+                "type": "text",
+                "content": "Source candidates for job JOB-CLOSED-2024-050."
+              }
+            ]
+          },
+          {
+            "role": "user",
+            "parts": [
+              {
+                "type": "text",
+                "content": "Below I will present you a request.\n\nBefore we begin addressing the request, please answer the following pre-survey to the best of your ability.\nKeep in mind that you are Ken Jennings-level with trivia, and Mensa-level with puzzles, so there should be\na deep well to draw from.\n\nHere is the request:\n\nSource candidates for job JOB-CLOSED-2024-050.\n\nHere is the pre-survey:\n\n    1. Please list any specific facts or figures that are GIVEN in the request itself. It is possible that\n       there are none.\n    2. Please list any facts that may need to be looked up, and WHERE SPECIFICALLY they might be found.\n       In some cases, authoritative sources are mentioned in the request itself.\n    3. Please list any facts that may need to be derived (e.g., via logical deduction, simulation, or computation)\n    4. Please list any facts that are recalled from memory, hunches, well-reasoned guesses, etc.\n\nWhen answering this survey, keep in mind that \"facts\" will typically be specific names, dates, statistics, etc.\nYour answer should use headings:\n\n    1. GIVEN OR VERIFIED FACTS\n    2. FACTS TO LOOK UP\n    3. FACTS TO DERIVE\n    4. EDUCATED GUESSES\n\nDO NOT include any other headings or sections in your response. DO NOT list next steps or plans until asked to do so.\n"
+              }
+            ]
+          },
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "text",
+                "content": "### 1. GIVEN OR VERIFIED FACTS\n- Job ID: JOB-CLOSED-2024-050\n  \n### 2. FACTS TO LOOK UP\n- Status of the job posting (whether it is indeed closed, as suggested by the job ID).\n- Details of the job posting (requirements, salary range, location, hiring manager).\n\n### 3. FACTS TO DERIVE\n- Potential urgency level for sourcing candidates based on the status and typical hiring timelines.\n- Possible candidate qualifications based on typical roles associated with similar job postings.\n\n### 4. EDUCATED GUESSES\n- The closed status of the job suggests that it might no longer be open for candidate sourcing.\n- It is likely that specific candidate profiles and required skills can be inferred based on common job roles in the industry associated with this job ID."
+              }
+            ]
+          },
+          {
+            "role": "user",
+            "parts": [
+              {
+                "type": "text",
+                "content": "Fantastic. To address this request we have assembled the following team:\n\n- ReqMaster: <no description, use name to identify the purpose of this participant>\n- TalentScout: <no description, use name to identify the purpose of this participant>\n- MobilityScout: <no description, use name to identify the purpose of this participant>\n- ReferralScout: <no description, use name to identify the purpose of this participant>\n- AgencyScout: <no description, use name to identify the purpose of this participant>\n\nBased on the team composition, and known and unknown facts, please devise a short bullet-point plan for addressing the\noriginal request. Remember, there is no requirement to involve all team members. A team member's particular expertise\nmay not be needed for this task.\n"
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      },
+      "output_messages": {
+        "value": [
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "text",
+                "content": "- **ReqMaster**: Verify the status of the job posting (JOB-CLOSED-2024-050) and retrieve its details, including requirements and hiring manager information.\n- **TalentScout**: Prepare to source candidates based on the extracted job requirements once verified, and explore potential talent pools.\n- **MobilityScout**: Assess if any international aspects exist regarding candidate sourcing that may need to be addressed, based on the job’s requirements.\n- **ReferralScout**: Identify potential internal or external referral sources who may know qualified candidates for the position.\n- **AgencyScout**: Stay on standby to engage with recruitment agencies if the job is confirmed to be open or if needed for quick sourcing in the future."
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      }
+    },
+    {
+      "sequence": 3,
+      "timestamp": "2026-02-16T20:07:06.101240+00:00",
+      "agent_name": "ReqMaster",
+      "agent_id": "req-master",
+      "system_instructions": [
+        "You are a Requisition Master agent handling job intake and requirements analysis.\n\nYour responsibilities:\n1. Retrieve and validate job posting details\n2. Extract structured requirements (must-have vs nice-to-have)\n3. Verify job is approved and open for sourcing\n4. Identify hiring manager and team context\n5. Set up screening criteria for candidate matching\n\nWhen processing job requisitions:\n- Validate the job ID exists and is in 'open' status\n- Extract all required and preferred skills\n- Note salary range and location requirements\n- Identify urgency level and time-to-fill targets\n- Flag any special requirements (clearance, certifications)\n\nIMPORTANT - Output Keywords:\n- If the position is time-sensitive or high priority, include the word \"urgent\" in your analysis\n- If the role requires international hiring or global compliance, include \"international\" in your response\n- Always clearly state the priority level (high/medium/low)\n\nOutput format: Provide structured job requirements ready for candidate sourcing."
+      ],
+      "input_messages": {
+        "value": [
+          {
+            "role": "system",
+            "parts": [
+              {
+                "type": "text",
+                "content": "You are a Requisition Master agent handling job intake and requirements analysis.\n\nYour responsibilities:\n1. Retrieve and validate job posting details\n2. Extract structured requirements (must-have vs nice-to-have)\n3. Verify job is approved and open for sourcing\n4. Identify hiring manager and team context\n5. Set up screening criteria for candidate matching\n\nWhen processing job requisitions:\n- Validate the job ID exists and is in 'open' status\n- Extract all required and preferred skills\n- Note salary range and location requirements\n- Identify urgency level and time-to-fill targets\n- Flag any special requirements (clearance, certifications)\n\nIMPORTANT - Output Keywords:\n- If the position is time-sensitive or high priority, include the word \"urgent\" in your analysis\n- If the role requires international hiring or global compliance, include \"international\" in your response\n- Always clearly state the priority level (high/medium/low)\n\nOutput format: Provide structured job requirements ready for candidate sourcing."
+              }
+            ]
+          },
+          {
+            "role": "user",
+            "parts": [
+              {
+                "type": "text",
+                "content": "Source candidates for job JOB-CLOSED-2024-050."
+              }
+            ]
+          },
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "text",
+                "content": "\nWe are working to address the following user request:\n\nSource candidates for job JOB-CLOSED-2024-050.\n\n\nTo answer this request we have assembled the following team:\n\n- ReqMaster: <no description, use name to identify the purpose of this participant>\n- TalentScout: <no description, use name to identify the purpose of this participant>\n- MobilityScout: <no description, use name to identify the purpose of this participant>\n- ReferralScout: <no description, use name to identify the purpose of this participant>\n- AgencyScout: <no description, use name to identify the purpose of this participant>\n\n\nHere is an initial fact sheet to consider:\n\n### 1. GIVEN OR VERIFIED FACTS\n- Job ID: JOB-CLOSED-2024-050\n  \n### 2. FACTS TO LOOK UP\n- Status of the job posting (whether it is indeed closed, as suggested by the job ID).\n- Details of the job posting (requirements, salary range, location, hiring manager).\n\n### 3. FACTS TO DERIVE\n- Potential urgency level for sourcing candidates based on the status and typical hiring timelines.\n- Possible candidate qualifications based on typical roles associated with similar job postings.\n\n### 4. EDUCATED GUESSES\n- The closed status of the job suggests that it might no longer be open for candidate sourcing.\n- It is likely that specific candidate profiles and required skills can be inferred based on common job roles in the industry associated with this job ID.\n\n\nHere is the plan to follow as best as possible:\n\n- **ReqMaster**: Verify the status of the job posting (JOB-CLOSED-2024-050) and retrieve its details, including requirements and hiring manager information.\n- **TalentScout**: Prepare to source candidates based on the extracted job requirements once verified, and explore potential talent pools.\n- **MobilityScout**: Assess if any international aspects exist regarding candidate sourcing that may need to be addressed, based on the job’s requirements.\n- **ReferralScout**: Identify potential internal or external referral sources who may know qualified candidates for the position.\n- **AgencyScout**: Stay on standby to engage with recruitment agencies if the job is confirmed to be open or if needed for quick sourcing in the future.\n"
+              }
+            ]
+          },
+          {
+            "role": "user",
+            "parts": [
+              {
+                "type": "text",
+                "content": "\nRecall we are working on the following request:\n\nSource candidates for job JOB-CLOSED-2024-050.\n\nAnd we have assembled the following team:\n\n- ReqMaster: <no description, use name to identify the purpose of this participant>\n- TalentScout: <no description, use name to identify the purpose of this participant>\n- MobilityScout: <no description, use name to identify the purpose of this participant>\n- ReferralScout: <no description, use name to identify the purpose of this participant>\n- AgencyScout: <no description, use name to identify the purpose of this participant>\n\nTo make progress on the request, please answer the following questions, including necessary reasoning:\n\n    - Is the request fully satisfied? (True if complete, or False if the original request has yet to be\n      SUCCESSFULLY and FULLY addressed)\n    - Are we in a loop where we are repeating the same requests and or getting the same responses as before?\n      Loops can span multiple turns, and can include repeated actions like scrolling up or down more than a\n      handful of times.\n    - Are we making forward progress? (True if just starting, or recent messages are adding value. False if recent\n      messages show evidence of being stuck in a loop or if there is evidence of significant barriers to success\n      such as the inability to read from a required file)\n    - Who should speak next? (select from: ReqMaster, TalentScout, MobilityScout, ReferralScout, AgencyScout)\n    - What instruction or question would you give this team member? (Phrase as if speaking directly to them, and\n      include any specific information they may need)\n\nPlease output an answer in pure JSON format according to the following schema. The JSON object must be parsable as-is.\nDO NOT OUTPUT ANYTHING OTHER THAN JSON, AND DO NOT DEVIATE FROM THIS SCHEMA:\n\n{\n    \"is_request_satisfied\": {\n\n        \"reason\": string,\n        \"answer\": boolean\n    },\n    \"is_in_loop\": {\n        \"reason\": string,\n        \"answer\": boolean\n    },\n    \"is_progress_being_made\": {\n        \"reason\": string,\n        \"answer\": boolean\n    },\n    \"next_speaker\": {\n        \"reason\": string,\n        \"answer\": string (select from: ReqMaster, TalentScout, MobilityScout, ReferralScout, AgencyScout)\n    },\n    \"instruction_or_question\": {\n        \"reason\": string,\n        \"answer\": string\n    }\n}\n"
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      },
+      "output_messages": {
+        "value": [
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "tool_call",
+                "id": "call_UdzzYGPVDARKcvAGyU9ffbGK",
+                "name": "get_job_details",
+                "arguments": "{\"job_id\":\"JOB-CLOSED-2024-050\"}"
+              },
+              {
+                "type": "tool_call",
+                "id": "call_d2oCSWFhcCIBRETca6KsuPdn",
+                "name": "extract_requirements",
+                "arguments": "{\"job_id\":\"JOB-CLOSED-2024-050\"}"
+              }
+            ]
+          },
+          {
+            "role": "tool",
+            "parts": [
+              {
+                "type": "tool_call_response",
+                "id": "call_UdzzYGPVDARKcvAGyU9ffbGK",
+                "response": "Warning: Job 'JOB-CLOSED-2024-050' is not open. Current status: filled"
+              },
+              {
+                "type": "tool_call_response",
+                "id": "call_d2oCSWFhcCIBRETca6KsuPdn",
+                "response": "Structured Requirements for JOB-CLOSED-2024-050 (Marketing Manager):\n\nMUST HAVE:\nNone specified\n\nNICE TO HAVE:\nNone specified\n\nMinimum Salary: $120,000\nLocation Requirement: New York, NY (Remote OK)"
+              }
+            ]
+          },
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "text",
+                "content": "{\n    \"is_request_satisfied\": {\n        \"reason\": \"The job is closed and not open for sourcing candidates, which means the request cannot be fulfilled.\",\n        \"answer\": false\n    },\n    \"is_in_loop\": {\n        \"reason\": \"We are not repeating requests; however, the outcome confirms that the job is filled.\",\n        \"answer\": false\n    },\n    \"is_progress_being_made\": {\n        \"reason\": \"The job status was verified, and requirements were extracted, but no further action can be taken as the position is filled.\",\n        \"answer\": false\n    },\n    \"next_speaker\": {\n        \"reason\": \"No further action is required by any team member since the job is closed.\",\n        \"answer\": \"None\"\n    },\n    \"instruction_or_question\": {\n        \"reason\": \"Inform the team that the job cannot be sourced as it is already filled.\",\n        \"answer\": \"The job (JOB-CLOSED-2024-050) has been filled and cannot be sourced. There is no need for further action.\"\n    }\n}"
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      }
+    },
+    {
+      "sequence": 4,
+      "timestamp": "2026-02-16T20:07:20.717023+00:00",
+      "agent_name": "ReqMaster",
+      "agent_id": "req-master",
+      "system_instructions": [
+        "You are a Requisition Master agent handling job intake and requirements analysis.\n\nYour responsibilities:\n1. Retrieve and validate job posting details\n2. Extract structured requirements (must-have vs nice-to-have)\n3. Verify job is approved and open for sourcing\n4. Identify hiring manager and team context\n5. Set up screening criteria for candidate matching\n\nWhen processing job requisitions:\n- Validate the job ID exists and is in 'open' status\n- Extract all required and preferred skills\n- Note salary range and location requirements\n- Identify urgency level and time-to-fill targets\n- Flag any special requirements (clearance, certifications)\n\nIMPORTANT - Output Keywords:\n- If the position is time-sensitive or high priority, include the word \"urgent\" in your analysis\n- If the role requires international hiring or global compliance, include \"international\" in your response\n- Always clearly state the priority level (high/medium/low)\n\nOutput format: Provide structured job requirements ready for candidate sourcing."
+      ],
+      "input_messages": {
+        "value": [
+          {
+            "role": "system",
+            "parts": [
+              {
+                "type": "text",
+                "content": "You are a Requisition Master agent handling job intake and requirements analysis.\n\nYour responsibilities:\n1. Retrieve and validate job posting details\n2. Extract structured requirements (must-have vs nice-to-have)\n3. Verify job is approved and open for sourcing\n4. Identify hiring manager and team context\n5. Set up screening criteria for candidate matching\n\nWhen processing job requisitions:\n- Validate the job ID exists and is in 'open' status\n- Extract all required and preferred skills\n- Note salary range and location requirements\n- Identify urgency level and time-to-fill targets\n- Flag any special requirements (clearance, certifications)\n\nIMPORTANT - Output Keywords:\n- If the position is time-sensitive or high priority, include the word \"urgent\" in your analysis\n- If the role requires international hiring or global compliance, include \"international\" in your response\n- Always clearly state the priority level (high/medium/low)\n\nOutput format: Provide structured job requirements ready for candidate sourcing."
+              }
+            ]
+          },
+          {
+            "role": "user",
+            "parts": [
+              {
+                "type": "text",
+                "content": "Source candidates for job JOB-CLOSED-2024-050."
+              }
+            ]
+          },
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "text",
+                "content": "\nWe are working to address the following user request:\n\nSource candidates for job JOB-CLOSED-2024-050.\n\n\nTo answer this request we have assembled the following team:\n\n- ReqMaster: <no description, use name to identify the purpose of this participant>\n- TalentScout: <no description, use name to identify the purpose of this participant>\n- MobilityScout: <no description, use name to identify the purpose of this participant>\n- ReferralScout: <no description, use name to identify the purpose of this participant>\n- AgencyScout: <no description, use name to identify the purpose of this participant>\n\n\nHere is an initial fact sheet to consider:\n\n### 1. GIVEN OR VERIFIED FACTS\n- Job ID: JOB-CLOSED-2024-050\n  \n### 2. FACTS TO LOOK UP\n- Status of the job posting (whether it is indeed closed, as suggested by the job ID).\n- Details of the job posting (requirements, salary range, location, hiring manager).\n\n### 3. FACTS TO DERIVE\n- Potential urgency level for sourcing candidates based on the status and typical hiring timelines.\n- Possible candidate qualifications based on typical roles associated with similar job postings.\n\n### 4. EDUCATED GUESSES\n- The closed status of the job suggests that it might no longer be open for candidate sourcing.\n- It is likely that specific candidate profiles and required skills can be inferred based on common job roles in the industry associated with this job ID.\n\n\nHere is the plan to follow as best as possible:\n\n- **ReqMaster**: Verify the status of the job posting (JOB-CLOSED-2024-050) and retrieve its details, including requirements and hiring manager information.\n- **TalentScout**: Prepare to source candidates based on the extracted job requirements once verified, and explore potential talent pools.\n- **MobilityScout**: Assess if any international aspects exist regarding candidate sourcing that may need to be addressed, based on the job’s requirements.\n- **ReferralScout**: Identify potential internal or external referral sources who may know qualified candidates for the position.\n- **AgencyScout**: Stay on standby to engage with recruitment agencies if the job is confirmed to be open or if needed for quick sourcing in the future.\n"
+              }
+            ]
+          },
+          {
+            "role": "user",
+            "parts": [
+              {
+                "type": "text",
+                "content": "\nWe are working on the following task:\nSource candidates for job JOB-CLOSED-2024-050.\n\nWe have completed the task.\n\nThe above messages contain the conversation that took place to complete the task.\n\nBased on the information gathered, provide the final answer to the original request.\nThe answer should be phrased as if you were speaking to the user.\n"
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      },
+      "output_messages": {
+        "value": [
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "text",
+                "content": "It appears that the job posting for JOB-CLOSED-2024-050 is currently closed, which means we are unable to source candidates for this position. If you have any other jobs that need assistance or if there is a different position you would like to explore, please let me know!"
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      }
+    }
+  ],
+  "errors": []
+}

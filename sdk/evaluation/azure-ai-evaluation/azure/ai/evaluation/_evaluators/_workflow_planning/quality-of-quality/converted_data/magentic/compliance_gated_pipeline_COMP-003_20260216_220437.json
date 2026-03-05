@@ -1,0 +1,467 @@
+{
+  "parse_failed": false,
+  "workflow_id": "e247cf02-fa6f-4f71-b570-6b8385b03dce",
+  "workflow_name": "WorkflowBuilder-96a32877-24c4-42aa-bfc5-13491bb40a18",
+  "workflow_type": "magentic",
+  "topology": {
+    "start_executor_id": "magentic_orchestrator",
+    "max_iterations": 100,
+    "executors": [
+      {
+        "id": "magentic_orchestrator",
+        "type": "MagenticOrchestrator"
+      },
+      {
+        "id": "ReqMaster",
+        "type": "MagenticAgentExecutor"
+      },
+      {
+        "id": "TalentScout",
+        "type": "MagenticAgentExecutor"
+      },
+      {
+        "id": "Evaluator",
+        "type": "MagenticAgentExecutor"
+      },
+      {
+        "id": "ComplianceGuard",
+        "type": "MagenticAgentExecutor"
+      },
+      {
+        "id": "Scheduler",
+        "type": "MagenticAgentExecutor"
+      }
+    ],
+    "edges": [
+      {
+        "type": "SingleEdgeGroup",
+        "source": "magentic_orchestrator",
+        "target": "ReqMaster"
+      },
+      {
+        "type": "SingleEdgeGroup",
+        "source": "ReqMaster",
+        "target": "magentic_orchestrator"
+      },
+      {
+        "type": "SingleEdgeGroup",
+        "source": "magentic_orchestrator",
+        "target": "TalentScout"
+      },
+      {
+        "type": "SingleEdgeGroup",
+        "source": "TalentScout",
+        "target": "magentic_orchestrator"
+      },
+      {
+        "type": "SingleEdgeGroup",
+        "source": "magentic_orchestrator",
+        "target": "Evaluator"
+      },
+      {
+        "type": "SingleEdgeGroup",
+        "source": "Evaluator",
+        "target": "magentic_orchestrator"
+      },
+      {
+        "type": "SingleEdgeGroup",
+        "source": "magentic_orchestrator",
+        "target": "ComplianceGuard"
+      },
+      {
+        "type": "SingleEdgeGroup",
+        "source": "ComplianceGuard",
+        "target": "magentic_orchestrator"
+      },
+      {
+        "type": "SingleEdgeGroup",
+        "source": "magentic_orchestrator",
+        "target": "Scheduler"
+      },
+      {
+        "type": "SingleEdgeGroup",
+        "source": "Scheduler",
+        "target": "magentic_orchestrator"
+      }
+    ]
+  },
+  "agents": {
+    "ReqMaster": {
+      "agent_id": "req-master",
+      "model": "gpt-4o-mini",
+      "system_instructions": "You are a Requisition Master agent handling job intake and requirements analysis.\n\nYour responsibilities:\n1. Retrieve and validate job posting details\n2. Extract structured requirements (must-have vs nice-to-have)\n3. Verify job is approved and open for sourcing\n4. Identify hiring manager and team context\n5. Set up screening criteria for candidate matching\n\nWhen processing job requisitions:\n- Validate the job ID exists and is in 'open' status\n- Extract all required and preferred skills\n- Note salary range and location requirements\n- Identify urgency level and time-to-fill targets\n- Flag any special requirements (clearance, certifications)\n\nIMPORTANT - Output Keywords:\n- If the position is time-sensitive or high priority, include the word \"urgent\" in your analysis\n- If the role requires international hiring or global compliance, include \"international\" in your response\n- Always clearly state the priority level (high/medium/low)\n\nOutput format: Provide structured job requirements ready for candidate sourcing.",
+      "tool_definitions": [
+        {
+          "name": "get_job_details",
+          "description": "Retrieves detailed information about a job posting including title, department, requirements, salary range, and hiring manager.",
+          "parameters": {
+            "properties": {
+              "job_id": {
+                "description": "The job ID to retrieve (e.g., JOB-SWE-2025-001)",
+                "title": "Job Id",
+                "type": "string"
+              }
+            },
+            "required": [
+              "job_id"
+            ],
+            "title": "get_job_details_input",
+            "type": "object"
+          }
+        },
+        {
+          "name": "extract_requirements",
+          "description": "Extracts and structures the requirements from a job posting, separating must-have from nice-to-have skills.",
+          "parameters": {
+            "properties": {
+              "job_id": {
+                "description": "The job ID to extract requirements from",
+                "title": "Job Id",
+                "type": "string"
+              }
+            },
+            "required": [
+              "job_id"
+            ],
+            "title": "extract_requirements_input",
+            "type": "object"
+          }
+        }
+      ]
+    },
+    "ComplianceGuard": {
+      "agent_id": "compliance-guard",
+      "model": "gpt-4o-mini",
+      "system_instructions": "You are a Compliance Guard agent ensuring fair hiring practices.\n\nYour responsibilities:\n1. Analyze shortlists for adverse impact using the 4/5ths rule\n2. Check demographic distribution of selections\n3. Verify selection criteria are job-related\n4. Flag potential bias in screening decisions\n5. Ensure EEOC compliance documentation\n\nWhen reviewing for compliance:\n- Calculate selection rates by demographic group\n- Compare rates using the 4/5ths (80%) rule\n- Flag any disparate impact concerns\n- Recommend adjustments if bias is detected\n- Document compliance review for audit trail\n\nIMPORTANT - Output Keywords:\n- If all compliance checks pass, explicitly state \"all requirements met\"\n- If documentation is incomplete, state \"missing documents\" and list what's needed\n- For complex cases needing legal review, state \"requires manual review\"\n\nOutput format: Provide compliance report with pass/fail status and recommendations.",
+      "tool_definitions": [
+        {
+          "name": "check_compliance",
+          "description": "Runs compliance checks on a candidate shortlist, analyzing for adverse impact, demographic bias, and EEOC compliance.",
+          "parameters": {
+            "properties": {
+              "job_id": {
+                "description": "The job ID",
+                "title": "Job Id",
+                "type": "string"
+              },
+              "shortlist_ids": {
+                "description": "Comma-separated list of shortlisted candidate IDs",
+                "title": "Shortlist Ids",
+                "type": "string"
+              }
+            },
+            "required": [
+              "job_id",
+              "shortlist_ids"
+            ],
+            "title": "check_compliance_input",
+            "type": "object"
+          }
+        }
+      ]
+    }
+  },
+  "invocations": [
+    {
+      "sequence": 1,
+      "timestamp": "2026-02-16T20:04:39.011306+00:00",
+      "agent_name": "ReqMaster",
+      "agent_id": "req-master",
+      "system_instructions": [
+        "You are a Requisition Master agent handling job intake and requirements analysis.\n\nYour responsibilities:\n1. Retrieve and validate job posting details\n2. Extract structured requirements (must-have vs nice-to-have)\n3. Verify job is approved and open for sourcing\n4. Identify hiring manager and team context\n5. Set up screening criteria for candidate matching\n\nWhen processing job requisitions:\n- Validate the job ID exists and is in 'open' status\n- Extract all required and preferred skills\n- Note salary range and location requirements\n- Identify urgency level and time-to-fill targets\n- Flag any special requirements (clearance, certifications)\n\nIMPORTANT - Output Keywords:\n- If the position is time-sensitive or high priority, include the word \"urgent\" in your analysis\n- If the role requires international hiring or global compliance, include \"international\" in your response\n- Always clearly state the priority level (high/medium/low)\n\nOutput format: Provide structured job requirements ready for candidate sourcing."
+      ],
+      "input_messages": {
+        "value": [
+          {
+            "role": "system",
+            "parts": [
+              {
+                "type": "text",
+                "content": "You are a Requisition Master agent handling job intake and requirements analysis.\n\nYour responsibilities:\n1. Retrieve and validate job posting details\n2. Extract structured requirements (must-have vs nice-to-have)\n3. Verify job is approved and open for sourcing\n4. Identify hiring manager and team context\n5. Set up screening criteria for candidate matching\n\nWhen processing job requisitions:\n- Validate the job ID exists and is in 'open' status\n- Extract all required and preferred skills\n- Note salary range and location requirements\n- Identify urgency level and time-to-fill targets\n- Flag any special requirements (clearance, certifications)\n\nIMPORTANT - Output Keywords:\n- If the position is time-sensitive or high priority, include the word \"urgent\" in your analysis\n- If the role requires international hiring or global compliance, include \"international\" in your response\n- Always clearly state the priority level (high/medium/low)\n\nOutput format: Provide structured job requirements ready for candidate sourcing."
+              }
+            ]
+          },
+          {
+            "role": "user",
+            "parts": [
+              {
+                "type": "text",
+                "content": "Verify the shortlist for JOB-DATA-2025-015 is compliant with EEOC guidelines. Candidates: CAND-EXT-1001, CAND-EXT-1002, CAND-EXT-1003. Then, schedule interviews for compliant candidates with hiring manager EMP-HM-001."
+              }
+            ]
+          },
+          {
+            "role": "user",
+            "parts": [
+              {
+                "type": "text",
+                "content": "Below I will present you a request.\n\nBefore we begin addressing the request, please answer the following pre-survey to the best of your ability.\nKeep in mind that you are Ken Jennings-level with trivia, and Mensa-level with puzzles, so there should be\na deep well to draw from.\n\nHere is the request:\n\nVerify the shortlist for JOB-DATA-2025-015 is compliant with EEOC guidelines. Candidates: CAND-EXT-1001, CAND-EXT-1002, CAND-EXT-1003. Then, schedule interviews for compliant candidates with hiring manager EMP-HM-001.\n\nHere is the pre-survey:\n\n    1. Please list any specific facts or figures that are GIVEN in the request itself. It is possible that\n       there are none.\n    2. Please list any facts that may need to be looked up, and WHERE SPECIFICALLY they might be found.\n       In some cases, authoritative sources are mentioned in the request itself.\n    3. Please list any facts that may need to be derived (e.g., via logical deduction, simulation, or computation)\n    4. Please list any facts that are recalled from memory, hunches, well-reasoned guesses, etc.\n\nWhen answering this survey, keep in mind that \"facts\" will typically be specific names, dates, statistics, etc.\nYour answer should use headings:\n\n    1. GIVEN OR VERIFIED FACTS\n    2. FACTS TO LOOK UP\n    3. FACTS TO DERIVE\n    4. EDUCATED GUESSES\n\nDO NOT include any other headings or sections in your response. DO NOT list next steps or plans until asked to do so.\n"
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      },
+      "output_messages": {
+        "value": [
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "text",
+                "content": "### GIVEN OR VERIFIED FACTS\n1. Job ID: JOB-DATA-2025-015\n2. Candidates: CAND-EXT-1001, CAND-EXT-1002, CAND-EXT-1003\n3. Hiring Manager ID: EMP-HM-001\n\n### FACTS TO LOOK UP\n1. **EEOC Guidelines**: Review specific compliance criteria for candidate selection to ensure the shortlist adheres to Equal Employment Opportunity Commission (EEOC) guidelines. This can typically be found on the EEOC's official website.\n2. **Candidate Profiles**: Check the profiles of CAND-EXT-1001, CAND-EXT-1002, and CAND-EXT-1003 to gather demographic or qualification data relevant for EEOC compliance.\n\n### FACTS TO DERIVE\n1. Determine if each candidate meets the criteria for equitable treatment based on the EEOC guidelines.\n2. Assess the qualifications and demographics of candidates against the hiring criteria for potential bias.\n\n### EDUCATED GUESSES\n1. It is likely that at least one of the candidates may not completely adhere to EEOC guidelines based on general patterns seen in candidate shortlists, but this requires verification through the specific candidate profiles.\n2. The hiring manager might prefer to schedule interviews as soon as candidates are verified for compliance to minimize time-to-fill."
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      }
+    },
+    {
+      "sequence": 2,
+      "timestamp": "2026-02-16T20:04:52.719351+00:00",
+      "agent_name": "ReqMaster",
+      "agent_id": "req-master",
+      "system_instructions": [
+        "You are a Requisition Master agent handling job intake and requirements analysis.\n\nYour responsibilities:\n1. Retrieve and validate job posting details\n2. Extract structured requirements (must-have vs nice-to-have)\n3. Verify job is approved and open for sourcing\n4. Identify hiring manager and team context\n5. Set up screening criteria for candidate matching\n\nWhen processing job requisitions:\n- Validate the job ID exists and is in 'open' status\n- Extract all required and preferred skills\n- Note salary range and location requirements\n- Identify urgency level and time-to-fill targets\n- Flag any special requirements (clearance, certifications)\n\nIMPORTANT - Output Keywords:\n- If the position is time-sensitive or high priority, include the word \"urgent\" in your analysis\n- If the role requires international hiring or global compliance, include \"international\" in your response\n- Always clearly state the priority level (high/medium/low)\n\nOutput format: Provide structured job requirements ready for candidate sourcing."
+      ],
+      "input_messages": {
+        "value": [
+          {
+            "role": "system",
+            "parts": [
+              {
+                "type": "text",
+                "content": "You are a Requisition Master agent handling job intake and requirements analysis.\n\nYour responsibilities:\n1. Retrieve and validate job posting details\n2. Extract structured requirements (must-have vs nice-to-have)\n3. Verify job is approved and open for sourcing\n4. Identify hiring manager and team context\n5. Set up screening criteria for candidate matching\n\nWhen processing job requisitions:\n- Validate the job ID exists and is in 'open' status\n- Extract all required and preferred skills\n- Note salary range and location requirements\n- Identify urgency level and time-to-fill targets\n- Flag any special requirements (clearance, certifications)\n\nIMPORTANT - Output Keywords:\n- If the position is time-sensitive or high priority, include the word \"urgent\" in your analysis\n- If the role requires international hiring or global compliance, include \"international\" in your response\n- Always clearly state the priority level (high/medium/low)\n\nOutput format: Provide structured job requirements ready for candidate sourcing."
+              }
+            ]
+          },
+          {
+            "role": "user",
+            "parts": [
+              {
+                "type": "text",
+                "content": "Verify the shortlist for JOB-DATA-2025-015 is compliant with EEOC guidelines. Candidates: CAND-EXT-1001, CAND-EXT-1002, CAND-EXT-1003. Then, schedule interviews for compliant candidates with hiring manager EMP-HM-001."
+              }
+            ]
+          },
+          {
+            "role": "user",
+            "parts": [
+              {
+                "type": "text",
+                "content": "Below I will present you a request.\n\nBefore we begin addressing the request, please answer the following pre-survey to the best of your ability.\nKeep in mind that you are Ken Jennings-level with trivia, and Mensa-level with puzzles, so there should be\na deep well to draw from.\n\nHere is the request:\n\nVerify the shortlist for JOB-DATA-2025-015 is compliant with EEOC guidelines. Candidates: CAND-EXT-1001, CAND-EXT-1002, CAND-EXT-1003. Then, schedule interviews for compliant candidates with hiring manager EMP-HM-001.\n\nHere is the pre-survey:\n\n    1. Please list any specific facts or figures that are GIVEN in the request itself. It is possible that\n       there are none.\n    2. Please list any facts that may need to be looked up, and WHERE SPECIFICALLY they might be found.\n       In some cases, authoritative sources are mentioned in the request itself.\n    3. Please list any facts that may need to be derived (e.g., via logical deduction, simulation, or computation)\n    4. Please list any facts that are recalled from memory, hunches, well-reasoned guesses, etc.\n\nWhen answering this survey, keep in mind that \"facts\" will typically be specific names, dates, statistics, etc.\nYour answer should use headings:\n\n    1. GIVEN OR VERIFIED FACTS\n    2. FACTS TO LOOK UP\n    3. FACTS TO DERIVE\n    4. EDUCATED GUESSES\n\nDO NOT include any other headings or sections in your response. DO NOT list next steps or plans until asked to do so.\n"
+              }
+            ]
+          },
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "text",
+                "content": "### GIVEN OR VERIFIED FACTS\n1. Job ID: JOB-DATA-2025-015\n2. Candidates: CAND-EXT-1001, CAND-EXT-1002, CAND-EXT-1003\n3. Hiring Manager ID: EMP-HM-001\n\n### FACTS TO LOOK UP\n1. **EEOC Guidelines**: Review specific compliance criteria for candidate selection to ensure the shortlist adheres to Equal Employment Opportunity Commission (EEOC) guidelines. This can typically be found on the EEOC's official website.\n2. **Candidate Profiles**: Check the profiles of CAND-EXT-1001, CAND-EXT-1002, and CAND-EXT-1003 to gather demographic or qualification data relevant for EEOC compliance.\n\n### FACTS TO DERIVE\n1. Determine if each candidate meets the criteria for equitable treatment based on the EEOC guidelines.\n2. Assess the qualifications and demographics of candidates against the hiring criteria for potential bias.\n\n### EDUCATED GUESSES\n1. It is likely that at least one of the candidates may not completely adhere to EEOC guidelines based on general patterns seen in candidate shortlists, but this requires verification through the specific candidate profiles.\n2. The hiring manager might prefer to schedule interviews as soon as candidates are verified for compliance to minimize time-to-fill."
+              }
+            ]
+          },
+          {
+            "role": "user",
+            "parts": [
+              {
+                "type": "text",
+                "content": "Fantastic. To address this request we have assembled the following team:\n\n- ReqMaster: <no description, use name to identify the purpose of this participant>\n- TalentScout: <no description, use name to identify the purpose of this participant>\n- Evaluator: <no description, use name to identify the purpose of this participant>\n- ComplianceGuard: <no description, use name to identify the purpose of this participant>\n- Scheduler: <no description, use name to identify the purpose of this participant>\n\nBased on the team composition, and known and unknown facts, please devise a short bullet-point plan for addressing the\noriginal request. Remember, there is no requirement to involve all team members. A team member's particular expertise\nmay not be needed for this task.\n"
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      },
+      "output_messages": {
+        "value": [
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "text",
+                "content": "- **ComplianceGuard**:\n  - Review the EEOC guidelines to confirm compliance standards for candidate selection.\n  - Analyze candidate profiles for CAND-EXT-1001, CAND-EXT-1002, and CAND-EXT-1003 against EEOC criteria.\n\n- **Evaluator**:\n  - Assess qualifications and any potential bias in the shortlisted candidates based on provided criteria.\n  - Compile findings regarding each candidate’s qualifications and compliance status.\n\n- **ReqMaster**:\n  - Gather and document the compliance findings and any issues that arise.\n  - Prepare a summary report for the hiring manager regarding candidate compliance.\n\n- **Scheduler**:\n  - Based on the compliance report, schedule interviews for candidates that meet EEOC guidelines with hiring manager EMP-HM-001."
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      }
+    },
+    {
+      "sequence": 3,
+      "timestamp": "2026-02-16T20:05:00.006021+00:00",
+      "agent_name": "ReqMaster",
+      "agent_id": "req-master",
+      "system_instructions": [
+        "You are a Requisition Master agent handling job intake and requirements analysis.\n\nYour responsibilities:\n1. Retrieve and validate job posting details\n2. Extract structured requirements (must-have vs nice-to-have)\n3. Verify job is approved and open for sourcing\n4. Identify hiring manager and team context\n5. Set up screening criteria for candidate matching\n\nWhen processing job requisitions:\n- Validate the job ID exists and is in 'open' status\n- Extract all required and preferred skills\n- Note salary range and location requirements\n- Identify urgency level and time-to-fill targets\n- Flag any special requirements (clearance, certifications)\n\nIMPORTANT - Output Keywords:\n- If the position is time-sensitive or high priority, include the word \"urgent\" in your analysis\n- If the role requires international hiring or global compliance, include \"international\" in your response\n- Always clearly state the priority level (high/medium/low)\n\nOutput format: Provide structured job requirements ready for candidate sourcing."
+      ],
+      "input_messages": {
+        "value": [
+          {
+            "role": "system",
+            "parts": [
+              {
+                "type": "text",
+                "content": "You are a Requisition Master agent handling job intake and requirements analysis.\n\nYour responsibilities:\n1. Retrieve and validate job posting details\n2. Extract structured requirements (must-have vs nice-to-have)\n3. Verify job is approved and open for sourcing\n4. Identify hiring manager and team context\n5. Set up screening criteria for candidate matching\n\nWhen processing job requisitions:\n- Validate the job ID exists and is in 'open' status\n- Extract all required and preferred skills\n- Note salary range and location requirements\n- Identify urgency level and time-to-fill targets\n- Flag any special requirements (clearance, certifications)\n\nIMPORTANT - Output Keywords:\n- If the position is time-sensitive or high priority, include the word \"urgent\" in your analysis\n- If the role requires international hiring or global compliance, include \"international\" in your response\n- Always clearly state the priority level (high/medium/low)\n\nOutput format: Provide structured job requirements ready for candidate sourcing."
+              }
+            ]
+          },
+          {
+            "role": "user",
+            "parts": [
+              {
+                "type": "text",
+                "content": "Verify the shortlist for JOB-DATA-2025-015 is compliant with EEOC guidelines. Candidates: CAND-EXT-1001, CAND-EXT-1002, CAND-EXT-1003. Then, schedule interviews for compliant candidates with hiring manager EMP-HM-001."
+              }
+            ]
+          },
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "text",
+                "content": "\nWe are working to address the following user request:\n\nVerify the shortlist for JOB-DATA-2025-015 is compliant with EEOC guidelines. Candidates: CAND-EXT-1001, CAND-EXT-1002, CAND-EXT-1003. Then, schedule interviews for compliant candidates with hiring manager EMP-HM-001.\n\n\nTo answer this request we have assembled the following team:\n\n- ReqMaster: <no description, use name to identify the purpose of this participant>\n- TalentScout: <no description, use name to identify the purpose of this participant>\n- Evaluator: <no description, use name to identify the purpose of this participant>\n- ComplianceGuard: <no description, use name to identify the purpose of this participant>\n- Scheduler: <no description, use name to identify the purpose of this participant>\n\n\nHere is an initial fact sheet to consider:\n\n### GIVEN OR VERIFIED FACTS\n1. Job ID: JOB-DATA-2025-015\n2. Candidates: CAND-EXT-1001, CAND-EXT-1002, CAND-EXT-1003\n3. Hiring Manager ID: EMP-HM-001\n\n### FACTS TO LOOK UP\n1. **EEOC Guidelines**: Review specific compliance criteria for candidate selection to ensure the shortlist adheres to Equal Employment Opportunity Commission (EEOC) guidelines. This can typically be found on the EEOC's official website.\n2. **Candidate Profiles**: Check the profiles of CAND-EXT-1001, CAND-EXT-1002, and CAND-EXT-1003 to gather demographic or qualification data relevant for EEOC compliance.\n\n### FACTS TO DERIVE\n1. Determine if each candidate meets the criteria for equitable treatment based on the EEOC guidelines.\n2. Assess the qualifications and demographics of candidates against the hiring criteria for potential bias.\n\n### EDUCATED GUESSES\n1. It is likely that at least one of the candidates may not completely adhere to EEOC guidelines based on general patterns seen in candidate shortlists, but this requires verification through the specific candidate profiles.\n2. The hiring manager might prefer to schedule interviews as soon as candidates are verified for compliance to minimize time-to-fill.\n\n\nHere is the plan to follow as best as possible:\n\n- **ComplianceGuard**:\n  - Review the EEOC guidelines to confirm compliance standards for candidate selection.\n  - Analyze candidate profiles for CAND-EXT-1001, CAND-EXT-1002, and CAND-EXT-1003 against EEOC criteria.\n\n- **Evaluator**:\n  - Assess qualifications and any potential bias in the shortlisted candidates based on provided criteria.\n  - Compile findings regarding each candidate’s qualifications and compliance status.\n\n- **ReqMaster**:\n  - Gather and document the compliance findings and any issues that arise.\n  - Prepare a summary report for the hiring manager regarding candidate compliance.\n\n- **Scheduler**:\n  - Based on the compliance report, schedule interviews for candidates that meet EEOC guidelines with hiring manager EMP-HM-001.\n"
+              }
+            ]
+          },
+          {
+            "role": "user",
+            "parts": [
+              {
+                "type": "text",
+                "content": "\nRecall we are working on the following request:\n\nVerify the shortlist for JOB-DATA-2025-015 is compliant with EEOC guidelines. Candidates: CAND-EXT-1001, CAND-EXT-1002, CAND-EXT-1003. Then, schedule interviews for compliant candidates with hiring manager EMP-HM-001.\n\nAnd we have assembled the following team:\n\n- ReqMaster: <no description, use name to identify the purpose of this participant>\n- TalentScout: <no description, use name to identify the purpose of this participant>\n- Evaluator: <no description, use name to identify the purpose of this participant>\n- ComplianceGuard: <no description, use name to identify the purpose of this participant>\n- Scheduler: <no description, use name to identify the purpose of this participant>\n\nTo make progress on the request, please answer the following questions, including necessary reasoning:\n\n    - Is the request fully satisfied? (True if complete, or False if the original request has yet to be\n      SUCCESSFULLY and FULLY addressed)\n    - Are we in a loop where we are repeating the same requests and or getting the same responses as before?\n      Loops can span multiple turns, and can include repeated actions like scrolling up or down more than a\n      handful of times.\n    - Are we making forward progress? (True if just starting, or recent messages are adding value. False if recent\n      messages show evidence of being stuck in a loop or if there is evidence of significant barriers to success\n      such as the inability to read from a required file)\n    - Who should speak next? (select from: ReqMaster, TalentScout, Evaluator, ComplianceGuard, Scheduler)\n    - What instruction or question would you give this team member? (Phrase as if speaking directly to them, and\n      include any specific information they may need)\n\nPlease output an answer in pure JSON format according to the following schema. The JSON object must be parsable as-is.\nDO NOT OUTPUT ANYTHING OTHER THAN JSON, AND DO NOT DEVIATE FROM THIS SCHEMA:\n\n{\n    \"is_request_satisfied\": {\n\n        \"reason\": string,\n        \"answer\": boolean\n    },\n    \"is_in_loop\": {\n        \"reason\": string,\n        \"answer\": boolean\n    },\n    \"is_progress_being_made\": {\n        \"reason\": string,\n        \"answer\": boolean\n    },\n    \"next_speaker\": {\n        \"reason\": string,\n        \"answer\": string (select from: ReqMaster, TalentScout, Evaluator, ComplianceGuard, Scheduler)\n    },\n    \"instruction_or_question\": {\n        \"reason\": string,\n        \"answer\": string\n    }\n}\n"
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      },
+      "output_messages": {
+        "value": [
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "text",
+                "content": "```json\n{\n    \"is_request_satisfied\": {\n        \"reason\": \"The compliance check for the shortlisted candidates has not yet been completed, and interviews have not been scheduled.\",\n        \"answer\": false\n    },\n    \"is_in_loop\": {\n        \"reason\": \"There is no indication of repeated actions or requests; the steps for verifying compliance and scheduling have not yet been executed.\",\n        \"answer\": false\n    },\n    \"is_progress_being_made\": {\n        \"reason\": \"The team has outlined tasks but has yet to execute them, indicating that progress is stalled.\",\n        \"answer\": false\n    },\n    \"next_speaker\": {\n        \"reason\": \"ComplianceGuard needs to review the EEOC guidelines and candidate profiles to establish compliance.\",\n        \"answer\": \"ComplianceGuard\"\n    },\n    \"instruction_or_question\": {\n        \"reason\": \"ComplianceGuard needs to take action to advance the compliance verification process.\",\n        \"answer\": \"Please review the EEOC guidelines and analyze the profiles of candidates CAND-EXT-1001, CAND-EXT-1002, and CAND-EXT-1003 for compliance.\"\n    }\n}\n```"
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      }
+    },
+    {
+      "sequence": 4,
+      "timestamp": "2026-02-16T20:05:08.850237+00:00",
+      "agent_name": "ComplianceGuard",
+      "agent_id": "compliance-guard",
+      "system_instructions": [
+        "You are a Compliance Guard agent ensuring fair hiring practices.\n\nYour responsibilities:\n1. Analyze shortlists for adverse impact using the 4/5ths rule\n2. Check demographic distribution of selections\n3. Verify selection criteria are job-related\n4. Flag potential bias in screening decisions\n5. Ensure EEOC compliance documentation\n\nWhen reviewing for compliance:\n- Calculate selection rates by demographic group\n- Compare rates using the 4/5ths (80%) rule\n- Flag any disparate impact concerns\n- Recommend adjustments if bias is detected\n- Document compliance review for audit trail\n\nIMPORTANT - Output Keywords:\n- If all compliance checks pass, explicitly state \"all requirements met\"\n- If documentation is incomplete, state \"missing documents\" and list what's needed\n- For complex cases needing legal review, state \"requires manual review\"\n\nOutput format: Provide compliance report with pass/fail status and recommendations."
+      ],
+      "input_messages": {
+        "value": [
+          {
+            "role": "system",
+            "parts": [
+              {
+                "type": "text",
+                "content": "You are a Compliance Guard agent ensuring fair hiring practices.\n\nYour responsibilities:\n1. Analyze shortlists for adverse impact using the 4/5ths rule\n2. Check demographic distribution of selections\n3. Verify selection criteria are job-related\n4. Flag potential bias in screening decisions\n5. Ensure EEOC compliance documentation\n\nWhen reviewing for compliance:\n- Calculate selection rates by demographic group\n- Compare rates using the 4/5ths (80%) rule\n- Flag any disparate impact concerns\n- Recommend adjustments if bias is detected\n- Document compliance review for audit trail\n\nIMPORTANT - Output Keywords:\n- If all compliance checks pass, explicitly state \"all requirements met\"\n- If documentation is incomplete, state \"missing documents\" and list what's needed\n- For complex cases needing legal review, state \"requires manual review\"\n\nOutput format: Provide compliance report with pass/fail status and recommendations."
+              }
+            ]
+          },
+          {
+            "role": "user",
+            "parts": [
+              {
+                "type": "text",
+                "content": "Please review the EEOC guidelines and analyze the profiles of candidates CAND-EXT-1001, CAND-EXT-1002, and CAND-EXT-1003 for compliance."
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      },
+      "output_messages": {
+        "value": [
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "tool_call",
+                "id": "call_fMJtc7yGXQyi6ZoZA1pr5eev",
+                "name": "check_compliance",
+                "arguments": "{\"job_id\":\"CAND-EXT-1001\",\"shortlist_ids\":\"CAND-EXT-1001,CAND-EXT-1002,CAND-EXT-1003\"}"
+              },
+              {
+                "type": "tool_call",
+                "id": "call_6xCgsryIoZWAuQQVryGK6P4e",
+                "name": "check_compliance",
+                "arguments": "{\"job_id\":\"CAND-EXT-1002\",\"shortlist_ids\":\"CAND-EXT-1001,CAND-EXT-1002,CAND-EXT-1003\"}"
+              },
+              {
+                "type": "tool_call",
+                "id": "call_JLdLWftromc6LGZ3gjkbx3Hw",
+                "name": "check_compliance",
+                "arguments": "{\"job_id\":\"CAND-EXT-1003\",\"shortlist_ids\":\"CAND-EXT-1001,CAND-EXT-1002,CAND-EXT-1003\"}"
+              },
+              {
+                "type": "function_approval_request",
+                "function_call": {
+                  "type": "function_call",
+                  "call_id": "call_fMJtc7yGXQyi6ZoZA1pr5eev",
+                  "name": "check_compliance",
+                  "arguments": "{\"job_id\":\"CAND-EXT-1001\",\"shortlist_ids\":\"CAND-EXT-1001,CAND-EXT-1002,CAND-EXT-1003\"}",
+                  "additional_properties": {
+                    "output_index": 0,
+                    "fc_id": "fc_02b70bf605709276006993787f43d08193a7ce2b18418407b1"
+                  }
+                },
+                "user_input_request": true,
+                "id": "call_fMJtc7yGXQyi6ZoZA1pr5eev",
+                "additional_properties": {}
+              },
+              {
+                "type": "function_approval_request",
+                "function_call": {
+                  "type": "function_call",
+                  "call_id": "call_6xCgsryIoZWAuQQVryGK6P4e",
+                  "name": "check_compliance",
+                  "arguments": "{\"job_id\":\"CAND-EXT-1002\",\"shortlist_ids\":\"CAND-EXT-1001,CAND-EXT-1002,CAND-EXT-1003\"}",
+                  "additional_properties": {
+                    "output_index": 1,
+                    "fc_id": "fc_02b70bf605709276006993787fe6848193a1918b8b8e93accc"
+                  }
+                },
+                "user_input_request": true,
+                "id": "call_6xCgsryIoZWAuQQVryGK6P4e",
+                "additional_properties": {}
+              },
+              {
+                "type": "function_approval_request",
+                "function_call": {
+                  "type": "function_call",
+                  "call_id": "call_JLdLWftromc6LGZ3gjkbx3Hw",
+                  "name": "check_compliance",
+                  "arguments": "{\"job_id\":\"CAND-EXT-1003\",\"shortlist_ids\":\"CAND-EXT-1001,CAND-EXT-1002,CAND-EXT-1003\"}",
+                  "additional_properties": {
+                    "output_index": 2,
+                    "fc_id": "fc_02b70bf60570927600699378807adc819398a1d0944656b920"
+                  }
+                },
+                "user_input_request": true,
+                "id": "call_JLdLWftromc6LGZ3gjkbx3Hw",
+                "additional_properties": {}
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      }
+    }
+  ],
+  "errors": []
+}

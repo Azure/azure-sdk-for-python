@@ -4,7 +4,7 @@
 """Utility to convert structured workflow trace JSON into LLM-readable text."""
 
 import logging
-from typing import Dict, List, Tuple
+from typing import Dict, List, Set, Tuple
 
 logger = logging.getLogger(__name__)
 
@@ -38,9 +38,15 @@ def format_workflow_trace_for_eval(data: Dict) -> str:
         sections.append(f"[User Input]\n{user_query}")
 
     seen_sys_prompts: Dict[str, bool] = {}
+    previous_output_texts: Set[str] = set()
     for inv in data.get("invocations", []):
-        text, trunc = _format_invocation(inv, seen_sys_prompts)
+        text, trunc, current_output_texts = _format_invocation(
+            inv,
+            seen_sys_prompts,
+            previous_output_texts=previous_output_texts,
+        )
         sections.append(text)
+        previous_output_texts = previous_output_texts | current_output_texts
         if trunc:
             has_truncation = True
 
@@ -97,6 +103,74 @@ def _format_messages(messages: List[Dict], indent: str = "  ", skip_system: bool
     return lines
 
 
+def _normalize_text_for_dedup(content: str) -> str:
+    return " ".join(str(content).split()).strip().lower()
+
+
+def _normalize_tool_call_for_dedup(part: Dict) -> str:
+    name = part.get("name", "")
+    args = part.get("arguments", "")
+    return _normalize_text_for_dedup(f"tool_call:{name}({args})")
+
+
+def _normalize_tool_call_response_for_dedup(part: Dict) -> str:
+    resp = str(part.get("response", ""))[:1000]
+    return _normalize_text_for_dedup(f"tool_result:{resp}")
+
+
+def _extract_normalized_output_parts(messages: List[Dict]) -> Set[str]:
+    """Extract normalized representations of all output parts (text, tool_call, tool_call_response)."""
+    normalized: Set[str] = set()
+    for msg in messages:
+        for part in msg.get("parts", []):
+            ptype = part.get("type", "")
+            if ptype == "text":
+                value = _normalize_text_for_dedup(part.get("content", ""))
+                if value:
+                    normalized.add(value)
+            elif ptype == "tool_call":
+                value = _normalize_tool_call_for_dedup(part)
+                if value:
+                    normalized.add(value)
+            elif ptype == "tool_call_response":
+                value = _normalize_tool_call_response_for_dedup(part)
+                if value:
+                    normalized.add(value)
+    return normalized
+
+
+def _filter_messages_by_previous_output(messages: List[Dict], previous_output_texts: Set[str]) -> Tuple[List[Dict], bool]:
+    if not previous_output_texts:
+        return messages, False
+
+    filtered_messages: List[Dict] = []
+    removed_any = False
+    for msg in messages:
+        role = msg.get("role", "")
+        parts = msg.get("parts", [])
+        filtered_parts = []
+        for part in parts:
+            ptype = part.get("type", "")
+            normalized = None
+            if ptype == "text" and role == "assistant":
+                normalized = _normalize_text_for_dedup(part.get("content", ""))
+            elif ptype == "tool_call":
+                normalized = _normalize_tool_call_for_dedup(part)
+            elif ptype == "tool_call_response":
+                normalized = _normalize_tool_call_response_for_dedup(part)
+
+            if normalized and normalized in previous_output_texts:
+                removed_any = True
+                continue
+            filtered_parts.append(part)
+
+        if filtered_parts:
+            filtered_msg = dict(msg)
+            filtered_msg["parts"] = filtered_parts
+            filtered_messages.append(filtered_msg)
+    return filtered_messages, removed_any
+
+
 # ---------------------------------------------------------------------------
 # Section formatters
 # ---------------------------------------------------------------------------
@@ -145,10 +219,16 @@ def _extract_user_query(invocations: List[Dict]) -> str:
     return ""
 
 
-def _format_invocation(inv: Dict, seen_sys_prompts: Dict[str, bool]) -> Tuple[str, bool]:
+def _format_invocation(
+    inv: Dict,
+    seen_sys_prompts: Dict[str, bool],
+    *,
+    previous_output_texts: Set[str],
+) -> Tuple[str, bool, Set[str]]:
     agent = inv.get("agent_name", "Unknown")
     seq = inv.get("sequence", "?")
     had_truncation = False
+    current_output_texts: Set[str] = set()
 
     lines = [f"[{agent} - Invocation {seq}]"]
 
@@ -169,9 +249,17 @@ def _format_invocation(inv: Dict, seen_sys_prompts: Dict[str, bool]) -> Tuple[st
         lines.append(f"  {in_msgs.get('_raw', '')[:4000]}")
         had_truncation = True
     else:
-        conv = _format_messages(in_msgs.get("value", []), skip_system=True)
+        input_value = in_msgs.get("value", [])
+        removed_duplicate_assistant_text = False
+        input_value, removed_duplicate_assistant_text = _filter_messages_by_previous_output(
+            input_value, previous_output_texts
+        )
+        conv = _format_messages(input_value, skip_system=True)
         if conv:
-            lines.append("  [Conversation History]")
+            if removed_duplicate_assistant_text:
+                lines.append("  [Conversation History: prior-agent context included]")
+            else:
+                lines.append("  [Conversation History]")
             lines.extend(conv)
 
     # Agent Response (output messages)
@@ -182,6 +270,7 @@ def _format_invocation(inv: Dict, seen_sys_prompts: Dict[str, bool]) -> Tuple[st
         lines.append(f"  {out_msgs.get('_raw', '')[:4000]}")
         had_truncation = True
     else:
+        current_output_texts = _extract_normalized_output_parts(out_msgs.get("value", []))
         tool_lines = []
         output_lines = []
         for msg in out_msgs.get("value", []):
@@ -205,7 +294,7 @@ def _format_invocation(inv: Dict, seen_sys_prompts: Dict[str, bool]) -> Tuple[st
                 lines.append("  [Agent Output]")
                 lines.extend(output_lines)
 
-    return "\n".join(lines), had_truncation
+    return "\n".join(lines), had_truncation, current_output_texts
 
 
 def _format_completion(errors: List[Dict]) -> str:

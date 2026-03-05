@@ -22,7 +22,7 @@ _DYNAMIC_PATTERNS = frozenset({"magentic", "group_chat", "handoff"})
 
 @experimental
 class _WorkflowPlanningEvaluator(PromptyEvaluatorBase[Union[str, float]]):
-    """Evaluates whether a multi-agent workflow was well-planned to achieve the user's goal.
+    """Evaluates whether a multi-agent workflow was well-planned and orchestrated to achieve the user's goal.
 
     Unlike single-agent evaluators that examine individual query-response pairs, this evaluator
     is workflow-traces-native. It consumes the parsed trace of a workflow execution and evaluates
@@ -83,6 +83,11 @@ class _WorkflowPlanningEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         return super().__call__(*args, **kwargs)
 
     @override
+    def _convert_kwargs_to_eval_input(self, **kwargs):
+        """Pass workflow_trace through to _do_eval, even if None (so _do_eval can raise the correct error)."""
+        return [{"workflow_trace": kwargs.get("workflow_trace")}]
+
+    @override
     async def _do_eval(self, eval_input: Dict) -> Dict[str, Union[float, str]]:  # type: ignore[override]
         """Perform workflow planning evaluation."""
         workflow_trace = eval_input.get("workflow_trace")
@@ -92,7 +97,7 @@ class _WorkflowPlanningEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 internal_message="workflow_trace must be provided.",
                 blame=ErrorBlame.USER_ERROR,
                 category=ErrorCategory.MISSING_FIELD,
-                target=ErrorTarget.CALLBACK,
+                target=ErrorTarget.EVALUATE,
             )
 
         # Normalize workflow_trace to dict
@@ -105,7 +110,7 @@ class _WorkflowPlanningEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                     internal_message=f"JSON parse failed: {exc}",
                     blame=ErrorBlame.USER_ERROR,
                     category=ErrorCategory.INVALID_VALUE,
-                    target=ErrorTarget.CALLBACK,
+                    target=ErrorTarget.EVALUATE,
                 ) from exc
 
         if not isinstance(workflow_trace, dict):
@@ -114,7 +119,16 @@ class _WorkflowPlanningEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 internal_message=f"Got type {type(workflow_trace).__name__}",
                 blame=ErrorBlame.USER_ERROR,
                 category=ErrorCategory.INVALID_VALUE,
-                target=ErrorTarget.CALLBACK,
+                target=ErrorTarget.EVALUATE,
+            )
+
+        workflow_errors = workflow_trace.get("errors", [])
+        if workflow_errors:
+            raise EvaluationException(
+                message=f"Workflow ended with errors: {workflow_errors}. Workflow Planning evaluation is not applicable.",
+                blame=ErrorBlame.USER_ERROR,
+                category=ErrorCategory.NOT_APPLICABLE,
+                target=ErrorTarget.EVALUATE,
             )
 
         # Check parse_failed flag

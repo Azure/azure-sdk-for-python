@@ -1,0 +1,15 @@
+{
+  "parse_failed": false,
+  "workflow_id": null,
+  "workflow_name": null,
+  "workflow_type": "workflow_dag",
+  "topology": {
+    "start_executor_id": "",
+    "max_iterations": 0,
+    "executors": [],
+    "edges": []
+  },
+  "agents": {},
+  "invocations": [],
+  "errors": []
+}

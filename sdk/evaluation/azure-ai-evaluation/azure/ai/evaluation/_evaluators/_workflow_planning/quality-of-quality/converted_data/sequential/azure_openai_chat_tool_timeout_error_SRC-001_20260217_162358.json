@@ -1,0 +1,296 @@
+{
+  "parse_failed": false,
+  "workflow_id": "30c154f0-71bb-4d30-be43-ad4d0747b00b",
+  "workflow_name": "WorkflowBuilder-8442a81c-866f-4073-bf6b-e8d8a842da32",
+  "workflow_type": "sequential",
+  "topology": {
+    "start_executor_id": "input-conversation",
+    "max_iterations": 100,
+    "executors": [
+      {
+        "id": "input-conversation",
+        "type": "_InputToConversation"
+      },
+      {
+        "id": "ReqMaster",
+        "type": "AgentExecutor"
+      },
+      {
+        "id": "TalentScout",
+        "type": "AgentExecutor"
+      },
+      {
+        "id": "end",
+        "type": "_EndWithConversation"
+      }
+    ],
+    "edges": [
+      {
+        "type": "SingleEdgeGroup",
+        "source": "input-conversation",
+        "target": "ReqMaster"
+      },
+      {
+        "type": "SingleEdgeGroup",
+        "source": "ReqMaster",
+        "target": "TalentScout"
+      },
+      {
+        "type": "SingleEdgeGroup",
+        "source": "TalentScout",
+        "target": "end"
+      }
+    ]
+  },
+  "agents": {
+    "ReqMaster": {
+      "agent_id": "req-master",
+      "model": "gpt-4.1",
+      "system_instructions": "You are a Requisition Master agent handling job intake and requirements analysis.\n\nYour responsibilities:\n1. Retrieve and validate job posting details\n2. Extract structured requirements (must-have vs nice-to-have)\n3. Verify job is approved and open for sourcing\n4. Identify hiring manager and team context\n5. Set up screening criteria for candidate matching\n\nWhen processing job requisitions:\n- Validate the job ID exists and is in 'open' status\n- Extract all required and preferred skills\n- Note salary range and location requirements\n- Identify urgency level and time-to-fill targets\n- Flag any special requirements (clearance, certifications)\n\nIMPORTANT - Output Keywords:\n- If the position is time-sensitive or high priority, include the word \"urgent\" in your analysis\n- If the role requires international hiring or global compliance, include \"international\" in your response\n- Always clearly state the priority level (high/medium/low)\n\nOutput format: Provide structured job requirements ready for candidate sourcing.",
+      "tool_definitions": [
+        {
+          "name": "get_job_details",
+          "description": "Retrieves detailed information about a job posting including title, department, requirements, salary range, and hiring manager.",
+          "parameters": {
+            "properties": {
+              "job_id": {
+                "description": "The job ID to retrieve (e.g., JOB-SWE-2025-001)",
+                "title": "Job Id",
+                "type": "string"
+              }
+            },
+            "required": [
+              "job_id"
+            ],
+            "title": "get_job_details_input",
+            "type": "object"
+          }
+        },
+        {
+          "name": "extract_requirements",
+          "description": "Extracts and structures the requirements from a job posting, separating must-have from nice-to-have skills.",
+          "parameters": {
+            "properties": {
+              "job_id": {
+                "description": "The job ID to extract requirements from",
+                "title": "Job Id",
+                "type": "string"
+              }
+            },
+            "required": [
+              "job_id"
+            ],
+            "title": "extract_requirements_input",
+            "type": "object"
+          }
+        }
+      ]
+    },
+    "TalentScout": {
+      "agent_id": "talent-scout",
+      "model": "gpt-4.1",
+      "system_instructions": "You are a Talent Scout agent specializing in external candidate sourcing.\n\nYour responsibilities:\n1. Search LinkedIn for candidate profiles matching job requirements\n2. Query external job boards for applicants (Indeed, LinkedIn Jobs, Glassdoor, etc.)\n3. Screen candidates against job requirements\n4. Filter based on experience, skills, and location\n5. Handle visa sponsorship considerations\n\nWhen processing external candidates:\n- Verify all required skills are present\n- Note any visa sponsorship requirements\n- Check salary expectations against job budget\n- Flag candidates with relevant industry experience\n- Prioritize candidates with shorter notice periods\n\nOutput Keywords:\n- When you find enough qualified candidates, explicitly state \"sufficient candidates found\"\n- If the candidate pool is limited or insufficient, state \"insufficient candidates\"\n- Always indicate the number of candidates found\n\nOutput format: Provide structured candidate profiles with skills match analysis.",
+      "tool_definitions": []
+    }
+  },
+  "invocations": [
+    {
+      "sequence": 1,
+      "timestamp": "2026-02-17T14:24:01.954000+00:00",
+      "agent_name": "ReqMaster",
+      "agent_id": "req-master",
+      "system_instructions": [
+        "You are a Requisition Master agent handling job intake and requirements analysis.\n\nYour responsibilities:\n1. Retrieve and validate job posting details\n2. Extract structured requirements (must-have vs nice-to-have)\n3. Verify job is approved and open for sourcing\n4. Identify hiring manager and team context\n5. Set up screening criteria for candidate matching\n\nWhen processing job requisitions:\n- Validate the job ID exists and is in 'open' status\n- Extract all required and preferred skills\n- Note salary range and location requirements\n- Identify urgency level and time-to-fill targets\n- Flag any special requirements (clearance, certifications)\n\nIMPORTANT - Output Keywords:\n- If the position is time-sensitive or high priority, include the word \"urgent\" in your analysis\n- If the role requires international hiring or global compliance, include \"international\" in your response\n- Always clearly state the priority level (high/medium/low)\n\nOutput format: Provide structured job requirements ready for candidate sourcing."
+      ],
+      "input_messages": {
+        "value": [
+          {
+            "role": "system",
+            "parts": [
+              {
+                "type": "text",
+                "content": "You are a Requisition Master agent handling job intake and requirements analysis.\n\nYour responsibilities:\n1. Retrieve and validate job posting details\n2. Extract structured requirements (must-have vs nice-to-have)\n3. Verify job is approved and open for sourcing\n4. Identify hiring manager and team context\n5. Set up screening criteria for candidate matching\n\nWhen processing job requisitions:\n- Validate the job ID exists and is in 'open' status\n- Extract all required and preferred skills\n- Note salary range and location requirements\n- Identify urgency level and time-to-fill targets\n- Flag any special requirements (clearance, certifications)\n\nIMPORTANT - Output Keywords:\n- If the position is time-sensitive or high priority, include the word \"urgent\" in your analysis\n- If the role requires international hiring or global compliance, include \"international\" in your response\n- Always clearly state the priority level (high/medium/low)\n\nOutput format: Provide structured job requirements ready for candidate sourcing."
+              }
+            ]
+          },
+          {
+            "role": "user",
+            "parts": [
+              {
+                "type": "text",
+                "content": "Find all candidates for the Senior Software Engineer position (JOB-SWE-2025-001). Include external applicants, internal transfers, referrals, and agency candidates."
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      },
+      "output_messages": {
+        "value": [
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "tool_call",
+                "id": "call_JXUhnzUYzsqqq1sh2YITr8SX",
+                "name": "get_job_details",
+                "arguments": "{\"job_id\": \"JOB-SWE-2025-001\"}"
+              },
+              {
+                "type": "tool_call",
+                "id": "call_Inc9HUEDPqvOIKi9ZJvxdeM7",
+                "name": "extract_requirements",
+                "arguments": "{\"job_id\": \"JOB-SWE-2025-001\"}"
+              }
+            ]
+          },
+          {
+            "role": "tool",
+            "parts": [
+              {
+                "type": "tool_call_response",
+                "id": "call_JXUhnzUYzsqqq1sh2YITr8SX",
+                "response": "Error: Function failed."
+              },
+              {
+                "type": "tool_call_response",
+                "id": "call_Inc9HUEDPqvOIKi9ZJvxdeM7",
+                "response": "Structured Requirements for JOB-SWE-2025-001 (Senior Software Engineer):\n\nMUST HAVE:\nPython, Azure, 5+ years experience, Distributed systems\n\nNICE TO HAVE:\nKubernetes, CS degree\n\nMinimum Salary: $150,000\nLocation Requirement: Seattle, WA (Remote OK)"
+              }
+            ]
+          },
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "text",
+                "content": "Job Requisition Analysis – Senior Software Engineer (JOB-SWE-2025-001)\n\nStatus: Job details could not be fully retrieved. Please verify that JOB-SWE-2025-001 is an approved, open requisition. Proceeding with structured requirement extraction below.\n\nPriority Level: Not yet validated (approval/status check needed)\n\nStructured Job Requirements (Candidate Sourcing Ready):\n\nMust-Have Skills:\n- Python\n- Azure experience\n- 5+ years software engineering experience\n- Background in distributed systems\n\nNice-to-Have Skills:\n- Kubernetes experience\n- Computer Science degree\n\nSalary Range:\n- Minimum: $150,000\n\nLocation Requirement:\n- Seattle, WA (Remote OK)\n\nSourcing Channels:\n- External applicants\n- Internal transfers\n- Referrals\n- Agency candidates\n\nSpecial Requirements/Notes:\n- Location flexibility (remote OK)\n- No clearance or certification details provided\n- Urgency and time-to-fill not validated (awaiting job status confirmation)\n\nAction Item:\n- Please confirm that JOB-SWE-2025-001 is open and approved before candidate search.\n- Once confirmed, sourcing will include all channels per your request.\n\nIs there another job ID to validate or any updates on the requisition status?"
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      }
+    },
+    {
+      "sequence": 2,
+      "timestamp": "2026-02-17T14:24:08.887861+00:00",
+      "agent_name": "TalentScout",
+      "agent_id": "talent-scout",
+      "system_instructions": [
+        "You are a Talent Scout agent specializing in external candidate sourcing.\n\nYour responsibilities:\n1. Search LinkedIn for candidate profiles matching job requirements\n2. Query external job boards for applicants (Indeed, LinkedIn Jobs, Glassdoor, etc.)\n3. Screen candidates against job requirements\n4. Filter based on experience, skills, and location\n5. Handle visa sponsorship considerations\n\nWhen processing external candidates:\n- Verify all required skills are present\n- Note any visa sponsorship requirements\n- Check salary expectations against job budget\n- Flag candidates with relevant industry experience\n- Prioritize candidates with shorter notice periods\n\nOutput Keywords:\n- When you find enough qualified candidates, explicitly state \"sufficient candidates found\"\n- If the candidate pool is limited or insufficient, state \"insufficient candidates\"\n- Always indicate the number of candidates found\n\nOutput format: Provide structured candidate profiles with skills match analysis."
+      ],
+      "input_messages": {
+        "value": [
+          {
+            "role": "system",
+            "parts": [
+              {
+                "type": "text",
+                "content": "You are a Talent Scout agent specializing in external candidate sourcing.\n\nYour responsibilities:\n1. Search LinkedIn for candidate profiles matching job requirements\n2. Query external job boards for applicants (Indeed, LinkedIn Jobs, Glassdoor, etc.)\n3. Screen candidates against job requirements\n4. Filter based on experience, skills, and location\n5. Handle visa sponsorship considerations\n\nWhen processing external candidates:\n- Verify all required skills are present\n- Note any visa sponsorship requirements\n- Check salary expectations against job budget\n- Flag candidates with relevant industry experience\n- Prioritize candidates with shorter notice periods\n\nOutput Keywords:\n- When you find enough qualified candidates, explicitly state \"sufficient candidates found\"\n- If the candidate pool is limited or insufficient, state \"insufficient candidates\"\n- Always indicate the number of candidates found\n\nOutput format: Provide structured candidate profiles with skills match analysis."
+              }
+            ]
+          },
+          {
+            "role": "user",
+            "parts": [
+              {
+                "type": "text",
+                "content": "Find all candidates for the Senior Software Engineer position (JOB-SWE-2025-001). Include external applicants, internal transfers, referrals, and agency candidates."
+              }
+            ]
+          },
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "tool_call",
+                "id": "call_JXUhnzUYzsqqq1sh2YITr8SX",
+                "name": "get_job_details",
+                "arguments": "{\"job_id\": \"JOB-SWE-2025-001\"}"
+              },
+              {
+                "type": "tool_call",
+                "id": "call_Inc9HUEDPqvOIKi9ZJvxdeM7",
+                "name": "extract_requirements",
+                "arguments": "{\"job_id\": \"JOB-SWE-2025-001\"}"
+              }
+            ]
+          },
+          {
+            "role": "tool",
+            "parts": [
+              {
+                "type": "tool_call_response",
+                "id": "call_JXUhnzUYzsqqq1sh2YITr8SX",
+                "response": "Error: Function failed."
+              },
+              {
+                "type": "tool_call_response",
+                "id": "call_Inc9HUEDPqvOIKi9ZJvxdeM7",
+                "response": "Structured Requirements for JOB-SWE-2025-001 (Senior Software Engineer):\n\nMUST HAVE:\nPython, Azure, 5+ years experience, Distributed systems\n\nNICE TO HAVE:\nKubernetes, CS degree\n\nMinimum Salary: $150,000\nLocation Requirement: Seattle, WA (Remote OK)"
+              }
+            ]
+          },
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "text",
+                "content": "Job Requisition Analysis – Senior Software Engineer (JOB-SWE-2025-001)\n\nStatus: Job details could not be fully retrieved. Please verify that JOB-SWE-2025-001 is an approved, open requisition. Proceeding with structured requirement extraction below.\n\nPriority Level: Not yet validated (approval/status check needed)\n\nStructured Job Requirements (Candidate Sourcing Ready):\n\nMust-Have Skills:\n- Python\n- Azure experience\n- 5+ years software engineering experience\n- Background in distributed systems\n\nNice-to-Have Skills:\n- Kubernetes experience\n- Computer Science degree\n\nSalary Range:\n- Minimum: $150,000\n\nLocation Requirement:\n- Seattle, WA (Remote OK)\n\nSourcing Channels:\n- External applicants\n- Internal transfers\n- Referrals\n- Agency candidates\n\nSpecial Requirements/Notes:\n- Location flexibility (remote OK)\n- No clearance or certification details provided\n- Urgency and time-to-fill not validated (awaiting job status confirmation)\n\nAction Item:\n- Please confirm that JOB-SWE-2025-001 is open and approved before candidate search.\n- Once confirmed, sourcing will include all channels per your request.\n\nIs there another job ID to validate or any updates on the requisition status?"
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      },
+      "output_messages": {
+        "value": [
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "tool_call",
+                "id": "call_8PFjKcWUh1WAWbbNy3LAvz73",
+                "name": "search_linkedin_profiles",
+                "arguments": "{\"skills\": [\"Python\", \"Azure\", \"Distributed systems\"], \"location\": \"Seattle, WA\", \"min_experience_years\": 5}"
+              },
+              {
+                "type": "tool_call",
+                "id": "call_fBXTwPHDeipEQAWtacAyV0qy",
+                "name": "query_external_job_boards",
+                "arguments": "{\"job_id\": \"JOB-SWE-2025-001\", \"skills\": [\"Python\", \"Azure\", \"Distributed systems\"], \"location\": \"Seattle, WA\", \"min_experience_years\": 5}"
+              }
+            ]
+          },
+          {
+            "role": "tool",
+            "parts": [
+              {
+                "type": "tool_call_response",
+                "id": "call_8PFjKcWUh1WAWbbNy3LAvz73",
+                "response": "Total Results: 2\n\nProfile ID: LI-001\nName: Alex Thompson\nHeadline: Senior Software Engineer at TechGiant\nLocation: Seattle, WA\nSkills: Python, Azure, Kubernetes, Distributed Systems, Go\nExperience Years: 8\nCurrent Company: TechGiant\nEducation: MS Computer Science, University of Washington\nOpen to Work: True\nMatch Score: 1.0\n\nProfile ID: LI-005\nName: Robert Chen\nHeadline: Senior Backend Developer | Distributed Systems\nLocation: Seattle, WA\nSkills: Python, Java, Azure, Microservices, Distributed Systems\nExperience Years: 6\nCurrent Company: Enterprise Solutions Corp\nEducation: BS Computer Engineering, Carnegie Mellon\nOpen to Work: True\nMatch Score: 1.0\n"
+              },
+              {
+                "type": "tool_call_response",
+                "id": "call_fBXTwPHDeipEQAWtacAyV0qy",
+                "response": "Total Results: 2\n\nCandidate ID: EXT-JB-001\nSource: Indeed\nName: John Chen\nEmail: john.chen@email.com\nPhone: +1-555-0101\nSkills: Python, Azure, Kubernetes, Distributed Systems, Go\nYears Experience: 7\nEducation: MS Computer Science, Stanford\nCurrent Company: TechCorp Inc\nCurrent Title: Senior Software Engineer\nLocation: Seattle, WA\nVisa Required: False\nSalary Expectation: $180,000\nApplication Date: 2025-01-20\nResume Summary: Experienced software engineer with 7 years in cloud platforms and distributed systems.\n\nCandidate ID: EXT-JB-005\nSource: ZipRecruiter\nName: James Park\nEmail: james.park@email.com\nPhone: +1-555-0105\nSkills: Python, Azure, Distributed Systems, C++\nYears Experience: 6\nEducation: MS Computer Science, Carnegie Mellon\nCurrent Company: CloudServices LLC\nCurrent Title: Senior Developer\nLocation: Seattle, WA\nVisa Required: True\nSalary Expectation: $175,000\nApplication Date: 2025-01-23\nResume Summary: Backend engineer with distributed systems experience, requires H1B sponsorship.\n"
+              }
+            ]
+          },
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "text",
+                "content": "External & LinkedIn Candidate Sourcing Results for JOB-SWE-2025-001 (Senior Software Engineer)\nsufficient candidates found\nTotal candidates found: 4\n\nCandidate Profiles & Skills Match Analysis\n\n1. Alex Thompson (LinkedIn, Profile ID: LI-001)\n- Location: Seattle, WA\n- Experience: 8 years | Current Role: Senior Software Engineer, TechGiant\n- Skills (must-have): Python ✅, Azure ✅, Distributed Systems ✅, 5+ years experience ✅\n- Skills (nice-to-have): Kubernetes ✅, CS degree (MS, University of Washington) ✅\n- Open to new opportunities: Yes\n- Visa: Not specified\n- Salary: Not specified\n- Notice: Not specified\n- Analysis: 100% match on must-have and nice-to-have. Recommend for next round.\n\n2. Robert Chen (LinkedIn, Profile ID: LI-005)\n- Location: Seattle, WA\n- Experience: 6 years | Current Role: Senior Backend Developer, Enterprise Solutions Corp\n- Skills (must-have): Python ✅, Azure ✅, Distributed Systems ✅, 5+ years experience ✅\n- Skills (nice-to-have): Kubernetes ❌, CS degree (BS, Carnegie Mellon) ✅\n- Open to new opportunities: Yes\n- Visa: Not specified\n- Salary: Not specified\n- Notice: Not specified\n- Analysis: 100% match on must-have, partial nice-to-have. Strong candidate.\n\n3. John Chen (Indeed, Candidate ID: EXT-JB-001)\n- Location: Seattle, WA\n- Experience: 7 years | Current Role: Senior Software Engineer, TechCorp Inc\n- Skills (must-have): Python ✅, Azure ✅, Distributed Systems ✅, 5+ years experience ✅\n- Skills (nice-to-have): Kubernetes ✅, CS degree (MS, Stanford) ✅\n- Visa: No\n- Salary Expectation: $180,000 (within/borderline to market)\n- Notice: Not specified\n- Analysis: 100% skills match, no visa required.\n\n4. James Park (ZipRecruiter, Candidate ID: EXT-JB-005)\n- Location: Seattle, WA\n- Experience: 6 years | Current Role: Senior Developer, CloudServices LLC\n- Skills (must-have): Python ✅, Azure ✅, Distributed Systems ✅, 5+ years experience ✅\n- Skills (nice-to-have): Kubernetes ❌, CS degree (MS, Carnegie Mellon) ✅\n- Visa: Requires H1B sponsorship ⚠️\n- Salary Expectation: $175,000 (within/borderline to market)\n- Notice: Not specified\n- Analysis: Full must-have match, requires visa sponsorship (flag for review).\n\nSummary:\n- 4 external/LinkedIn candidates matched; all have required skills and experience.\n- 2 candidates require no sponsorship, 1 requires H1B.\n- All salary expectations within market ($150,000 minimum stated).\n- All are Seattle-based, remote eligible.\n- Notice periods and internal referrals/transfers/agency not yet assessed.\n\nNext Steps:\n- Screen for internal transfers, referrals, and agency candidates (please provide internal listing/export or specify how to access).\n- Would you like to proceed to interview outreach for these external/LinkedIn profiles?"
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      }
+    }
+  ],
+  "errors": []
+}

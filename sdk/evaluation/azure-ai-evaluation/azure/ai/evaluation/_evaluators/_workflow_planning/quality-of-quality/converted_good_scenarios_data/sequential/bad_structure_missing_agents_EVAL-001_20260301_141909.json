@@ -1,0 +1,255 @@
+{
+  "parse_failed": false,
+  "workflow_id": "735337fd-4b98-460f-b9e1-1838fae06fed",
+  "workflow_name": "WorkflowBuilder-4b6dbc94-be94-4893-8051-37253f33c884",
+  "workflow_type": "sequential",
+  "topology": {
+    "start_executor_id": "input-conversation",
+    "max_iterations": 100,
+    "executors": [
+      {
+        "id": "input-conversation",
+        "type": "_InputToConversation"
+      },
+      {
+        "id": "CommsBot",
+        "type": "AgentExecutor"
+      },
+      {
+        "id": "Scheduler",
+        "type": "AgentExecutor"
+      },
+      {
+        "id": "end",
+        "type": "_EndWithConversation"
+      }
+    ],
+    "edges": [
+      {
+        "type": "SingleEdgeGroup",
+        "source": "input-conversation",
+        "target": "CommsBot"
+      },
+      {
+        "type": "SingleEdgeGroup",
+        "source": "CommsBot",
+        "target": "Scheduler"
+      },
+      {
+        "type": "SingleEdgeGroup",
+        "source": "Scheduler",
+        "target": "end"
+      }
+    ]
+  },
+  "agents": {
+    "CommsBot": {
+      "agent_id": "comms-bot",
+      "model": "gpt-4o-mini",
+      "system_instructions": "You are a Communications Bot handling candidate correspondence.\n\nYour responsibilities:\n1. Send interview invitation emails\n2. Provide application status updates\n3. Send rejection notifications professionally\n4. Coordinate offer letter delivery\n5. Handle candidate inquiries\n\nWhen communicating with candidates:\n- Always call send_candidate_email at least once before finalizing your response\n- Use professional, warm tone\n- Include all relevant details (time, location, etc.)\n- Provide clear next steps\n- Respect candidate's time and privacy\n- Follow up on unanswered communications\n\nOutput format: Confirm email sent with recipient and template used.",
+      "tool_definitions": [
+        {
+          "name": "send_candidate_email",
+          "description": "Sends an email to a candidate. Use for interview invitations, rejections, or follow-ups.",
+          "parameters": {
+            "properties": {
+              "candidate_id": {
+                "description": "The candidate ID",
+                "title": "Candidate Id",
+                "type": "string"
+              },
+              "template": {
+                "description": "Email template (interview_invite, rejection, follow_up, offer)",
+                "title": "Template",
+                "type": "string"
+              },
+              "custom_message": {
+                "default": "",
+                "description": "Optional custom message to include",
+                "title": "Custom Message",
+                "type": "string"
+              }
+            },
+            "required": [
+              "candidate_id",
+              "template"
+            ],
+            "title": "send_candidate_email_input",
+            "type": "object"
+          }
+        }
+      ]
+    },
+    "Scheduler": {
+      "agent_id": "scheduler",
+      "model": "gpt-4o-mini",
+      "system_instructions": "You are a Scheduler agent coordinating interviews.\n\nYour responsibilities:\n1. Check calendar availability for hiring managers\n2. Find suitable interview slots for candidates\n3. Book interview rooms or video conferences\n4. Send calendar invitations to all participants\n5. Handle rescheduling requests\n\nWhen scheduling interviews:\n- Check both interviewer and candidate availability\n- Allow buffer time between interviews\n- Consider time zones for remote candidates\n- Include video conference links for virtual interviews\n- Send confirmation emails with all details\n\nOutput format: Provide booking confirmation with time, participants, and meeting link.",
+      "tool_definitions": [
+        {
+          "name": "get_calendar_availability",
+          "description": "Retrieves available interview slots from the calendar system for specified people.",
+          "parameters": {
+            "properties": {
+              "person_ids": {
+                "description": "Comma-separated list of person IDs (hiring managers, candidates)",
+                "title": "Person Ids",
+                "type": "string"
+              },
+              "days_ahead": {
+                "default": 7,
+                "description": "Number of days ahead to check",
+                "title": "Days Ahead",
+                "type": "integer"
+              }
+            },
+            "required": [
+              "person_ids"
+            ],
+            "title": "get_calendar_availability_input",
+            "type": "object"
+          }
+        },
+        {
+          "name": "book_interview",
+          "description": "Books an interview slot between a candidate and interviewer(s). Sends calendar invites.",
+          "parameters": {
+            "properties": {
+              "candidate_id": {
+                "description": "The candidate ID",
+                "title": "Candidate Id",
+                "type": "string"
+              },
+              "interviewer_ids": {
+                "description": "Comma-separated list of interviewer IDs",
+                "title": "Interviewer Ids",
+                "type": "string"
+              },
+              "slot_time": {
+                "description": "The interview time slot (e.g., '2025-01-27 10:00')",
+                "title": "Slot Time",
+                "type": "string"
+              },
+              "interview_type": {
+                "default": "video",
+                "description": "Type of interview (phone, video, onsite)",
+                "title": "Interview Type",
+                "type": "string"
+              }
+            },
+            "required": [
+              "candidate_id",
+              "interviewer_ids",
+              "slot_time"
+            ],
+            "title": "book_interview_input",
+            "type": "object"
+          }
+        }
+      ]
+    }
+  },
+  "invocations": [
+    {
+      "sequence": 1,
+      "timestamp": "2026-03-01T12:19:10.666075+00:00",
+      "agent_name": "CommsBot",
+      "agent_id": "comms-bot",
+      "system_instructions": [
+        "You are a Communications Bot handling candidate correspondence.\n\nYour responsibilities:\n1. Send interview invitation emails\n2. Provide application status updates\n3. Send rejection notifications professionally\n4. Coordinate offer letter delivery\n5. Handle candidate inquiries\n\nWhen communicating with candidates:\n- Always call send_candidate_email at least once before finalizing your response\n- Use professional, warm tone\n- Include all relevant details (time, location, etc.)\n- Provide clear next steps\n- Respect candidate's time and privacy\n- Follow up on unanswered communications\n\nOutput format: Confirm email sent with recipient and template used."
+      ],
+      "input_messages": {
+        "value": [
+          {
+            "role": "system",
+            "parts": [
+              {
+                "type": "text",
+                "content": "You are a Communications Bot handling candidate correspondence.\n\nYour responsibilities:\n1. Send interview invitation emails\n2. Provide application status updates\n3. Send rejection notifications professionally\n4. Coordinate offer letter delivery\n5. Handle candidate inquiries\n\nWhen communicating with candidates:\n- Always call send_candidate_email at least once before finalizing your response\n- Use professional, warm tone\n- Include all relevant details (time, location, etc.)\n- Provide clear next steps\n- Respect candidate's time and privacy\n- Follow up on unanswered communications\n\nOutput format: Confirm email sent with recipient and template used."
+              }
+            ]
+          },
+          {
+            "role": "user",
+            "parts": [
+              {
+                "type": "text",
+                "content": "Score and rank all candidates for the Senior Software Engineer position (JOB-SWE-2025-001). Produce a shortlist of the top candidates."
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      },
+      "output_messages": {
+        "value": [
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "text",
+                "content": "I currently do not have access to candidate scores or details. If you can provide me with the scores and relevant information for the candidates applying for the Senior Software Engineer position (JOB-SWE-2025-001), I can help you create the shortlist of the top candidates."
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      }
+    },
+    {
+      "sequence": 2,
+      "timestamp": "2026-03-01T12:19:17.936808+00:00",
+      "agent_name": "Scheduler",
+      "agent_id": "scheduler",
+      "system_instructions": [
+        "You are a Scheduler agent coordinating interviews.\n\nYour responsibilities:\n1. Check calendar availability for hiring managers\n2. Find suitable interview slots for candidates\n3. Book interview rooms or video conferences\n4. Send calendar invitations to all participants\n5. Handle rescheduling requests\n\nWhen scheduling interviews:\n- Check both interviewer and candidate availability\n- Allow buffer time between interviews\n- Consider time zones for remote candidates\n- Include video conference links for virtual interviews\n- Send confirmation emails with all details\n\nOutput format: Provide booking confirmation with time, participants, and meeting link."
+      ],
+      "input_messages": {
+        "value": [
+          {
+            "role": "system",
+            "parts": [
+              {
+                "type": "text",
+                "content": "You are a Scheduler agent coordinating interviews.\n\nYour responsibilities:\n1. Check calendar availability for hiring managers\n2. Find suitable interview slots for candidates\n3. Book interview rooms or video conferences\n4. Send calendar invitations to all participants\n5. Handle rescheduling requests\n\nWhen scheduling interviews:\n- Check both interviewer and candidate availability\n- Allow buffer time between interviews\n- Consider time zones for remote candidates\n- Include video conference links for virtual interviews\n- Send confirmation emails with all details\n\nOutput format: Provide booking confirmation with time, participants, and meeting link."
+              }
+            ]
+          },
+          {
+            "role": "user",
+            "parts": [
+              {
+                "type": "text",
+                "content": "Score and rank all candidates for the Senior Software Engineer position (JOB-SWE-2025-001). Produce a shortlist of the top candidates."
+              }
+            ]
+          },
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "text",
+                "content": "I currently do not have access to candidate scores or details. If you can provide me with the scores and relevant information for the candidates applying for the Senior Software Engineer position (JOB-SWE-2025-001), I can help you create the shortlist of the top candidates."
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      },
+      "output_messages": {
+        "value": [
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "text",
+                "content": "Please provide the candidate scores, names, and any other relevant information so I can help you create the shortlist of the top candidates for the Senior Software Engineer position (JOB-SWE-2025-001)."
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      }
+    }
+  ],
+  "errors": []
+}

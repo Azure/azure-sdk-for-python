@@ -1,0 +1,859 @@
+{
+  "parse_failed": false,
+  "workflow_id": "be6da3aa-f8ee-4607-91d9-3079c0d55ebb",
+  "workflow_name": "hr_recruitment_handoff",
+  "workflow_type": "handoff",
+  "topology": {
+    "start_executor_id": "ReqMaster",
+    "max_iterations": 100,
+    "executors": [
+      {
+        "id": "ReqMaster",
+        "type": "HandoffAgentExecutor"
+      },
+      {
+        "id": "TalentScout",
+        "type": "HandoffAgentExecutor"
+      },
+      {
+        "id": "Evaluator",
+        "type": "HandoffAgentExecutor"
+      },
+      {
+        "id": "Scheduler",
+        "type": "HandoffAgentExecutor"
+      }
+    ],
+    "edges": [
+      {
+        "type": "FanOutEdgeGroup",
+        "source": "ReqMaster",
+        "target": "TalentScout"
+      },
+      {
+        "type": "FanOutEdgeGroup",
+        "source": "ReqMaster",
+        "target": "Evaluator"
+      },
+      {
+        "type": "FanOutEdgeGroup",
+        "source": "ReqMaster",
+        "target": "Scheduler"
+      },
+      {
+        "type": "FanOutEdgeGroup",
+        "source": "TalentScout",
+        "target": "ReqMaster"
+      },
+      {
+        "type": "FanOutEdgeGroup",
+        "source": "TalentScout",
+        "target": "Evaluator"
+      },
+      {
+        "type": "FanOutEdgeGroup",
+        "source": "TalentScout",
+        "target": "Scheduler"
+      },
+      {
+        "type": "FanOutEdgeGroup",
+        "source": "Evaluator",
+        "target": "ReqMaster"
+      },
+      {
+        "type": "FanOutEdgeGroup",
+        "source": "Evaluator",
+        "target": "TalentScout"
+      },
+      {
+        "type": "FanOutEdgeGroup",
+        "source": "Evaluator",
+        "target": "Scheduler"
+      },
+      {
+        "type": "FanOutEdgeGroup",
+        "source": "Scheduler",
+        "target": "ReqMaster"
+      },
+      {
+        "type": "FanOutEdgeGroup",
+        "source": "Scheduler",
+        "target": "TalentScout"
+      },
+      {
+        "type": "FanOutEdgeGroup",
+        "source": "Scheduler",
+        "target": "Evaluator"
+      }
+    ]
+  },
+  "agents": {
+    "ReqMaster": {
+      "agent_id": "req-master",
+      "model": "gpt-4o-mini",
+      "system_instructions": "You are a Requisition Master agent handling job intake and requirements analysis.\n\nYour responsibilities:\n1. Retrieve and validate job posting details\n2. Extract structured requirements (must-have vs nice-to-have)\n3. Verify job is approved and open for sourcing\n4. Identify hiring manager and team context\n5. Set up screening criteria for candidate matching\n\nWhen processing job requisitions:\n- Validate the job ID exists and is in 'open' status\n- Extract all required and preferred skills\n- Note salary range and location requirements\n- Identify urgency level and time-to-fill targets\n- Flag any special requirements (clearance, certifications)\n\nIMPORTANT - Output Keywords:\n- If the position is time-sensitive or high priority, include the word \"urgent\" in your analysis\n- If the role requires international hiring or global compliance, include \"international\" in your response\n- Always clearly state the priority level (high/medium/low)\n\nOutput format: Provide structured job requirements ready for candidate sourcing.",
+      "tool_definitions": [
+        {
+          "name": "get_job_details",
+          "description": "Retrieves detailed information about a job posting including title, department, requirements, salary range, and hiring manager.",
+          "parameters": {
+            "properties": {
+              "job_id": {
+                "description": "The job ID to retrieve (e.g., JOB-SWE-2025-001)",
+                "title": "Job Id",
+                "type": "string"
+              }
+            },
+            "required": [
+              "job_id"
+            ],
+            "title": "get_job_details_input",
+            "type": "object"
+          }
+        },
+        {
+          "name": "extract_requirements",
+          "description": "Extracts and structures the requirements from a job posting, separating must-have from nice-to-have skills.",
+          "parameters": {
+            "properties": {
+              "job_id": {
+                "description": "The job ID to extract requirements from",
+                "title": "Job Id",
+                "type": "string"
+              }
+            },
+            "required": [
+              "job_id"
+            ],
+            "title": "extract_requirements_input",
+            "type": "object"
+          }
+        },
+        {
+          "name": "handoff_to_TalentScout",
+          "description": "Handoff to the TalentScout agent.",
+          "parameters": {
+            "properties": {
+              "context": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Context"
+              }
+            },
+            "title": "handoff_to_TalentScout_input",
+            "type": "object"
+          }
+        },
+        {
+          "name": "handoff_to_Evaluator",
+          "description": "Handoff to the Evaluator agent.",
+          "parameters": {
+            "properties": {
+              "context": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Context"
+              }
+            },
+            "title": "handoff_to_Evaluator_input",
+            "type": "object"
+          }
+        },
+        {
+          "name": "handoff_to_Scheduler",
+          "description": "Handoff to the Scheduler agent.",
+          "parameters": {
+            "properties": {
+              "context": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Context"
+              }
+            },
+            "title": "handoff_to_Scheduler_input",
+            "type": "object"
+          }
+        }
+      ]
+    },
+    "TalentScout": {
+      "agent_id": "talent-scout",
+      "model": "gpt-4o-mini",
+      "system_instructions": "You are a Talent Scout agent specializing in external candidate sourcing.\n\nYour responsibilities:\n1. Search LinkedIn for candidate profiles matching job requirements\n2. Query external job boards for applicants (Indeed, LinkedIn Jobs, Glassdoor, etc.)\n3. Screen candidates against job requirements\n4. Filter based on experience, skills, and location\n5. Handle visa sponsorship considerations\n\nWhen processing external candidates:\n- Verify all required skills are present\n- Note any visa sponsorship requirements\n- Check salary expectations against job budget\n- Flag candidates with relevant industry experience\n- Prioritize candidates with shorter notice periods\n\nOutput Keywords:\n- When you find enough qualified candidates, explicitly state \"sufficient candidates found\"\n- If the candidate pool is limited or insufficient, state \"insufficient candidates\"\n- Always indicate the number of candidates found\n\nOutput format: Provide structured candidate profiles with skills match analysis.",
+      "tool_definitions": [
+        {
+          "name": "handoff_to_Evaluator",
+          "description": "Handoff to the Evaluator agent.",
+          "parameters": {
+            "properties": {
+              "context": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Context"
+              }
+            },
+            "title": "handoff_to_Evaluator_input",
+            "type": "object"
+          }
+        }
+      ]
+    }
+  },
+  "invocations": [
+    {
+      "sequence": 1,
+      "timestamp": "2026-02-16T14:19:30.009276+00:00",
+      "agent_name": "ReqMaster",
+      "agent_id": "req-master",
+      "system_instructions": [
+        "You are a Requisition Master agent handling job intake and requirements analysis.\n\nYour responsibilities:\n1. Retrieve and validate job posting details\n2. Extract structured requirements (must-have vs nice-to-have)\n3. Verify job is approved and open for sourcing\n4. Identify hiring manager and team context\n5. Set up screening criteria for candidate matching\n\nWhen processing job requisitions:\n- Validate the job ID exists and is in 'open' status\n- Extract all required and preferred skills\n- Note salary range and location requirements\n- Identify urgency level and time-to-fill targets\n- Flag any special requirements (clearance, certifications)\n\nIMPORTANT - Output Keywords:\n- If the position is time-sensitive or high priority, include the word \"urgent\" in your analysis\n- If the role requires international hiring or global compliance, include \"international\" in your response\n- Always clearly state the priority level (high/medium/low)\n\nOutput format: Provide structured job requirements ready for candidate sourcing."
+      ],
+      "input_messages": {
+        "value": [
+          {
+            "role": "system",
+            "parts": [
+              {
+                "type": "text",
+                "content": "You are a Requisition Master agent handling job intake and requirements analysis.\n\nYour responsibilities:\n1. Retrieve and validate job posting details\n2. Extract structured requirements (must-have vs nice-to-have)\n3. Verify job is approved and open for sourcing\n4. Identify hiring manager and team context\n5. Set up screening criteria for candidate matching\n\nWhen processing job requisitions:\n- Validate the job ID exists and is in 'open' status\n- Extract all required and preferred skills\n- Note salary range and location requirements\n- Identify urgency level and time-to-fill targets\n- Flag any special requirements (clearance, certifications)\n\nIMPORTANT - Output Keywords:\n- If the position is time-sensitive or high priority, include the word \"urgent\" in your analysis\n- If the role requires international hiring or global compliance, include \"international\" in your response\n- Always clearly state the priority level (high/medium/low)\n\nOutput format: Provide structured job requirements ready for candidate sourcing."
+              }
+            ]
+          },
+          {
+            "role": "user",
+            "parts": [
+              {
+                "type": "text",
+                "content": "Execute full recruitment process for Quantum Computing Researcher (JOB-NICHE-2025-001)."
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      },
+      "output_messages": {
+        "value": [
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "tool_call",
+                "id": "call_lpCixPcmtgiArgDhogrgDheS",
+                "name": "get_job_details",
+                "arguments": "{\"job_id\":\"JOB-NICHE-2025-001\"}"
+              }
+            ]
+          },
+          {
+            "role": "tool",
+            "parts": [
+              {
+                "type": "tool_call_response",
+                "id": "call_lpCixPcmtgiArgDhogrgDheS",
+                "response": "Job Details for JOB-NICHE-2025-001:\nTitle: Quantum Computing Research Scientist\nDepartment: Research\nLocation: Redmond, WA\nRemote Allowed: No\nSalary Range: $200,000 - $300,000\nHiring Manager ID: EMP-MGR-004\nStatus: open\nCreated: 2025-01-20\n\nRequirements:\n  - PhD in Quantum Physics (Required)\n  - 10+ years research (Required)\n  - Published papers (Required)\n\nDescription: Quantum computing researcher"
+              }
+            ]
+          },
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "tool_call",
+                "id": "call_b1F0pv0rUKw0PuOVYflAPn86",
+                "name": "extract_requirements",
+                "arguments": "{\"job_id\":\"JOB-NICHE-2025-001\"}"
+              }
+            ]
+          },
+          {
+            "role": "tool",
+            "parts": [
+              {
+                "type": "tool_call_response",
+                "id": "call_b1F0pv0rUKw0PuOVYflAPn86",
+                "response": "Structured Requirements for JOB-NICHE-2025-001 (Quantum Computing Research Scientist):\n\nMUST HAVE:\nPhD in Quantum Physics, 10+ years research, Published papers\n\nNICE TO HAVE:\nNone specified\n\nMinimum Salary: $200,000\nLocation Requirement: Redmond, WA (On-site required)"
+              }
+            ]
+          },
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "tool_call",
+                "id": "call_qO7p09JMDFIlcg25RUqL7tVH",
+                "name": "handoff_to_TalentScout",
+                "arguments": "{\"context\":\"Urgent recruitment for a Quantum Computing Research Scientist. The role requires a PhD in Quantum Physics, 10+ years of research experience, and published papers. Salary range is $200,000 - $300,000. On-site work in Redmond, WA is mandatory. Hiring manager ID: EMP-MGR-004.\"}"
+              }
+            ]
+          },
+          {
+            "role": "tool",
+            "parts": [
+              {
+                "type": "tool_call_response",
+                "id": "call_qO7p09JMDFIlcg25RUqL7tVH",
+                "response": {
+                  "handoff_to": "TalentScout"
+                }
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      }
+    },
+    {
+      "sequence": 2,
+      "timestamp": "2026-02-16T14:19:57.008201+00:00",
+      "agent_name": "TalentScout",
+      "agent_id": "talent-scout",
+      "system_instructions": [
+        "You are a Talent Scout agent specializing in external candidate sourcing.\n\nYour responsibilities:\n1. Search LinkedIn for candidate profiles matching job requirements\n2. Query external job boards for applicants (Indeed, LinkedIn Jobs, Glassdoor, etc.)\n3. Screen candidates against job requirements\n4. Filter based on experience, skills, and location\n5. Handle visa sponsorship considerations\n\nWhen processing external candidates:\n- Verify all required skills are present\n- Note any visa sponsorship requirements\n- Check salary expectations against job budget\n- Flag candidates with relevant industry experience\n- Prioritize candidates with shorter notice periods\n\nOutput Keywords:\n- When you find enough qualified candidates, explicitly state \"sufficient candidates found\"\n- If the candidate pool is limited or insufficient, state \"insufficient candidates\"\n- Always indicate the number of candidates found\n\nOutput format: Provide structured candidate profiles with skills match analysis."
+      ],
+      "input_messages": {
+        "value": [
+          {
+            "role": "system",
+            "parts": [
+              {
+                "type": "text",
+                "content": "You are a Talent Scout agent specializing in external candidate sourcing.\n\nYour responsibilities:\n1. Search LinkedIn for candidate profiles matching job requirements\n2. Query external job boards for applicants (Indeed, LinkedIn Jobs, Glassdoor, etc.)\n3. Screen candidates against job requirements\n4. Filter based on experience, skills, and location\n5. Handle visa sponsorship considerations\n\nWhen processing external candidates:\n- Verify all required skills are present\n- Note any visa sponsorship requirements\n- Check salary expectations against job budget\n- Flag candidates with relevant industry experience\n- Prioritize candidates with shorter notice periods\n\nOutput Keywords:\n- When you find enough qualified candidates, explicitly state \"sufficient candidates found\"\n- If the candidate pool is limited or insufficient, state \"insufficient candidates\"\n- Always indicate the number of candidates found\n\nOutput format: Provide structured candidate profiles with skills match analysis."
+              }
+            ]
+          },
+          {
+            "role": "user",
+            "parts": [
+              {
+                "type": "text",
+                "content": "Execute full recruitment process for Quantum Computing Researcher (JOB-NICHE-2025-001)."
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      },
+      "output_messages": {
+        "value": [
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "tool_call",
+                "id": "call_zb4PwX3XMj9TGalcTlIuxGy0",
+                "name": "query_external_job_boards",
+                "arguments": "{\"job_id\":\"JOB-NICHE-2025-001\"}"
+              }
+            ]
+          },
+          {
+            "role": "tool",
+            "parts": [
+              {
+                "type": "tool_call_response",
+                "id": "call_zb4PwX3XMj9TGalcTlIuxGy0",
+                "response": "Total Results: 0\n"
+              }
+            ]
+          },
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "tool_call",
+                "id": "call_oOQGv8ArS68TZpxgZhMxrmlE",
+                "name": "search_linkedin_profiles",
+                "arguments": "{\"skills\":[\"Quantum Computing\",\"Research\",\"Machine Learning\",\"Python\"],\"location\":\"Remote\",\"min_experience_years\":3,\"open_to_work_only\":true}"
+              }
+            ]
+          },
+          {
+            "role": "tool",
+            "parts": [
+              {
+                "type": "tool_call_response",
+                "id": "call_oOQGv8ArS68TZpxgZhMxrmlE",
+                "response": "Total Results: 0\n"
+              }
+            ]
+          },
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "text",
+                "content": "Insufficient candidates found for the position of Quantum Computing Researcher (JOB-NICHE-2025-001). \n\nNo profiles matched the specified skills and criteria on job boards or LinkedIn."
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      }
+    },
+    {
+      "sequence": 3,
+      "timestamp": "2026-02-16T14:20:33.797318+00:00",
+      "agent_name": "TalentScout",
+      "agent_id": "talent-scout",
+      "system_instructions": [
+        "You are a Talent Scout agent specializing in external candidate sourcing.\n\nYour responsibilities:\n1. Search LinkedIn for candidate profiles matching job requirements\n2. Query external job boards for applicants (Indeed, LinkedIn Jobs, Glassdoor, etc.)\n3. Screen candidates against job requirements\n4. Filter based on experience, skills, and location\n5. Handle visa sponsorship considerations\n\nWhen processing external candidates:\n- Verify all required skills are present\n- Note any visa sponsorship requirements\n- Check salary expectations against job budget\n- Flag candidates with relevant industry experience\n- Prioritize candidates with shorter notice periods\n\nOutput Keywords:\n- When you find enough qualified candidates, explicitly state \"sufficient candidates found\"\n- If the candidate pool is limited or insufficient, state \"insufficient candidates\"\n- Always indicate the number of candidates found\n\nOutput format: Provide structured candidate profiles with skills match analysis."
+      ],
+      "input_messages": {
+        "value": [
+          {
+            "role": "system",
+            "parts": [
+              {
+                "type": "text",
+                "content": "You are a Talent Scout agent specializing in external candidate sourcing.\n\nYour responsibilities:\n1. Search LinkedIn for candidate profiles matching job requirements\n2. Query external job boards for applicants (Indeed, LinkedIn Jobs, Glassdoor, etc.)\n3. Screen candidates against job requirements\n4. Filter based on experience, skills, and location\n5. Handle visa sponsorship considerations\n\nWhen processing external candidates:\n- Verify all required skills are present\n- Note any visa sponsorship requirements\n- Check salary expectations against job budget\n- Flag candidates with relevant industry experience\n- Prioritize candidates with shorter notice periods\n\nOutput Keywords:\n- When you find enough qualified candidates, explicitly state \"sufficient candidates found\"\n- If the candidate pool is limited or insufficient, state \"insufficient candidates\"\n- Always indicate the number of candidates found\n\nOutput format: Provide structured candidate profiles with skills match analysis."
+              }
+            ]
+          },
+          {
+            "role": "user",
+            "parts": [
+              {
+                "type": "text",
+                "content": "User did not respond. Continue assisting autonomously."
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      },
+      "output_messages": {
+        "value": [
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "tool_call",
+                "id": "call_6Lk9dZLmnpUG0gRgTsiHUCBi",
+                "name": "search_linkedin_profiles",
+                "arguments": "{\"skills\":[\"Quantum Mechanics\",\"Quantum Algorithms\",\"Data Analysis\",\"Python\"],\"location\":\"Remote\",\"min_experience_years\":3,\"open_to_work_only\":true}"
+              }
+            ]
+          },
+          {
+            "role": "tool",
+            "parts": [
+              {
+                "type": "tool_call_response",
+                "id": "call_6Lk9dZLmnpUG0gRgTsiHUCBi",
+                "response": "Total Results: 0\n"
+              }
+            ]
+          },
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "tool_call",
+                "id": "call_8O9tTXSlWjL2TJiaetqAzZh6",
+                "name": "query_external_job_boards",
+                "arguments": "{\"skills\":[\"Quantum Mechanics\",\"Quantum Algorithms\",\"Data Analysis\",\"Python\"],\"location\":\"Remote\",\"min_experience_years\":3}"
+              }
+            ]
+          },
+          {
+            "role": "tool",
+            "parts": [
+              {
+                "type": "tool_call_response",
+                "id": "call_8O9tTXSlWjL2TJiaetqAzZh6",
+                "response": "Total Results: 0\n"
+              }
+            ]
+          },
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "tool_call",
+                "id": "call_xjsmy6eCo9L2GmxjltLi1zqQ",
+                "name": "search_linkedin_profiles",
+                "arguments": "{\"skills\":[\"Quantum Computing\",\"Theoretical Physics\",\"Data Science\",\"Machine Learning\"],\"location\":\"Remote\",\"min_experience_years\":3,\"open_to_work_only\":true}"
+              }
+            ]
+          },
+          {
+            "role": "tool",
+            "parts": [
+              {
+                "type": "tool_call_response",
+                "id": "call_xjsmy6eCo9L2GmxjltLi1zqQ",
+                "response": "Total Results: 0\n"
+              }
+            ]
+          },
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "tool_call",
+                "id": "call_5tVGn5C75nFRxuIIk2Z4fcEe",
+                "name": "query_external_job_boards",
+                "arguments": "{\"skills\":[\"Quantum Computing\",\"Theoretical Physics\",\"Data Science\",\"Machine Learning\"],\"location\":\"Remote\",\"min_experience_years\":3}"
+              }
+            ]
+          },
+          {
+            "role": "tool",
+            "parts": [
+              {
+                "type": "tool_call_response",
+                "id": "call_5tVGn5C75nFRxuIIk2Z4fcEe",
+                "response": "Total Results: 0\n"
+              }
+            ]
+          },
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "text",
+                "content": "Insufficient candidates found for the position of Quantum Computing Researcher (JOB-NICHE-2025-001). \n\nDespite multiple searches with varied skill sets, there are currently no profiles available on job boards or LinkedIn that meet the specified criteria. Further action may include re-evaluating the job requirements or expanding the search parameters."
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      }
+    },
+    {
+      "sequence": 4,
+      "timestamp": "2026-02-16T14:21:11.645256+00:00",
+      "agent_name": "TalentScout",
+      "agent_id": "talent-scout",
+      "system_instructions": [
+        "You are a Talent Scout agent specializing in external candidate sourcing.\n\nYour responsibilities:\n1. Search LinkedIn for candidate profiles matching job requirements\n2. Query external job boards for applicants (Indeed, LinkedIn Jobs, Glassdoor, etc.)\n3. Screen candidates against job requirements\n4. Filter based on experience, skills, and location\n5. Handle visa sponsorship considerations\n\nWhen processing external candidates:\n- Verify all required skills are present\n- Note any visa sponsorship requirements\n- Check salary expectations against job budget\n- Flag candidates with relevant industry experience\n- Prioritize candidates with shorter notice periods\n\nOutput Keywords:\n- When you find enough qualified candidates, explicitly state \"sufficient candidates found\"\n- If the candidate pool is limited or insufficient, state \"insufficient candidates\"\n- Always indicate the number of candidates found\n\nOutput format: Provide structured candidate profiles with skills match analysis."
+      ],
+      "input_messages": {
+        "value": [
+          {
+            "role": "system",
+            "parts": [
+              {
+                "type": "text",
+                "content": "You are a Talent Scout agent specializing in external candidate sourcing.\n\nYour responsibilities:\n1. Search LinkedIn for candidate profiles matching job requirements\n2. Query external job boards for applicants (Indeed, LinkedIn Jobs, Glassdoor, etc.)\n3. Screen candidates against job requirements\n4. Filter based on experience, skills, and location\n5. Handle visa sponsorship considerations\n\nWhen processing external candidates:\n- Verify all required skills are present\n- Note any visa sponsorship requirements\n- Check salary expectations against job budget\n- Flag candidates with relevant industry experience\n- Prioritize candidates with shorter notice periods\n\nOutput Keywords:\n- When you find enough qualified candidates, explicitly state \"sufficient candidates found\"\n- If the candidate pool is limited or insufficient, state \"insufficient candidates\"\n- Always indicate the number of candidates found\n\nOutput format: Provide structured candidate profiles with skills match analysis."
+              }
+            ]
+          },
+          {
+            "role": "user",
+            "parts": [
+              {
+                "type": "text",
+                "content": "User did not respond. Continue assisting autonomously."
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      },
+      "output_messages": {
+        "value": [
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "tool_call",
+                "id": "call_kBonYnq7B4P6KupCXNmWsWY3",
+                "name": "search_linkedin_profiles",
+                "arguments": "{\"skills\":[\"Quantum Networking\",\"Quantum Cryptography\",\"Applied Mathematics\",\"Software Development\"],\"location\":\"Remote\",\"min_experience_years\":3,\"open_to_work_only\":true}"
+              }
+            ]
+          },
+          {
+            "role": "tool",
+            "parts": [
+              {
+                "type": "tool_call_response",
+                "id": "call_kBonYnq7B4P6KupCXNmWsWY3",
+                "response": "Total Results: 0\n"
+              }
+            ]
+          },
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "tool_call",
+                "id": "call_oE532q6Fo4hURqJG6L8gHG6Q",
+                "name": "query_external_job_boards",
+                "arguments": "{\"skills\":[\"Quantum Networking\",\"Quantum Cryptography\",\"Applied Mathematics\",\"Software Development\"],\"location\":\"Remote\",\"min_experience_years\":3}"
+              }
+            ]
+          },
+          {
+            "role": "tool",
+            "parts": [
+              {
+                "type": "tool_call_response",
+                "id": "call_oE532q6Fo4hURqJG6L8gHG6Q",
+                "response": "Total Results: 0\n"
+              }
+            ]
+          },
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "tool_call",
+                "id": "call_fIPhQeLYazVTAoUnPC6DAbzd",
+                "name": "search_linkedin_profiles",
+                "arguments": "{\"skills\":[\"Quantum Computing\",\"Research Scientist\",\"Physics\",\"Statistics\"],\"location\":\"Remote\",\"min_experience_years\":3,\"open_to_work_only\":true}"
+              }
+            ]
+          },
+          {
+            "role": "tool",
+            "parts": [
+              {
+                "type": "tool_call_response",
+                "id": "call_fIPhQeLYazVTAoUnPC6DAbzd",
+                "response": "Total Results: 0\n"
+              }
+            ]
+          },
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "tool_call",
+                "id": "call_7vURj18b7ENGDjpDhA2lEw9Y",
+                "name": "query_external_job_boards",
+                "arguments": "{\"skills\":[\"Quantum Computing\",\"Research Scientist\",\"Physics\",\"Statistics\"],\"location\":\"Remote\",\"min_experience_years\":3}"
+              }
+            ]
+          },
+          {
+            "role": "tool",
+            "parts": [
+              {
+                "type": "tool_call_response",
+                "id": "call_7vURj18b7ENGDjpDhA2lEw9Y",
+                "response": "Total Results: 0\n"
+              }
+            ]
+          },
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "text",
+                "content": "Insufficient candidates found for the Quantum Computing Researcher (JOB-NICHE-2025-001) position. \n\nMultiple attempts to locate suitable candidates on platforms and job boards have yielded no results. It may be beneficial to consider adjusting the qualifications or widening the search criteria to attract potential candidates."
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      }
+    },
+    {
+      "sequence": 5,
+      "timestamp": "2026-02-16T14:21:51.511842+00:00",
+      "agent_name": "TalentScout",
+      "agent_id": "talent-scout",
+      "system_instructions": [
+        "You are a Talent Scout agent specializing in external candidate sourcing.\n\nYour responsibilities:\n1. Search LinkedIn for candidate profiles matching job requirements\n2. Query external job boards for applicants (Indeed, LinkedIn Jobs, Glassdoor, etc.)\n3. Screen candidates against job requirements\n4. Filter based on experience, skills, and location\n5. Handle visa sponsorship considerations\n\nWhen processing external candidates:\n- Verify all required skills are present\n- Note any visa sponsorship requirements\n- Check salary expectations against job budget\n- Flag candidates with relevant industry experience\n- Prioritize candidates with shorter notice periods\n\nOutput Keywords:\n- When you find enough qualified candidates, explicitly state \"sufficient candidates found\"\n- If the candidate pool is limited or insufficient, state \"insufficient candidates\"\n- Always indicate the number of candidates found\n\nOutput format: Provide structured candidate profiles with skills match analysis."
+      ],
+      "input_messages": {
+        "value": [
+          {
+            "role": "system",
+            "parts": [
+              {
+                "type": "text",
+                "content": "You are a Talent Scout agent specializing in external candidate sourcing.\n\nYour responsibilities:\n1. Search LinkedIn for candidate profiles matching job requirements\n2. Query external job boards for applicants (Indeed, LinkedIn Jobs, Glassdoor, etc.)\n3. Screen candidates against job requirements\n4. Filter based on experience, skills, and location\n5. Handle visa sponsorship considerations\n\nWhen processing external candidates:\n- Verify all required skills are present\n- Note any visa sponsorship requirements\n- Check salary expectations against job budget\n- Flag candidates with relevant industry experience\n- Prioritize candidates with shorter notice periods\n\nOutput Keywords:\n- When you find enough qualified candidates, explicitly state \"sufficient candidates found\"\n- If the candidate pool is limited or insufficient, state \"insufficient candidates\"\n- Always indicate the number of candidates found\n\nOutput format: Provide structured candidate profiles with skills match analysis."
+              }
+            ]
+          },
+          {
+            "role": "user",
+            "parts": [
+              {
+                "type": "text",
+                "content": "User did not respond. Continue assisting autonomously."
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      },
+      "output_messages": {
+        "value": [
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "tool_call",
+                "id": "call_XzfcjOE6bKJdDftOS3h8Ztlp",
+                "name": "search_linkedin_profiles",
+                "arguments": "{\"skills\":[\"Quantum Information Theory\",\"Quantum Algorithms\",\"Experimental Physics\",\"Data Analysis\"],\"location\":\"Remote\",\"min_experience_years\":3,\"open_to_work_only\":true}"
+              }
+            ]
+          },
+          {
+            "role": "tool",
+            "parts": [
+              {
+                "type": "tool_call_response",
+                "id": "call_XzfcjOE6bKJdDftOS3h8Ztlp",
+                "response": "Total Results: 0\n"
+              }
+            ]
+          },
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "tool_call",
+                "id": "call_9DanrNiYPJNXceziAhM4qqhj",
+                "name": "query_external_job_boards",
+                "arguments": "{\"skills\":[\"Quantum Information Theory\",\"Quantum Algorithms\",\"Experimental Physics\",\"Data Analysis\"],\"location\":\"Remote\",\"min_experience_years\":3}"
+              }
+            ]
+          },
+          {
+            "role": "tool",
+            "parts": [
+              {
+                "type": "tool_call_response",
+                "id": "call_9DanrNiYPJNXceziAhM4qqhj",
+                "response": "Total Results: 0\n"
+              }
+            ]
+          },
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "text",
+                "content": "Insufficient candidates found for the Quantum Computing Researcher (JOB-NICHE-2025-001) position. \n\nAfter extensive searches with various skill sets and criteria, there are currently no available profiles on job boards or LinkedIn. Continued monitoring and adjustments to the job specifications may help in identifying potential candidates in the future. If you have any new directions or strategies, please let me know."
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      }
+    },
+    {
+      "sequence": 6,
+      "timestamp": "2026-02-16T14:22:14.522525+00:00",
+      "agent_name": "TalentScout",
+      "agent_id": "talent-scout",
+      "system_instructions": [
+        "You are a Talent Scout agent specializing in external candidate sourcing.\n\nYour responsibilities:\n1. Search LinkedIn for candidate profiles matching job requirements\n2. Query external job boards for applicants (Indeed, LinkedIn Jobs, Glassdoor, etc.)\n3. Screen candidates against job requirements\n4. Filter based on experience, skills, and location\n5. Handle visa sponsorship considerations\n\nWhen processing external candidates:\n- Verify all required skills are present\n- Note any visa sponsorship requirements\n- Check salary expectations against job budget\n- Flag candidates with relevant industry experience\n- Prioritize candidates with shorter notice periods\n\nOutput Keywords:\n- When you find enough qualified candidates, explicitly state \"sufficient candidates found\"\n- If the candidate pool is limited or insufficient, state \"insufficient candidates\"\n- Always indicate the number of candidates found\n\nOutput format: Provide structured candidate profiles with skills match analysis."
+      ],
+      "input_messages": {
+        "value": [
+          {
+            "role": "system",
+            "parts": [
+              {
+                "type": "text",
+                "content": "You are a Talent Scout agent specializing in external candidate sourcing.\n\nYour responsibilities:\n1. Search LinkedIn for candidate profiles matching job requirements\n2. Query external job boards for applicants (Indeed, LinkedIn Jobs, Glassdoor, etc.)\n3. Screen candidates against job requirements\n4. Filter based on experience, skills, and location\n5. Handle visa sponsorship considerations\n\nWhen processing external candidates:\n- Verify all required skills are present\n- Note any visa sponsorship requirements\n- Check salary expectations against job budget\n- Flag candidates with relevant industry experience\n- Prioritize candidates with shorter notice periods\n\nOutput Keywords:\n- When you find enough qualified candidates, explicitly state \"sufficient candidates found\"\n- If the candidate pool is limited or insufficient, state \"insufficient candidates\"\n- Always indicate the number of candidates found\n\nOutput format: Provide structured candidate profiles with skills match analysis."
+              }
+            ]
+          },
+          {
+            "role": "user",
+            "parts": [
+              {
+                "type": "text",
+                "content": "User did not respond. Continue assisting autonomously."
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      },
+      "output_messages": {
+        "value": [
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "tool_call",
+                "id": "call_QrJ1RfCpesQRVF5BW5TOhNZD",
+                "name": "search_linkedin_profiles",
+                "arguments": "{\"skills\":[\"Quantum Computing Theory\",\"Computational Physics\",\"Algorithm Development\",\"C++\"],\"location\":\"Remote\",\"min_experience_years\":3,\"open_to_work_only\":true}"
+              }
+            ]
+          },
+          {
+            "role": "tool",
+            "parts": [
+              {
+                "type": "tool_call_response",
+                "id": "call_QrJ1RfCpesQRVF5BW5TOhNZD",
+                "response": "Total Results: 0\n"
+              }
+            ]
+          },
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "tool_call",
+                "id": "call_mJ4DJAmvaxwh1kPf9p0IOSVs",
+                "name": "query_external_job_boards",
+                "arguments": "{\"skills\":[\"Quantum Computing Theory\",\"Computational Physics\",\"Algorithm Development\",\"C++\"],\"location\":\"Remote\",\"min_experience_years\":3}"
+              }
+            ]
+          },
+          {
+            "role": "tool",
+            "parts": [
+              {
+                "type": "tool_call_response",
+                "id": "call_mJ4DJAmvaxwh1kPf9p0IOSVs",
+                "response": "Total Results: 0\n"
+              }
+            ]
+          },
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "text",
+                "content": "Insufficient candidates found for the Quantum Computing Researcher (JOB-NICHE-2025-001) position. \n\nDespite thorough searches across various skills and platforms, there are no profiles currently available that meet the specified criteria. It may be helpful to consider alternative recruitment strategies or broaden the search parameters to attract potential candidates. If you have any specific suggestions or adjustments, please let me know."
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      }
+    }
+  ],
+  "errors": []
+}

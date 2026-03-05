@@ -1,0 +1,258 @@
+{
+  "parse_failed": false,
+  "workflow_id": "f360dfc1-29de-4ff5-be74-fb13f343089d",
+  "workflow_name": "WorkflowBuilder-bda06387-9492-4164-9719-94cf9bba134f",
+  "workflow_type": "workflow_dag",
+  "topology": {
+    "start_executor_id": "dispatcher",
+    "max_iterations": 100,
+    "executors": [
+      {
+        "id": "dispatcher",
+        "type": "FanOutDispatcher"
+      },
+      {
+        "id": "TalentScout",
+        "type": "AgentExecutor"
+      },
+      {
+        "id": "MobilityScout",
+        "type": "AgentExecutor"
+      },
+      {
+        "id": "aggregator",
+        "type": "FanInAggregator"
+      }
+    ],
+    "edges": [
+      {
+        "type": "FanOutEdgeGroup",
+        "source": "dispatcher",
+        "target": "TalentScout"
+      },
+      {
+        "type": "FanOutEdgeGroup",
+        "source": "dispatcher",
+        "target": "MobilityScout"
+      },
+      {
+        "type": "FanInEdgeGroup",
+        "source": "TalentScout",
+        "target": "aggregator"
+      },
+      {
+        "type": "FanInEdgeGroup",
+        "source": "MobilityScout",
+        "target": "aggregator"
+      }
+    ]
+  },
+  "agents": {
+    "TalentScout": {
+      "agent_id": "talent-scout",
+      "model": "gpt-4o-mini",
+      "system_instructions": "You are a Talent Scout agent specializing in external candidate sourcing.\n\nYour responsibilities:\n1. Search LinkedIn for candidate profiles matching job requirements\n2. Query external job boards for applicants (Indeed, LinkedIn Jobs, Glassdoor, etc.)\n3. Screen candidates against job requirements\n4. Filter based on experience, skills, and location\n5. Handle visa sponsorship considerations\n\nWhen processing external candidates:\n- Verify all required skills are present\n- Note any visa sponsorship requirements\n- Check salary expectations against job budget\n- Flag candidates with relevant industry experience\n- Prioritize candidates with shorter notice periods\n\nOutput Keywords:\n- When you find enough qualified candidates, explicitly state \"sufficient candidates found\"\n- If the candidate pool is limited or insufficient, state \"insufficient candidates\"\n- Always indicate the number of candidates found\n\nOutput format: Provide structured candidate profiles with skills match analysis.",
+      "tool_definitions": []
+    },
+    "MobilityScout": {
+      "agent_id": "mobility-scout",
+      "model": "gpt-4o-mini",
+      "system_instructions": "You are an Internal Mobility Scout agent specializing in internal transfers.\n\nYour responsibilities:\n1. Query the HRIS system for employees interested in the role\n2. Verify transfer eligibility (tenure, performance, no PIP)\n3. Check manager approval status\n4. Assess skills match with current role experience\n5. Coordinate with HR on internal transfer policies\n\nWhen processing internal candidates:\n- Verify minimum tenure requirement (usually 1+ year)\n- Check performance rating (must be meeting expectations or above)\n- Confirm employee is not on a Performance Improvement Plan\n- Note current team and potential backfill needs\n- Include manager feedback if available\n\nIMPORTANT - Output Keywords:\n- When you find enough qualified internal candidates, state \"found sufficient candidates\" or \"sufficient candidates found\"\n- If internal pool is limited, state \"no candidates\" or \"insufficient candidates\"\n\nOutput format: Provide structured profiles with eligibility status and current role context.",
+      "tool_definitions": [
+        {
+          "name": "query_internal_employees",
+          "description": "Queries the internal HRIS system for current employees who have expressed interest in a job opening and checks their transfer eligibility.",
+          "parameters": {
+            "properties": {
+              "job_id": {
+                "description": "The job ID to find internal candidates for",
+                "title": "Job Id",
+                "type": "string"
+              },
+              "eligible_only": {
+                "default": true,
+                "description": "Only return transfer-eligible employees",
+                "title": "Eligible Only",
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "job_id"
+            ],
+            "title": "query_internal_employees_input",
+            "type": "object"
+          }
+        }
+      ]
+    }
+  },
+  "invocations": [
+    {
+      "sequence": 1,
+      "timestamp": "2026-02-16T14:15:02.612948+00:00",
+      "agent_name": "TalentScout",
+      "agent_id": "talent-scout",
+      "system_instructions": [
+        "You are a Talent Scout agent specializing in external candidate sourcing.\n\nYour responsibilities:\n1. Search LinkedIn for candidate profiles matching job requirements\n2. Query external job boards for applicants (Indeed, LinkedIn Jobs, Glassdoor, etc.)\n3. Screen candidates against job requirements\n4. Filter based on experience, skills, and location\n5. Handle visa sponsorship considerations\n\nWhen processing external candidates:\n- Verify all required skills are present\n- Note any visa sponsorship requirements\n- Check salary expectations against job budget\n- Flag candidates with relevant industry experience\n- Prioritize candidates with shorter notice periods\n\nOutput Keywords:\n- When you find enough qualified candidates, explicitly state \"sufficient candidates found\"\n- If the candidate pool is limited or insufficient, state \"insufficient candidates\"\n- Always indicate the number of candidates found\n\nOutput format: Provide structured candidate profiles with skills match analysis."
+      ],
+      "input_messages": {
+        "value": [
+          {
+            "role": "system",
+            "parts": [
+              {
+                "type": "text",
+                "content": "You are a Talent Scout agent specializing in external candidate sourcing.\n\nYour responsibilities:\n1. Search LinkedIn for candidate profiles matching job requirements\n2. Query external job boards for applicants (Indeed, LinkedIn Jobs, Glassdoor, etc.)\n3. Screen candidates against job requirements\n4. Filter based on experience, skills, and location\n5. Handle visa sponsorship considerations\n\nWhen processing external candidates:\n- Verify all required skills are present\n- Note any visa sponsorship requirements\n- Check salary expectations against job budget\n- Flag candidates with relevant industry experience\n- Prioritize candidates with shorter notice periods\n\nOutput Keywords:\n- When you find enough qualified candidates, explicitly state \"sufficient candidates found\"\n- If the candidate pool is limited or insufficient, state \"insufficient candidates\"\n- Always indicate the number of candidates found\n\nOutput format: Provide structured candidate profiles with skills match analysis."
+              }
+            ]
+          },
+          {
+            "role": "user",
+            "parts": [
+              {
+                "type": "text",
+                "content": "Compare candidates from all sources for JOB-PM-2025-042. Identify duplicates and calculate total cost for agency candidates."
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      },
+      "output_messages": {
+        "value": [
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "tool_call",
+                "id": "call_SnFvteWPjRjsW64RHWkqTPFh",
+                "name": "query_external_job_boards",
+                "arguments": "{\"job_id\":\"JOB-PM-2025-042\"}"
+              },
+              {
+                "type": "tool_call",
+                "id": "call_h79s0CyQYF9jUApLW1Vx6Ipq",
+                "name": "search_linkedin_profiles",
+                "arguments": "{\"skills\":[\"Project Management\",\"Agile\",\"Scrum\"],\"location\":\"New York, NY\",\"min_experience_years\":5}"
+              }
+            ]
+          },
+          {
+            "role": "tool",
+            "parts": [
+              {
+                "type": "tool_call_response",
+                "id": "call_SnFvteWPjRjsW64RHWkqTPFh",
+                "response": "Total Results: 1\n\nCandidate ID: EXT-JB-004\nSource: Indeed\nName: Emily Rodriguez\nEmail: emily.r@email.com\nPhone: +1-555-0104\nSkills: Product Management, AI/ML, Technical Background, Agile\nYears Experience: 8\nEducation: MBA, Harvard Business School\nCurrent Company: AI Innovations\nCurrent Title: Product Manager\nLocation: San Francisco, CA\nVisa Required: False\nSalary Expectation: $195,000\nApplication Date: 2025-01-15\nResume Summary: Product manager with deep AI/ML domain expertise and technical background.\n"
+              },
+              {
+                "type": "tool_call_response",
+                "id": "call_h79s0CyQYF9jUApLW1Vx6Ipq",
+                "response": "Total Results: 0\n"
+              }
+            ]
+          },
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "tool_call",
+                "id": "call_1SU3PintThSUAr571JhoSagE",
+                "name": "query_external_job_boards",
+                "arguments": "{\"job_id\":\"JOB-PM-2025-042\",\"skills\":[\"Project Management\",\"Agile\",\"Scrum\"],\"location\":\"New York, NY\",\"min_experience_years\":5}"
+              }
+            ]
+          },
+          {
+            "role": "tool",
+            "parts": [
+              {
+                "type": "tool_call_response",
+                "id": "call_1SU3PintThSUAr571JhoSagE",
+                "response": "Total Results: 0\n"
+              }
+            ]
+          },
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "text",
+                "content": "### Candidate Comparison for JOB-PM-2025-042\n\n#### External Candidates from Job Boards\n1. **Candidate ID:** EXT-JB-004  \n   - **Name:** Emily Rodriguez  \n   - **Email:** emily.r@email.com  \n   - **Phone:** +1-555-0104  \n   - **Skills:** Product Management, AI/ML, Technical Background, Agile  \n   - **Years Experience:** 8  \n   - **Education:** MBA, Harvard Business School  \n   - **Current Company:** AI Innovations  \n   - **Current Title:** Product Manager  \n   - **Location:** San Francisco, CA  \n   - **Visa Required:** False  \n   - **Salary Expectation:** $195,000  \n   - **Application Date:** 2025-01-15  \n   - **Resume Summary:** Product manager with deep AI/ML domain expertise and technical background.\n\n#### Summary of Findings\n- **Total Candidates Found:** 1\n- **Duplicates:** None found\n- **Total Cost for Agency Candidates:** Not applicable as candidates were sourced only from external job boards, and none are agency candidates.\n\n### Conclusion\n**Insufficient candidates found.** The only candidate available does not meet the required skills for Project Management, Agile, and Scrum for JOB-PM-2025-042."
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      }
+    },
+    {
+      "sequence": 2,
+      "timestamp": "2026-02-16T14:15:02.941098+00:00",
+      "agent_name": "MobilityScout",
+      "agent_id": "mobility-scout",
+      "system_instructions": [
+        "You are an Internal Mobility Scout agent specializing in internal transfers.\n\nYour responsibilities:\n1. Query the HRIS system for employees interested in the role\n2. Verify transfer eligibility (tenure, performance, no PIP)\n3. Check manager approval status\n4. Assess skills match with current role experience\n5. Coordinate with HR on internal transfer policies\n\nWhen processing internal candidates:\n- Verify minimum tenure requirement (usually 1+ year)\n- Check performance rating (must be meeting expectations or above)\n- Confirm employee is not on a Performance Improvement Plan\n- Note current team and potential backfill needs\n- Include manager feedback if available\n\nIMPORTANT - Output Keywords:\n- When you find enough qualified internal candidates, state \"found sufficient candidates\" or \"sufficient candidates found\"\n- If internal pool is limited, state \"no candidates\" or \"insufficient candidates\"\n\nOutput format: Provide structured profiles with eligibility status and current role context."
+      ],
+      "input_messages": {
+        "value": [
+          {
+            "role": "system",
+            "parts": [
+              {
+                "type": "text",
+                "content": "You are an Internal Mobility Scout agent specializing in internal transfers.\n\nYour responsibilities:\n1. Query the HRIS system for employees interested in the role\n2. Verify transfer eligibility (tenure, performance, no PIP)\n3. Check manager approval status\n4. Assess skills match with current role experience\n5. Coordinate with HR on internal transfer policies\n\nWhen processing internal candidates:\n- Verify minimum tenure requirement (usually 1+ year)\n- Check performance rating (must be meeting expectations or above)\n- Confirm employee is not on a Performance Improvement Plan\n- Note current team and potential backfill needs\n- Include manager feedback if available\n\nIMPORTANT - Output Keywords:\n- When you find enough qualified internal candidates, state \"found sufficient candidates\" or \"sufficient candidates found\"\n- If internal pool is limited, state \"no candidates\" or \"insufficient candidates\"\n\nOutput format: Provide structured profiles with eligibility status and current role context."
+              }
+            ]
+          },
+          {
+            "role": "user",
+            "parts": [
+              {
+                "type": "text",
+                "content": "Compare candidates from all sources for JOB-PM-2025-042. Identify duplicates and calculate total cost for agency candidates."
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      },
+      "output_messages": {
+        "value": [
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "tool_call",
+                "id": "call_MOf0dZdN6SG4fhvVQCgL4VzA",
+                "name": "query_internal_employees",
+                "arguments": "{\"job_id\":\"JOB-PM-2025-042\",\"eligible_only\":true}"
+              }
+            ]
+          },
+          {
+            "role": "tool",
+            "parts": [
+              {
+                "type": "tool_call_response",
+                "id": "call_MOf0dZdN6SG4fhvVQCgL4VzA",
+                "response": "No internal candidates found for job JOB-PM-2025-042."
+              }
+            ]
+          },
+          {
+            "role": "assistant",
+            "parts": [
+              {
+                "type": "text",
+                "content": "No internal candidates found for the job position JOB-PM-2025-042. Thus, I cannot compare candidates from all sources or identify duplicates.\n\nIf you have agency candidates details available, please provide them, and I can assist with the calculation of the total cost and comparisons as needed."
+              }
+            ]
+          }
+        ],
+        "_truncated": false
+      }
+    }
+  ],
+  "errors": []
+}
