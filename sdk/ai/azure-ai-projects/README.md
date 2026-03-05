@@ -281,7 +281,7 @@ tool = FileSearchTool(vector_store_ids=[vector_store.id])
 
 See the full sample in file `\agents\tools\sample_agent_file_search.py` in the [Samples][samples] folder.
 
-**Image Generation**
+**Image Generation** ([documentation](https://learn.microsoft.com/azure/foundry/agents/how-to/tools/image-generation?pivots=python))
 
 Generate images based on text prompts with customizable resolution, quality, and style settings:
 
