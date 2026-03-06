@@ -7,7 +7,7 @@
 import sys
 import asyncio
 import logging
-from typing import Any, Mapping, overload, Union, Optional, TypeVar, Tuple, Dict, Literal
+from typing import Any, Callable, Mapping, overload, Union, Optional, TypeVar, Tuple, Dict, Literal
 import json
 import math
 import threading
@@ -291,6 +291,76 @@ class SequenceAckData(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
+class InvokeData(_model_base.Model):
+    """Data for invoke message
+
+    :ivar type: The type of the message. Required. Default value is "invoke".
+    :vartype type: str
+    :ivar invocation_id: The invocation id. Required.
+    :vartype invocation_id: str
+    :ivar target: The invocation target type.
+    :vartype target: str
+    :ivar event: The event name.
+    :vartype event: str
+    :ivar data_type: The data type of the message.
+    :vartype data_type: ~azure.messaging.webpubsubclient.models.WebPubSubDataType or str
+    :ivar data: The data of the message.
+    :vartype data: Any
+    """
+
+    type: Literal["invoke"] = rest_field(default="invoke")
+    invocation_id: str = rest_field(name="invocationId")
+    target: Optional[str] = rest_field()
+    event: Optional[str] = rest_field()
+    data_type: Optional[Union[WebPubSubDataType, str]] = rest_field(name="dataType")
+    data: Any = rest_field()
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: Literal["invoke"] = "invoke",  # pylint: disable=redefined-builtin
+        invocation_id: str,
+        target: Optional[str] = None,
+        event: Optional[str] = None,
+        data_type: Optional[WebPubSubDataType] = None,
+        data: Any = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]): ...
+
+    def __init__(self, *args, **kwargs):  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
+class CancelInvocationData(_model_base.Model):
+    """Data for cancel invocation message
+
+    :ivar type: The type of the message. Required. Default value is "cancelInvocation".
+    :vartype type: str
+    :ivar invocation_id: The invocation id. Required.
+    :vartype invocation_id: str
+    """
+
+    type: Literal["cancelInvocation"] = rest_field(default="cancelInvocation")
+    invocation_id: str = rest_field(name="invocationId")
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: Literal["cancelInvocation"] = "cancelInvocation",  # pylint: disable=redefined-builtin
+        invocation_id: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]): ...
+
+    def __init__(self, *args, **kwargs):  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
 class SequenceAckMessage:
     """Message for sequence ack
 
@@ -427,6 +497,119 @@ class SendToGroupMessage:
         self.ack_id = ack_id
 
 
+class InvokeResponseError:
+    """Error details of an invoke response
+
+    :ivar name: The error name. Required.
+    :vartype name: str
+    :ivar message: The error message. Required.
+    :vartype message: str
+    """
+
+    def __init__(self, *, name: str, message: str):
+        self.name = name
+        self.message = message
+
+
+class InvokeMessage:
+    """Message for invoking an upstream event
+
+    :ivar invocation_id: The invocation id. Required.
+    :vartype invocation_id: str
+    :ivar target: The invocation target type. Currently, only upstream events are supported.
+    :vartype target: str
+    :ivar event: The event name when targeting upstream events.
+    :vartype event: str
+    :ivar data_type: Data type of the payload.
+    :vartype data_type: ~azure.messaging.webpubsubclient.models.WebPubSubDataType or str
+    :ivar data: Payload data.
+    :vartype data: Any
+    """
+
+    def __init__(
+        self,
+        invocation_id: str,
+        *,
+        target: Optional[str] = "event",
+        event: Optional[str] = None,
+        data_type: Optional[WebPubSubDataType] = None,
+        data: Any = None,
+    ) -> None:
+        self.kind: Literal["invoke"] = "invoke"
+        self.invocation_id = invocation_id
+        self.target = target
+        self.event = event
+        self.data_type = data_type
+        self.data = data
+
+
+class InvokeResponseMessage:
+    """Message for invoke response
+
+    :ivar invocation_id: The invocation ID that this response is for. Required.
+    :vartype invocation_id: str
+    :ivar success: Indicates whether the invocation was successful.
+    :vartype success: bool
+    :ivar data_type: Data type of the payload.
+    :vartype data_type: ~azure.messaging.webpubsubclient.models.WebPubSubDataType or str
+    :ivar data: Payload data.
+    :vartype data: Any
+    :ivar error: Error details if the invocation failed.
+    :vartype error: ~azure.messaging.webpubsubclient.models.InvokeResponseError
+    """
+
+    def __init__(
+        self,
+        invocation_id: str,
+        *,
+        success: Optional[bool] = None,
+        data_type: Optional[WebPubSubDataType] = None,
+        data: Any = None,
+        error: Optional[InvokeResponseError] = None,
+    ) -> None:
+        self.kind: Literal["invokeResponse"] = "invokeResponse"
+        self.invocation_id = invocation_id
+        self.success = success
+        self.data_type = data_type
+        self.data = data
+        self.error = error
+
+
+class CancelInvocationMessage:
+    """Message for canceling an invocation
+
+    :ivar invocation_id: The invocation ID to cancel. Required.
+    :vartype invocation_id: str
+    """
+
+    def __init__(self, invocation_id: str) -> None:
+        self.kind: Literal["cancelInvocation"] = "cancelInvocation"
+        self.invocation_id = invocation_id
+
+
+class InvokeEventResult:
+    """Result of invoke_event
+
+    :ivar invocation_id: Invocation identifier correlated with the response. Required.
+    :vartype invocation_id: str
+    :ivar data_type: The response payload data type.
+    :vartype data_type: ~azure.messaging.webpubsubclient.models.WebPubSubDataType or str
+    :ivar data: The response payload.
+    :vartype data: Any
+    """
+
+    def __init__(
+        self,
+        invocation_id: str,
+        *,
+        data_type: Optional[WebPubSubDataType] = None,
+        data: Any = None,
+    ) -> None:
+        self.invocation_id = invocation_id
+        self.data_type = data_type
+        self.data = data
+
+
 WebPubSubMessage = TypeVar(
     "WebPubSubMessage",
     GroupDataMessage,
@@ -439,6 +622,9 @@ WebPubSubMessage = TypeVar(
     SendEventMessage,
     SequenceAckMessage,
     AckMessage,
+    InvokeMessage,
+    InvokeResponseMessage,
+    CancelInvocationMessage,
 )
 
 SendMessageType = TypeVar(
@@ -518,6 +704,7 @@ class WebPubSubClientProtocol:
         GroupDataMessage,
         ServerDataMessage,
         AckMessage,
+        InvokeResponseMessage,
         None,
     ]:
         """Parse messages from raw message
@@ -525,7 +712,8 @@ class WebPubSubClientProtocol:
         :param raw_message: The raw message. Required.
         :type raw_message: str
         :return: The parsed message.
-        :rtype: Union[ConnectedMessage, DisconnectedMessage, GroupDataMessage, ServerDataMessage, AckMessage, None]
+        :rtype: Union[ConnectedMessage, DisconnectedMessage, GroupDataMessage, ServerDataMessage, AckMessage,
+         InvokeResponseMessage, None]
         :raises ValueError: If raw_message is None or raw_message type is not string.
         """
         if raw_message is None:
@@ -573,6 +761,22 @@ class WebPubSubClientProtocol:
                     AckMessageError(name=error["name"], message=error["message"]) if isinstance(error, dict) else None
                 ),
             )
+        if message["type"] == "invokeResponse":
+            data = None
+            if message.get("dataType") is not None:
+                data = parse_payload(message.get("data"), message["dataType"])
+            error = message.get("error")
+            return InvokeResponseMessage(
+                invocation_id=message["invocationId"],
+                success=message.get("success"),
+                data_type=message.get("dataType"),
+                data=data,
+                error=(
+                    InvokeResponseError(name=error["name"], message=error["message"])
+                    if isinstance(error, dict)
+                    else None
+                ),
+            )
         _LOGGER.error("wrong message type: %s", message["type"])
         return None
 
@@ -607,6 +811,18 @@ class WebPubSubClientProtocol:
             )
         elif message.kind == UpstreamMessageType.SEQUENCE_ACK:
             data = SequenceAckData(sequence_id=message.sequence_id)
+        elif message.kind == UpstreamMessageType.INVOKE:
+            invoke_data = InvokeData(
+                invocation_id=message.invocation_id,
+                target=message.target,
+                event=message.event,
+            )
+            if message.data_type is not None and message.data is not None:
+                invoke_data.data_type = message.data_type
+                invoke_data.data = get_pay_load(message.data, message.data_type)
+            data = invoke_data
+        elif message.kind == UpstreamMessageType.CANCEL_INVOCATION:
+            data = CancelInvocationData(invocation_id=message.invocation_id)
         else:
             raise TypeError(f"Unsupported type: {message.kind}")
 
@@ -706,6 +922,29 @@ class SendMessageError(AzureError):
         super().__init__(message)
         self.name = "SendMessageError"
         self.ack_id = ack_id
+        self.error_detail = error_detail
+
+
+class InvocationError(AzureError):
+    """Exception raised when an invocation fails or is cancelled
+
+    :ivar message: The error message. Required.
+    :vartype message: str
+    :ivar invocation_id: The invocation id of the request.
+    :vartype invocation_id: str
+    :ivar error_detail: Error details from the service if available.
+    :vartype error_detail: ~azure.messaging.webpubsubclient.models.InvokeResponseError
+    """
+
+    def __init__(
+        self,
+        message: str,
+        invocation_id: str,
+        error_detail: Optional[InvokeResponseError] = None,
+    ) -> None:
+        super().__init__(message)
+        self.name = "InvocationError"
+        self.invocation_id = invocation_id
         self.error_detail = error_detail
 
 
@@ -1014,6 +1253,199 @@ class AckMapAsync:
             _LOGGER.debug("clear ack map with ack id: %s", key)
             value.event.set()
         self.ack_map.clear()
+
+
+class _InvocationEntry:
+    """Entry for a pending invocation (sync version)"""
+
+    def __init__(self, invocation_id: str) -> None:
+        self.invocation_id = invocation_id
+        self.cv = threading.Condition()
+        self.result: Optional[InvokeResponseMessage] = None
+        self.error: Optional[Exception] = None
+
+
+class _InvocationEntryAsync:
+    """Entry for a pending invocation (async version)"""
+
+    def __init__(self, invocation_id: str) -> None:
+        self.invocation_id = invocation_id
+        self.event = asyncio.Event()
+        self.result: Optional[InvokeResponseMessage] = None
+        self.error: Optional[Exception] = None
+
+
+class InvocationManager:
+    """Manages pending invocations awaiting invokeResponse frames (sync version)"""
+
+    def __init__(self) -> None:
+        self._entries: Dict[str, _InvocationEntry] = {}
+        self._next_id = 0
+        self._lock = threading.Lock()
+
+    def _generate_invocation_id(self) -> str:
+        self._next_id += 1
+        return str(self._next_id)
+
+    def register(self, invocation_id: Optional[str] = None) -> Tuple[str, _InvocationEntry]:
+        """Register a new invocation and return the invocation id and entry.
+
+        :param invocation_id: Optional invocation id. If not provided, one will be generated.
+        :type invocation_id: str
+        :return: Tuple of invocation id and entry.
+        :rtype: Tuple[str, _InvocationEntry]
+        :raises InvocationError: If invocation id is already registered.
+        """
+        with self._lock:
+            resolved_id = invocation_id if invocation_id else self._generate_invocation_id()
+            if resolved_id in self._entries:
+                raise InvocationError(
+                    "Invocation id is already registered.",
+                    invocation_id=resolved_id,
+                )
+            entry = _InvocationEntry(resolved_id)
+            self._entries[resolved_id] = entry
+            return resolved_id, entry
+
+    def resolve(self, message: InvokeResponseMessage) -> bool:
+        """Resolve a pending invocation with a response message.
+
+        :param message: The invoke response message.
+        :type message: InvokeResponseMessage
+        :return: True if invocation was found and resolved.
+        :rtype: bool
+        """
+        with self._lock:
+            entry = self._entries.pop(message.invocation_id, None)
+            if not entry:
+                return False
+            with entry.cv:
+                entry.result = message
+                entry.cv.notify()
+            return True
+
+    def reject(self, invocation_id: str, error: Exception) -> bool:
+        """Reject a pending invocation with an error.
+
+        :param invocation_id: The invocation id to reject.
+        :type invocation_id: str
+        :param error: The error to reject with.
+        :type error: Exception
+        :return: True if invocation was found and rejected.
+        :rtype: bool
+        """
+        with self._lock:
+            entry = self._entries.pop(invocation_id, None)
+            if not entry:
+                return False
+            with entry.cv:
+                entry.error = error
+                entry.cv.notify()
+            return True
+
+    def discard(self, invocation_id: str) -> None:
+        """Discard a pending invocation without resolving or rejecting it.
+
+        :param invocation_id: The invocation id to discard.
+        :type invocation_id: str
+        """
+        with self._lock:
+            self._entries.pop(invocation_id, None)
+
+    def reject_all(self, create_error: Callable[[str], Exception]) -> None:
+        """Reject all pending invocations with errors.
+
+        :param create_error: Factory function to create error for each invocation id.
+        :type create_error: Callable[[str], Exception]
+        """
+        with self._lock:
+            for invocation_id, entry in list(self._entries.items()):
+                self._entries.pop(invocation_id, None)
+                with entry.cv:
+                    entry.error = create_error(invocation_id)
+                    entry.cv.notify()
+
+
+class InvocationManagerAsync:
+    """Manages pending invocations awaiting invokeResponse frames (async version)"""
+
+    def __init__(self) -> None:
+        self._entries: Dict[str, _InvocationEntryAsync] = {}
+        self._next_id = 0
+
+    def _generate_invocation_id(self) -> str:
+        self._next_id += 1
+        return str(self._next_id)
+
+    def register(self, invocation_id: Optional[str] = None) -> Tuple[str, _InvocationEntryAsync]:
+        """Register a new invocation and return the invocation id and entry.
+
+        :param invocation_id: Optional invocation id. If not provided, one will be generated.
+        :type invocation_id: str
+        :return: Tuple of invocation id and entry.
+        :rtype: Tuple[str, _InvocationEntryAsync]
+        :raises InvocationError: If invocation id is already registered.
+        """
+        resolved_id = invocation_id if invocation_id else self._generate_invocation_id()
+        if resolved_id in self._entries:
+            raise InvocationError(
+                "Invocation id is already registered.",
+                invocation_id=resolved_id,
+            )
+        entry = _InvocationEntryAsync(resolved_id)
+        self._entries[resolved_id] = entry
+        return resolved_id, entry
+
+    def resolve(self, message: InvokeResponseMessage) -> bool:
+        """Resolve a pending invocation with a response message.
+
+        :param message: The invoke response message.
+        :type message: InvokeResponseMessage
+        :return: True if invocation was found and resolved.
+        :rtype: bool
+        """
+        entry = self._entries.pop(message.invocation_id, None)
+        if not entry:
+            return False
+        entry.result = message
+        entry.event.set()
+        return True
+
+    def reject(self, invocation_id: str, error: Exception) -> bool:
+        """Reject a pending invocation with an error.
+
+        :param invocation_id: The invocation id to reject.
+        :type invocation_id: str
+        :param error: The error to reject with.
+        :type error: Exception
+        :return: True if invocation was found and rejected.
+        :rtype: bool
+        """
+        entry = self._entries.pop(invocation_id, None)
+        if not entry:
+            return False
+        entry.error = error
+        entry.event.set()
+        return True
+
+    def discard(self, invocation_id: str) -> None:
+        """Discard a pending invocation without resolving or rejecting it.
+
+        :param invocation_id: The invocation id to discard.
+        :type invocation_id: str
+        """
+        self._entries.pop(invocation_id, None)
+
+    def reject_all(self, create_error: Callable[[str], Exception]) -> None:
+        """Reject all pending invocations with errors.
+
+        :param create_error: Factory function to create error for each invocation id.
+        :type create_error: Callable[[str], Exception]
+        """
+        for invocation_id, entry in list(self._entries.items()):
+            self._entries.pop(invocation_id, None)
+            entry.error = create_error(invocation_id)
+            entry.event.set()
 
 
 class OpenClientError(AzureError):

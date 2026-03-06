@@ -13,7 +13,10 @@ from azure.messaging.webpubsubclient.models._models import (
     SendEventMessage,
     SequenceAckMessage,
     WebPubSubJsonReliableProtocol,
+    InvokeMessage,
+    CancelInvocationMessage,
 )
+from azure.messaging.webpubsubclient.models import WebPubSubDataType
 from testcase import WebpubsubClientPowerShellPreparer
 
 
@@ -158,6 +161,50 @@ def compare_dict(dict1, dict2):
             {
                 "type": "sequenceAck",
                 "sequenceId": 123456,
+            },
+        ),
+        (
+            "invoke1",
+            InvokeMessage(
+                invocation_id="test-123",
+                target="event",
+                event="processOrder",
+                data_type=WebPubSubDataType.JSON,
+                data={"orderId": 1},
+            ),
+            {
+                "type": "invoke",
+                "invocationId": "test-123",
+                "target": "event",
+                "event": "processOrder",
+                "dataType": "json",
+                "data": {"orderId": 1},
+            },
+        ),
+        (
+            "invoke2",
+            InvokeMessage(
+                invocation_id="test-456",
+                target="event",
+                event="echo",
+                data_type=WebPubSubDataType.TEXT,
+                data="hello world",
+            ),
+            {
+                "type": "invoke",
+                "invocationId": "test-456",
+                "target": "event",
+                "event": "echo",
+                "dataType": "text",
+                "data": "hello world",
+            },
+        ),
+        (
+            "cancelInvocation1",
+            CancelInvocationMessage(invocation_id="test-789"),
+            {
+                "type": "cancelInvocation",
+                "invocationId": "test-789",
             },
         ),
     ],
@@ -355,6 +402,36 @@ def test_write_message(testname, message, expect):
                 "message": "message",
             },
             lambda msg: msg.kind == "disconnected" and msg.message == "message",
+        ),
+        (
+            "invokeResponse1",
+            {
+                "type": "invokeResponse",
+                "invocationId": "test-123",
+                "success": True,
+                "dataType": "json",
+                "data": {"result": "ok"},
+            },
+            lambda msg: msg.kind == "invokeResponse"
+            and msg.invocation_id == "test-123"
+            and msg.success is True
+            and msg.data_type == "json"
+            and msg.data == {"result": "ok"},
+        ),
+        (
+            "invokeResponse2",
+            {
+                "type": "invokeResponse",
+                "invocationId": "test-456",
+                "success": False,
+                "error": {"name": "BadRequest", "message": "Invalid request"},
+            },
+            lambda msg: msg.kind == "invokeResponse"
+            and msg.invocation_id == "test-456"
+            and msg.success is False
+            and msg.error is not None
+            and msg.error.name == "BadRequest"
+            and msg.error.message == "Invalid request",
         ),
     ],
 )
