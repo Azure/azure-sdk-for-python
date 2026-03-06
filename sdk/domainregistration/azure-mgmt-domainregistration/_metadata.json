@@ -1,0 +1,10 @@
+{
+  "apiVersion": "2024-11-01",
+  "apiVersions": {
+    "Microsoft.DomainRegistration": "2024-11-01"
+  },
+  "commit": "e3083bc5d7f8d5a01e969ba71182339a64d8b21b",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/domainregistration/resource-manager/Microsoft.DomainRegistration/DomainRegistration",
+  "emitterVersion": "0.60.1"
+}
