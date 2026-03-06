@@ -1,0 +1,4 @@
+directory: specification/certificateregistration/resource-manager/Microsoft.CertificateRegistration/CertificateRegistration
+commit: e3083bc5d7f8d5a01e969ba71182339a64d8b21b
+repo: Azure/azure-rest-api-specs
+additionalDirectories: 
