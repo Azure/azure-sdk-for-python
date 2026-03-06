@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- Added `NULL_LABEL` constant for use with `SettingSelector` to represent configuration settings with no label assigned.
+
 ### Breaking Changes
 
 ### Bugs Fixed
