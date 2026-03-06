@@ -1309,6 +1309,26 @@ class RedTeam:
         client_id: Optional[str] = kwargs.get("client_id")
         http_timeout: Optional[int] = kwargs.get("_http_timeout")
 
+        # ── Early input validation ──
+        if target is None:
+            raise ValueError(
+                "target is required. Provide a callback function, AzureOpenAIModelConfiguration dict, "
+                "OpenAIModelConfiguration dict, or a PromptChatTarget instance."
+            )
+        if not callable(target) and not isinstance(target, dict):
+            try:
+                from pyrit.prompt_target import PromptChatTarget
+
+                if not isinstance(target, PromptChatTarget):
+                    raise ValueError(
+                        f"target must be a callable, a model configuration dict, or a PromptChatTarget. "
+                        f"Got {type(target).__name__}."
+                    )
+            except ImportError:
+                raise ValueError(
+                    f"target must be a callable or a model configuration dict. " f"Got {type(target).__name__}."
+                )
+
         with UserAgentSingleton().add_useragent_product(user_agent):
             # Initialize scan
             self._initialize_scan(scan_name, application_scenario)
