@@ -112,7 +112,19 @@ class ScenarioOrchestrator:
 
         # Run attack - PyRIT handles all execution
         self.logger.info(f"Executing attacks for {self.risk_category}...")
-        self._scenario_result = await self._scenario.run_async()
+        try:
+            self._scenario_result = await self._scenario.run_async()
+        except Exception as e:
+            self.logger.warning(
+                f"Error during attack execution for {self.risk_category}: {str(e)}. "
+                f"Partial results may still be available."
+            )
+            # Try to retrieve partial results from the scenario
+            try:
+                if self._scenario and hasattr(self._scenario, "_result"):
+                    self._scenario_result = self._scenario._result
+            except Exception:
+                pass
 
         self.logger.info(f"Attack execution complete for {self.risk_category}")
 
