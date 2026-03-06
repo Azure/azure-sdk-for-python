@@ -1,5 +1,11 @@
 # Release History
 
+## 7.15.0 (Unreleased)
+
+### Features Added
+
+- Added `ServiceBusReceivedMessage.from_bytes()` classmethod to construct a `ServiceBusReceivedMessage` from raw AMQP payload bytes without requiring the deprecated `uamqp` library. ([#43979](https://github.com/Azure/azure-sdk-for-python/issues/43979))
+
 ## 7.14.3 (2025-11-11)
 
 ### Bugs Fixed
