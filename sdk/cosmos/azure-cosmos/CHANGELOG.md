@@ -4,6 +4,7 @@
 
 #### Features Added
 * Added `get_response_headers()` and `get_last_response_headers()` methods to the `CosmosItemPaged` and `CosmosAsyncItemPaged` objects returned by `query_items()`, allowing access to response headers from query operations. See [PR 44593](https://github.com/Azure/azure-sdk-for-python/pull/44593)
+* Added InferenceRequestTimeout property for HttpTimeout Policy to Reranking API. See [45469](https://github.com/Azure/azure-sdk-for-python/pull/45469)
 
 #### Breaking Changes
 
