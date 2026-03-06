@@ -4,6 +4,9 @@ parameters:
   - name: VersionForReservation
     type: string
     default: '0.0.0'
+  - name: ApprovingEmail
+    type: string
+    default: ''
 
 extends:
   template: /eng/pipelines/templates/stages/1es-redirect.yml
@@ -66,7 +69,7 @@ extends:
                       Intent: 'PackageDistribution'
                       ContentType: 'PyPI'
                       FolderLocation: "$(PUBLISHDIRECTORY)"
-                      Owners: $(Build.RequestedForEmail)
-                      Approvers: $(Build.RequestedForEmail)
+                      Owners: ${{ coalesce(parameters.ApprovingEmail, variables['Build.RequestedForEmail']) }}
+                      Approvers: ${{ coalesce(parameters.ApprovingEmail, variables['Build.RequestedForEmail']) }}
                       ServiceEndpointUrl: 'https://api.esrp.microsoft.com'
                       MainPublisher: 'ESRPRELPACMANTEST'
