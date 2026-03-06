@@ -88,50 +88,16 @@
   - Added enum `ThreatStatus`
   - Added model `UpdateRecoveryPointRequest`
   - Added enum `VMWorkloadPolicyType`
-  - Model `ProtectedItemsOperations` added method `begin_create_or_update`
+  - Operation group `ProtectedItemsOperations` added method `begin_create_or_update`
 
 ### Breaking Changes
 
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
+  - Deleted or renamed enum value `HttpStatusCode.CONTINUE_ENUM`
   - Model `Resource` deleted or renamed its instance variable `location`
   - Model `Resource` deleted or renamed its instance variable `tags`
   - Model `Resource` deleted or renamed its instance variable `e_tag`
-  - Deleted or renamed model `BMSBackupEngineQueryObject`
-  - Deleted or renamed model `BMSBackupEnginesQueryObject`
-  - Deleted or renamed model `BMSBackupSummariesQueryObject`
-  - Deleted or renamed model `BMSContainerQueryObject`
-  - Deleted or renamed model `BMSContainersInquiryQueryObject`
-  - Deleted or renamed model `BMSPOQueryObject`
-  - Deleted or renamed model `BMSRPQueryObject`
-  - Deleted or renamed model `BMSRefreshContainersQueryObject`
-  - Deleted or renamed model `BMSWorkloadItemQueryObject`
-  - Deleted or renamed model `BackupEngineBaseResourceList`
-  - Deleted or renamed model `BackupManagementUsageList`
-  - Deleted or renamed model `ClientDiscoveryResponse`
-  - Deleted or renamed model `CloudErrorBody`
-  - Deleted or renamed model `ContainerType`
-  - Deleted or renamed model `GetProtectedItemQueryObject`
-  - Deleted or renamed model `HealthState`
-  - Deleted or renamed model `IntentItemType`
-  - Deleted or renamed model `JobOperationType`
-  - Deleted or renamed model `JobQueryObject`
-  - Deleted or renamed model `JobResourceList`
-  - Deleted or renamed model `JobStatus`
-  - Deleted or renamed model `NewErrorResponse`
-  - Deleted or renamed model `NewErrorResponseError`
-  - Deleted or renamed model `ProtectableContainerResourceList`
-  - Deleted or renamed model `ProtectedItemQueryObject`
-  - Deleted or renamed model `ProtectedItemResourceList`
-  - Deleted or renamed model `ProtectionContainerResourceList`
-  - Deleted or renamed model `ProtectionIntentQueryObject`
-  - Deleted or renamed model `ProtectionIntentResourceList`
-  - Deleted or renamed model `ProtectionPolicyQueryObject`
-  - Deleted or renamed model `ProtectionPolicyResourceList`
-  - Deleted or renamed model `RecoveryPointResourceList`
-  - Deleted or renamed model `ResourceGuardProxyBaseResourceList`
-  - Deleted or renamed model `RestorePointQueryType`
-  - Deleted or renamed model `Type`
-  - Deleted or renamed model `WorkloadItemResourceList`
-  - Deleted or renamed model `WorkloadProtectableItemResourceList`
   - Method `BackupEnginesOperations.get` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
   - Method `BackupEnginesOperations.list` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
   - Method `BackupJobsOperations.list` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
@@ -146,7 +112,10 @@
   - Method `ProtectionPoliciesOperations.create_or_update` changed its parameter `x_ms_authorization_auxiliary` from `positional_or_keyword` to `keyword_only`
   - Method `RestoresOperations.begin_trigger` changed its parameter `x_ms_authorization_auxiliary` from `positional_or_keyword` to `keyword_only`
   - Method `SecurityPINsOperations.get` changed its parameter `x_ms_authorization_auxiliary` from `positional_or_keyword` to `keyword_only`
-  - Method `SecurityPINsOperations.get` re-ordered its parameters from `['self', 'vault_name', 'resource_group_name', 'x_ms_authorization_auxiliary', 'parameters', 'kwargs']` to `['self', 'vault_name', 'resource_group_name', 'parameters', 'x_ms_authorization_auxiliary', 'kwargs']`
+
+### Other Changes
+
+  - Deleted model `BMSBackupEngineQueryObject`/`BMSBackupEnginesQueryObject`/`BMSBackupSummariesQueryObject`/`BMSContainerQueryObject`/`BMSContainersInquiryQueryObject`/`BMSPOQueryObject`/`BMSRPQueryObject`/`BMSRefreshContainersQueryObject`/`BMSWorkloadItemQueryObject`/`ClientDiscoveryResponse`/`CloudErrorBody`/`ContainerType`/`GetProtectedItemQueryObject`/`HealthState`/`IntentItemType`/`JobOperationType`/`JobQueryObject`/`JobStatus`/`NewErrorResponse`/`NewErrorResponseError`/`ProtectedItemQueryObject`/`ProtectionIntentQueryObject`/`ProtectionPolicyQueryObject`/`RestorePointQueryType`/`Type`/`BackupEngineBaseResourceList`/`BackupManagementUsageList`/`JobResourceList`/`ProtectableContainerResourceList`/`ProtectedItemResourceList`/`ProtectionContainerResourceList`/`ProtectionIntentResourceList`/`ProtectionPolicyResourceList`/`RecoveryPointResourceList`/`ResourceGuardProxyBaseResourceList`/`WorkloadItemResourceList`/`WorkloadProtectableItemResourceList` which actually were not used by SDK users
 
 ## 10.0.0 (2025-10-16)
 
