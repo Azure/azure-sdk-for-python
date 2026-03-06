@@ -3,8 +3,8 @@
   "apiVersions": {
     "Microsoft.RecoveryServices": "2026-01-01-preview"
   },
-  "commit": "93a4d321c297a0879ddf91d0c3dfd65b810343a6",
+  "commit": "6d86791ed38dc861a3d74175aa4e24b3c5d40f4e",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/recoveryservicesbackup/resource-manager/Microsoft.RecoveryServices/RecoveryServicesBackup",
-  "emitterVersion": "0.60.1"
+  "emitterVersion": "0.60.2"
 }

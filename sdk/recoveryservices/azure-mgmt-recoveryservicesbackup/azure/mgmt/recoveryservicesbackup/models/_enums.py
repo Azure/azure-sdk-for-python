@@ -289,8 +289,8 @@ class HealthStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class HttpStatusCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """HTTP Status Code of the operation."""
 
-    CONTINUEEnum = "Continue"
-    """CONTINUEEnum."""
+    CONTINUE_ENUM = "Continue"
+    """CONTINUE_ENUM."""
     SWITCHING_PROTOCOLS = "SwitchingProtocols"
     """SWITCHING_PROTOCOLS."""
     OK = "OK"
