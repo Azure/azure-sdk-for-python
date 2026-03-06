@@ -5,6 +5,47 @@
 ### Features Added
 
   - Model `NginxManagementClient` added parameter `cloud_setting` in method `__init__`
+  - Client `NginxManagementClient` added method `send_request`
+  - Client `NginxManagementClient` added operation group `waf_policy`
+  - Client `NginxManagementClient` added operation group `default_waf_policy`
+  - Model `NginxDeploymentApiKeyRequest` added property `system_data`
+  - Model `NginxDeploymentApiKeyResponse` added property `system_data`
+  - Model `NginxDeploymentScalingProperties` added property `auto_scale_settings`
+  - Model `WebApplicationFirewallStatus` added property `waf_release`
+  - Added enum `ActionType`
+  - Added model `NginxDeploymentDefaultWafPolicyListResponse`
+  - Added model `NginxDeploymentDefaultWafPolicyProperties`
+  - Added model `NginxDeploymentScalingPropertiesAutoScaleSettings`
+  - Added model `NginxDeploymentWafPolicy`
+  - Added model `NginxDeploymentWafPolicyApplyingStatus`
+  - Added enum `NginxDeploymentWafPolicyApplyingStatusCode`
+  - Added model `NginxDeploymentWafPolicyCompilingStatus`
+  - Added enum `NginxDeploymentWafPolicyCompilingStatusCode`
+  - Added model `NginxDeploymentWafPolicyMetadata`
+  - Added model `NginxDeploymentWafPolicyMetadataProperties`
+  - Added model `NginxDeploymentWafPolicyProperties`
+  - Added model `Operation`
+  - Added enum `Origin`
+  - Added model `ProxyResource`
+  - Added model `Resource`
+  - Added model `TrackedResource`
+  - Added model `DefaultWafPolicyOperations`
+  - Added model `WafPolicyOperations`
+
+### Breaking Changes
+
+  - Model `NginxDeploymentScalingProperties` deleted or renamed its instance variable `profiles`
+  - Deleted or renamed model `NginxCertificateListResponse`
+  - Deleted or renamed model `NginxConfigurationListResponse`
+  - Deleted or renamed model `NginxDeploymentApiKeyListResponse`
+  - Deleted or renamed model `NginxDeploymentListResponse`
+  - Deleted or renamed model `OperationResult`
+
+## 3.1.0b3 (2026-02-10)
+
+### Features Added
+
+  - Model `NginxManagementClient` added parameter `cloud_setting` in method `__init__`
   - Client `NginxManagementClient` added operation group `default_waf_policy`
   - Client `NginxManagementClient` added operation group `waf_policy`
   - Model `AnalysisCreate` added property `root_file`
