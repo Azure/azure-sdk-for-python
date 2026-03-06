@@ -132,3 +132,47 @@ Ask the user for clarification if repository path or configuration file is ambig
 ## SDK release
 
 For detailed workflow instructions, see [SDK Release](https://github.com/Azure/azure-sdk-for-python/blob/main/eng/common/instructions/copilot/sdk-release.instructions.md).
+
+---
+
+## AUTOMATED ISSUE HANDLING
+
+### AZURE-AI-ML LINTING AND TYPE CHECKING AUTOMATION
+
+**OVERVIEW:**
+The repository has automated handling for issues related to azure-ai-ml package linting and type checking (mypy, pylint, pyright).
+
+**AUTOMATED DETECTION:**
+- Issues mentioning "azure-ai-ml" AND ("mypy" OR "pylint" OR "pyright") are automatically detected
+- Auto-labeled with: `azure-ai-ml`, `Machine Learning`, `needs-copilot-action`, and tool-specific labels
+- Bot adds comment with fix instructions
+
+**FOR COPILOT:**
+When you see issues with the `needs-copilot-action` label:
+
+1. **Generate fix instructions:**
+   ```bash
+   python scripts/copilot_fix_trigger.py --issue-number <NUM> --tool <mypy|pylint|pyright>
+   ```
+
+2. **Follow the generated prompt** which includes:
+   - Package location
+   - Commands to run
+   - Fix guidelines
+   - Testing requirements
+   - Reference documentation
+
+3. **Create PR** linked to the issue with fixes
+
+**QUICK REFERENCE:**
+- Documentation: [#file:.github/workflows/README-AZURE-AI-ML-AUTOMATION.md](.github/workflows/README-AZURE-AI-ML-AUTOMATION.md)
+- Quick guide: [#file:.github/QUICKREF-AZURE-AI-ML-AUTOMATION.md](.github/QUICKREF-AZURE-AI-ML-AUTOMATION.md)
+- Configuration: [#file:.github/azure-ai-ml-automation.config.json](.github/azure-ai-ml-automation.config.json)
+
+**EXAMPLE COMMAND:**
+```bash
+# For issue #44424 with mypy issues:
+python scripts/copilot_fix_trigger.py --issue-number 44424 --tool mypy
+```
+
+This will generate detailed instructions for fixing the specific issue type.

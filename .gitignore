@@ -180,3 +180,6 @@ uv.lock
 
 # Sphinx generated documentation
 website/
+
+# Script cache
+scripts/__pycache__/
