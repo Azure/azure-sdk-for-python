@@ -1,0 +1,123 @@
+trigger: none
+pr: none
+
+schedules:
+  - cron: "0 8 * * *"
+    displayName: Daily Package Name Registration
+    branches:
+      include:
+        - main
+    always: true
+
+pool:
+  name: azsdk-pool
+  image: ubuntu-24.04
+  os: linux
+
+steps:
+  - checkout: self
+
+  - pwsh: |
+      # Step 1: Find azure-mgmt-* packages with version 1.0.0b1
+      Write-Host "=== Step 1: Scanning for azure-mgmt-* packages with version 1.0.0b1 ==="
+      $versionFiles = Get-ChildItem -Path "sdk/*/azure-mgmt-*" -Directory | ForEach-Object { Get-ChildItem -Path $_.FullName -Recurse -Filter "_version.py" }
+      $candidatePackages = @()
+
+      foreach ($file in $versionFiles) {
+          $content = Get-Content $file.FullName -Raw
+          if ($content -match 'VERSION\s*=\s*"1\.0\.0b1"') {
+              # Extract the azure-mgmt-* folder name from the path
+              $parts = $file.FullName -replace '\\', '/' -split '/'
+              $pkgName = $null
+              foreach ($part in $parts) {
+                  if ($part -like 'azure-mgmt-*') {
+                      $pkgName = $part
+                      break
+                  }
+              }
+              if ($pkgName -and $candidatePackages -notcontains $pkgName) {
+                  $candidatePackages += $pkgName
+                  Write-Host "  Found: $pkgName ($($file.FullName))"
+              }
+          }
+      }
+
+      Write-Host "`nTotal candidates with version 1.0.0b1: $($candidatePackages.Count)"
+
+      if ($candidatePackages.Count -eq 0) {
+          Write-Host "No packages to process. Exiting."
+          return
+      }
+
+      # Step 2: Check PyPI for each candidate package
+      Write-Host "`n=== Step 2: Checking PyPI for unregistered packages ==="
+      $unregisteredPackages = @()
+
+      foreach ($pkg in $candidatePackages) {
+          $pypiUrl = "https://pypi.org/pypi/$pkg/json"
+          try {
+              $response = Invoke-WebRequest -Uri $pypiUrl -Method Head -SkipHttpErrorCheck
+              if ($response.StatusCode -eq 404) {
+                  $unregisteredPackages += $pkg
+                  Write-Host "  NOT on PyPI: $pkg"
+              } else {
+                  Write-Host "  Already on PyPI: $pkg (skipping)"
+              }
+          } catch {
+              # Network error or other issue, treat as not found
+              $unregisteredPackages += $pkg
+              Write-Host "  PyPI check failed for $pkg (will attempt registration): $_"
+          }
+      }
+
+      Write-Host "`nPackages to register: $($unregisteredPackages.Count)"
+
+      if ($unregisteredPackages.Count -eq 0) {
+          Write-Host "All packages are already registered on PyPI. Exiting."
+          return
+      }
+
+      # Step 3: Trigger pipeline 8013 for each unregistered package
+      Write-Host "`n=== Step 3: Triggering name reservation pipeline ==="
+      $pipelineUrl = "https://dev.azure.com/azure-sdk/internal/_apis/pipelines/8013/runs?api-version=7.1"
+      $headers = @{
+          "Authorization" = "Bearer $(System.AccessToken)"
+          "Content-Type"  = "application/json"
+      }
+
+      $failures = @()
+      $successes = @()
+
+      foreach ($pkg in $unregisteredPackages) {
+          $body = @{
+              templateParameters = @{
+                  NameForReservation = $pkg
+              }
+          } | ConvertTo-Json -Depth 5
+
+          Write-Host "  Triggering pipeline for: $pkg"
+          try {
+              $result = Invoke-RestMethod -Uri $pipelineUrl -Method Post -Headers $headers -Body $body
+              $successes += $pkg
+              Write-Host "    Success: Run ID $($result.id)"
+          } catch {
+              $failures += @{ Package = $pkg; Error = $_.Exception.Message }
+              Write-Host "    FAILED: $($_.Exception.Message)"
+          }
+      }
+
+      # Summary
+      Write-Host "`n=== Summary ==="
+      Write-Host "Successfully triggered: $($successes.Count)"
+      Write-Host "Failed: $($failures.Count)"
+
+      if ($failures.Count -gt 0) {
+          Write-Host "`nFailed packages:"
+          foreach ($f in $failures) {
+              Write-Host "  - $($f.Package): $($f.Error)"
+          }
+          Write-Error "Some pipeline triggers failed. See details above."
+      }
+    displayName: Register unregistered azure-mgmt-* package names
+    env:
+      SYSTEM_ACCESSTOKEN: $(System.AccessToken)
