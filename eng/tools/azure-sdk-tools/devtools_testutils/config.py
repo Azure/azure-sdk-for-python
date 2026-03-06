@@ -12,8 +12,11 @@ load_dotenv(find_dotenv())
 
 
 ENV_LIVE_TEST = "AZURE_TEST_RUN_LIVE"
-PROXY_URL = os.getenv("PROXY_URL", "http://localhost:5000").rstrip("/")
 TEST_SETTING_FILENAME = "testsettings_local.cfg"
+
+
+def PROXY_URL():
+    return os.getenv("PROXY_URL", "http://localhost:5000").rstrip("/")
 
 
 class TestConfig(object):  # pylint: disable=too-few-public-methods

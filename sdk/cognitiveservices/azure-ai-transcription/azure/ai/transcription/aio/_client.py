@@ -27,7 +27,7 @@ class TranscriptionClient(_TranscriptionClientOperationsMixin):
     """TranscriptionClient.
 
     :param endpoint: Supported Cognitive Services endpoints (protocol and hostname, for example:
-     `https://westus.api.cognitive.microsoft.com <https://westus.api.cognitive.microsoft.com>`_.
+     `https://westus.api.cognitive.microsoft.com <https://westus.api.cognitive.microsoft.com>`_).
      Required.
     :type endpoint: str
     :param credential: Credential used to authenticate requests to the service. Is either a key

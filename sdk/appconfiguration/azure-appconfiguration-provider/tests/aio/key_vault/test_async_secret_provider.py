@@ -3,18 +3,33 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import functools
 import unittest
 from unittest.mock import Mock, patch, AsyncMock
-from azure.appconfiguration import SecretReferenceConfigurationSetting
-from azure.appconfiguration.provider.aio._key_vault._async_secret_provider import SecretProvider
-from azure.keyvault.secrets.aio import SecretClient
+from devtools_testutils import EnvironmentVariableLoader
 from devtools_testutils.aio import recorded_by_proxy_async
-from async_preparers import app_config_decorator_async
 from asynctestcase import AppConfigTestCase
+from test_constants import APPCONFIGURATION_ENDPOINT_STRING, APPCONFIGURATION_KEYVAULT_SECRET_URL
+from azure.appconfiguration import SecretReferenceConfigurationSetting
+from azure.keyvault.secrets.aio import SecretClient
+from azure.appconfiguration.provider.aio._key_vault._async_secret_provider import SecretProvider
 
 TEST_SECRET_ID = "https://myvault.vault.azure.net/secrets/my_secret"
 
 TEST_SECRET_ID_VERSION = TEST_SECRET_ID + "/12345"
+
+AppConfigProviderPreparer = functools.partial(
+    EnvironmentVariableLoader,
+    "appconfiguration",
+    appconfiguration_endpoint_string=APPCONFIGURATION_ENDPOINT_STRING,
+    appconfiguration_keyvault_secret_url=APPCONFIGURATION_KEYVAULT_SECRET_URL,
+)
+
+SecretPreparer = functools.partial(
+    EnvironmentVariableLoader,
+    "appconfiguration",
+    appconfiguration_keyvault_secret_url=APPCONFIGURATION_KEYVAULT_SECRET_URL,
+)
 
 
 class TestSecretProviderAsync(AppConfigTestCase, unittest.IsolatedAsyncioTestCase):
@@ -254,7 +269,7 @@ class TestSecretProviderAsync(AppConfigTestCase, unittest.IsolatedAsyncioTestCas
         config = SecretReferenceConfigurationSetting(key="test-key", secret_id=TEST_SECRET_ID_VERSION)
 
         # Create a mock async secret resolver
-        async def async_resolver(secret_id):
+        async def async_resolver(_):
             return "async-resolved-secret-value"
 
         # Create a SecretProvider with the mock resolver
@@ -434,11 +449,9 @@ class TestSecretProviderAsync(AppConfigTestCase, unittest.IsolatedAsyncioTestCas
                     # Verify the result
                     self.assertEqual(result, "secret-value")
 
-    @app_config_decorator_async
+    @SecretPreparer()
     @recorded_by_proxy_async
-    async def test_integration_with_keyvault(
-        self, appconfiguration_endpoint_string, appconfiguration_keyvault_secret_url
-    ):
+    async def test_integration_with_keyvault(self, appconfiguration_keyvault_secret_url):
         """Test integration with Key Vault."""
         if not appconfiguration_keyvault_secret_url:
             self.skipTest("No Key Vault secret URL provided")

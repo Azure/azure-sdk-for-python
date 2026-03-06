@@ -14,16 +14,23 @@ if TYPE_CHECKING:
 
 from ._operations import Operations  # type: ignore
 from ._managed_clusters_operations import ManagedClustersOperations  # type: ignore
+from ._container_service_operations import ContainerServiceOperations  # type: ignore
 from ._maintenance_configurations_operations import MaintenanceConfigurationsOperations  # type: ignore
 from ._managed_namespaces_operations import ManagedNamespacesOperations  # type: ignore
 from ._agent_pools_operations import AgentPoolsOperations  # type: ignore
+from ._machines_operations import MachinesOperations  # type: ignore
 from ._private_endpoint_connections_operations import PrivateEndpointConnectionsOperations  # type: ignore
 from ._private_link_resources_operations import PrivateLinkResourcesOperations  # type: ignore
 from ._resolve_private_link_service_id_operations import ResolvePrivateLinkServiceIdOperations  # type: ignore
+from ._operation_status_result_operations import OperationStatusResultOperations  # type: ignore
 from ._snapshots_operations import SnapshotsOperations  # type: ignore
-from ._trusted_access_role_bindings_operations import TrustedAccessRoleBindingsOperations  # type: ignore
+from ._managed_cluster_snapshots_operations import ManagedClusterSnapshotsOperations  # type: ignore
 from ._trusted_access_roles_operations import TrustedAccessRolesOperations  # type: ignore
-from ._machines_operations import MachinesOperations  # type: ignore
+from ._trusted_access_role_bindings_operations import TrustedAccessRoleBindingsOperations  # type: ignore
+from ._load_balancers_operations import LoadBalancersOperations  # type: ignore
+from ._identity_bindings_operations import IdentityBindingsOperations  # type: ignore
+from ._jwt_authenticators_operations import JWTAuthenticatorsOperations  # type: ignore
+from ._mesh_memberships_operations import MeshMembershipsOperations  # type: ignore
 
 from ._patch import __all__ as _patch_all
 from ._patch import *
@@ -32,16 +39,23 @@ from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     "Operations",
     "ManagedClustersOperations",
+    "ContainerServiceOperations",
     "MaintenanceConfigurationsOperations",
     "ManagedNamespacesOperations",
     "AgentPoolsOperations",
+    "MachinesOperations",
     "PrivateEndpointConnectionsOperations",
     "PrivateLinkResourcesOperations",
     "ResolvePrivateLinkServiceIdOperations",
+    "OperationStatusResultOperations",
     "SnapshotsOperations",
-    "TrustedAccessRoleBindingsOperations",
+    "ManagedClusterSnapshotsOperations",
     "TrustedAccessRolesOperations",
-    "MachinesOperations",
+    "TrustedAccessRoleBindingsOperations",
+    "LoadBalancersOperations",
+    "IdentityBindingsOperations",
+    "JWTAuthenticatorsOperations",
+    "MeshMembershipsOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 _patch_sdk()

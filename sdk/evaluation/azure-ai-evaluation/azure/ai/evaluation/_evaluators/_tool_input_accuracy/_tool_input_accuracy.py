@@ -8,13 +8,14 @@ import json
 from typing import Dict, List, Union, TypeVar, Optional, cast
 from typing_extensions import override
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
+from azure.ai.evaluation._evaluators._common._validators import ToolDefinitionsValidator, ValidatorInterface
 from azure.ai.evaluation._exceptions import (
     ErrorBlame,
     ErrorCategory,
     ErrorTarget,
     EvaluationException,
 )
-from ..._common.utils import reformat_conversation_history, _get_agent_response
+from ..._common.utils import reformat_conversation_history, reformat_agent_response
 from azure.ai.evaluation._common._experimental import experimental
 
 logger = logging.getLogger(__name__)
@@ -25,11 +26,11 @@ class _ToolInputAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     """The Tool Input Accuracy evaluator performs a strict binary evaluation (PASS/FAIL) of parameters
     passed to tool calls. It ensures that ALL parameters meet ALL criteria:
 
-        - Parameter grounding: All parameters must be derived from conversation history/query
-        - Type compliance: All parameters must match exact types specified in tool definitions
-        - Format compliance: All parameters must follow exact format and structure requirements
-        - Completeness: All required parameters must be provided
-        - No unexpected parameters: Only defined parameters are allowed
+        - Parameter grounding: All parameters must be derived from conversation history/query.
+        - Type compliance: All parameters must match exact types specified in tool definitions.
+        - Format compliance: All parameters must follow exact format and structure requirements.
+        - Completeness: All required parameters must be provided.
+        - No unexpected parameters: Only defined parameters are allowed.
 
     The evaluator uses strict binary evaluation:
         - 1: Only when ALL criteria are satisfied perfectly for ALL parameters
@@ -75,6 +76,8 @@ class _ToolInputAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     _NO_TOOL_DEFINITIONS_MESSAGE = "Tool definitions must be provided."
     _TOOL_DEFINITIONS_MISSING_MESSAGE = "Tool definitions for all tool calls must be provided."
 
+    _validator: ValidatorInterface
+
     def __init__(
         self,
         model_config,
@@ -84,6 +87,14 @@ class _ToolInputAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     ):
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
+
+        # Initialize input validator
+        self._validator = ToolDefinitionsValidator(
+            error_target=ErrorTarget.TOOL_INPUT_ACCURACY_EVALUATOR,
+            optional_tool_definitions=False,
+            check_for_unsupported_tools=True,
+        )
+
         super().__init__(
             model_config=model_config,
             prompty_file=prompty_path,
@@ -135,8 +146,8 @@ class _ToolInputAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         if len(needed_tool_definitions) == 0:
             return {"error_message": self._NO_TOOL_DEFINITIONS_MESSAGE}
 
-        # Get agent response with tool calls and results using _get_agent_response
-        agent_response_with_tools = _get_agent_response(response, include_tool_messages=True)
+        # Reformat agent response with tool calls and results using reformat_agent_response
+        agent_response_with_tools = reformat_agent_response(response, include_tool_messages=True)
 
         return {
             "query": query,
@@ -153,15 +164,44 @@ class _ToolInputAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         :return: A dictionary containing the result of the evaluation.
         :rtype: Dict[str, Union[str, float]]
         """
-        # Format conversation history for cleaner evaluation
-        if "query" in eval_input:
-            eval_input["query"] = reformat_conversation_history(
-                eval_input["query"], logger, include_system_messages=True, include_tool_messages=True
+        # Import helper functions from base class module
+        from azure.ai.evaluation._evaluators._common._base_prompty_eval import (
+            _is_intermediate_response,
+            _preprocess_messages,
+        )
+
+        # Check for intermediate response
+        if _is_intermediate_response(eval_input.get("response")):
+            return self._not_applicable_result(
+                "Intermediate response. Please provide the agent's final response for evaluation.",
+                1,
+                has_details=True,
             )
+
+        # Preprocess messages if they are lists
+        if isinstance(eval_input.get("response"), list):
+            eval_input["response"] = _preprocess_messages(eval_input["response"])
+
+        if eval_input.get("query") is None:
+            raise EvaluationException(
+                message=("Query is a required input to " "the Tool Input Accuracy evaluator."),
+                internal_message=("Query is a required input " "to the Tool Input Accuracy evaluator."),
+                blame=ErrorBlame.USER_ERROR,
+                category=ErrorCategory.INVALID_VALUE,
+                target=ErrorTarget.TOOL_INPUT_ACCURACY_EVALUATOR,
+            )
+
+        if isinstance(eval_input.get("query"), list):
+            eval_input["query"] = _preprocess_messages(eval_input["query"])
+
+        # Format conversation history for cleaner evaluation
+        eval_input["query"] = reformat_conversation_history(
+            eval_input["query"], logger, include_system_messages=True, include_tool_messages=True
+        )
 
         # Call the LLM to evaluate
         prompty_output_dict = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
-        llm_output = prompty_output_dict.get("llm_output", {})
+        llm_output = prompty_output_dict.get("llm_output", prompty_output_dict)
 
         if isinstance(llm_output, dict):
             result = llm_output.get("result", None)
@@ -200,10 +240,10 @@ class _ToolInputAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
         else:
             raise EvaluationException(
-                message="Tool input accuracy evaluator returned invalid output.",
+                message="Evaluator returned invalid output.",
                 blame=ErrorBlame.SYSTEM_ERROR,
                 category=ErrorCategory.FAILED_EXECUTION,
-                target=ErrorTarget.TOOL_INPUT_ACCURACY_EVALUATOR,
+                target=ErrorTarget.EVALUATE,
             )
 
     async def _real_call(self, **kwargs):
@@ -214,12 +254,15 @@ class _ToolInputAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         :return: The evaluation result.
         :rtype: Union[DoEvalResult[T_EvalValue], AggregateResult[T_EvalValue]]
         """
+        # Validate input before processing
+        self._validator.validate_eval_input(kwargs)
+
         # Convert inputs into list of evaluable inputs.
         eval_input = self._convert_kwargs_to_eval_input(**kwargs)
         if isinstance(eval_input, dict) and eval_input.get("error_message"):
             # If there is an error message, return not applicable result
             error_message = eval_input.get("error_message", "Unknown error")
-            return self._not_applicable_result(error_message, 1)
+            return self._not_applicable_result(error_message, 1, has_details=True)
         # Do the evaluation
         result = await self._do_eval(eval_input)
         # Return the result

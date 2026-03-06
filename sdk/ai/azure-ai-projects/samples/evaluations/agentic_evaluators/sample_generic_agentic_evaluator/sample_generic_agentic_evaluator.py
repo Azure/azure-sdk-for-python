@@ -15,7 +15,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b1" python-dotenv
+    pip install "azure-ai-projects>=2.0.0" python-dotenv
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
@@ -28,7 +28,6 @@ import os
 from agent_utils import run_evaluator
 from schema_mappings import evaluator_to_data_source_config, evaluator_to_data_mapping
 from openai.types.evals.create_eval_jsonl_run_data_source_param import SourceFileContentContent
-
 
 load_dotenv()
 

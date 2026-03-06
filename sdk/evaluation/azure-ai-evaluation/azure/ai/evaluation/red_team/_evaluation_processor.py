@@ -25,8 +25,11 @@ from tenacity import retry
 
 # Azure AI Evaluation imports
 from azure.ai.evaluation._constants import EVALUATION_PASS_FAIL_MAPPING
-from azure.ai.evaluation._common.rai_service import evaluate_with_rai_service, evaluate_with_rai_service_sync
-from azure.ai.evaluation._common.utils import is_onedp_project, get_default_threshold_for_evaluator
+from azure.ai.evaluation._common.rai_service import evaluate_with_rai_service_sync
+from azure.ai.evaluation._common.utils import (
+    get_default_threshold_for_evaluator,
+    is_onedp_project,
+)
 from azure.ai.evaluation._evaluate._utils import _write_output
 
 # Local imports
@@ -55,6 +58,7 @@ class EvaluationProcessor:
         scan_session_id=None,
         scan_output_dir=None,
         taxonomy_risk_categories=None,
+        _use_legacy_endpoint=False,
     ):
         """Initialize the evaluation processor.
 
@@ -66,6 +70,7 @@ class EvaluationProcessor:
         :param scan_session_id: Session ID for the current scan
         :param scan_output_dir: Directory for scan outputs
         :param taxonomy_risk_categories: Dictionary mapping risk categories to taxonomy values
+        :param _use_legacy_endpoint: Whether to use the legacy evaluation endpoint. Defaults to False.
         """
         self.logger = logger
         self.azure_ai_project = azure_ai_project
@@ -75,6 +80,7 @@ class EvaluationProcessor:
         self.scan_session_id = scan_session_id
         self.scan_output_dir = scan_output_dir
         self.taxonomy_risk_categories = taxonomy_risk_categories or {}
+        self._use_legacy_endpoint = _use_legacy_endpoint
 
     async def evaluate_conversation(
         self,
@@ -109,7 +115,7 @@ class EvaluationProcessor:
         # Extract all assistant messages for evaluation
         assistant_messages = [msg["content"] for msg in messages if msg.get("role") == "assistant"]
 
-        context = [msg["context"] for msg in messages if msg.get("role") == "user"]
+        context = [msg["context"] for msg in messages if msg.get("role") == "user" and "context" in msg]
         tool_calls = [
             msg.get("tool_calls", []) for msg in messages if msg.get("role") == "assistant" and msg.get("tool_calls")
         ]
@@ -156,24 +162,16 @@ class EvaluationProcessor:
                 @retry(**self.retry_config["network_retry"])
                 async def evaluate_with_rai_service_with_retry():
                     try:
-                        if use_sync_endpoint:
-                            return await evaluate_with_rai_service_sync(
-                                data=query_response,
-                                metric_name=effective_metric_name,
-                                project_scope=self.azure_ai_project,
-                                credential=self.credential,
-                                annotation_task=annotation_task,
-                                scan_session_id=self.scan_session_id,
-                            )
-                        else:
-                            return await evaluate_with_rai_service(
-                                data=query_response,
-                                metric_name=metric_name,
-                                project_scope=self.azure_ai_project,
-                                credential=self.credential,
-                                annotation_task=annotation_task,
-                                scan_session_id=self.scan_session_id,
-                            )
+                        # Always use sync_evals endpoint for all projects
+                        return await evaluate_with_rai_service_sync(
+                            data=query_response,
+                            metric_name=metric_name,
+                            project_scope=self.azure_ai_project,
+                            credential=self.credential,
+                            annotation_task=annotation_task,
+                            scan_session_id=self.scan_session_id,
+                            use_legacy_endpoint=self._use_legacy_endpoint,
+                        )
                     except (
                         httpx.ConnectTimeout,
                         httpx.ReadTimeout,
@@ -233,7 +231,9 @@ class EvaluationProcessor:
                         severity_label = eval_result.get("label")
                         if severity_label is None:
                             # Calculate severity from score
-                            from azure.ai.evaluation._common.utils import get_harm_severity_level
+                            from azure.ai.evaluation._common.utils import (
+                                get_harm_severity_level,
+                            )
 
                             severity_label = get_harm_severity_level(score)
 
@@ -293,7 +293,8 @@ class EvaluationProcessor:
                         score = evaluate_output.get(f"{risk_cat_value}_score", 0)
                         # Get pattern-specific default threshold for this evaluator
                         default_threshold = evaluate_output.get(
-                            f"{risk_cat_value}_threshold", get_default_threshold_for_evaluator(risk_cat_value)
+                            f"{risk_cat_value}_threshold",
+                            get_default_threshold_for_evaluator(risk_cat_value),
                         )
 
                         # Content safety evaluators use "lower is better" scoring by default
@@ -407,6 +408,12 @@ class EvaluationProcessor:
         try:
             # Get the appropriate metric for this risk category
             metric_name = get_metric_from_risk_category(risk_category)
+
+            # For hate_unfairness, always use "hate_unfairness" metric name for Sync API
+            if risk_category == RiskCategory.HateUnfairness:
+                metric_name = "hate_unfairness"
+                self.logger.debug(f"Using metric 'hate_unfairness' for Sync API")
+
             self.logger.debug(f"Using metric '{metric_name}' for risk category '{risk_category.value}'")
 
             # Load all conversations from the data file

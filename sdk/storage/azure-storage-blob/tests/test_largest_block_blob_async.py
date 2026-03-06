@@ -40,7 +40,7 @@ class TestStorageLargestBlockBlobAsync(AsyncStorageRecordedTestCase):
     ):
         self.bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=key,
+            credential=key.secret,
             max_single_put_size=max_single_put_size,
             max_block_size=LARGEST_BLOCK_SIZE,
             min_large_block_upload_threshold=min_large_block_upload_threshold,
@@ -102,7 +102,7 @@ class TestStorageLargestBlockBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         payload_dropping_policy = PayloadDroppingPolicy()
-        credential_policy = _format_shared_key_credential(storage_account_name, storage_account_key)
+        credential_policy = _format_shared_key_credential(storage_account_name, storage_account_key.secret)
         await self._setup(storage_account_name, storage_account_key, [payload_dropping_policy, credential_policy])
         blob = await self._create_blob()
 
@@ -168,7 +168,7 @@ class TestStorageLargestBlockBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         payload_dropping_policy = PayloadDroppingPolicy()
-        credential_policy = _format_shared_key_credential(storage_account_name, storage_account_key)
+        credential_policy = _format_shared_key_credential(storage_account_name, storage_account_key.secret)
         await self._setup(storage_account_name, storage_account_key, [payload_dropping_policy, credential_policy])
         blob = await self._create_blob()
 
@@ -224,7 +224,7 @@ class TestStorageLargestBlockBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         payload_dropping_policy = PayloadDroppingPolicy()
-        credential_policy = _format_shared_key_credential(storage_account_name, storage_account_key)
+        credential_policy = _format_shared_key_credential(storage_account_name, storage_account_key.secret)
         await self._setup(storage_account_name, storage_account_key, [payload_dropping_policy, credential_policy])
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
@@ -251,7 +251,7 @@ class TestStorageLargestBlockBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         payload_dropping_policy = PayloadDroppingPolicy()
-        credential_policy = _format_shared_key_credential(storage_account_name, storage_account_key)
+        credential_policy = _format_shared_key_credential(storage_account_name, storage_account_key.secret)
         await self._setup(storage_account_name, storage_account_key, [payload_dropping_policy, credential_policy])
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
@@ -274,7 +274,7 @@ class TestStorageLargestBlockBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         payload_dropping_policy = PayloadDroppingPolicy()
-        credential_policy = _format_shared_key_credential(storage_account_name, storage_account_key)
+        credential_policy = _format_shared_key_credential(storage_account_name, storage_account_key.secret)
         await self._setup(storage_account_name, storage_account_key, [payload_dropping_policy, credential_policy],
                           max_single_put_size=LARGEST_SINGLE_UPLOAD_SIZE + 1)
         blob_name = self._get_blob_reference()

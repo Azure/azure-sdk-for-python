@@ -38,13 +38,11 @@ from openai.types.eval_create_params import DataSourceConfigCustom
 from dotenv import load_dotenv
 from azure.identity import get_bearer_token_provider
 
-
 load_dotenv()
 
 client = OpenAI(
     api_key=get_bearer_token_provider(DefaultAzureCredential(), "https://ai.azure.com/.default"),
-    base_url=os.environ["AZURE_AI_PROJECT_ENDPOINT"].rstrip("/") + "/openai",
-    default_query={"api-version": "2025-11-15-preview"},
+    base_url=os.environ["AZURE_AI_PROJECT_ENDPOINT"].rstrip("/") + "/openai/v1",
 )
 
 model_deployment_name = os.environ.get("AZURE_AI_MODEL_DEPLOYMENT_NAME", "")  # Sample : gpt-4o-mini

@@ -1,6 +1,7 @@
 # pylint: disable=line-too-long,useless-suppression
 import functools
-import pytest
+from typing import cast, List
+import re
 
 from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader, recorded_by_proxy
 from azure.ai.language.conversations import ConversationAnalysisClient, AnalyzeConversationLROPoller
@@ -9,6 +10,7 @@ from azure.ai.language.conversations.models import (
     # request models
     AnalyzeConversationOperationInput,
     MultiLanguageConversationInput,
+    NamedEntity,
     TextConversation,
     TextConversationItem,
     PiiOperationAction,
@@ -18,16 +20,10 @@ from azure.ai.language.conversations.models import (
     ConversationPiiOperationResult,
     ConversationalPiiResult,
     ConversationPiiItemResult,
-    NamedEntity,
-    InputWarning,
     ConversationError,
     AnalyzeConversationOperationAction,
-    CharacterMaskPolicyType,
-    RedactionCharacter,
     EntityMaskTypePolicyType,
 )
-from typing import cast, List
-import re
 
 from azure.core.credentials import AzureKeyCredential
 
@@ -114,7 +110,7 @@ class TestConversationsCase(TestConversations):
                 print(f"  Code: {err.code} - {err.message}")
 
         # ---- Iterate results and validate redaction --------------------------
-        for actions_page in paged_actions:
+        for actions_page in paged_actions: # pylint: disable=too-many-nested-blocks
             for action_result in actions_page.task_results or []:
                 ar = cast(AnalyzeConversationOperationResult, action_result)
                 print(f"\nAction Name: {getattr(ar, 'name', None)}")
@@ -128,7 +124,6 @@ class TestConversationsCase(TestConversations):
                             item = cast(ConversationPiiItemResult, item)
                             redacted_text = (getattr(item.redacted_content, "text", None) or "").strip()
                             print(f"Redacted Text: {redacted_text}")
-
                             # Only verify when there are detected entities in the original item
                             if item.entities and redacted_text:
                                 for entity in item.entities:

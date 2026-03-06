@@ -6,6 +6,7 @@
 # cSpell:disable
 
 import os
+import pytest
 from test_base import TestBase, servicePreparer
 from devtools_testutils import recorded_by_proxy, RecordedTransport
 from azure.ai.projects.models import PromptAgentDefinition, FileSearchTool
@@ -41,7 +42,7 @@ class TestAgentFileSearchStream(TestBase):
         DELETE /vector_stores/{id}                           openai_client.vector_stores.delete()
         """
 
-        model = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+        model = kwargs.get("azure_ai_model_deployment_name")
 
         with (
             self.create_client(operation_group="agents", **kwargs) as project_client,
@@ -90,7 +91,7 @@ class TestAgentFileSearchStream(TestBase):
             stream_response = openai_client.responses.create(
                 stream=True,
                 input="What products are mentioned in the document? Please provide a brief summary.",
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             )
 
             # Collect streamed response

@@ -1,11 +1,117 @@
 # Release History
 
-## 2.0.0b3 (Unreleased)
+## 2.0.0 (2026-03-06)
+
+First stable release of the client library that uses the Generally Available (GA) version "v1" of the Foundry REST APIs.
+
+### Features Added
+
+* To enable preview (beta) operations, a new optional boolean input argument named `allow_preview` was added
+to the constructor of `AIProjectClient`. Caller must set it to True to opt-in to preview features.
+This includes creating an Hosted Agent or Workflow Agent. Methods on the `.beta` sub-client (for example
+`.beta.memory_stores.create()`) do not require setting `allow_preview=True` since it's implied by the sub-client name.
+When preview features are enabled, the client libraries sends the HTTP request header `Foundry-Features`
+with the appropriate value in all relevant calls to the service.
+
+### Breaking Changes
+
+* Input argument `foundry_features` was removed from all methods that supported it. Use the new `allow_preview`
+instead on client constructor (see above).
+* Class `TextResponseFormatConfiguration` renamed to `TextResponseFormat`.
+* Class `TextResponseFormatConfigurationResponseFormatText` renamed to `TextResponseFormatTest`.
+* Class `TextResponseFormatConfigurationResponseFormatJsonObject` renamed to `TextResponseFormatJsonObject`.
+* Class `CodeInterpreterContainerAuto` was renamed to `AutoCodeInterpreterToolParam`,
+  and has a new optional property `network_policy` of type `ContainerNetworkPolicyParam`.
+* class `ImageGenActionEnum` was renamed to `ImageGenAction`.
+* Rename `ToolChoiceParamType.WEB_SEARCH_PREVIEW2025_03_11` to `ToolChoiceParamType.WEB_SEARCH_PREVIEW_2025_03_11`.
+* Rename `RankerVersionType.DEFAULT2024_11_15` to `RankerVersionType.DEFAULT_2024_11_15`.
+* Rename method `.beta.evaluators.list_latest_versions()` to `.beta.evaluators.list()`.
+* Rename property `id` on class `Insight` to `insight_id`.
+* Rename property `id` on class `Schedule` to `schedule_id`.
+* Rename input argument `id` to `insight_id` in `.beta.insights.get()` method.
+* Rename input argument `id` to `schedule_id` in `.beta.schedules` methods.
+* Updated datetime-typed fields (`start_time`, `end_time`, `trigger_at`, `trigger_time`, `created_at`, `modified_at`) 
+across `CronTrigger`, `RecurrenceTrigger`, `OneTimeTrigger`, `ScheduleRun`, and `EvaluatorVersion` classes from `str`
+to `datetime.datetime` with format="rfc3339".
+
+### Other Changes
+
+* The input `items` argument in the methods `.beta.memory_stores.begin_update_memories()` and `.beta.memory_stores.search_memories`
+was change from type `Optional[List[dict[str, Any]]]` to `Optional[Union[str, ResponseInputParam]]`. The class `ResponseInputParam`
+can be imported using `from openai.types.responses import EasyInputMessageParam`. This is not a breaking change, since the caller
+can still pass in `List[dict[str, Any]`.
+
+## 2.0.0b4 (2026-02-24)
+
+This is the first release that uses the Generally Available (GA) version "v1" of the Foundry REST APIs.
+
+### Features Added
+
+* Tracing: included agent ID in response generation traces when available.
+* Tracing: Added support for opt-in trace context propagation.
+
+### Breaking changes
+
+* A Responses call on OpenAPI client (`openai_client.responses.create()`) that uses an Agent reference, now needs to specify
+`extra_body={"agent_reference": {"name": agent_name, "type": "agent_reference"}}` instead of `extra_body={"agent": {"name": agent_name, "type": "agent_reference"}}`.
+* Agent methods `.agents.create()`, `.agents.create_from_manifest()`, `.agents.update()` and `.agents.update_from_manifest()` were removed. Use
+the remaining methods `.agents.create_version()` and `.agents.create_version_from_manifest()` instead.
+* To align with OpenAI naming conventions, use "Tool" suffix for class names describing Azure tools that are generally available (stable release):
+  * Rename class `AzureAISearchAgentTool` to `AzureAISearchTool`.
+  * Rename class `AzureFunctionAgentTool` to `AzureFunctionTool`.
+  * Rename class `BingGroundingAgentTool` to `BingGroundingTool`.
+  * Rename class `OpenApiAgentTool` to `OpenApiTool`.
+* To align with OpenAI naming conventions, use "PreviewTool" suffix for class names describing Azure tools in preview:
+  * Rename class `A2ATool` to `A2APreviewTool`.
+  * Rename class `BingCustomSearchAgentTool` to `BingCustomSearchPreviewTool`.
+  * Rename class `BrowserAutomationAgentTool` to `BrowserAutomationPreviewTool`.
+  * Rename class `MemorySearchTool` to `MemorySearchPreviewTool`.
+  * Rename class `MicrosoftFabricAgentTool` to `MicrosoftFabricPreviewTool`.
+  * Rename class `SharepointAgentTool` to `SharepointPreviewTool`.
+* Other class renames:
+  * Rename class `PromptAgentDefinitionText` to `PromptAgentDefinitionTextOptions`
+  * Rename class `EvaluationComparisonRequest` to `InsightRequest`
+* To use Workflow Agents, which are still in preview, you now need to set an additional input
+argument `foundry_features=FoundryFeaturesOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW` when calling
+`.agents.create_version()`.
+* To use Hosted Agents, which are still in preview, you now need to set an additional input
+argument `foundry_features=FoundryFeaturesOptInKeys.HOSTED_AGENTS_V1_PREVIEW` when calling
+`.agents.create_version()`.
+* To use `.evaluation_rules.create_or_update()` with `HumanEvaluationPreviewRuleAction`, you now
+need to set an additional input argument `foundry_features=FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW`.
+* Operation sets that are still in preview now have the ".beta" subclient in their call path. So for example
+`project_client.memory_stores.create()` has changed to `project_client.beta.memory_stores.create()`.
+Similarly for the operation sets: `evaluators`, `insights`, `evaluation_taxonomies`, `schedules` and `red_teams`.
+* The method `begin_update_memories()` in Memory Stores operation now accept optional `items` of type `List[dict[str, Any]]`
+instead of `List[ItemParam]`. Similarly for `items` in method `search_memories()`. As a result around 100 classes
+that are derived from `ItemParam` were removed as they are no longer used by the client library.
+* Tracing instrumentation, is an experimental preview feature, now requires explicitly opt in by setting the environment variable:
+`AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING=true`
+* Tracing: workflow actions in conversation item listings are now emitted as "gen_ai.conversation.item" events
+(with role="workflow") instead of "gen_ai.workflow.action" events in the list_conversation_items span.
+* Tracing: response generation span names changed from "responses {model_name}" to "chat {model_name}" for model
+calls and from "responses {agent_name}" to "invoke_agent {agent_name}" for agent calls.
+* Tracing: response generation operation names changed from "responses" to "chat" for model calls and from "responses"
+to "invoke_agent" for agent calls.
+* Tracing: response generation uses gen_ai.input.messages and gen_ai.output.messages attributes directly under the
+span instead of events.
+* Tracing: agent creation uses gen_ai.system_instructions attribute directly under the span instead of an event.
+Note that the attribute name is gen_ai.system_instructions not gen_ai.system.instructions.
+* Tracing: "gen_ai.provider.name" attribute value changed to "microsoft.foundry".
+* Tracing: the format of the function tool call related traces in input and output messages changed to
+{"type": "tool_call", "id": "...", "name": "...", "arguments": {...}} and {"type": "tool_call_response", "id": "...", "result": "..."}
+
+### Sample updates
+
+* Add and update samples for `AzureFunctionTool`, `WebSearchTool`, and `WebSearchPreviewTool`
+* All samples for agent tools call `responses.create` API with `agent_reference` instead of `agent`
+
+## 2.0.0b3 (2026-01-06)
 
 ### Features Added
 
 * The package now takes dependency on openai and azure-identity packages. No need to install them separately.
-* Tracing: support for tracing the schema when agent is created with structured output definition.
+* Tracing: support for tracing the schema when an Agent is created with structured output definition.
 
 ### Breaking changes
 
@@ -23,6 +129,7 @@
 * Tracing: changed the tool calls to use the api definitions as the types in traces. For example "function_call" instead of "function" and "function_call_output" instead of "function"
 
 ### Bugs Fixed
+
 * Tracing: fixed a bug with computer use tool call output including screenshot binary data even when binary data tracing is off.
 
 ### Sample updates
@@ -33,6 +140,9 @@
 * Improved MCP client sample showing direct MCP tool invocation. See `samples/mcp_client/sample_mcp_tool_async.py`.
 * Samples that download generated files (code interpreter and image generation) now save files to the system temp directory instead of the current working directory. See `sample_agent_code_interpreter.py`, `sample_agent_code_interpreter_async.py`, `sample_agent_image_generation.py`, and `sample_agent_image_generation_async.py`.
 * The Agent to Agent sample was updated to allow "Custom keys" connection type.
+* Update Fine-Tuning supervised job samples to show waiting for model result instead of polling
+* Add evaluations sample `samples/evaluations/sample_evaluations_score_model_grader_with_image.py`.
+* Add basic steam event samples `samples/agents/sample_agent_stream_events.py` and `samples/responses/sample_responses_stream_events.py`
 
 ## 2.0.0b2 (2025-11-14)
 
@@ -181,7 +291,7 @@ Please see new samples and package README.md file.
 Overview page. The factory method `from_connection_string` was removed. Support for project connection string and hub-based projects has been discontinued. We recommend creating a new Azure AI Foundry resource utilizing project endpoint. If this is not possible, please pin the version of or pin the version of `azure-ai-projects` to `1.0.0b10` or earlier.
 * Agents are now implemented in a separate package `azure-ai-agents`. Continue using the ".agents" operations on the
 `AIProjectsClient` to create, run and delete agents, as before. However there have been some breaking changes in these operations.
-See [Agents package document and samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-agents) for more details.
+See [Agents package document and samples](https://github.com/Azure/azure-sdk-for-python/tree/azure-ai-projects_1.0.0b11/sdk/ai/azure-ai-agents) for more details.
 * Several changes to the `.connections` methods, including the response object (now simply called `Connection`)
 * The method `.inference.get_azure_openai_client()` now supports returning an authenticated `AzureOpenAI` client to be used with
 AI models deployed to the Project's AI Services. This is in addition to the existing option to get an `AzureOpenAI` client for one of the connected Azure OpenAI services.
@@ -192,7 +302,7 @@ AI models deployed to the Project's AI Services. This is in addition to the exis
 * Evaluator Ids are available using the Enum `EvaluatorIds` and no longer require `azure-ai-evaluation` package to be installed.
 * Property `scope` on `AIProjectClient` is removed, use AI Foundry Project endpoint instead.
 * Property `id` on Evaluation is replaced with `name`.
-* Please see the [agents migration guide](https://github.com/Azure/azure-sdk-for-python/blob/release/azure-ai-projects/1.0.0/sdk/ai/azure-ai-projects/AGENTS_MIGRATION_GUIDE.md) on how to use the new `azure-ai-projects` with `azure-ai-agents` package.
+* Please see the [agents migration guide](https://github.com/Azure/azure-sdk-for-python/blob/azure-ai-projects_1.0.0/sdk/ai/azure-ai-projects/AGENTS_MIGRATION_GUIDE.md) on how to use the new `azure-ai-projects` with `azure-ai-agents` package.
 
 ### Sample updates
 

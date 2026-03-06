@@ -9,7 +9,7 @@ import psutil
 
 from opentelemetry import metrics
 from opentelemetry.metrics import CallbackOptions, Observation
-from opentelemetry.sdk._logs import ReadableLogRecord
+from opentelemetry.sdk._logs import ReadWriteLogRecord
 from opentelemetry.sdk.trace import ReadableSpan
 from opentelemetry.semconv.attributes.exception_attributes import (
     EXCEPTION_MESSAGE,
@@ -49,8 +49,22 @@ NUM_CPUS = psutil.cpu_count()
 _IO_AVAILABLE = hasattr(_PROCESS, "io_counters")
 _IO_LAST_COUNT = 0
 if _IO_AVAILABLE:
-    _io_counters_initial = _PROCESS.io_counters()
-    _IO_LAST_COUNT = _io_counters_initial.read_bytes + _io_counters_initial.write_bytes
+    try:
+        _io_counters_initial = _PROCESS.io_counters()
+        _IO_LAST_COUNT = _io_counters_initial.read_bytes + _io_counters_initial.write_bytes
+    except (  # pylint: disable=broad-exception-caught
+        psutil.NoSuchProcess,
+        psutil.AccessDenied,
+        AttributeError,
+        Exception,
+    ) as e:
+        _logger.exception(
+            "Performance counter %s is unavailable due to an error while initializing process I/O counters: %s",
+            _PROCESS_IO_RATE[0],
+            e,
+        )
+        _IO_AVAILABLE = False
+        _IO_LAST_COUNT = 0
 _IO_LAST_TIME = datetime.now()
 # Processor Time %
 _LAST_CPU_TIMES = psutil.cpu_times()
@@ -62,13 +76,13 @@ _LAST_EXCEPTION_RATE_TIME = datetime.now()
 _EXCEPTIONS_COUNT = 0
 
 
-#  pylint: disable=unused-argument
+#  pylint: disable=unused-argument, do-not-use-logging-exception, do-not-log-exceptions-if-not-debug
 def _get_process_cpu(options: CallbackOptions) -> Iterable[Observation]:
     """Get process CPU usage as a percentage.
 
     In the case of a process running on multiple threads on different CPU cores,
     the returned value can be > 100.0.
-    
+
     :param options: Callback options for OpenTelemetry observable gauge.
     :type options: ~opentelemetry.metrics.CallbackOptions
     :returns: Process CPU usage percentage observations.
@@ -90,7 +104,7 @@ def _get_process_cpu_normalized(options: CallbackOptions) -> Iterable[Observatio
     In the case of a process running on multiple threads on different CPU cores,
     the returned value can be > 100.0. We normalize the CPU process usage
     using the number of logical CPUs.
-    
+
     :param options: Callback options for OpenTelemetry observable gauge.
     :type options: ~opentelemetry.metrics.CallbackOptions
     :returns: Normalized process CPU usage percentage observations.
@@ -120,7 +134,7 @@ def _get_available_memory(options: CallbackOptions) -> Iterable[Observation]:
 
     Available memory is defined as memory that can be given instantly to
     processes without the system going into swap.
-    
+
     :param options: Callback options for OpenTelemetry observable gauge.
     :type options: ~opentelemetry.metrics.CallbackOptions
     :returns: Available memory in bytes observations.
@@ -141,7 +155,7 @@ def _get_process_memory(options: CallbackOptions) -> Iterable[Observation]:
 
     Private bytes for the current process is measured by the Resident Set Size,
     which is the non-swapped physical memory a process has used.
-    
+
     :param options: Callback options for OpenTelemetry observable gauge.
     :type options: ~opentelemetry.metrics.CallbackOptions
     :returns: Process memory usage in bytes observations.
@@ -189,9 +203,10 @@ def _get_process_io(options: CallbackOptions) -> Iterable[Observation]:
         _logger.exception("Error getting process I/O rate: %s", e)
         yield Observation(0, {})
 
+
 def _get_cpu_times_total(cpu_times):
     """Calculate total CPU time from CPU times structure.
-    
+
     :param cpu_times: CPU times structure from psutil.
     :type cpu_times: psutil._common.scputimes
     :returns: Total CPU time.
@@ -226,7 +241,7 @@ def _get_processor_time(options: CallbackOptions) -> Iterable[Observation]:
 
     Processor time is defined as the current system-wide CPU utilization
     minus idle CPU time as a percentage. Return values range from 0.0 to 100.0.
-    
+
     :param options: Callback options for OpenTelemetry observable gauge.
     :type options: ~opentelemetry.metrics.CallbackOptions
     :returns: System-wide CPU utilization percentage observations.
@@ -240,7 +255,7 @@ def _get_processor_time(options: CallbackOptions) -> Iterable[Observation]:
         last_total = _get_cpu_times_total(_LAST_CPU_TIMES)
         idle_d = cpu_times.idle - _LAST_CPU_TIMES.idle
         total_d = total - last_total
-        utilization_percentage = 100*(total_d - idle_d)/total_d
+        utilization_percentage = 100 * (total_d - idle_d) / total_d
         _LAST_CPU_TIMES = cpu_times
         yield Observation(utilization_percentage, {})
     except Exception as e:  # pylint: disable=broad-except
@@ -251,7 +266,7 @@ def _get_processor_time(options: CallbackOptions) -> Iterable[Observation]:
 #  pylint: disable=unused-argument
 def _get_request_rate(options: CallbackOptions) -> Iterable[Observation]:
     """Get request rate in requests per second.
-    
+
     :param options: Callback options for OpenTelemetry observable gauge.
     :type options: ~opentelemetry.metrics.CallbackOptions
     :returns: Request rate in requests per second observations.
@@ -276,7 +291,7 @@ def _get_request_rate(options: CallbackOptions) -> Iterable[Observation]:
 #  pylint: disable=unused-argument
 def _get_exception_rate(options: CallbackOptions) -> Iterable[Observation]:
     """Get exception rate in exceptions per second.
-    
+
     :param options: Callback options for OpenTelemetry observable gauge.
     :type options: ~opentelemetry.metrics.CallbackOptions
     :returns: Exception rate in exceptions per second observations.
@@ -313,13 +328,13 @@ class AvailableMemory:
             name=self.NAME[0],
             description="performance counter available memory in bytes",
             unit="byte",
-            callbacks=[_get_available_memory]
+            callbacks=[_get_available_memory],
         )
 
     @property
     def gauge(self):
         """Get the underlying gauge.
-        
+
         :returns: The OpenTelemetry observable gauge instance.
         :rtype: ~opentelemetry.metrics.ObservableGauge
         """
@@ -341,13 +356,13 @@ class ExceptionRate:
             name=self.NAME[0],
             description="performance counter exceptions per second",
             unit="exc/sec",
-            callbacks=[_get_exception_rate]
+            callbacks=[_get_exception_rate],
         )
 
     @property
     def gauge(self):
         """Get the underlying gauge.
-        
+
         :returns: The OpenTelemetry observable gauge instance.
         :rtype: ~opentelemetry.metrics.ObservableGauge
         """
@@ -374,7 +389,7 @@ class RequestExecutionTime:
     @property
     def gauge(self):
         """Get the underlying gauge.
-        
+
         :returns: The OpenTelemetry histogram instance.
         :rtype: ~opentelemetry.metrics.Histogram
         """
@@ -396,13 +411,13 @@ class RequestRate:
             name=self.NAME[0],
             description="performance counter requests per second",
             unit="req/sec",
-            callbacks=[_get_request_rate]
+            callbacks=[_get_request_rate],
         )
 
     @property
     def gauge(self):
         """Get the underlying gauge.
-        
+
         :returns: The OpenTelemetry observable gauge instance.
         :rtype: ~opentelemetry.metrics.ObservableGauge
         """
@@ -427,13 +442,13 @@ class ProcessCpu:
             name=self.NAME[0],
             description="performance counter process cpu usage as a percentage",
             unit="percent",
-            callbacks=[_get_process_cpu]
+            callbacks=[_get_process_cpu],
         )
 
     @property
     def gauge(self):
         """Get the underlying gauge.
-        
+
         :returns: The OpenTelemetry observable gauge instance.
         :rtype: ~opentelemetry.metrics.ObservableGauge
         """
@@ -457,15 +472,15 @@ class ProcessCpuNormalized:
         self._gauge = meter.create_observable_gauge(
             name=self.NAME[0],
             description="performance counter process cpu usage as a percentage "
-                       "divided by the number of total processors.",
+            "divided by the number of total processors.",
             unit="percent",
-            callbacks=[_get_process_cpu_normalized]
+            callbacks=[_get_process_cpu_normalized],
         )
 
     @property
     def gauge(self):
         """Get the underlying gauge.
-        
+
         :returns: The OpenTelemetry observable gauge instance.
         :rtype: ~opentelemetry.metrics.ObservableGauge
         """
@@ -487,13 +502,13 @@ class ProcessIORate:
             name=self.NAME[0],
             description="performance counter rate of I/O operations per second",
             unit="byte/sec",
-            callbacks=[_get_process_io]
+            callbacks=[_get_process_io],
         )
 
     @property
     def gauge(self):
         """Get the underlying gauge.
-        
+
         :returns: The OpenTelemetry observable gauge instance.
         :rtype: ~opentelemetry.metrics.ObservableGauge
         """
@@ -515,13 +530,13 @@ class ProcessPrivateBytes:
             name=self.NAME[0],
             description="performance counter amount of memory process has used in bytes",
             unit="byte",
-            callbacks=[_get_process_memory]
+            callbacks=[_get_process_memory],
         )
 
     @property
     def gauge(self):
         """Get the underlying gauge.
-        
+
         :returns: The OpenTelemetry observable gauge instance.
         :rtype: ~opentelemetry.metrics.ObservableGauge
         """
@@ -543,13 +558,13 @@ class ProcessorTime:
             name=self.NAME[0],
             description="performance counter processor time as a percentage",
             unit="percent",
-            callbacks=[_get_processor_time]
+            callbacks=[_get_processor_time],
         )
 
     @property
     def gauge(self):
         """Get the underlying gauge.
-        
+
         :returns: The OpenTelemetry observable gauge instance.
         :rtype: ~opentelemetry.metrics.ObservableGauge
         """
@@ -577,7 +592,7 @@ class _PerformanceCountersManager(metaclass=Singleton):
 
     def __init__(self, meter_provider=None):
         """Initialize the performance counters manager.
-        
+
         :param meter_provider: OpenTelemetry meter provider, if None uses global provider.
         :type meter_provider: ~opentelemetry.metrics.MeterProvider or None
         """
@@ -589,16 +604,13 @@ class _PerformanceCountersManager(metaclass=Singleton):
             if meter_provider is None:
                 meter_provider = metrics.get_meter_provider()
 
-            self._meter = meter_provider.get_meter(
-                "azure.monitor.opentelemetry.performance_counters"
-            )
+            self._meter = meter_provider.get_meter("azure.monitor.opentelemetry.performance_counters")
 
             # Initialize all performance counter metrics
             for metric_class in PERFORMANCE_COUNTER_METRICS:
                 try:
                     # Note: ProcessIORate may not be available on all platforms
                     if metric_class == ProcessIORate and not _IO_AVAILABLE:
-                        _logger.warning("Process I/O Rate performance counter is not available on this platform.")
                         continue
                     performance_counter = metric_class(self._meter)
                     self._performance_counters.append(performance_counter)
@@ -632,13 +644,13 @@ class _PerformanceCountersManager(metaclass=Singleton):
         except Exception:  # pylint: disable=broad-except
             _logger.exception("Exception occurred while recording span.")  # pylint: disable=C4769
 
-    def _record_log_record(self, readable_log_record: ReadableLogRecord) -> None:
+    def _record_log_record(self, read_write_log_record: ReadWriteLogRecord) -> None:
         try:
             # pylint: disable=global-statement
             global _EXCEPTIONS_COUNT
-            if readable_log_record.log_record:
+            if read_write_log_record.log_record:
                 exc_type = None
-                log_record = readable_log_record.log_record
+                log_record = read_write_log_record.log_record
                 if log_record.attributes:
                     exc_type = log_record.attributes.get(EXCEPTION_TYPE)
                     exc_message = log_record.attributes.get(EXCEPTION_MESSAGE)

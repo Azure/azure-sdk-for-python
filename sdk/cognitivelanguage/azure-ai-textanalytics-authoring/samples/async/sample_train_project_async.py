@@ -28,7 +28,7 @@ OPTIONAL ENV VARS:
 # [START text_authoring_train_project_async]
 import os
 import asyncio
-from azure.identity import DefaultAzureCredential
+from azure.identity.aio import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
 from azure.ai.textanalytics.authoring.aio import TextAuthoringClient
 from azure.ai.textanalytics.authoring.models import (

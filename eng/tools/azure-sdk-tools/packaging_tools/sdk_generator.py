@@ -5,6 +5,7 @@ import argparse
 import json
 import logging
 from pathlib import Path
+import subprocess
 from subprocess import check_call
 import shutil
 import re
@@ -230,6 +231,7 @@ def main(generate_input, generate_output):
             if data.get("runMode") in ["spec-pull-request"]:
                 apiview_start_time = time.time()
                 try:
+                    _LOGGER.info("install dependencies for apiview generation")
                     package_path = Path(sdk_folder, folder_name, package_name)
                     check_call(
                         [
@@ -249,7 +251,16 @@ def main(generate_input, generate_output):
                     cross_language_mapping_path = Path(package_path, "apiview-properties.json")
                     if cross_language_mapping_path.exists():
                         cmds.extend(["--mapping-path", str(cross_language_mapping_path)])
-                    check_call(cmds, cwd=package_path, timeout=600)
+
+                    _LOGGER.info(f"generate apiview file for package {package_name}")
+                    check_call(
+                        cmds,
+                        cwd=package_path,
+                        timeout=600,
+                        # known issue that higher python version meet install warning with lower pylint.
+                        # we skip the output here to reduce confusion and will remove it after apiview tool upgrade to higher pylint version.
+                        stderr=subprocess.DEVNULL,
+                    )
                     for file in os.listdir(package_path):
                         if "_python.json" in file and package_name in file:
                             result[package_name]["apiViewArtifact"] = str(Path(package_path, file))

@@ -1,5 +1,83 @@
 # Release History
 
+## 19.0.0 (2026-02-27)
+
+### Features Added
+
+  - Model `BatchManagementClient` added parameter `cloud_setting` in method `__init__`
+  - Client `BatchManagementClient` added method `send_request`
+  - Model `Application` added property `system_data`
+  - Model `ApplicationPackage` added property `system_data`
+  - Model `AzureResource` added property `system_data`
+  - Model `BatchAccount` added property `system_data`
+  - Model `BatchAccountCreateParameters` added property `properties`
+  - Model `BatchAccountUpdateParameters` added property `properties`
+  - Model `CheckNameAvailabilityParameters` added property `type`
+  - Model `DataDisk` added property `managed_disk`
+  - Model `DetectorResponse` added property `system_data`
+  - Model `DiskEncryptionConfiguration` added property `customer_managed_key`
+  - Model `IPRule` added property `action`
+  - Model `ManagedDisk` added property `disk_encryption_set`
+  - Model `Pool` added property `system_data`
+  - Model `PrivateEndpointConnection` added property `system_data`
+  - Model `PrivateLinkResource` added property `system_data`
+  - Model `PublicIPAddressConfiguration` added property `ip_families`
+  - Model `PublicIPAddressConfiguration` added property `ip_tags`
+  - Enum `SecurityEncryptionTypes` added member `DISK_WITH_VM_GUEST_STATE`
+  - Model `SecurityProfile` added property `proxy_agent_settings`
+  - Model `TaskSchedulingPolicy` added property `job_default_order`
+  - Model `VMDiskSecurityProfile` added property `disk_encryption_set`
+  - Added model `AccessRulePropertiesSubscription`
+  - Added model `BatchAccountCreateProperties`
+  - Added model `BatchAccountUpdateProperties`
+  - Added model `CloudError`
+  - Added enum `DiffDiskPlacement`
+  - Added model `DiskCustomerManagedKey`
+  - Added model `DiskEncryptionSetParameters`
+  - Added model `HostEndpointSettings`
+  - Added enum `HostEndpointSettingsModeTypes`
+  - Added enum `IPFamily`
+  - Added enum `IPRuleAction`
+  - Added model `IPTag`
+  - Added enum `JobDefaultOrder`
+  - Added model `ProxyAgentSettings`
+  - Added enum `ResourceType`
+
+### Breaking Changes
+
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
+  - Model `BatchAccountCreateParameters` moved instance variable `auto_storage`, `pool_allocation_mode`, `key_vault_reference`, `public_network_access`, `network_profile`, `encryption` and `allowed_authentication_modes` under property `properties`
+  - Model `BatchAccountUpdateParameters` moved instance variable `auto_storage`, `encryption`, `allowed_authentication_modes`, `public_network_access` and `network_profile` under property `properties`
+  - Model `DataDisk` deleted or renamed its instance variable `storage_account_type`
+  - Deleted or renamed model `AzureProxyResource`
+  - Deleted or renamed model `Certificate`
+  - Deleted or renamed model `CertificateBaseProperties`
+  - Deleted or renamed model `CertificateCreateOrUpdateParameters`
+  - Deleted or renamed model `CertificateCreateOrUpdateProperties`
+  - Deleted or renamed model `CertificateFormat`
+  - Deleted or renamed model `CertificateProperties`
+  - Deleted or renamed model `CertificateProvisioningState`
+  - Deleted or renamed model `CertificateReference`
+  - Deleted or renamed model `CertificateStoreLocation`
+  - Deleted or renamed model `CertificateVisibility`
+  - Deleted or renamed model `DeleteCertificateError`
+  - Deleted or renamed model `NodeCommunicationMode`
+  - Method `ApplicationOperations.list` changed its parameter `maxresults` from `positional_or_keyword` to `keyword_only`
+  - Method `ApplicationPackageOperations.list` changed its parameter `maxresults` from `positional_or_keyword` to `keyword_only`
+  - Method `LocationOperations.list_supported_virtual_machine_skus` changed its parameter `maxresults` from `positional_or_keyword` to `keyword_only`
+  - Method `PrivateEndpointConnectionOperations.list_by_batch_account` changed its parameter `maxresults` from `positional_or_keyword` to `keyword_only`
+  - Method `PrivateLinkResourceOperations.list_by_batch_account` changed its parameter `maxresults` from `positional_or_keyword` to `keyword_only`
+  - Method `PoolOperations.create` replaced positional_or_keyword parameters `if_match`/`if_none_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `PoolOperations.list_by_batch_account` changed its parameter `maxresults`/`select` from `positional_or_keyword` to `keyword_only`
+  - Method `PoolOperations.update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `PrivateEndpointConnectionOperations.begin_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Deleted or renamed operation group `CertificateOperations`
+
+### Other Changes
+
+  - Deleted model `AccessRulePropertiesSubscriptionsItem`/`ListApplicationPackagesResult`/`ListApplicationsResult`/`ListCertificatesResult`/`ListPoolsResult`/`ListPrivateEndpointConnectionsResult`/`ListPrivateLinkResourcesResult`/`SupportedSkusResult`/`OutboundEnvironmentEndpointCollection` which actually were not used by SDK users
+
 ## 18.0.0 (2024-09-25)
 
 ### Features Added

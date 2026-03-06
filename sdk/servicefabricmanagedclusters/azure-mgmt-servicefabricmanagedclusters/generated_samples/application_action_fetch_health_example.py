@@ -44,6 +44,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: 2025-10-01-preview/ApplicationActionFetchHealth_example.json
+# x-ms-original-file: 2026-02-01/ApplicationActionFetchHealth_example.json
 if __name__ == "__main__":
     main()

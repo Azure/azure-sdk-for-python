@@ -10,7 +10,8 @@
 FILE: snapshot_sample_async.py
 
 DESCRIPTION:
-    This sample demos how to create/retrieve/archive/recover/list configuration settings snapshot and list configuration settings of a snapshot asynchronously.
+    This sample demos how to create/retrieve/archive/recover/list configuration settings snapshot and list configuration
+    settings of a snapshot asynchronously.
 
 USAGE: python snapshot_sample_async.py
 
@@ -19,9 +20,9 @@ USAGE: python snapshot_sample_async.py
 """
 import asyncio
 import os
+from uuid import uuid4
 from azure.appconfiguration import ConfigurationSetting
 from azure.appconfiguration.aio import AzureAppConfigurationClient
-from uuid import uuid4
 
 
 async def main():

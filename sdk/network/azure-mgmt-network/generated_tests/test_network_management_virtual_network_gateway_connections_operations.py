@@ -413,7 +413,7 @@ class TestNetworkManagementVirtualNetworkGatewayConnectionsOperations(AzureMgmtR
                     "vpnType": "str",
                 },
             },
-            api_version="2025-03-01",
+            api_version="2025-05-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -425,7 +425,7 @@ class TestNetworkManagementVirtualNetworkGatewayConnectionsOperations(AzureMgmtR
         response = self.client.virtual_network_gateway_connections.get(
             resource_group_name=resource_group.name,
             virtual_network_gateway_connection_name="str",
-            api_version="2025-03-01",
+            api_version="2025-05-01",
         )
 
         # please add some check logic here by yourself
@@ -437,7 +437,7 @@ class TestNetworkManagementVirtualNetworkGatewayConnectionsOperations(AzureMgmtR
         response = self.client.virtual_network_gateway_connections.begin_delete(
             resource_group_name=resource_group.name,
             virtual_network_gateway_connection_name="str",
-            api_version="2025-03-01",
+            api_version="2025-05-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -450,7 +450,7 @@ class TestNetworkManagementVirtualNetworkGatewayConnectionsOperations(AzureMgmtR
             resource_group_name=resource_group.name,
             virtual_network_gateway_connection_name="str",
             parameters={"tags": {"str": "str"}},
-            api_version="2025-03-01",
+            api_version="2025-05-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -463,7 +463,7 @@ class TestNetworkManagementVirtualNetworkGatewayConnectionsOperations(AzureMgmtR
             resource_group_name=resource_group.name,
             virtual_network_gateway_connection_name="str",
             parameters={"value": "str", "id": "str"},
-            api_version="2025-03-01",
+            api_version="2025-05-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -475,7 +475,7 @@ class TestNetworkManagementVirtualNetworkGatewayConnectionsOperations(AzureMgmtR
         response = self.client.virtual_network_gateway_connections.get_shared_key(
             resource_group_name=resource_group.name,
             virtual_network_gateway_connection_name="str",
-            api_version="2025-03-01",
+            api_version="2025-05-01",
         )
 
         # please add some check logic here by yourself
@@ -486,7 +486,7 @@ class TestNetworkManagementVirtualNetworkGatewayConnectionsOperations(AzureMgmtR
     def test_virtual_network_gateway_connections_list(self, resource_group):
         response = self.client.virtual_network_gateway_connections.list(
             resource_group_name=resource_group.name,
-            api_version="2025-03-01",
+            api_version="2025-05-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -499,7 +499,7 @@ class TestNetworkManagementVirtualNetworkGatewayConnectionsOperations(AzureMgmtR
             resource_group_name=resource_group.name,
             virtual_network_gateway_connection_name="str",
             parameters={"keyLength": 0},
-            api_version="2025-03-01",
+            api_version="2025-05-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -511,7 +511,7 @@ class TestNetworkManagementVirtualNetworkGatewayConnectionsOperations(AzureMgmtR
         response = self.client.virtual_network_gateway_connections.begin_start_packet_capture(
             resource_group_name=resource_group.name,
             virtual_network_gateway_connection_name="str",
-            api_version="2025-03-01",
+            api_version="2025-05-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -524,7 +524,7 @@ class TestNetworkManagementVirtualNetworkGatewayConnectionsOperations(AzureMgmtR
             resource_group_name=resource_group.name,
             virtual_network_gateway_connection_name="str",
             parameters={"sasUrl": "str"},
-            api_version="2025-03-01",
+            api_version="2025-05-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -536,7 +536,7 @@ class TestNetworkManagementVirtualNetworkGatewayConnectionsOperations(AzureMgmtR
         response = self.client.virtual_network_gateway_connections.begin_get_ike_sas(
             resource_group_name=resource_group.name,
             virtual_network_gateway_connection_name="str",
-            api_version="2025-03-01",
+            api_version="2025-05-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -548,7 +548,7 @@ class TestNetworkManagementVirtualNetworkGatewayConnectionsOperations(AzureMgmtR
         response = self.client.virtual_network_gateway_connections.begin_reset_connection(
             resource_group_name=resource_group.name,
             virtual_network_gateway_connection_name="str",
-            api_version="2025-03-01",
+            api_version="2025-05-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

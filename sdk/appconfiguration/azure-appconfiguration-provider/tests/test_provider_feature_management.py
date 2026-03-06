@@ -3,18 +3,24 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from azure.appconfiguration.provider import SettingSelector, load
-from azure.appconfiguration import AzureAppConfigurationClient
-from devtools_testutils import recorded_by_proxy
-from preparers import app_config_decorator
+import functools
+from devtools_testutils import EnvironmentVariableLoader, recorded_by_proxy
 from testcase import AppConfigTestCase, setup_configs, has_feature_flag, get_feature_flag
-from test_constants import FEATURE_MANAGEMENT_KEY
+from test_constants import APPCONFIGURATION_CONNECTION_STRING, FEATURE_MANAGEMENT_KEY
+from azure.appconfiguration import AzureAppConfigurationClient
+from azure.appconfiguration.provider import SettingSelector, load
+
+AppConfigProviderPreparer = functools.partial(
+    EnvironmentVariableLoader,
+    "appconfiguration",
+    appconfiguration_connection_string=APPCONFIGURATION_CONNECTION_STRING,
+)
 
 
 class TestAppConfigurationProviderFeatureManagement(AppConfigTestCase):
     # method: load
+    @AppConfigProviderPreparer()
     @recorded_by_proxy
-    @app_config_decorator
     def test_load_only_feature_flags(self, appconfiguration_connection_string):
         client = self.create_client(
             connection_string=appconfiguration_connection_string,
@@ -29,8 +35,8 @@ class TestAppConfigurationProviderFeatureManagement(AppConfigTestCase):
         assert "enabled" not in alpha.get("telemetry")
 
     # method: load
+    @AppConfigProviderPreparer()
     @recorded_by_proxy
-    @app_config_decorator
     def test_select_feature_flags(self, appconfiguration_connection_string):
         client = AzureAppConfigurationClient.from_connection_string(appconfiguration_connection_string)
         setup_configs(client, None, None)

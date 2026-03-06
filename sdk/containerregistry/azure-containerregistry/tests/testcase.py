@@ -12,7 +12,11 @@ from azure.containerregistry import ContainerRegistryClient
 from azure.containerregistry._helpers import _is_tag
 from azure.identity import AzureAuthorityHosts, ClientSecretCredential
 
-from devtools_testutils import AzureRecordedTestCase, FakeTokenCredential, get_credential
+from devtools_testutils import (
+    AzureRecordedTestCase,
+    FakeTokenCredential,
+    get_credential,
+)
 
 logger = logging.getLogger()
 

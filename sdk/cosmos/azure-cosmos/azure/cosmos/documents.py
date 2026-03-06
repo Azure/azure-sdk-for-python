@@ -346,6 +346,7 @@ class ConnectionPolicy:  # pylint: disable=too-many-instance-attributes
     __defaultRecoveryReadTimeout: int = 6  # seconds
     __defaultDBAReadTimeout: int = 3 # seconds
     __defaultMaxBackoff: int = 1 # seconds
+    __defaultInferenceRequestTimeout: int = 5  # seconds
 
     def __init__(self) -> None:
         # RequestTimeout is the connection timeout for all operations except database account
@@ -356,6 +357,7 @@ class ConnectionPolicy:  # pylint: disable=too-many-instance-attributes
         # This is only applicable if circuit breaker is enabled
         self.RecoveryReadTimeout: int = self.__defaultRecoveryReadTimeout
         self.DBAReadTimeout: int = self.__defaultDBAReadTimeout
+        self.InferenceRequestTimeout: int = self.__defaultInferenceRequestTimeout
         self.MaxBackoff: int = self.__defaultMaxBackoff
         self.ConnectionMode: int = ConnectionMode.Gateway
         self.SSLConfiguration: Optional[SSLConfiguration] = None

@@ -5,6 +5,8 @@
 # ------------------------------------
 # cSpell:disable
 
+import pytest
+
 """
 Multi-Tool Tests: File Search + Code Interpreter + Function Tool
 
@@ -20,7 +22,7 @@ from azure.ai.projects.models import (
     PromptAgentDefinition,
     FileSearchTool,
     CodeInterpreterTool,
-    CodeInterpreterToolAuto,
+    AutoCodeInterpreterToolParam,
     FunctionTool,
 )
 from openai.types.responses.response_input_param import FunctionCallOutput, ResponseInputParam
@@ -41,7 +43,7 @@ class TestAgentFileSearchCodeInterpreterFunction(TestBase):
         3. Function Tool: Agent saves the computed results
         """
 
-        model = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+        model = kwargs.get("azure_ai_model_deployment_name")
 
         # Setup
         project_client = self.create_client(operation_group="agents", **kwargs)
@@ -104,7 +106,7 @@ Please analyze this data for the quarterly review.
                 instructions="You are a data analyst. Use file search to find data files, code interpreter to calculate statistics, and ALWAYS save your analysis using the save_analysis function.",
                 tools=[
                     FileSearchTool(vector_store_ids=[vector_store.id]),
-                    CodeInterpreterTool(container=CodeInterpreterToolAuto()),
+                    CodeInterpreterTool(container=AutoCodeInterpreterToolParam()),
                     func_tool,
                 ],
             ),
@@ -115,7 +117,7 @@ Please analyze this data for the quarterly review.
         # Request that requires all three tools
         response = openai_client.responses.create(
             input="Find the sales report, use code to calculate the total and average of all monthly sales figures, then save the analysis results.",
-            extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+            extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
         )
         self.validate_response(response)
         print("✓ Three-tool combination works!")

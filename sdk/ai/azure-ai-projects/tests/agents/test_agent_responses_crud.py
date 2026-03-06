@@ -10,9 +10,10 @@ from test_base import TestBase, servicePreparer
 from devtools_testutils import recorded_by_proxy, RecordedTransport
 from azure.ai.projects.models import (
     PromptAgentDefinition,
-    ResponseTextFormatConfigurationJsonSchema,
-    PromptAgentDefinitionText,
+    TextResponseFormatJsonSchema,
+    PromptAgentDefinitionTextOptions,
 )
+import pytest
 
 
 class TestAgentResponsesCrud(TestBase):
@@ -47,7 +48,7 @@ class TestAgentResponsesCrud(TestBase):
         DELETE /agents/{agent_name}/versions/{agent_version} project_client.agents.delete_version()
         """
 
-        model = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+        model = kwargs.get("azure_ai_model_deployment_name")
 
         # Setup
         project_client = self.create_client(operation_group="agents", **kwargs)
@@ -69,8 +70,7 @@ class TestAgentResponsesCrud(TestBase):
 
         response = openai_client.responses.create(
             conversation=conversation.id,
-            extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
-            input="",  # TODO: Remove 'input' once service is fixed
+            extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
         )
         print(f"Response id: {response.id}, output text: {response.output_text}")
         assert "5280" in response.output_text or "5,280" in response.output_text
@@ -109,8 +109,7 @@ class TestAgentResponsesCrud(TestBase):
 
         response = openai_client.responses.create(
             conversation=conversation.id,
-            extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
-            input="",  # TODO: Remove 'input' once service is fixed
+            extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
         )
         print(f"Response id: {response.id}, output text: {response.output_text}")
         assert "1609" in response.output_text or "1,609" in response.output_text
@@ -137,7 +136,7 @@ class TestAgentResponsesCrud(TestBase):
 
         # response = openai_client.responses.create(
         #     conversation=conversation.id,
-        #     extra_body={"agent": AgentReference(name=agent.name).as_dict()}
+        #     extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}}
         # )
         # print(f"Response id: {response.id}, output text: {response.output_text}")
 
@@ -159,7 +158,7 @@ class TestAgentResponsesCrud(TestBase):
     @servicePreparer()
     @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_agent_responses_with_structured_output(self, **kwargs):
-        model = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+        model = kwargs.get("azure_ai_model_deployment_name")
 
         # Setup
         project_client = self.create_client(operation_group="agents", **kwargs)
@@ -175,10 +174,8 @@ class TestAgentResponsesCrud(TestBase):
             agent_name="MyAgent",
             definition=PromptAgentDefinition(
                 model=model,
-                text=PromptAgentDefinitionText(
-                    format=ResponseTextFormatConfigurationJsonSchema(
-                        name="CalendarEvent", schema=CalendarEvent.model_json_schema()
-                    )
+                text=PromptAgentDefinitionTextOptions(
+                    format=TextResponseFormatJsonSchema(name="CalendarEvent", schema=CalendarEvent.model_json_schema())
                 ),
                 instructions="""
                     You are a helpful assistant that extracts calendar event information from the input user messages,
@@ -201,11 +198,10 @@ class TestAgentResponsesCrud(TestBase):
 
         response = openai_client.responses.create(
             conversation=conversation.id,
-            extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
-            input="",  # TODO: Remove 'input' once service is fixed
+            extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
         )
         print(f"Response id: {response.id}, output text: {response.output_text}")
-        assert response.output_text == '{"name":"Science Fair","date":"2025-11-07","participants":["Alice","Bob"]}'
+        assert response.output_text == '{"name":"Science fair","date":"2025-11-07","participants":["Alice","Bob"]}'
 
         openai_client.conversations.delete(conversation_id=conversation.id)
         print("Conversation deleted")

@@ -3,19 +3,30 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import functools
 import time
 import unittest
-import pytest
 import sys
-
-from azure.appconfiguration import ConfigurationSetting
-from azure.appconfiguration.provider import WatchKey
+from unittest.mock import Mock
+import pytest
+from devtools_testutils import EnvironmentVariableLoader
 from devtools_testutils.aio import recorded_by_proxy_async
-from async_preparers import app_config_decorator_async
 from testcase import has_feature_flag
 from asynctestcase import AppConfigTestCase
-from test_constants import FEATURE_MANAGEMENT_KEY
-from unittest.mock import Mock
+from test_constants import (
+    APPCONFIGURATION_ENDPOINT_STRING,
+    APPCONFIGURATION_KEYVAULT_SECRET_URL,
+    FEATURE_MANAGEMENT_KEY,
+)
+from azure.appconfiguration import ConfigurationSetting
+from azure.appconfiguration.provider import WatchKey
+
+AppConfigProviderPreparer = functools.partial(
+    EnvironmentVariableLoader,
+    "appconfiguration",
+    appconfiguration_endpoint_string=APPCONFIGURATION_ENDPOINT_STRING,
+    appconfiguration_keyvault_secret_url=APPCONFIGURATION_KEYVAULT_SECRET_URL,
+)
 
 try:
     # Python 3.7 does not support AsyncMock
@@ -23,7 +34,7 @@ try:
 
     class TestAppConfigurationProvider(AppConfigTestCase, unittest.TestCase):
         # method: refresh
-        @app_config_decorator_async
+        @AppConfigProviderPreparer()
         @recorded_by_proxy_async
         @pytest.mark.skipif(sys.version_info < (3, 8), reason="Python 3.7 does not support AsyncMock")
         @pytest.mark.asyncio
@@ -92,7 +103,7 @@ try:
                 assert mock_callback.call_count == 2
 
         # method: refresh
-        @app_config_decorator_async
+        @AppConfigProviderPreparer()
         @recorded_by_proxy_async
         @pytest.mark.skipif(sys.version_info < (3, 8), reason="Python 3.7 does not support AsyncMock")
         @pytest.mark.asyncio
@@ -143,7 +154,7 @@ try:
                 assert mock_callback.call_count == 1
 
         # method: refresh
-        @app_config_decorator_async
+        @AppConfigProviderPreparer()
         @recorded_by_proxy_async
         @pytest.mark.skipif(sys.version_info < (3, 8), reason="Python 3.7 does not support AsyncMock")
         @pytest.mark.asyncio

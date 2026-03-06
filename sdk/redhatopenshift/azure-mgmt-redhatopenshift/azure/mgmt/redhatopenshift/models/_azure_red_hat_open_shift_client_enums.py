@@ -33,6 +33,17 @@ class FipsValidatedModules(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ENABLED = "Enabled"
 
 
+class ManagedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of managed service identity (where both SystemAssigned and UserAssigned types are
+    allowed).
+    """
+
+    NONE = "None"
+    SYSTEM_ASSIGNED = "SystemAssigned"
+    USER_ASSIGNED = "UserAssigned"
+    SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned,UserAssigned"
+
+
 class OutboundType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The outbound routing strategy used to provide your cluster egress to the internet."""
 

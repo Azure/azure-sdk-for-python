@@ -24,7 +24,7 @@ class TestNetworkCloudMgmtBareMetalMachineKeySetsOperations(AzureMgmtRecordedTes
         response = self.client.bare_metal_machine_key_sets.list_by_cluster(
             resource_group_name=resource_group.name,
             cluster_name="str",
-            api_version="2025-07-01-preview",
+            api_version="2025-09-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestNetworkCloudMgmtBareMetalMachineKeySetsOperations(AzureMgmtRecordedTes
             resource_group_name=resource_group.name,
             cluster_name="str",
             bare_metal_machine_key_set_name="str",
-            api_version="2025-07-01-preview",
+            api_version="2025-09-01",
         )
 
         # please add some check logic here by yourself
@@ -86,7 +86,7 @@ class TestNetworkCloudMgmtBareMetalMachineKeySetsOperations(AzureMgmtRecordedTes
                 "type": "str",
                 "userListStatus": [{"azureUserName": "str", "status": "str", "statusMessage": "str"}],
             },
-            api_version="2025-07-01-preview",
+            api_version="2025-09-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -99,7 +99,7 @@ class TestNetworkCloudMgmtBareMetalMachineKeySetsOperations(AzureMgmtRecordedTes
             resource_group_name=resource_group.name,
             cluster_name="str",
             bare_metal_machine_key_set_name="str",
-            api_version="2025-07-01-preview",
+            api_version="2025-09-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -112,7 +112,7 @@ class TestNetworkCloudMgmtBareMetalMachineKeySetsOperations(AzureMgmtRecordedTes
             resource_group_name=resource_group.name,
             cluster_name="str",
             bare_metal_machine_key_set_name="str",
-            api_version="2025-07-01-preview",
+            api_version="2025-09-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

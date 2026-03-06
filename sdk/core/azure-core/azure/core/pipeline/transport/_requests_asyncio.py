@@ -163,7 +163,7 @@ class AsyncioRequestsTransport(RequestsAsyncTransportBase):
             response = await loop.run_in_executor(
                 None,
                 functools.partial(
-                    self.session.request,
+                    self.session.request,  # type: ignore
                     request.method,
                     request.url,
                     headers=request.headers,

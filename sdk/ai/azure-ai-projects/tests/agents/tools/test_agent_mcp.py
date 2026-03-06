@@ -48,7 +48,7 @@ class TestAgentMCP(TestBase):
         DELETE /agents/{agent_name}/versions/{agent_version} project_client.agents.delete_version()
         """
 
-        model = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+        model = kwargs.get("azure_ai_model_deployment_name")
 
         with (
             self.create_client(operation_group="agents", **kwargs) as project_client,
@@ -87,7 +87,7 @@ class TestAgentMCP(TestBase):
             response = openai_client.responses.create(
                 conversation=conversation.id,
                 input="Please summarize the Azure REST API specifications Readme",
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             )
 
             self.validate_response(response, print_message="Initial response completed")
@@ -125,7 +125,7 @@ class TestAgentMCP(TestBase):
             response = openai_client.responses.create(
                 conversation=conversation.id,
                 input=input_list,
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             )
 
             self.validate_response(response, print_message="Final response completed")
@@ -179,17 +179,17 @@ class TestAgentMCP(TestBase):
         DELETE /agents/{agent_name}/versions/{agent_version} project_client.agents.delete_version()
         """
 
-        model = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+        model = kwargs.get("azure_ai_model_deployment_name")
 
         with (
             self.create_client(operation_group="agents", **kwargs) as project_client,
             project_client.get_openai_client() as openai_client,
         ):
             # Get MCP project connection from environment
-            mcp_project_connection_id = kwargs.get("azure_ai_projects_tests_mcp_project_connection_id")
+            mcp_project_connection_id = kwargs.get("mcp_project_connection_id")
 
             if not mcp_project_connection_id:
-                pytest.fail("AZURE_AI_PROJECTS_TESTS_MCP_PROJECT_CONNECTION_ID environment variable not set")
+                pytest.fail("mcp_project_connection_id environment variable not set")
 
             assert isinstance(mcp_project_connection_id, str), "mcp_project_connection_id must be a string"
             print(f"Using MCP project connection: {mcp_project_connection_id}")
@@ -230,7 +230,7 @@ class TestAgentMCP(TestBase):
             response = openai_client.responses.create(
                 conversation=conversation.id,
                 input="What is my username in Github profile?",
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             )
 
             self.validate_response(response, print_message="Initial response completed")
@@ -268,7 +268,7 @@ class TestAgentMCP(TestBase):
             response = openai_client.responses.create(
                 conversation=conversation.id,
                 input=input_list,
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             )
 
             self.validate_response(response, print_message="Final response completed")

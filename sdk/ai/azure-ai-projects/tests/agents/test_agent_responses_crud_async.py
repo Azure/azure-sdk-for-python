@@ -11,9 +11,10 @@ from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils import RecordedTransport
 from azure.ai.projects.models import (
     PromptAgentDefinition,
-    ResponseTextFormatConfigurationJsonSchema,
-    PromptAgentDefinitionText,
+    TextResponseFormatJsonSchema,
+    PromptAgentDefinitionTextOptions,
 )
+import pytest
 
 
 class TestAgentResponsesCrudAsync(TestBase):
@@ -22,7 +23,7 @@ class TestAgentResponsesCrudAsync(TestBase):
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     async def test_agent_responses_crud_async(self, **kwargs):
 
-        model = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+        model = kwargs.get("azure_ai_model_deployment_name")
 
         # Setup
         project_client = self.create_async_client(operation_group="agents", **kwargs)
@@ -46,8 +47,7 @@ class TestAgentResponsesCrudAsync(TestBase):
 
             response = await openai_client.responses.create(
                 conversation=conversation.id,
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
-                input="",  # TODO: Remove 'input' once service is fixed
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             )
             print(f"Response id: {response.id}, output text: {response.output_text}")
             assert "5280" in response.output_text or "5,280" in response.output_text
@@ -80,8 +80,7 @@ class TestAgentResponsesCrudAsync(TestBase):
 
             response = await openai_client.responses.create(
                 conversation=conversation.id,
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
-                input="",  # TODO: Remove 'input' once service is fixed
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             )
             print(f"Response id: {response.id}, output text: {response.output_text}")
             assert "1609" in response.output_text or "1,609" in response.output_text
@@ -108,7 +107,7 @@ class TestAgentResponsesCrudAsync(TestBase):
 
             # response = await project_client.agents.responses.create(
             #     conversation=conversation.id,
-            #     extra_body={"agent": AgentReference(name=agent.name).as_dict()}
+            #     extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}}
             # )
             # print(f"Response id: {response.id}, output text: {response.output_text}")
 
@@ -130,7 +129,7 @@ class TestAgentResponsesCrudAsync(TestBase):
     @servicePreparer()
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     async def test_agent_responses_with_structured_output_async(self, **kwargs):
-        model = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+        model = kwargs.get("azure_ai_model_deployment_name")
 
         # Setup
         project_client = self.create_async_client(operation_group="agents", **kwargs)
@@ -148,8 +147,8 @@ class TestAgentResponsesCrudAsync(TestBase):
                 agent_name="MyAgent",
                 definition=PromptAgentDefinition(
                     model=model,
-                    text=PromptAgentDefinitionText(
-                        format=ResponseTextFormatConfigurationJsonSchema(
+                    text=PromptAgentDefinitionTextOptions(
+                        format=TextResponseFormatJsonSchema(
                             name="CalendarEvent", schema=CalendarEvent.model_json_schema()
                         )
                     ),
@@ -174,11 +173,10 @@ class TestAgentResponsesCrudAsync(TestBase):
 
             response = await openai_client.responses.create(
                 conversation=conversation.id,
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
-                input="",  # TODO: Remove 'input' once service is fixed
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             )
             print(f"Response id: {response.id}, output text: {response.output_text}")
-            assert response.output_text == '{"name":"Science Fair","date":"2025-11-07","participants":["Alice","Bob"]}'
+            assert response.output_text == '{"name":"Science fair","date":"2025-11-07","participants":["Alice","Bob"]}'
 
             await openai_client.conversations.delete(conversation_id=conversation.id)
             print("Conversation deleted")

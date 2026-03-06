@@ -6,6 +6,7 @@
 # cSpell:disable
 
 import os
+import pytest
 from test_base import TestBase, servicePreparer
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils import RecordedTransport
@@ -18,7 +19,7 @@ class TestAgentFileSearchStreamAsync(TestBase):
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     async def test_agent_file_search_stream_async(self, **kwargs):
 
-        model = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+        model = kwargs.get("azure_ai_model_deployment_name")
 
         async with (
             self.create_async_client(operation_group="agents", **kwargs) as project_client,
@@ -67,7 +68,7 @@ class TestAgentFileSearchStreamAsync(TestBase):
             stream_response = await openai_client.responses.create(
                 stream=True,
                 input="What products are mentioned in the document? Please provide a brief summary.",
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             )
 
             # Collect streamed response

@@ -5,6 +5,7 @@
 # -------------------------------------------------------------------------
 import time
 import base64
+import random
 from typing import TYPE_CHECKING, Optional, TypeVar, MutableMapping, Any, Union, cast
 
 from azure.core.credentials import (
@@ -36,6 +37,38 @@ if TYPE_CHECKING:
 HTTPResponseType = TypeVar("HTTPResponseType", HttpResponse, LegacyHttpResponse)
 HTTPRequestType = TypeVar("HTTPRequestType", HttpRequest, LegacyHttpRequest)
 
+DEFAULT_REFRESH_WINDOW_SECONDS = 300  # 5 minutes
+MAX_REFRESH_JITTER_SECONDS = 60  # 1 minute
+
+
+def _should_refresh_token(token: Optional[Union["AccessToken", "AccessTokenInfo"]], refresh_jitter: int) -> bool:
+    """Check if a new token is needed based on expiry and refresh logic.
+
+    :param token: The current token or None if no token exists
+    :type token: Optional[Union[~azure.core.credentials.AccessToken, ~azure.core.credentials.AccessTokenInfo]]
+    :param int refresh_jitter: The jitter to apply to refresh timing
+    :return: True if a new token is needed, False otherwise
+    :rtype: bool
+    """
+    if not token:
+        return True
+
+    now = time.time()
+    if token.expires_on <= now:
+        return True
+
+    refresh_on = getattr(token, "refresh_on", None)
+
+    if refresh_on:
+        # Apply jitter, but ensure that adding it doesn't push the refresh time past the actual expiration.
+        # This is a safeguard, as refresh_on is typically well before expires_on.
+        effective_refresh_time = min(refresh_on + refresh_jitter, token.expires_on)
+        return effective_refresh_time <= now
+
+    time_until_expiry = token.expires_on - now
+    # Reduce refresh window by jitter to delay refresh and distribute load
+    return time_until_expiry < (DEFAULT_REFRESH_WINDOW_SECONDS - refresh_jitter)
+
 
 # pylint:disable=too-few-public-methods
 class _BearerTokenCredentialPolicyBase:
@@ -45,7 +78,7 @@ class _BearerTokenCredentialPolicyBase:
     :type credential: ~azure.core.credentials.TokenProvider
     :param str scopes: Lets you specify the type of access needed.
     :keyword bool enable_cae: Indicates whether to enable Continuous Access Evaluation (CAE) on all requested
-        tokens. Defaults to True.
+        tokens. Defaults to False.
     """
 
     def __init__(self, credential: TokenProvider, *scopes: str, **kwargs: Any) -> None:
@@ -53,7 +86,8 @@ class _BearerTokenCredentialPolicyBase:
         self._scopes = scopes
         self._credential = credential
         self._token: Optional[Union["AccessToken", "AccessTokenInfo"]] = None
-        self._enable_cae: bool = kwargs.get("enable_cae", True)
+        self._enable_cae: bool = kwargs.get("enable_cae", False)
+        self._refresh_jitter = 0
 
     @staticmethod
     def _enforce_https(request: PipelineRequest[HTTPRequestType]) -> None:
@@ -82,9 +116,7 @@ class _BearerTokenCredentialPolicyBase:
 
     @property
     def _need_new_token(self) -> bool:
-        now = time.time()
-        refresh_on = getattr(self._token, "refresh_on", None)
-        return not self._token or (refresh_on and refresh_on <= now) or self._token.expires_on - now < 300
+        return _should_refresh_token(self._token, self._refresh_jitter)
 
     def _get_token(self, *scopes: str, **kwargs: Any) -> Union["AccessToken", "AccessTokenInfo"]:
         if self._enable_cae:
@@ -108,6 +140,7 @@ class _BearerTokenCredentialPolicyBase:
         :param str scopes: The type of access needed.
         """
         self._token = self._get_token(*scopes, **kwargs)
+        self._refresh_jitter = random.randint(0, MAX_REFRESH_JITTER_SECONDS)
 
 
 class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy[HTTPRequestType, HTTPResponseType]):

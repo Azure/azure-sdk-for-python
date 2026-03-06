@@ -153,6 +153,9 @@ class _QueueSharedAccessHelper(_SharedAccessHelper):
             self._add_query(QueryStringConstants.SIGNED_KEY_EXPIRY, user_delegation_key.signed_expiry)
             self._add_query(QueryStringConstants.SIGNED_KEY_SERVICE, user_delegation_key.signed_service)
             self._add_query(QueryStringConstants.SIGNED_KEY_VERSION, user_delegation_key.signed_version)
+            self._add_query(
+                QueryStringConstants.SIGNED_KEY_DELEGATED_USER_TID, user_delegation_key.signed_delegated_user_tid
+            )
 
             string_to_sign += (
                 get_value_to_append(QueryStringConstants.SIGNED_OID)

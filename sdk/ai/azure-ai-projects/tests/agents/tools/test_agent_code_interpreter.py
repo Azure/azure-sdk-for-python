@@ -12,7 +12,7 @@ from devtools_testutils import recorded_by_proxy, RecordedTransport
 from azure.ai.projects.models import (
     PromptAgentDefinition,
     CodeInterpreterTool,
-    CodeInterpreterToolAuto,
+    AutoCodeInterpreterToolParam,
 )
 
 
@@ -41,7 +41,7 @@ class TestAgentCodeInterpreter(TestBase):
         DELETE /agents/{agent_name}/versions/{agent_version} project_client.agents.delete_version()
         """
 
-        model = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+        model = kwargs.get("azure_ai_model_deployment_name")
         agent_name = "code-interpreter-simple-agent"
 
         with (
@@ -54,7 +54,7 @@ class TestAgentCodeInterpreter(TestBase):
                 definition=PromptAgentDefinition(
                     model=model,
                     instructions="You are a helpful assistant that can execute Python code.",
-                    tools=[CodeInterpreterTool(container=CodeInterpreterToolAuto(file_ids=[]))],
+                    tools=[CodeInterpreterTool(container=AutoCodeInterpreterToolParam(file_ids=[]))],
                 ),
                 description="Simple code interpreter agent for basic Python execution.",
             )
@@ -67,7 +67,7 @@ class TestAgentCodeInterpreter(TestBase):
 
             response = openai_client.responses.create(
                 input="Calculate this using Python: First, find the sum of cubes from 1 to 50 (1³ + 2³ + ... + 50³). Then add 12 factorial divided by 8 factorial (12!/8!). What is the final result?",
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             )
             self.validate_response(response)
 
@@ -125,7 +125,7 @@ class TestAgentCodeInterpreter(TestBase):
         DELETE /files/{file_id}                              openai_client.files.delete()
         """
 
-        model = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+        model = kwargs.get("azure_ai_model_deployment_name")
 
         with (
             self.create_client(operation_group="agents", **kwargs) as project_client,
@@ -154,7 +154,7 @@ class TestAgentCodeInterpreter(TestBase):
                 definition=PromptAgentDefinition(
                     model=model,
                     instructions="You are a helpful assistant that can analyze data and create visualizations.",
-                    tools=[CodeInterpreterTool(container=CodeInterpreterToolAuto(file_ids=[file.id]))],
+                    tools=[CodeInterpreterTool(container=AutoCodeInterpreterToolParam(file_ids=[file.id]))],
                 ),
                 description="Code interpreter agent for file processing and chart generation.",
             )
@@ -168,7 +168,7 @@ class TestAgentCodeInterpreter(TestBase):
 
             response = openai_client.responses.create(
                 input="Create a bar chart showing operating profit by sector from the uploaded CSV file. Save it as a PNG file.",
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             )
             self.validate_response(response)
 

@@ -20,7 +20,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b1" python-dotenv aiohttp
+    pip install "azure-ai-projects>=2.0.0" python-dotenv aiohttp
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
@@ -34,7 +34,7 @@ import os
 from dotenv import load_dotenv
 from azure.identity.aio import DefaultAzureCredential
 from azure.ai.projects.aio import AIProjectClient
-from azure.ai.projects.models import AgentReference, PromptAgentDefinition, ComputerUsePreviewTool
+from azure.ai.projects.models import PromptAgentDefinition, ComputerUsePreviewTool
 from computer_use_util import (
     SearchState,
     load_screenshot_assets,
@@ -70,7 +70,7 @@ async def main():
         computer_use_tool = ComputerUsePreviewTool(display_width=1026, display_height=769, environment="windows")
 
         agent = await project_client.agents.create_version(
-            agent_name="ComputerUseAgent",
+            agent_name="MyAgent",
             definition=PromptAgentDefinition(
                 model=os.environ.get("COMPUTER_USE_MODEL_DEPLOYMENT_NAME", "computer-use-preview"),
                 instructions="""
@@ -103,7 +103,7 @@ async def main():
                     ],
                 }
             ],
-            extra_body={"agent": AgentReference(name=agent.name).as_dict()},
+            extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             truncation="auto",
         )
 
@@ -155,7 +155,7 @@ async def main():
                         },
                     }
                 ],
-                extra_body={"agent": AgentReference(name=agent.name).as_dict()},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
                 truncation="auto",
             )
 

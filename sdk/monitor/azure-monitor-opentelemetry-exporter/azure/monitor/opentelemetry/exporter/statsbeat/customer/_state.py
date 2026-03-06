@@ -9,6 +9,7 @@ if TYPE_CHECKING:
 # Global singleton instance for easy access throughout the codebase
 _customer_stats_manager = None
 
+
 def get_customer_stats_manager() -> "CustomerSdkStatsManager":  # type: ignore
     # Get the global CustomerSdkStatsManager singleton instance.
 
@@ -18,15 +19,14 @@ def get_customer_stats_manager() -> "CustomerSdkStatsManager":  # type: ignore
     global _customer_stats_manager  # pylint: disable=global-statement
     if _customer_stats_manager is None:
         from ._manager import CustomerSdkStatsManager
+
         _customer_stats_manager = CustomerSdkStatsManager()
     return _customer_stats_manager
 
+
 # TODO: Move to a storage manager
 
-_LOCAL_STORAGE_SETUP_STATE = {
-    "READONLY": False,
-    "EXCEPTION_OCCURRED": ""
-}
+_LOCAL_STORAGE_SETUP_STATE = {"READONLY": False, "EXCEPTION_OCCURRED": ""}
 
 _LOCAL_STORAGE_SETUP_STATE_LOCK = threading.Lock()
 

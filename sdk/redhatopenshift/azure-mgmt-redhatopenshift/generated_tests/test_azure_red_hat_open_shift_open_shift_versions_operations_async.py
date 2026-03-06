@@ -21,11 +21,23 @@ class TestAzureRedHatOpenShiftOpenShiftVersionsOperationsAsync(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_open_shift_versions_list(self, resource_group):
         response = self.client.open_shift_versions.list(
             location="str",
-            api_version="2023-11-22",
+            api_version="2025-07-25",
         )
         result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_open_shift_versions_get(self, resource_group):
+        response = await self.client.open_shift_versions.get(
+            location="str",
+            open_shift_version="str",
+            api_version="2025-07-25",
+        )
+
         # please add some check logic here by yourself
         # ...
