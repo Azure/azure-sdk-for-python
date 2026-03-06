@@ -172,11 +172,43 @@ class TestRateLimitedSampler(unittest.TestCase):
             sampler = RateLimitedSampler(target_rate)
             self.assertIsInstance(sampler, RateLimitedSampler)
             self.assertEqual(sampler.get_description(), f"RateLimitedSampler{{{target_rate}}}")
+        
 
-    # Test that negative target rates raise a ValueError
+    # Test that negative explicit traces per second logs error and defaults to 5.0
     def test_negative_rate_raises_error(self):
         with self.assertRaises(ValueError):
             RateLimitedSampler(-1.0)
+        self.assertEqual(sampler.get_description(), "RateLimitedSampler{5.0}")
+
+    # Test default traces per second when no argument and no env var set
+    def test_constructor_default_traces_per_second(self):
+        with patch.dict("os.environ", {}, clear=True):
+            sampler = RateLimitedSampler()
+            self.assertEqual(sampler.get_description(), "RateLimitedSampler{5.0}")
+
+    # Test traces per second is read from OTEL_TRACES_SAMPLER_ARG when no explicit value passed
+    def test_constructor_traces_per_second_from_env_var(self):
+        with patch.dict("os.environ", {"OTEL_TRACES_SAMPLER_ARG": "10.0"}):
+            sampler = RateLimitedSampler()
+            self.assertEqual(sampler.get_description(), "RateLimitedSampler{10.0}")
+
+    # Test explicit traces per second takes precedence over OTEL_TRACES_SAMPLER_ARG
+    def test_constructor_explicit_ignores_env_var(self):
+        with patch.dict("os.environ", {"OTEL_TRACES_SAMPLER_ARG": "10.0"}):
+            sampler = RateLimitedSampler(3.0)
+            self.assertEqual(sampler.get_description(), "RateLimitedSampler{3.0}")
+
+    # Test env var with negative value logs error and defaults to 5.0
+    def test_constructor_env_var_negative(self):
+        with patch.dict("os.environ", {"OTEL_TRACES_SAMPLER_ARG": "-5.0"}):
+            sampler = RateLimitedSampler()
+            self.assertEqual(sampler.get_description(), "RateLimitedSampler{5.0}")
+
+    # Test env var with invalid float value logs error and defaults to 5.0
+    def test_constructor_env_var_invalid_float(self):
+        with patch.dict("os.environ", {"OTEL_TRACES_SAMPLER_ARG": "not_a_number"}):
+            sampler = RateLimitedSampler()
+            self.assertEqual(sampler.get_description(), "RateLimitedSampler{5.0}")
 
     # Test sampling behavior with zero target rate
     def test_zero_rate_sampling(self):
