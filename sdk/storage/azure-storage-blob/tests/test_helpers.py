@@ -10,8 +10,7 @@ from io import IOBase, UnsupportedOperation
 from typing import Any, Dict, Optional, Tuple
 from typing_extensions import Self
 
-from azure.core.pipeline.transport import RequestsTransport
-from azure.core.rest._requests_basic import RestRequestsTransportResponse
+from azure.core.pipeline.transport import RequestsTransport, RequestsTransportResponse
 from azure.core.rest import HttpRequest
 from azure.storage.blob._serialize import get_api_version
 from requests import Response
@@ -123,7 +122,7 @@ class MockLegacyTransport(RequestsTransport):
     This transport returns http response objects from azure core pipelines and is
     intended only to test our backwards compatibility support.
     """
-    def send(self, request: HttpRequest, **kwargs: Any) -> RestRequestsTransportResponse:
+    def send(self, request: HttpRequest, **kwargs: Any) -> RequestsTransportResponse:
         if request.method == 'GET':
             # download_blob
             headers = {
@@ -135,34 +134,32 @@ class MockLegacyTransport(RequestsTransport):
             if "x-ms-range-get-content-md5" in request.headers:
                 headers["Content-MD5"] = "7Qdih1MuhjZehB6Sv8UNjA=="  # cspell:disable-line
 
-            rest_response = RestRequestsTransportResponse(
+            rest_response = RequestsTransportResponse(
                 request=request,
-                internal_response=MockClientResponse(
+                requests_response=MockClientResponse(
                     request.url,
                     b"Hello World!",
                     headers,
-                ),
-                block_size=self.connection_config.data_block_size,
+                )
             )
         elif request.method == 'HEAD':
             # get_blob_properties
-            rest_response = RestRequestsTransportResponse(
+            rest_response = RequestsTransportResponse(
                 request=request,
-                internal_response=MockClientResponse(
+                requests_response=MockClientResponse(
                     request.url,
                     b"",
                     {
                         "Content-Type": "application/octet-stream",
                         "Content-Length": "1024",
                     },
-                ),
-                block_size=self.connection_config.data_block_size,
+                )
             )
         elif request.method == 'PUT':
             # upload_blob
-            rest_response = RestRequestsTransportResponse(
+            rest_response = RequestsTransportResponse(
                 request=request,
-                internal_response=MockClientResponse(
+                requests_response=MockClientResponse(
                     request.url,
                     b"",
                     {
@@ -170,14 +167,13 @@ class MockLegacyTransport(RequestsTransport):
                     },
                     201,
                     "Created"
-                ),
-                block_size=self.connection_config.data_block_size,
+                )
             )
         elif request.method == 'DELETE':
             # delete_blob
-            rest_response = RestRequestsTransportResponse(
+            rest_response = RequestsTransportResponse(
                 request=request,
-                internal_response=MockClientResponse(
+                requests_response=MockClientResponse(
                     request.url,
                     b"",
                     {
@@ -185,8 +181,7 @@ class MockLegacyTransport(RequestsTransport):
                     },
                     202,
                     "Accepted"
-                ),
-                block_size=self.connection_config.data_block_size,
+                )
             )
         else:
             raise ValueError("The request is not accepted as part of MockLegacyTransport.")

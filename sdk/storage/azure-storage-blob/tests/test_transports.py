@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-
+import pytest
 from azure.storage.blob import BlobClient, BlobServiceClient
 from azure.core.exceptions import ResourceExistsError
 from azure.core.pipeline.transport import RequestsTransport
@@ -24,6 +24,7 @@ class TestStorageTransports(StorageRecordedTestCase):
             except ResourceExistsError:
                 pass
 
+    @pytest.mark.skip("Legacy transports not supported")
     @BlobPreparer()
     def test_legacy_transport_old_response(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
@@ -52,6 +53,7 @@ class TestStorageTransports(StorageRecordedTestCase):
         resp = blob_client.delete_blob()
         assert resp is None
 
+    @pytest.mark.skip("Legacy transports not supported")
     @BlobPreparer()
     def test_legacy_transport_old_response_content_validation(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
@@ -77,6 +79,7 @@ class TestStorageTransports(StorageRecordedTestCase):
         resp = blob_client.delete_blob()
         assert resp is None
 
+    @pytest.mark.skip("Legacy transports not supported")
     @BlobPreparer()
     @recorded_by_proxy
     def test_legacy_transport(self, **kwargs):
@@ -104,6 +107,7 @@ class TestStorageTransports(StorageRecordedTestCase):
         resp = blob_client.delete_blob()
         assert resp is None
 
+    @pytest.mark.skip("Legacy transports not supported")
     @BlobPreparer()
     @recorded_by_proxy
     def test_legacy_transport_content_validation(self, **kwargs):
