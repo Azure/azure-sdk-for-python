@@ -1,6 +1,6 @@
 # Release History
 
-## 11.0.0b1 (2026-02-27)
+## 11.0.0b1 (2026-03-06)
 
 ### Features Added
 
@@ -116,8 +116,7 @@
 
 ### Other Changes
 
-  - Deleted model `BMSBackupEngineQueryObject`/`BMSBackupEnginesQueryObject`/`BMSBackupSummariesQueryObject`/`BMSContainerQueryObject`/`BMSContainersInquiryQueryObject`/`BMSPOQueryObject`/`BMSRPQueryObject`/`BMSRefreshContainersQueryObject`/`BMSWorkloadItemQueryObject`/`ClientDiscoveryResponse`/`CloudErrorBody`/`ContainerType`/`GetProtectedItemQueryObject`/`HealthState`/`IntentItemType`/`JobOperationType`/`JobQueryObject`/`JobStatus`/`NewErrorResponse`/`NewErrorResponseError`/`ProtectedItemQueryObject`/`ProtectionIntentQueryObject`/`ProtectionPolicyQueryObject`/`RestorePointQueryType`/`Type` which actually were not used by SDK users
-  - Deleted model `BackupEngineBaseResourceList`/`BackupManagementUsageList`/`JobResourceList`/`ProtectableContainerResourceList`/`ProtectedItemResourceList`/`ProtectionContainerResourceList`/`ProtectionIntentResourceList`/`ProtectionPolicyResourceList`/`RecoveryPointResourceList`/`ResourceGuardProxyBaseResourceList`/`WorkloadItemResourceList`/`WorkloadProtectableItemResourceList` which actually were not used by SDK users
+  - Deleted model `BMSBackupEngineQueryObject`/`BMSBackupEnginesQueryObject`/`BMSBackupSummariesQueryObject`/`BMSContainerQueryObject`/`BMSContainersInquiryQueryObject`/`BMSPOQueryObject`/`BMSRPQueryObject`/`BMSRefreshContainersQueryObject`/`BMSWorkloadItemQueryObject`/`ClientDiscoveryResponse`/`CloudErrorBody`/`ContainerType`/`GetProtectedItemQueryObject`/`HealthState`/`IntentItemType`/`JobOperationType`/`JobQueryObject`/`JobStatus`/`NewErrorResponse`/`NewErrorResponseError`/`ProtectedItemQueryObject`/`ProtectionIntentQueryObject`/`ProtectionPolicyQueryObject`/`RestorePointQueryType`/`Type`/`BackupEngineBaseResourceList`/`BackupManagementUsageList`/`JobResourceList`/`ProtectableContainerResourceList`/`ProtectedItemResourceList`/`ProtectionContainerResourceList`/`ProtectionIntentResourceList`/`ProtectionPolicyResourceList`/`RecoveryPointResourceList`/`ResourceGuardProxyBaseResourceList`/`WorkloadItemResourceList`/`WorkloadProtectableItemResourceList` which actually were not used by SDK users
 
 ## 10.0.0 (2025-10-16)
 
