@@ -55,6 +55,7 @@ from .._change_feed.feed_range_internal import FeedRangeInternalEpk
 from .._routing import routing_range
 from ..documents import ConnectionPolicy, DatabaseAccount
 from .._constants import _Constants as Constants
+from .._query_advisor import get_query_advice_info
 from .._cosmos_responses import CosmosDict, CosmosList, CosmosAsyncItemPaged
 from .. import http_constants, exceptions
 from . import _query_iterable_async as query_iterable
@@ -3177,6 +3178,14 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                     response_hook(self.last_response_headers, partial_result)
             # if the prefix partition query has results lets return it
             if results:
+                if self.last_response_headers.get(http_constants.HttpHeaders.IndexUtilization) is not None:
+                    index_metrics_raw = self.last_response_headers[http_constants.HttpHeaders.IndexUtilization]
+                    self.last_response_headers[http_constants.HttpHeaders.IndexUtilization] = (
+                        _utils.get_index_metrics_info(index_metrics_raw))
+                if self.last_response_headers.get(http_constants.HttpHeaders.QueryAdvice) is not None:
+                    query_advice_raw = self.last_response_headers[http_constants.HttpHeaders.QueryAdvice]
+                    self.last_response_headers[http_constants.HttpHeaders.QueryAdvice] = (
+                        get_query_advice_info(query_advice_raw))
                 return __GetBodiesFromQueryResult(results)
 
         result, last_response_headers = await self.__Post(path, request_params, query, req_headers, **kwargs)
@@ -3188,6 +3197,9 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             INDEX_METRICS_HEADER = http_constants.HttpHeaders.IndexUtilization
             index_metrics_raw = self.last_response_headers[INDEX_METRICS_HEADER]
             self.last_response_headers[INDEX_METRICS_HEADER] = _utils.get_index_metrics_info(index_metrics_raw)
+        if self.last_response_headers.get(http_constants.HttpHeaders.QueryAdvice) is not None:
+            query_advice_raw = self.last_response_headers[http_constants.HttpHeaders.QueryAdvice]
+            self.last_response_headers[http_constants.HttpHeaders.QueryAdvice] = get_query_advice_info(query_advice_raw)
         if response_headers_list is not None:
             response_headers_list.append(last_response_headers.copy())
         if response_hook:
