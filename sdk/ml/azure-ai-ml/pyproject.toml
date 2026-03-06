@@ -61,6 +61,8 @@ content-type = "text/markdown"
 [tool.setuptools.packages.find]
 exclude = [
     "tests*",
+    "samples*",
+    "scripts*",
     "azure",
     "azure.ai",
 ]
