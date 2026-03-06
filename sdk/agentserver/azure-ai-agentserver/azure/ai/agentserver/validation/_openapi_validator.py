@@ -27,13 +27,53 @@
 import copy
 import json
 import logging
+import re
 from collections import Counter
+from datetime import datetime, timezone
 from typing import Any, Optional
 
 import jsonschema
-from jsonschema import ValidationError
+from jsonschema import FormatChecker, ValidationError
 
 logger = logging.getLogger("azure.ai.agentserver")
+
+# ---------------------------------------------------------------------------
+# Stdlib-only format checkers so we never depend on optional jsonschema extras
+# (rfc3339-validator, fqdn, …).  Registered on a module-level instance that
+# is reused for every validation call.
+# ---------------------------------------------------------------------------
+_format_checker = FormatChecker(formats=())  # start with no built-in checks
+
+_EMAIL_RE = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
+
+
+@_format_checker.checks("date-time", raises=ValueError)
+def _check_datetime(value: object) -> bool:
+    """Validate RFC 3339 / ISO 8601 date-time strings using stdlib only."""
+    if not isinstance(value, str):
+        return True  # non-string is not a format error
+    normalized = value.replace("Z", "+00:00") if value.endswith("Z") else value
+    datetime.fromisoformat(normalized)
+    return True
+
+
+@_format_checker.checks("date", raises=ValueError)
+def _check_date(value: object) -> bool:
+    """Validate ISO 8601 date strings (YYYY-MM-DD)."""
+    if not isinstance(value, str):
+        return True
+    datetime.strptime(value, "%Y-%m-%d")
+    return True
+
+
+@_format_checker.checks("email", raises=ValueError)
+def _check_email(value: object) -> bool:
+    """Basic RFC 5322 email format check (no DNS lookup)."""
+    if not isinstance(value, str):
+        return True
+    if not _EMAIL_RE.match(value):
+        raise ValueError(f"Invalid email: {value!r}")
+    return True
 
 # OpenAPI keywords that are not part of JSON Schema and must be stripped
 # before handing a schema to a JSON Schema validator.
@@ -135,7 +175,7 @@ class OpenApiValidator:
 
         errors: list[str] = []
         validator = jsonschema.Draft7Validator(
-            schema, format_checker=jsonschema.FormatChecker()
+            schema, format_checker=_format_checker
         )
         for error in validator.iter_errors(data):
             errors.extend(_collect_errors(error))
