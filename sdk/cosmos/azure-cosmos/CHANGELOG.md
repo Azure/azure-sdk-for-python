@@ -8,6 +8,7 @@
 * Added InferenceRequestTimeout property for HttpTimeout Policy to Reranking API. See [45469](https://github.com/Azure/azure-sdk-for-python/pull/45469)
 
 #### Breaking Changes
+* Added `start_time` support for change feed queries in `query_items_change_feed` API. See [PR 44621](https://github.com/Azure/azure-sdk-for-python/pull/44621)
 
 #### Bugs Fixed
 
