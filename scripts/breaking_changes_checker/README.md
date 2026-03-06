@@ -22,18 +22,6 @@ cd ./sdk/storage/azure-storage-blob
 azpysdk breaking .
 ```
 
-## Run locally with tox
-
-**1) Install tox:**
-
-`pip install tox<5`
-
-**2) Run the `breaking` environment.**
-
-Here we run the breaking changes tool against azure-storage-blob, for example:
-
-`C:\azure-sdk-for-python\sdk\storage\azure-storage-blob>tox run -c ../../../eng/tox/tox.ini --root . -e breaking`
-
 For more advanced usage scenarios see [Advanced scenarios](#advanced-scenarios).
 
 ## Ignore a reported breaking change
@@ -102,7 +90,7 @@ By default, this tool will only compare against past stable releases on PyPi. If
 Example:
 
 ```
-C:\azure-sdk-for-python\sdk\storage\azure-storage-blob> tox run -c ../../../eng/tox/tox.ini --root . -e breaking -- --latest-pypi-version
+C:\azure-sdk-for-python\sdk\storage\azure-storage-blob> azpysdk breaking . --latest-pypi-version
 ```
 
 ### Changelog reporting
@@ -112,7 +100,7 @@ The breaking changes tool also supports reporting general changes between librar
 To get changelog output use the `--changelog` flag:
 
 ```
-C:\azure-sdk-for-python\sdk\storage\azure-storage-blob>tox run -c ../../../eng/tox/tox.ini --root . -e breaking -- --changelog
+C:\azure-sdk-for-python\sdk\storage\azure-storage-blob> azpysdk breaking . --changelog
 ```
 
 Example output:
@@ -136,7 +124,7 @@ To get a code report pass the `--code-report` flag.
 Example:
 
 ```
-C:\azure-sdk-for-python\sdk\storage\azure-storage-blob> tox run -c ../../../eng/tox/tox.ini --root . -e breaking -- --code-report
+C:\azure-sdk-for-python\sdk\storage\azure-storage-blob> azpysdk breaking . --code-report
 ```
 
 This command will generate a `code_report.json` file in the library directory.
@@ -148,5 +136,5 @@ To use previously generated code reports for breaking changes comparison you wil
 Example:
 
 ```
-C:\azure-sdk-for-python\sdk\storage\azure-storage-blob> tox run -c ../../../eng/tox/tox.ini --root . -e breaking -- --source-report ./source_code_report.json --target-report ./target_code_report.json
+C:\azure-sdk-for-python\sdk\storage\azure-storage-blob> azpysdk breaking . --source-report ./source_code_report.json --target-report ./target_code_report.json
 ```
