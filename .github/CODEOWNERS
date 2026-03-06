@@ -317,14 +317,6 @@
 # PRLabel: %Maps
 /sdk/maps/    @andykao1213 @dubiety
 
-# ServiceLabel: %Mixed Reality
-# PRLabel: %Mixed Reality
-/sdk/mixedreality/azure-mixedreality-authentication/    @RamonArguelles
-
-# ServiceLabel: %Mixed Reality
-# PRLabel: %Mixed Reality
-/sdk/remoterendering/    @FlorianBorn71
-
 # PRLabel: %Monitor
 /sdk/loganalytics/    @lirenhe @msyyc
 
