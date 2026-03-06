@@ -79,6 +79,7 @@ __all__ = [
     "RecordMergePatchUpdate",
     "AnalyzeLROPoller",
     "ProcessingLocation",
+    "ContentField",
     "StringField",
     "IntegerField",
     "NumberField",
