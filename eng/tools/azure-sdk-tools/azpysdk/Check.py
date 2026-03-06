@@ -1,6 +1,7 @@
 import abc
 import os
 import argparse
+import re
 import traceback
 import sys
 import shutil
@@ -26,6 +27,18 @@ from ci_tools.logging import logger
 # we assume this because we don't know how a dev has installed this package, and might be
 # being called from within a site-packages folder. Due to that, we can't trust the location of __file__
 REPO_ROOT = discover_repo_root()
+
+PACKAGING_REQUIREMENTS = [
+    "wheel==0.45.1",
+    "packaging==24.2",
+    "urllib3==2.2.3",
+    "tomli==2.2.1",
+    "build==1.2.2.post1",
+    "pkginfo==1.12.1.2",
+]
+
+TEST_TOOLS_REQUIREMENTS = os.path.join(REPO_ROOT, "eng/test_tools.txt")
+DEPENDENCY_TOOLS_REQUIREMENTS = os.path.join(REPO_ROOT, "eng/dependency_tools.txt")
 
 
 class Check(abc.ABC):
@@ -80,16 +93,14 @@ class Check(abc.ABC):
 
                 if prebuilt_whl:
                     install_location = os.path.join(wheel_dir, prebuilt_whl)
-                    install_into_venv(venv_location, [f"{install_location}[build]"], REPO_ROOT)
+                    install_into_venv(venv_location, [install_location], REPO_ROOT)
                 else:
                     logger.error(
                         "Falling back to manual build and install of azure-sdk-tools into isolated env,"
                         f" unable to locate prebuilt azure-sdk-tools within {wheel_dir}"
                     )
             else:
-                install_into_venv(
-                    venv_location, [os.path.join(REPO_ROOT, "eng/tools/azure-sdk-tools[build]")], REPO_ROOT
-                )
+                install_into_venv(venv_location, [os.path.join(REPO_ROOT, "eng/tools/azure-sdk-tools")], REPO_ROOT)
 
             venv_python_exe = get_venv_python(venv_location)
 
@@ -100,8 +111,11 @@ class Check(abc.ABC):
 
     def get_executable(self, isolate: bool, check_name: str, executable: str, package_folder: str) -> Tuple[str, str]:
         """Get the Python executable that should be used for this check."""
-        venv_location = os.path.join(package_folder, f".venv_{check_name}")
-
+        # Keep venvs under a shared repo-level folder to prevent nested import errors during pytest collection
+        package_name = os.path.basename(os.path.normpath(package_folder))
+        shared_venv_root = os.path.join(REPO_ROOT, ".venv", package_name)
+        os.makedirs(shared_venv_root, exist_ok=True)
+        venv_location = os.path.join(shared_venv_root, f".venv_{check_name}")
         # if isolation is required, the executable we get back will align with the venv
         # otherwise we'll just get sys.executable and install in current
         executable = self.create_venv(isolate, venv_location)
@@ -117,6 +131,7 @@ class Check(abc.ABC):
         check: bool = False,
         append_executable: bool = True,
         immediately_dump: bool = False,
+        additional_environment_settings: Optional[dict] = None,
     ) -> subprocess.CompletedProcess[str]:
         """Run a command in the given virtual environment.
         - Prepends the virtual environment's bin directory to the PATH environment variable (if one exists)
@@ -130,6 +145,8 @@ class Check(abc.ABC):
             )
 
         env = os.environ.copy()
+        if additional_environment_settings:
+            env.update(additional_environment_settings)
 
         python_exec = pathlib.Path(executable)
         if python_exec.exists():
@@ -178,6 +195,16 @@ class Check(abc.ABC):
                 logger.error(f"Exception: {e}")
                 return []
         else:
+            # Narrow discovery to a specific service directory when --service is provided.
+            # "auto" is discarded (treated the same as no value), matching dispatch_checks.py behavior.
+            service = getattr(args, "service", None)
+            if service and service != "auto":
+                service_dir = os.path.join(REPO_ROOT, "sdk", service)
+                if os.path.isdir(service_dir):
+                    targeted_dir = service_dir
+                else:
+                    logger.warning(f"Service directory '{service_dir}' does not exist, falling back to cwd.")
+
             targeted_packages = discover_targeted_packages(args.target, targeted_dir)
             for pkg in targeted_packages:
                 try:
@@ -249,14 +276,16 @@ class Check(abc.ABC):
             logger.error(e.stdout)
             logger.error(e.stderr)
 
-    def _build_pytest_args(self, package_dir: str, args: argparse.Namespace) -> List[str]:
-        """
-        Builds the pytest arguments used for the given package directory.
-
-        :param package_dir: The package directory to build pytest args for.
-        :param args: The argparse.Namespace object containing command-line arguments.
-        :return: A list of pytest arguments.
-        """
+    def _build_pytest_args_base(
+        self,
+        package_dir: str,
+        args: argparse.Namespace,
+        *,
+        ignore_globs: Optional[List[str]] = None,
+        extra_args: Optional[List[str]] = None,
+        test_target: Optional[str] = None,
+    ) -> List[str]:
+        """Build common pytest args for a package directory."""
         log_level = os.getenv("PYTEST_LOG_LEVEL", "51")
         junit_path = os.path.join(package_dir, f"test-junit-{args.command}.xml")
 
@@ -268,13 +297,51 @@ class Check(abc.ABC):
             "--durations=10",
             "--ignore=azure",
             "--ignore=.tox",
-            "--ignore-glob=.venv*",
             "--ignore=build",
             "--ignore=.eggs",
             "--ignore=samples",
             f"--log-cli-level={log_level}",
         ]
 
-        additional = args.pytest_args if args.pytest_args else []
+        for glob in ignore_globs or [".venv*"]:
+            default_args.append(f"--ignore-glob={glob}")
 
-        return [*default_args, *additional, package_dir]
+        pytest_args = [*default_args]
+
+        if extra_args:
+            pytest_args.extend(extra_args)
+
+        if getattr(args, "mark_arg", None):
+            pytest_args.extend(["-m", args.mark_arg])
+
+        if getattr(args, "pytest_args", None):
+            pytest_args.extend(args.pytest_args)
+
+        pytest_args.append(test_target or ".")
+
+        return pytest_args
+
+    def _build_pytest_args(self, package_dir: str, args: argparse.Namespace) -> List[str]:
+        """Build pytest args for a package directory."""
+        return self._build_pytest_args_base(package_dir, args)
+
+    def get_check_version(self, executable: str, module_name: str) -> Optional[str]:
+        """Get the version of a tool installed in the virtual environment.
+
+        Runs ``<executable> -m <module_name> --version`` and extracts the first
+        semver-style version string from the output.
+
+        :param executable: Path to the Python executable in the target venv.
+        :param module_name: The module to query (e.g. "pylint", "mypy").
+        :returns: The version string, or None if it could not be determined.
+        """
+        try:
+            result = subprocess.run(
+                [executable, "-m", module_name, "--version"],
+                capture_output=True,
+            )
+            version_output = result.stdout.rstrip().decode("utf-8")
+            matches = re.findall(r"(\d+\.\d+\.\d+)", version_output)
+            return matches[0] if matches else None
+        except Exception:
+            return None

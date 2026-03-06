@@ -10,6 +10,12 @@ parameters:
 
 # Please use `$(TargetingString)` to refer to the python packages glob string. This variable is set from resolve-package-targeting.yml.
 steps:
+  # Authenticate to Azure Artifacts feed immediately to prevent 401 errors
+  # Public feeds have upstream sources enabled and require authentication for passthrough to pypi.org
+  - template: ../steps/auth-dev-feed.yml
+    parameters:
+      DevFeedName: ${{ parameters.DevFeedName }}
+
   - template: /eng/pipelines/templates/steps/analyze_dependency.yml
     parameters:
       ScanPath: $(Build.SourcesDirectory)/sdk/${{ parameters.ServiceDirectory }}
@@ -20,16 +26,11 @@ steps:
       ServiceDirectory: "template"
       TestPipeline: ${{ parameters.TestPipeline }}
 
-  - ${{if eq(variables['System.TeamProject'], 'internal') }}:
-    - template: ../steps/auth-dev-feed.yml
-      parameters:
-        DevFeedName: ${{ parameters.DevFeedName }}
-
   - task: PythonScript@0
-    displayName: 'Set Tox Environment Skips'
+    displayName: 'Set Checks Environment Skips'
     condition: succeededOrFailed()
     inputs:
-      scriptPath: 'scripts/devops_tasks/set_tox_environment.py'
+      scriptPath: 'eng/scripts/set_checks.py'
       arguments: '"$(TargetingString)" --team-project="$(System.TeamProject)" --service="${{ parameters.ServiceDirectory }}"'
 
   - ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
@@ -48,7 +49,7 @@ steps:
             Condition: succeededOrFailed()
 
   - script: |
-      $(PIP_EXE) install "./eng/tools/azure-sdk-tools[build]"
+      $(PIP_EXE) install "./eng/tools/azure-sdk-tools"
       sdk_find_invalid_versions --always-succeed --service=${{parameters.ServiceDirectory}}
     displayName: Find Invalid Versions
     condition: succeededOrFailed()

@@ -6,6 +6,7 @@
 """
 Tests for ResponsesInstrumentor with Code Interpreter tool.
 """
+
 import os
 import pytest
 from io import BytesIO
@@ -22,7 +23,7 @@ from devtools_testutils import recorded_by_proxy, RecordedTransport
 from azure.ai.projects.models import (
     PromptAgentDefinition,
     CodeInterpreterTool,
-    CodeInterpreterContainerAuto,
+    AutoCodeInterpreterToolParam,
 )
 
 from test_base import servicePreparer
@@ -92,7 +93,7 @@ TRANSPORTATION,Contoso air,1100000
                 definition=PromptAgentDefinition(
                     model=deployment_name,
                     instructions="You are a helpful assistant that can execute Python code to analyze data.",
-                    tools=[CodeInterpreterTool(container=CodeInterpreterContainerAuto(file_ids=[file.id]))],
+                    tools=[CodeInterpreterTool(container=AutoCodeInterpreterToolParam(file_ids=[file.id]))],
                 ),
             )
 
@@ -103,7 +104,7 @@ TRANSPORTATION,Contoso air,1100000
                 response = openai_client.responses.create(
                     conversation=conversation.id,
                     input="Calculate the average operating profit from the transportation data",
-                    extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                    extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
                 )
 
                 # Explicitly call and iterate through conversation items
@@ -279,7 +280,7 @@ TRANSPORTATION,Contoso air,1100000
                 definition=PromptAgentDefinition(
                     model=deployment_name,
                     instructions="You are a helpful assistant that can execute Python code to analyze data.",
-                    tools=[CodeInterpreterTool(container=CodeInterpreterContainerAuto(file_ids=[file.id]))],
+                    tools=[CodeInterpreterTool(container=AutoCodeInterpreterToolParam(file_ids=[file.id]))],
                 ),
             )
 
@@ -290,7 +291,7 @@ TRANSPORTATION,Contoso air,1100000
                 response = openai_client.responses.create(
                     conversation=conversation.id,
                     input="Calculate the average operating profit from the transportation data",
-                    extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                    extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
                 )
 
                 # Explicitly call and iterate through conversation items
@@ -470,7 +471,7 @@ TRANSPORTATION,Contoso air,1100000
                 definition=PromptAgentDefinition(
                     model=deployment_name,
                     instructions="You are a helpful assistant that can execute Python code to analyze data.",
-                    tools=[CodeInterpreterTool(container=CodeInterpreterContainerAuto(file_ids=[file.id]))],
+                    tools=[CodeInterpreterTool(container=AutoCodeInterpreterToolParam(file_ids=[file.id]))],
                 ),
             )
 
@@ -482,7 +483,7 @@ TRANSPORTATION,Contoso air,1100000
                     conversation=conversation.id,
                     input="Calculate the average operating profit from the transportation data",
                     stream=True,
-                    extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                    extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
                 )
 
                 # Consume the stream
@@ -661,7 +662,7 @@ TRANSPORTATION,Contoso air,1100000
                 definition=PromptAgentDefinition(
                     model=deployment_name,
                     instructions="You are a helpful assistant that can execute Python code to analyze data.",
-                    tools=[CodeInterpreterTool(container=CodeInterpreterContainerAuto(file_ids=[file.id]))],
+                    tools=[CodeInterpreterTool(container=AutoCodeInterpreterToolParam(file_ids=[file.id]))],
                 ),
             )
 
@@ -673,7 +674,7 @@ TRANSPORTATION,Contoso air,1100000
                     conversation=conversation.id,
                     input="Calculate the average operating profit from the transportation data",
                     stream=True,
-                    extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                    extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
                 )
 
                 # Consume the stream

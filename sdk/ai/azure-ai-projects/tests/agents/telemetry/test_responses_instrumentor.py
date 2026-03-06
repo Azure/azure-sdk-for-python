@@ -85,6 +85,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     def test_instrumentation(self, **kwargs):
         # Make sure code is not instrumented due to a previous test exception
         AIProjectInstrumentor().uninstrument()
+        os.environ["AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING"] = "true"
         exception_caught = False
         try:
             assert AIProjectInstrumentor().is_instrumented() == False
@@ -95,11 +96,14 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         except RuntimeError as e:
             exception_caught = True
             print(e)
+        finally:
+            os.environ.pop("AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING", None)
         assert exception_caught == False
 
     def test_instrumenting_twice_does_not_cause_exception(self, **kwargs):
         # Make sure code is not instrumented due to a previous test exception
         AIProjectInstrumentor().uninstrument()
+        os.environ["AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING"] = "true"
         exception_caught = False
         try:
             AIProjectInstrumentor().instrument()
@@ -107,7 +111,9 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         except RuntimeError as e:
             exception_caught = True
             print(e)
-        AIProjectInstrumentor().uninstrument()
+        finally:
+            AIProjectInstrumentor().uninstrument()
+            os.environ.pop("AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING", None)
         assert exception_caught == False
 
     def test_uninstrumenting_uninstrumented_does_not_cause_exception(self, **kwargs):
@@ -124,6 +130,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     def test_uninstrumenting_twice_does_not_cause_exception(self, **kwargs):
         # Make sure code is not instrumented due to a previous test exception
         AIProjectInstrumentor().uninstrument()
+        os.environ["AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING"] = "true"
         exception_caught = False
         try:
             AIProjectInstrumentor().instrument()
@@ -132,6 +139,8 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         except RuntimeError as e:
             exception_caught = True
             print(e)
+        finally:
+            os.environ.pop("AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING", None)
         assert exception_caught == False
 
     @pytest.mark.parametrize(
@@ -837,10 +846,11 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         from opentelemetry.sdk.trace.export import SimpleSpanProcessor
         from memory_trace_exporter import MemoryTraceExporter
 
-        trace._TRACER_PROVIDER = TracerProvider()
+        tracer_provider = TracerProvider()
+        trace._TRACER_PROVIDER = tracer_provider
         exporter = MemoryTraceExporter()
         span_processor = SimpleSpanProcessor(exporter)
-        trace.get_tracer_provider().add_span_processor(span_processor)
+        tracer_provider.add_span_processor(span_processor)
 
         try:
             # Verify no instrumentation
@@ -1021,7 +1031,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             response = client.responses.create(
                 conversation=conversation.id,
                 input="What's the weather in Seattle?",
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
                 stream=False,
             )
             function_calls = [item for item in response.output if item.type == "function_call"]
@@ -1044,7 +1054,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             response2 = client.responses.create(
                 conversation=conversation.id,
                 input=input_list,
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
                 stream=False,
             )
             assert hasattr(response2, "output")
@@ -1280,7 +1290,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             stream = client.responses.create(
                 conversation=conversation.id,
                 input="What's the weather in Seattle?",
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
                 stream=True,
             )
             # Consume the stream and collect function calls
@@ -1318,7 +1328,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             stream2 = client.responses.create(
                 conversation=conversation.id,
                 input=input_list,
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
                 stream=True,
             )
             # Consume the second stream
@@ -1604,7 +1614,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             response = client.responses.create(
                 conversation=conversation.id,
                 input="What's the weather in Seattle?",
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
                 stream=False,
             )
             function_calls = [item for item in response.output if item.type == "function_call"]
@@ -1627,7 +1637,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             response2 = client.responses.create(
                 conversation=conversation.id,
                 input=input_list,
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
                 stream=False,
             )
             assert hasattr(response2, "output")
@@ -1840,7 +1850,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             stream = client.responses.create(
                 conversation=conversation.id,
                 input="What's the weather in Seattle?",
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
                 stream=True,
             )
             # Consume the stream and collect function calls
@@ -1879,7 +1889,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             stream2 = client.responses.create(
                 conversation=conversation.id,
                 input=input_list,
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
                 stream=True,
             )
             # Consume the second stream
@@ -2158,7 +2168,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             response = client.responses.create(
                 conversation=conversation.id,
                 input="What's the weather in Seattle?",
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
                 stream=False,
             )
 
@@ -2179,7 +2189,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             response2 = client.responses.create(
                 conversation=conversation.id,
                 input=input_list,
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
                 stream=False,
             )
 
@@ -2308,7 +2318,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             response = client.responses.create(
                 conversation=conversation.id,
                 input="What's the weather in Seattle?",
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
                 stream=False,
             )
 
@@ -2329,7 +2339,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             response2 = client.responses.create(
                 conversation=conversation.id,
                 input=input_list,
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
                 stream=False,
             )
 
@@ -4936,7 +4946,6 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         """Test workflow agent with non-streaming and content recording enabled."""
         from azure.ai.projects.models import (
             WorkflowAgentDefinition,
-            AgentReference,
             PromptAgentDefinition,
         )
 
@@ -5053,7 +5062,7 @@ trigger:
 
             response = openai_client.responses.create(
                 conversation=conversation.id,
-                extra_body={"agent": AgentReference(name=workflow_agent.name).as_dict()},
+                extra_body={"agent_reference": {"name": workflow_agent.name, "type": "agent_reference"}},
                 input="1 + 1 = ?",
                 stream=False,
             )
@@ -5137,7 +5146,7 @@ trigger:
     @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_workflow_agent_non_streaming_without_content_recording(self, **kwargs):
         """Test workflow agent with non-streaming and content recording disabled."""
-        from azure.ai.projects.models import WorkflowAgentDefinition, AgentReference
+        from azure.ai.projects.models import WorkflowAgentDefinition
 
         self.cleanup()
         os.environ.update(
@@ -5173,7 +5182,7 @@ trigger:
 
             response = openai_client.responses.create(
                 conversation=conversation.id,
-                extra_body={"agent": AgentReference(name=workflow_agent.name).as_dict()},
+                extra_body={"agent_reference": {"name": workflow_agent.name, "type": "agent_reference"}},
                 input="Test workflow",
                 stream=False,
             )
@@ -5253,7 +5262,6 @@ trigger:
         """Test workflow agent with streaming and content recording enabled."""
         from azure.ai.projects.models import (
             WorkflowAgentDefinition,
-            AgentReference,
             PromptAgentDefinition,
         )
 
@@ -5370,7 +5378,7 @@ trigger:
 
             stream = openai_client.responses.create(
                 conversation=conversation.id,
-                extra_body={"agent": AgentReference(name=workflow_agent.name).as_dict()},
+                extra_body={"agent_reference": {"name": workflow_agent.name, "type": "agent_reference"}},
                 input="1 + 1 = ?",
                 stream=True,
             )
@@ -5457,7 +5465,7 @@ trigger:
     @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_workflow_agent_streaming_without_content_recording(self, **kwargs):
         """Test workflow agent with streaming and content recording disabled."""
-        from azure.ai.projects.models import WorkflowAgentDefinition, AgentReference
+        from azure.ai.projects.models import WorkflowAgentDefinition
 
         self.cleanup()
         os.environ.update(
@@ -5493,7 +5501,7 @@ trigger:
 
             stream = openai_client.responses.create(
                 conversation=conversation.id,
-                extra_body={"agent": AgentReference(name=workflow_agent.name).as_dict()},
+                extra_body={"agent_reference": {"name": workflow_agent.name, "type": "agent_reference"}},
                 input="Test workflow",
                 stream=True,
             )
@@ -5604,7 +5612,7 @@ trigger:
             # Create response with agent name and id
             response = client.responses.create(
                 conversation=conversation.id,
-                extra_body={"agent": {"name": agent.name, "id": agent.id, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "id": agent.id, "type": "agent_reference"}},
                 input="What is the capital of France?",
             )
 
@@ -5674,7 +5682,7 @@ trigger:
             # Create streaming response with agent name and id
             stream = client.responses.create(
                 conversation=conversation.id,
-                extra_body={"agent": {"name": agent.name, "id": agent.id, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "id": agent.id, "type": "agent_reference"}},
                 input="What is the capital of France?",
                 stream=True,
             )

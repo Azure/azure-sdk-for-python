@@ -14,7 +14,7 @@ DESCRIPTION:
     These tests validate the sample_analyze_url.py sample code.
     This sample demonstrates prebuilt RAG analyzers with URL inputs. Content Understanding supports
     both local binary inputs (see sample_analyze_binary.py) and URL inputs across all modalities.
-    For URL inputs, use begin_analyze() with AnalyzeInput objects that wrap the URL.
+    For URL inputs, use begin_analyze() with AnalysisInput objects that wrap the URL.
 
 USAGE:
     pytest test_sample_analyze_url.py
@@ -24,7 +24,7 @@ import os
 import pytest
 from devtools_testutils import recorded_by_proxy
 from testpreparer import ContentUnderstandingPreparer, ContentUnderstandingClientTestBase
-from azure.ai.contentunderstanding.models import AnalyzeInput, AudioVisualContent, DocumentContent
+from azure.ai.contentunderstanding.models import AnalysisInput, AudioVisualContent, DocumentContent
 
 
 class TestSampleAnalyzeUrl(ContentUnderstandingClientTestBase):
@@ -51,7 +51,7 @@ class TestSampleAnalyzeUrl(ContentUnderstandingClientTestBase):
         print(f"[PASS] Analyzing document from URL: {url}")
 
         # Analyze the document
-        poller = client.begin_analyze(analyzer_id="prebuilt-documentSearch", inputs=[AnalyzeInput(url=url)])
+        poller = client.begin_analyze(analyzer_id="prebuilt-documentSearch", inputs=[AnalysisInput(url=url)])
 
         result = poller.result()
 
@@ -96,7 +96,9 @@ class TestSampleAnalyzeUrl(ContentUnderstandingClientTestBase):
 
         # Analyze the video
         # Use 10-second polling interval for video analysis (longer processing time)
-        poller = client.begin_analyze(analyzer_id="prebuilt-videoSearch", inputs=[AnalyzeInput(url=url)], polling_interval=10)
+        poller = client.begin_analyze(
+            analyzer_id="prebuilt-videoSearch", inputs=[AnalysisInput(url=url)], polling_interval=10
+        )
 
         result = poller.result()
 
@@ -138,8 +140,10 @@ class TestSampleAnalyzeUrl(ContentUnderstandingClientTestBase):
 
         # Analyze the audio
         # Use 10-second polling interval for audio analysis (longer processing time)
-        poller = client.begin_analyze(analyzer_id="prebuilt-audioSearch", inputs=[AnalyzeInput(url=url)], polling_interval=10)
-        
+        poller = client.begin_analyze(
+            analyzer_id="prebuilt-audioSearch", inputs=[AnalysisInput(url=url)], polling_interval=10
+        )
+
         result = poller.result()
 
         # Assertion: Verify analysis operation completed
@@ -178,8 +182,8 @@ class TestSampleAnalyzeUrl(ContentUnderstandingClientTestBase):
         print(f"[PASS] Analyzing image from URL: {url}")
 
         # Analyze the image
-        poller = client.begin_analyze(analyzer_id="prebuilt-imageSearch", inputs=[AnalyzeInput(url=url)])
-        
+        poller = client.begin_analyze(analyzer_id="prebuilt-imageSearch", inputs=[AnalysisInput(url=url)])
+
         result = poller.result()
 
         # Assertion: Verify analysis operation completed

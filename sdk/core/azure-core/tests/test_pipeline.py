@@ -38,6 +38,7 @@ import pytest
 
 from azure.core.configuration import Configuration
 from azure.core.pipeline import Pipeline
+from azure.core.rest import HttpRequest
 from azure.core import PipelineClient
 from azure.core.pipeline.policies import (
     SansIOHTTPPolicy,
@@ -204,6 +205,47 @@ def test_format_url_double_query():
     client = PipelineClientBase("https://bing.com/path?query=testvalue&x=2ndvalue")
     formatted = client.format_url("/subpath?a=X&c=Y")
     assert formatted == "https://bing.com/path/subpath?query=testvalue&x=2ndvalue&a=X&c=Y"
+
+
+def test_format_url_query_strings():
+    client = PipelineClientBase("https://foo.core.windows.net")
+    formatted = client.format_url("/")
+    assert formatted == "https://foo.core.windows.net/"
+
+    formatted = client.format_url("/?a=X&c=Y")
+    assert formatted == "https://foo.core.windows.net/?a=X&c=Y"
+
+    formatted = client.format_url("?a=X&c=Y")
+    assert formatted == "https://foo.core.windows.net?a=X&c=Y"
+
+    formatted = client.format_url("/Tables/?a=X&c=Y")
+    assert formatted == "https://foo.core.windows.net/Tables/?a=X&c=Y"
+
+    formatted = client.format_url("/Tables?a=X&c=Y")
+    assert formatted == "https://foo.core.windows.net/Tables?a=X&c=Y"
+
+
+def test_format_url_trailing_slash_preserved_with_query_only():
+    # Test that trailing slash in base URL is preserved when url_template is query-string only
+    # https://github.com/Azure/azure-sdk-for-python/issues/45365
+    client = PipelineClientBase("{url}")
+    formatted = client.format_url("?versionid=2026-02-25", url="https://storage.blob.core.windows.net/sample//a/a/")
+    assert formatted == "https://storage.blob.core.windows.net/sample//a/a/?versionid=2026-02-25"
+
+
+def test_format_url_from_http_request():
+    client = PipelineClientBase("https://foo.core.windows.net")
+
+    _url = "/"
+    _params = {"foo": "bar"}
+    request = HttpRequest("GET", _url, params=_params)
+    formatted = client.format_url(request.url)
+    assert formatted == "https://foo.core.windows.net/?foo=bar"
+
+    _url = "?restype=service&comp=properties"
+    request = HttpRequest("GET", _url)
+    formatted = client.format_url(request.url)
+    assert formatted == "https://foo.core.windows.net?restype=service&comp=properties"
 
 
 def test_format_url_braces_with_dot():

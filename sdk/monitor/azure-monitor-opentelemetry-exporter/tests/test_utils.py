@@ -35,7 +35,7 @@ class TestUtils(unittest.TestCase):
     def setUp(self):
         self._valid_instrumentation_key = "1234abcd-5678-4efa-8abc-1234567890ab"
 
-    def test_filter_custom_properties_truncates_and_drops_invalid_entries(self):
+    def test_filter_custom_properties_drops_invalid_entries(self):
         oversized_value = "v" * 9000
         properties = {
             "valid_key": oversized_value,
@@ -52,6 +52,41 @@ class TestUtils(unittest.TestCase):
         self.assertEqual(len(filtered["valid_key"]), 9000)
         self.assertEqual(filtered["short"], "ok")
         self.assertNotIn("k" * 151, filtered)
+
+    def test_filter_custom_properties_preserves_large_values_after_disable_limit(self):
+        # Ensure values larger than 64KiB are not truncated when the env variable is set to true
+        enable_values = ["true", "True", "TRUE", "TrUE", "  true  "]
+        large_value = "x" * (64 * 1024 + 1000)
+        properties = {"large_key": large_value}
+
+        for env_value in enable_values:
+            with self.subTest(env_value=env_value):
+                with patch.dict(
+                    "azure.monitor.opentelemetry.exporter._utils.environ",
+                    {"AZURE_MONITOR_DISABLE_CUSTOM_DIMENSIONS_LIMIT": env_value},
+                ):
+                    filtered = _utils._filter_custom_properties(properties)
+                    self.assertIn("large_key", filtered)
+                    self.assertEqual(filtered["large_key"], large_value)
+                    self.assertEqual(len(filtered["large_key"]), 64 * 1024 + 1000)
+
+    def test_filter_custom_properties_preserves_large_values_after_enable_limit(self):
+        # Ensure values larger than 64KiB are not truncated when the env variable is set to false/empty/invalid
+        disable_values = ["", "False", "truthy", "89", "fALSE", " "]
+        large_value = "x" * (64 * 1024 + 1000)
+        max_length = 64 * 1024
+        properties = {"large_key": large_value}
+
+        for env_value in disable_values:
+            with self.subTest(env_value=env_value):
+                with patch.dict(
+                    "azure.monitor.opentelemetry.exporter._utils.environ",
+                    {"AZURE_MONITOR_DISABLE_CUSTOM_DIMENSIONS_LIMIT": env_value},
+                ):
+                    filtered = _utils._filter_custom_properties(properties)
+                    self.assertIn("large_key", filtered)
+                    self.assertEqual(filtered["large_key"], "x" * max_length)
+                    self.assertEqual(len(filtered["large_key"]), max_length)
 
     def test_nanoseconds_to_duration(self):
         ns_to_duration = _utils.ns_to_duration

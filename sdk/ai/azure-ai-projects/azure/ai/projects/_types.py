@@ -10,5 +10,4 @@ from typing import TYPE_CHECKING, Union
 
 if TYPE_CHECKING:
     from . import models as _models
-ComparisonFilterValueItems = Union[str, float]
 Filters = Union["_models.ComparisonFilter", "_models.CompoundFilter"]
