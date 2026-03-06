@@ -664,6 +664,8 @@ class AgentReference(_Model):
     :vartype name: str
     :ivar version: The version identifier of the agent.
     :vartype version: str
+    :ivar id: The unique identifier of the agent version.
+    :vartype id: str
     """
 
     type: Literal["agent_reference"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -672,6 +674,8 @@ class AgentReference(_Model):
     """The name of the agent. Required."""
     version: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The version identifier of the agent."""
+    id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The unique identifier of the agent version."""
 
     @overload
     def __init__(
@@ -679,6 +683,7 @@ class AgentReference(_Model):
         *,
         name: str,
         version: Optional[str] = None,
+        id: Optional[str] = None,
     ) -> None: ...
 
     @overload
