@@ -18,6 +18,7 @@ from ._models import (
     RecordingProperties,
     AddParticipantResult,
     RemoveParticipantResult,
+    MoveParticipantsResult,
     TransferCallResult,
     MediaStreamingOptions,
     TranscriptionOptions,
@@ -95,6 +96,7 @@ __all__ = [
     "MuteParticipantResult",
     "SendDtmfTonesResult",
     "CancelAddParticipantOperationResult",
+    "MoveParticipantsResult",
     # common ACS communication identifier
     "CommunicationIdentifier",
     "PhoneNumberIdentifier",
