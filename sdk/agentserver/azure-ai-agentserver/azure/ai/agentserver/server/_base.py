@@ -89,7 +89,7 @@ class AgentServer(ABC):
         ``AGENT_MAX_CONCURRENT_REQUESTS`` env var is consulted; if that is also
         unset the default is ``0`` (disabled — no concurrency limit).  When
         the limit is reached, additional requests receive a
-        ``429 Too Many Requests`` response.
+        ``503 Service Unavailable`` response.
     :type max_concurrent_requests: Optional[int]
     :param enable_metrics: Enable Prometheus metrics endpoint at ``/metrics``.
         When *None* (default) the ``AGENT_ENABLE_METRICS`` env var is consulted
@@ -370,7 +370,7 @@ class AgentServer(ABC):
         if self._metrics is not None:
             self.app.add_middleware(MetricsMiddleware, metrics=self._metrics)
         # CORS must be added last so it wraps outermost — this ensures
-        # error responses from inner middleware (413, 429) also carry
+        # error responses from inner middleware (413, 503) also carry
         # Access-Control-Allow-Origin headers for browser clients.
         self.app.add_middleware(
             CORSMiddleware,

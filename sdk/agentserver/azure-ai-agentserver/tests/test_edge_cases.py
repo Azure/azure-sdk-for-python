@@ -195,8 +195,8 @@ class TestCORS:
             assert resp.headers.get("access-control-allow-origin") == "*"
 
     @pytest.mark.asyncio
-    async def test_cors_on_429_response(self):
-        """429 from concurrency middleware still carries CORS headers for browsers."""
+    async def test_cors_on_503_response(self):
+        """503 from concurrency middleware still carries CORS headers for browsers."""
         import asyncio
 
         class _SlowAgent(AgentServer):
@@ -214,7 +214,7 @@ class TestCORS:
                 content=b"{}",
                 headers={"Origin": "http://example.com"},
             )
-            assert resp.status_code == 429
+            assert resp.status_code == 503
             assert resp.headers.get("access-control-allow-origin") == "*"
             await task1
 

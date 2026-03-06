@@ -73,7 +73,7 @@ your agent is compatible with the hosting platform — no manual route setup req
   `GET /invocations/docs/openapi.json` for documentation / tooling.
 - **Optional request validation** — opt in to validate incoming request bodies
   against the OpenAPI spec before reaching your code.
-- **Production middleware** — request body size limits (413), concurrency throttling (429),
+- **Production middleware** — request body size limits (413), concurrency throttling (503),
   configurable invoke timeouts (504), and graceful shutdown — all via constructor args or
   environment variables.
 - **Optional OpenTelemetry tracing** — opt-in span instrumentation that covers the full
@@ -164,7 +164,7 @@ variable > default**. Set a value to `0` to disable the corresponding feature.
 | `timeout_graceful_shutdown` | `AGENT_GRACEFUL_SHUTDOWN_TIMEOUT` | `30` (seconds) | Drain period after SIGTERM before forced exit |
 | `max_request_body_size` | `AGENT_MAX_REQUEST_BODY_SIZE` | `104857600` (100 MB) | Max request body in bytes; exceeding returns 413 |
 | `request_timeout` | `AGENT_REQUEST_TIMEOUT` | `300` (seconds) | Max time for `invoke()` before 504 |
-| `max_concurrent_requests` | `AGENT_MAX_CONCURRENT_REQUESTS` | `0` (disabled) | Max simultaneous requests; exceeding returns 429 |
+| `max_concurrent_requests` | `AGENT_MAX_CONCURRENT_REQUESTS` | `0` (disabled) | Max simultaneous requests; exceeding returns 503 |
 | `enable_tracing` | `AGENT_ENABLE_TRACING` | `false` | Enable OpenTelemetry tracing |
 | `enable_metrics` | `AGENT_ENABLE_METRICS` | `false` | Enable Prometheus `/metrics` endpoint |
 | `enable_access_log` | `AGENT_ENABLE_ACCESS_LOG` | `false` | Enable structured per-request access logging |

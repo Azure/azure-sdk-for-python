@@ -171,8 +171,9 @@ class TestMaxRequestBodySizeEnforcement:
             assert resp.status_code == 413
 
     @pytest.mark.asyncio
-    async def test_no_content_length_passes_through(self):
-        """Requests without Content-Length (e.g. chunked) bypass the size check."""
+    async def test_chunked_transfer_also_enforced(self):
+        """Streaming uploads without Content-Length are bounded by the
+        counting-receive guard (Envoy-style byte counting)."""
         agent = _EchoAgent(max_request_body_size=100)
         transport = httpx.ASGITransport(app=agent.app)
         async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as client:
@@ -181,9 +182,22 @@ class TestMaxRequestBodySizeEnforcement:
                 yield b"x" * 200  # larger than the 100-byte limit
 
             resp = await client.post("/invocations", content=_stream())
-            # Should succeed — middleware only checks Content-Length header
+            assert resp.status_code == 413
+            data = resp.json()
+            assert data["error"]["code"] == "payload_too_large"
+
+    @pytest.mark.asyncio
+    async def test_chunked_transfer_within_limit_succeeds(self):
+        """Streaming uploads within the limit should succeed normally."""
+        agent = _EchoAgent(max_request_body_size=1024)
+        transport = httpx.ASGITransport(app=agent.app)
+        async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as client:
+            async def _stream():
+                yield b"x" * 512  # within the 1024-byte limit
+
+            resp = await client.post("/invocations", content=_stream())
             assert resp.status_code == 200
-            assert len(resp.content) == 200
+            assert len(resp.content) == 512
 
 
 # ===========================================================================
@@ -347,8 +361,8 @@ class TestMaxConcurrentRequestsEnforcement:
     """Test that excess concurrent requests are rejected with 503."""
 
     @pytest.mark.asyncio
-    async def test_excess_requests_get_429(self):
-        """When concurrency limit is 1 and a request is in-flight, the next gets 429."""
+    async def test_excess_requests_get_503(self):
+        """When concurrency limit is 1 and a request is in-flight, the next gets 503."""
         agent = _DelayAgent(delay=2.0, max_concurrent_requests=1)
         transport = httpx.ASGITransport(app=agent.app)
         async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as client:
@@ -357,9 +371,9 @@ class TestMaxConcurrentRequestsEnforcement:
             await asyncio.sleep(0.1)  # let it start
             # Second request should be rejected
             resp2 = await client.post("/invocations", content=b"{}")
-            assert resp2.status_code == 429
+            assert resp2.status_code == 503
             data = resp2.json()
-            assert data["error"]["code"] == "too_many_requests"
+            assert data["error"]["code"] == "server_overloaded"
             # First request should still succeed
             resp1 = await task1
             assert resp1.status_code == 200
@@ -388,18 +402,18 @@ class TestMaxConcurrentRequestsEnforcement:
             assert all(r.status_code == 200 for r in results)
 
     @pytest.mark.asyncio
-    async def test_429_response_body_structure(self):
-        """Verify the 429 response contains the expected error detail."""
+    async def test_503_response_body_structure(self):
+        """Verify the 503 response contains the expected error detail."""
         agent = _DelayAgent(delay=2.0, max_concurrent_requests=1)
         transport = httpx.ASGITransport(app=agent.app)
         async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as client:
             # Occupy the slot
             task1 = asyncio.create_task(client.post("/invocations", content=b"{}"))
             await asyncio.sleep(0.1)
-            # Verify the 429 response body structure.
+            # Verify the 503 response body structure.
             resp = await client.post("/invocations", content=b"{}")
-            assert resp.status_code == 429
-            assert resp.json()["error"]["code"] == "too_many_requests"
+            assert resp.status_code == 503
+            assert resp.json()["error"]["code"] == "server_overloaded"
             resp1 = await task1
             assert resp1.status_code == 200
 
