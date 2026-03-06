@@ -26,7 +26,7 @@ class TestCognitiveServicesManagementLocationBasedModelCapacitiesOperations(Azur
             model_format="str",
             model_name="str",
             model_version="str",
-            api_version="2025-09-01",
+            api_version="2025-10-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

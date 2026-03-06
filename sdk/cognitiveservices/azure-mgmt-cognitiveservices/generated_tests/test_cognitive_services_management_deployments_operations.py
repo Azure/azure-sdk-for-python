@@ -24,7 +24,7 @@ class TestCognitiveServicesManagementDeploymentsOperations(AzureMgmtRecordedTest
         response = self.client.deployments.list(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2025-09-01",
+            api_version="2025-10-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestCognitiveServicesManagementDeploymentsOperations(AzureMgmtRecordedTest
             resource_group_name=resource_group.name,
             account_name="str",
             deployment_name="str",
-            api_version="2025-09-01",
+            api_version="2025-10-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -72,6 +72,7 @@ class TestCognitiveServicesManagementDeploymentsOperations(AzureMgmtRecordedTest
                     "capabilities": {"str": "str"},
                     "capacitySettings": {"designatedCapacity": 0, "priority": 0},
                     "currentCapacity": 0,
+                    "deploymentState": "str",
                     "dynamicThrottlingEnabled": bool,
                     "model": {
                         "callRateLimit": {
@@ -109,6 +110,7 @@ class TestCognitiveServicesManagementDeploymentsOperations(AzureMgmtRecordedTest
                         }
                     ],
                     "scaleSettings": {"activeCapacity": 0, "capacity": 0, "scaleType": "str"},
+                    "serviceTier": "str",
                     "spilloverDeploymentName": "str",
                     "versionUpgradeOption": "str",
                 },
@@ -124,7 +126,7 @@ class TestCognitiveServicesManagementDeploymentsOperations(AzureMgmtRecordedTest
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2025-09-01",
+            api_version="2025-10-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -141,7 +143,7 @@ class TestCognitiveServicesManagementDeploymentsOperations(AzureMgmtRecordedTest
                 "sku": {"name": "str", "capacity": 0, "family": "str", "size": "str", "tier": "str"},
                 "tags": {"str": "str"},
             },
-            api_version="2025-09-01",
+            api_version="2025-10-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -154,7 +156,7 @@ class TestCognitiveServicesManagementDeploymentsOperations(AzureMgmtRecordedTest
             resource_group_name=resource_group.name,
             account_name="str",
             deployment_name="str",
-            api_version="2025-09-01",
+            api_version="2025-10-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -167,8 +169,34 @@ class TestCognitiveServicesManagementDeploymentsOperations(AzureMgmtRecordedTest
             resource_group_name=resource_group.name,
             account_name="str",
             deployment_name="str",
-            api_version="2025-09-01",
+            api_version="2025-10-01-preview",
         )
         result = [r for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_deployments_pause(self, resource_group):
+        response = self.client.deployments.pause(
+            resource_group_name=resource_group.name,
+            account_name="str",
+            deployment_name="str",
+            api_version="2025-10-01-preview",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_deployments_resume(self, resource_group):
+        response = self.client.deployments.resume(
+            resource_group_name=resource_group.name,
+            account_name="str",
+            deployment_name="str",
+            api_version="2025-10-01-preview",
+        )
+
         # please add some check logic here by yourself
         # ...

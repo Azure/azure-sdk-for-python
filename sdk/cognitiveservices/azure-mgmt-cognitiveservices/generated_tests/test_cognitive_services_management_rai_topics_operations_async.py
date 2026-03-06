@@ -26,7 +26,7 @@ class TestCognitiveServicesManagementRaiTopicsOperationsAsync(AzureMgmtRecordedT
             resource_group_name=resource_group.name,
             account_name="str",
             rai_topic_name="str",
-            api_version="2025-09-01",
+            api_version="2025-10-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -64,7 +64,7 @@ class TestCognitiveServicesManagementRaiTopicsOperationsAsync(AzureMgmtRecordedT
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2025-09-01",
+            api_version="2025-10-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -78,7 +78,7 @@ class TestCognitiveServicesManagementRaiTopicsOperationsAsync(AzureMgmtRecordedT
                 resource_group_name=resource_group.name,
                 account_name="str",
                 rai_topic_name="str",
-                api_version="2025-09-01",
+                api_version="2025-10-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -91,7 +91,7 @@ class TestCognitiveServicesManagementRaiTopicsOperationsAsync(AzureMgmtRecordedT
         response = self.client.rai_topics.list(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2025-09-01",
+            api_version="2025-10-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

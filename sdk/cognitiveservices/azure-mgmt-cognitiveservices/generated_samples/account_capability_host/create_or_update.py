@@ -37,13 +37,14 @@ def main():
         capability_host_name="capabilityHostName",
         capability_host={
             "properties": {
-                "customerSubnet": "/subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/myResourceGroups/providers/Microsoft.Network/virtualNetworks/myVnet/subnets/mySubnet"
+                "customerSubnet": "/subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/myResourceGroups/providers/Microsoft.Network/virtualNetworks/myVnet/subnets/mySubnet",
+                "enablePublicHostingEnvironment": True,
             }
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/cognitiveservices/resource-manager/Microsoft.CognitiveServices/stable/2025-09-01/examples/AccountCapabilityHost/createOrUpdate.json
+# x-ms-original-file: specification/cognitiveservices/resource-manager/Microsoft.CognitiveServices/preview/2025-10-01-preview/examples/AccountCapabilityHost/createOrUpdate.json
 if __name__ == "__main__":
     main()

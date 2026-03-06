@@ -25,7 +25,7 @@ class TestCognitiveServicesManagementRaiPoliciesOperationsAsync(AzureMgmtRecorde
         response = self.client.rai_policies.list(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2025-09-01",
+            api_version="2025-10-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestCognitiveServicesManagementRaiPoliciesOperationsAsync(AzureMgmtRecorde
             resource_group_name=resource_group.name,
             account_name="str",
             rai_policy_name="str",
-            api_version="2025-09-01",
+            api_version="2025-10-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -58,11 +58,19 @@ class TestCognitiveServicesManagementRaiPoliciesOperationsAsync(AzureMgmtRecorde
                 "properties": {
                     "basePolicyName": "str",
                     "contentFilters": [
-                        {"blocking": bool, "enabled": bool, "name": "str", "severityThreshold": "str", "source": "str"}
+                        {
+                            "action": "str",
+                            "blocking": bool,
+                            "enabled": bool,
+                            "name": "str",
+                            "severityThreshold": "str",
+                            "source": "str",
+                        }
                     ],
                     "customBlocklists": [{"blocking": bool, "blocklistName": "str", "source": "str"}],
                     "customTopics": [{"blocking": bool, "source": "str", "topicName": "str"}],
                     "mode": "str",
+                    "safetyProviders": [{"blocking": bool, "safetyProviderName": "str", "source": "str"}],
                     "type": "str",
                 },
                 "systemData": {
@@ -76,7 +84,7 @@ class TestCognitiveServicesManagementRaiPoliciesOperationsAsync(AzureMgmtRecorde
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2025-09-01",
+            api_version="2025-10-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -90,7 +98,7 @@ class TestCognitiveServicesManagementRaiPoliciesOperationsAsync(AzureMgmtRecorde
                 resource_group_name=resource_group.name,
                 account_name="str",
                 rai_policy_name="str",
-                api_version="2025-09-01",
+                api_version="2025-10-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
