@@ -18,7 +18,6 @@ If the package is not installed, tracing silently becomes a no-op.
 from __future__ import annotations
 
 import logging
-import os
 from contextlib import contextmanager
 from collections.abc import AsyncIterable, AsyncIterator, Mapping  # pylint: disable=import-error
 from typing import TYPE_CHECKING, Any, Iterator, Optional, Union
@@ -44,31 +43,23 @@ except ImportError:
 
 
 class TracingHelper:
-    """Lightweight wrapper around OpenTelemetry that can be a complete no-op.
+    """Lightweight wrapper around OpenTelemetry.
 
-    :param enabled: Explicit enable flag, or *None* to read from
-        ``AGENT_ENABLE_TRACING`` env var (default ``false``).
-    :type enabled: Optional[bool]
+    Only instantiate when tracing is enabled.  If ``opentelemetry-api`` is
+    not installed, a warning is logged and all methods become no-ops.
     """
 
-    def __init__(self, enabled: Optional[bool] = None) -> None:
-        if enabled is None:
-            enabled = os.getenv("AGENT_ENABLE_TRACING", "false").lower() == "true"
-        self._enabled = enabled and _HAS_OTEL
+    def __init__(self) -> None:
+        self._enabled = _HAS_OTEL
         self._tracer: Any = None
 
         if self._enabled:
             self._tracer = trace.get_tracer("azure.ai.agentserver")
-        elif enabled and not _HAS_OTEL:
+        else:
             logger.warning(
                 "Tracing was enabled but opentelemetry-api is not installed. "
                 "Install it with: pip install azure-ai-agentserver[tracing]"
             )
-
-    @property
-    def enabled(self) -> bool:
-        """Whether tracing is active."""
-        return self._enabled
 
     @contextmanager
     def span(

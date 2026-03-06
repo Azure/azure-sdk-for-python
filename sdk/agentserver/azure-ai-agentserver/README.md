@@ -1,9 +1,9 @@
 # Azure AI Agent Server client library for Python
 
 A standalone, **protocol-agnostic agent server** package for Azure AI. Provides a
-Starlette-based `AgentServer` base class with pluggable protocol heads, OpenAPI-based
-request validation, production middleware, optional tracing, and health endpoints — with
-**zero framework coupling**.
+Starlette-based `AgentServer` base class with pluggable protocol heads, OpenAPI spec
+serving, optional request validation, production middleware, optional tracing, and health
+endpoints — with **zero framework coupling**.
 
 ## Getting started
 
@@ -48,21 +48,20 @@ curl -X POST http://localhost:8088/invocations \
 
 ## Key concepts
 
-`azure-ai-agentserver` is the canonical agent-server package going forward. It supports
-multiple protocol heads (`/invoke`, `/responses`, and future protocols) through a pluggable
-handler architecture. Phase 1 ships with `/invoke` support; `/responses` and other
-protocols will be added in subsequent phases.
+`AgentServer` is a base class for building agent endpoints that plug into the
+Azure Agent Service. It supports multiple protocol heads (`/invoke` today,
+`/responses` and others in the future) through a pluggable handler architecture.
 
-The Azure Agent Service (Layer 1) expects specific route paths (`/invocations`,
-`/liveness`, `/readiness`, etc.) for deployment. `AgentServer` wires these automatically
-so your agent is compatible with the hosting platform — no manual route setup required.
+The Azure Agent Service expects specific route paths (`/invocations`, `/liveness`,
+`/readiness`, etc.) for deployment. `AgentServer` wires these automatically so
+your agent is compatible with the hosting platform — no manual route setup required.
 
 **Key properties:**
 
 - **Platform-compatible routes** — automatically registers the exact endpoints the Azure
   Agent Service expects, so your agent deploys without configuration changes.
-- **Standalone** — no dependency on `azure-ai-agentserver-core`, `openai`, or any AI
-  framework library.
+- **Standalone** — no AI-framework dependencies. Bring your own LLM client, orchestration
+  library, or plain Python.
 - **Starlette + Hypercorn** — lightweight ASGI server with native HTTP/1.1 and HTTP/2
   support.
 - **Raw protocol access** — subclass `AgentServer` and receive raw Starlette `Request`
@@ -70,8 +69,10 @@ so your agent is compatible with the hosting platform — no manual route setup 
   streaming, headers, SSE, and status codes.
 - **Automatic invocation ID tracking** — every request gets a unique ID injected into
   `request.state` and the `x-agent-invocation-id` response header.
-- **OpenAPI request validation** — pass a spec and incoming requests are validated before
-  reaching your code.
+- **OpenAPI spec serving** — pass a spec and it is served at
+  `GET /invocations/docs/openapi.json` for documentation / tooling.
+- **Optional request validation** — opt in to validate incoming request bodies
+  against the OpenAPI spec before reaching your code.
 - **Production middleware** — request body size limits (413), concurrency throttling (429),
   configurable invoke timeouts (504), and graceful shutdown — all via constructor args or
   environment variables.
@@ -81,19 +82,18 @@ so your agent is compatible with the hosting platform — no manual route setup 
   latency histograms, in-flight gauges, and request/response body size distributions in
   Prometheus text exposition format.
 - **Optional structured access logging** — opt-in per-request access log emitted to a
-  dedicated `azure.ai.agentserver.access` logger with structured fields (method, path,
-  status, duration, sizes, invocation ID, client IP, user agent). Uses JSON format when
-  `python-json-logger` is installed, otherwise `key=value` pairs.
+  dedicated `azure.ai.agentserver.access` logger with structured JSON entries containing
+  method, path, status, protocol, duration, sizes, invocation ID, client IP, and user agent.
 - **Health endpoints** — `/liveness` and `/readiness` out of the box.
-- **Customer-managed adapters** — integration with LangGraph, Agent Framework, Semantic
-  Kernel, etc. is done in your own code. We provide samples, not separate adapter packages.
+- **Framework integration via samples** — samples show how to integrate LangGraph, Agent
+  Framework, Semantic Kernel, and other libraries in your own code.
 
 ### Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
-│ Layer 1: Agent Service (Cloud Infrastructure)                       │
-│  Supports: /invoke, /responses, /mcp, /a2a, /activity               │
+│ Azure Agent Service (Cloud Infrastructure)                          │
+│  Protocols: /invoke, /responses, /mcp, /a2a, /activity              │
 └────────────────────────────┬────────────────────────────────────────┘
                              │
                              ▼
@@ -102,10 +102,11 @@ so your agent is compatible with the hosting platform — no manual route setup 
               │ AgentServer                   │
               │                               │
               │ Protocol heads:               │
-              │  • /invoke (Phase 1)          │
-              │  • /responses (Phase 2)       │
+              │  • /invoke                    │
+              │  • /responses (planned)       │
               │                               │
-              │ OpenAPI request validation    │
+              │ OpenAPI spec serving         │
+              │ Optional request validation  │
               │ Invocation ID tracking        │
               │ Body size / concurrency guard │
               │ Invoke timeout / graceful     │
@@ -118,13 +119,11 @@ so your agent is compatible with the hosting platform — no manual route setup 
               │ CORS                          │
               └───────────────────────────────┘
                              │
-                   Customer owns adapters:
+                   Your integration code:
                    ┌─────────┼─────────┐
                    ▼         ▼         ▼
               LangGraph   Agent     Semantic
-              adapter   Framework    Kernel
-              (sample)   adapter    adapter
-                        (sample)   (sample)
+                        Framework    Kernel
 ```
 
 **Single package, multiple protocol heads, no framework coupling.**
@@ -169,6 +168,9 @@ variable > default**. Set a value to `0` to disable the corresponding feature.
 | `enable_tracing` | `AGENT_ENABLE_TRACING` | `false` | Enable OpenTelemetry tracing |
 | `enable_metrics` | `AGENT_ENABLE_METRICS` | `false` | Enable Prometheus `/metrics` endpoint |
 | `enable_access_log` | `AGENT_ENABLE_ACCESS_LOG` | `false` | Enable structured per-request access logging |
+| `enable_request_validation` | `AGENT_ENABLE_REQUEST_VALIDATION` | `false` | Validate request bodies against `openapi_spec` |
+| `log_level` | `AGENT_LOG_LEVEL` | `WARNING` | Library log level (`DEBUG`, `INFO`, `WARNING`, `ERROR`, `CRITICAL`) |
+| `debug_errors` | `AGENT_DEBUG_ERRORS` | `false` | Include exception details in error responses |
 
 ```python
 agent = MyAgent(
@@ -185,9 +187,10 @@ tuning.
 
 ## Examples
 
-### OpenAPI validation
+### OpenAPI spec & validation
 
-Register a spec to validate request bodies at runtime:
+Pass an OpenAPI spec to serve it at `/invocations/docs/openapi.json`.
+Opt in to runtime request validation with `enable_request_validation=True`:
 
 ```python
 spec = {
@@ -223,12 +226,16 @@ spec = {
     },
 }
 
+# Spec served for documentation; validation off (default)
 agent = GreetingAgent(openapi_spec=spec)
+
+# Spec served AND requests validated at runtime
+agent = GreetingAgent(openapi_spec=spec, enable_request_validation=True)
 agent.run()
 ```
 
-- Non-conforming **requests** return 400 with details.
 - `GET /invocations/docs/openapi.json` serves the registered spec (or 404 if none).
+- When validation is enabled, non-conforming **requests** return 400 with details.
 
 ### Tracing
 
@@ -307,17 +314,9 @@ export AGENT_ENABLE_ACCESS_LOG=true
 ```
 
 One structured log record is emitted per request to the `azure.ai.agentserver.access`
-logger (separate from the library's main logger). Each entry includes: `method`, `path`,
-`status`, `protocol`, `duration_ms`, `request_size`, `response_size`, `invocation_id`,
-`client_ip`, and `user_agent`.
-
-Optionally install `python-json-logger` for JSON-formatted output:
-
-```bash
-pip install azure-ai-agentserver[logging]
-```
-
-Without that dependency, a `key=value` format is used by default.
+logger (separate from the library's main logger). Each entry is a JSON object containing:
+`method`, `path`, `status`, `protocol`, `duration_ms`, `request_size`, `response_size`,
+`invocation_id`, `client_ip`, and `user_agent`.
 
 ### More samples
 
@@ -338,30 +337,6 @@ To report an issue with the client library, or request additional features, plea
 GitHub issue [here](https://github.com/Azure/azure-sdk-for-python/issues).
 
 ## Next steps
-
-### Vision & migration path
-
-#### Phase 1 (Current): `/invoke` only
-
-- Ship `azure-ai-agentserver` with the `/invoke` protocol head.
-- Existing `agentserver-core` + Layer 3 adapter packages remain as-is for `/responses`
-  customers.
-- Samples show customer-managed framework integration (LangGraph, Agent Framework, Semantic
-  Kernel, etc.).
-
-#### Phase 2 (Future): Add `/responses`
-
-- Add a `/responses` protocol head to `azure-ai-agentserver` as a built-in handler.
-- Validation for `/responses` uses the same OpenAPI-based approach (not
-  `openai.types.responses.*` imports).
-- Sample adapters show how to port existing LangGraph / Agent Framework patterns.
-
-#### Phase 3 (Future): Deprecate old packages
-
-- Deprecate `azure-ai-agentserver-core` (replaced by this package's `/responses` handler).
-- Deprecate `azure-ai-agentserver-agentframework` and `azure-ai-agentserver-langgraph`
-  (replaced by customer-managed adapter code provided as samples).
-- Customers who depend on Layer 3 adapters copy the adapter code into their own projects.
 
 Please visit [Samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver/samples)
 for more usage examples.

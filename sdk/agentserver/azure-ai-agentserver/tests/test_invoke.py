@@ -5,7 +5,10 @@
 import json
 import uuid
 
+import httpx
 import pytest
+
+from conftest import FailingAgent
 
 
 @pytest.mark.asyncio
@@ -106,9 +109,11 @@ async def test_invoke_error_hides_details_by_default(failing_client):
 
 
 @pytest.mark.asyncio
-async def test_invoke_error_exposes_details_with_debug(monkeypatch, failing_client):
-    """With AGENT_DEBUG_ERRORS set, the actual exception message is returned."""
-    monkeypatch.setenv("AGENT_DEBUG_ERRORS", "1")
-    resp = await failing_client.post("/invocations", content=b'{}')
+async def test_invoke_error_exposes_details_with_debug():
+    """With debug_errors=True, the actual exception message is returned."""
+    agent = FailingAgent(debug_errors=True)
+    transport = httpx.ASGITransport(app=agent.app)
+    async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as client:
+        resp = await client.post("/invocations", content=b'{}')
     assert resp.status_code == 500
     assert resp.json()["error"]["message"] == "something went wrong"

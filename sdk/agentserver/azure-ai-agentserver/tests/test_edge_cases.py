@@ -431,7 +431,7 @@ class TestDebugErrorsOnGetCancel:
     @pytest.mark.asyncio
     async def test_get_exposes_details_with_debug(self, monkeypatch):
         """GET error exposes exception detail with AGENT_DEBUG_ERRORS set."""
-        monkeypatch.setenv("AGENT_DEBUG_ERRORS", "1")
+        monkeypatch.setenv("AGENT_DEBUG_ERRORS", "true")
         agent = SlowFailingGetAgent()
         transport = httpx.ASGITransport(app=agent.app)
         async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as client:
@@ -452,7 +452,7 @@ class TestDebugErrorsOnGetCancel:
     @pytest.mark.asyncio
     async def test_cancel_exposes_details_with_debug(self, monkeypatch):
         """CANCEL error exposes exception detail with AGENT_DEBUG_ERRORS set."""
-        monkeypatch.setenv("AGENT_DEBUG_ERRORS", "1")
+        monkeypatch.setenv("AGENT_DEBUG_ERRORS", "true")
         agent = SlowFailingCancelAgent()
         transport = httpx.ASGITransport(app=agent.app)
         async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as client:
@@ -460,10 +460,73 @@ class TestDebugErrorsOnGetCancel:
         assert resp.status_code == 500
         assert resp.json()["error"]["message"] == "cancel-debug-detail"
 
+    @pytest.mark.asyncio
+    async def test_get_exposes_details_with_constructor_param(self):
+        """debug_errors=True in constructor exposes GET exception detail."""
+        agent = SlowFailingGetAgent(debug_errors=True)
+        transport = httpx.ASGITransport(app=agent.app)
+        async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as client:
+            resp = await client.get("/invocations/some-id")
+        assert resp.status_code == 500
+        assert resp.json()["error"]["message"] == "get-debug-detail"
+
+    @pytest.mark.asyncio
+    async def test_cancel_exposes_details_with_constructor_param(self):
+        """debug_errors=True in constructor exposes CANCEL exception detail."""
+        agent = SlowFailingCancelAgent(debug_errors=True)
+        transport = httpx.ASGITransport(app=agent.app)
+        async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as client:
+            resp = await client.post("/invocations/some-id/cancel")
+        assert resp.status_code == 500
+        assert resp.json()["error"]["message"] == "cancel-debug-detail"
+
+    @pytest.mark.asyncio
+    async def test_constructor_overrides_env_var(self, monkeypatch):
+        """debug_errors=False in constructor overrides AGENT_DEBUG_ERRORS=true."""
+        monkeypatch.setenv("AGENT_DEBUG_ERRORS", "true")
+        agent = SlowFailingGetAgent(debug_errors=False)
+        transport = httpx.ASGITransport(app=agent.app)
+        async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as client:
+            resp = await client.get("/invocations/some-id")
+        assert resp.status_code == 500
+        assert resp.json()["error"]["message"] == "Internal server error"
+
 
 # ---------------------------------------------------------------------------
-# Tests: concurrent invocations
+# Tests: log_level constructor parameter
 # ---------------------------------------------------------------------------
+
+
+class TestLogLevel:
+    """log_level parameter controls the library logger level."""
+
+    def test_log_level_via_constructor(self):
+        """log_level='DEBUG' sets library logger to DEBUG."""
+        import logging
+        agent = CustomHeaderAgent(log_level="DEBUG")
+        lib_logger = logging.getLogger("azure.ai.agentserver")
+        assert lib_logger.level == logging.DEBUG
+
+    def test_log_level_via_env_var(self, monkeypatch):
+        """AGENT_LOG_LEVEL=info sets library logger to INFO."""
+        import logging
+        monkeypatch.setenv("AGENT_LOG_LEVEL", "info")
+        agent = CustomHeaderAgent()
+        lib_logger = logging.getLogger("azure.ai.agentserver")
+        assert lib_logger.level == logging.INFO
+
+    def test_log_level_constructor_overrides_env_var(self, monkeypatch):
+        """Constructor log_level overrides AGENT_LOG_LEVEL env var."""
+        import logging
+        monkeypatch.setenv("AGENT_LOG_LEVEL", "DEBUG")
+        agent = CustomHeaderAgent(log_level="ERROR")
+        lib_logger = logging.getLogger("azure.ai.agentserver")
+        assert lib_logger.level == logging.ERROR
+
+    def test_invalid_log_level_raises(self):
+        """Invalid log_level raises ValueError."""
+        with pytest.raises(ValueError, match="Invalid log level"):
+            CustomHeaderAgent(log_level="BOGUS")
 
 
 class TestConcurrency:

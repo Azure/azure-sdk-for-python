@@ -3,14 +3,12 @@
 # ---------------------------------------------------------
 import asyncio  # pylint: disable=do-not-import-asyncio
 import contextlib
-import os
+import logging
 import uuid
 from abc import ABC, abstractmethod
 from collections.abc import AsyncGenerator  # pylint: disable=import-error
 from typing import Any, Optional
 
-from hypercorn.asyncio import serve as _hypercorn_serve
-from hypercorn.config import Config as HypercornConfig
 from starlette.applications import Starlette
 from starlette.middleware.cors import CORSMiddleware
 from starlette.requests import Request
@@ -20,12 +18,13 @@ from starlette.routing import Route
 from .._access_log import AccessLogHelper
 from .._constants import Constants
 from .._errors import error_response
-from .._logger import get_logger
 from .._metrics import MetricsHelper
 from .._tracing import TracingHelper, extract_w3c_carrier
 from ..validation._openapi_validator import OpenApiValidator
 from ._config import (
+    resolve_bool_feature,
     resolve_graceful_shutdown_timeout,
+    resolve_log_level,
     resolve_request_timeout,
     resolve_max_concurrent_requests,
     resolve_max_request_body_size,
@@ -38,7 +37,7 @@ from ._middleware import (
     MetricsMiddleware,
 )
 
-logger = get_logger()
+logger = logging.getLogger("azure.ai.agentserver")
 
 
 class AgentServer(ABC):
@@ -52,8 +51,17 @@ class AgentServer(ABC):
     Starlette ``Response`` objects, giving full control over content types,
     streaming, headers, and status codes.
 
-    :param openapi_spec: Optional OpenAPI spec dict for request validation.
+    :param openapi_spec: Optional OpenAPI spec dict.  When provided, the spec
+        is served at ``GET /invocations/docs/openapi.json`` for documentation.
+        Runtime request validation is **not** enabled by default — set
+        *enable_request_validation* to opt in.
     :type openapi_spec: Optional[dict[str, Any]]
+    :param enable_request_validation: When *True*, incoming ``POST /invocations``
+        request bodies are validated against the *openapi_spec* before reaching
+        :meth:`invoke`.  When *None* (default) the
+        ``AGENT_ENABLE_REQUEST_VALIDATION`` env var is consulted (``"true"`` to
+        enable).  Requires *openapi_spec* to be set.
+    :type enable_request_validation: Optional[bool]
     :param enable_tracing: Enable OpenTelemetry tracing.  When *None* (default)
         the ``AGENT_ENABLE_TRACING`` env var is consulted (``"true"`` to enable).
         Requires ``opentelemetry-api`` — install with
@@ -91,14 +99,23 @@ class AgentServer(ABC):
     :param enable_access_log: Enable structured per-request access logging to
         the ``azure.ai.agentserver.access`` logger.  When *None* (default)
         the ``AGENT_ENABLE_ACCESS_LOG`` env var is consulted (``"true"`` to
-        enable).  Uses JSON format if ``python-json-logger`` is installed,
-        otherwise falls back to ``key=value`` pairs.
+        enable).  Each entry is emitted as a JSON object.
     :type enable_access_log: Optional[bool]
+    :param log_level: Library log level (e.g. ``"DEBUG"``, ``"INFO"``).  When
+        *None* (default) the ``AGENT_LOG_LEVEL`` env var is consulted; if that
+        is also unset the default is ``"WARNING"``.
+    :type log_level: Optional[str]
+    :param debug_errors: When *True*, error responses include the original
+        exception message instead of a generic ``"Internal server error"``.
+        When *None* (default) the ``AGENT_DEBUG_ERRORS`` env var is consulted
+        (any truthy value enables it).  Defaults to *False*.
+    :type debug_errors: Optional[bool]
     """
 
     def __init__(
         self,
         openapi_spec: Optional[dict[str, Any]] = None,
+        enable_request_validation: Optional[bool] = None,
         enable_tracing: Optional[bool] = None,
         timeout_graceful_shutdown: Optional[int] = None,
         max_request_body_size: Optional[int] = None,
@@ -106,14 +123,31 @@ class AgentServer(ABC):
         max_concurrent_requests: Optional[int] = None,
         enable_metrics: Optional[bool] = None,
         enable_access_log: Optional[bool] = None,
+        log_level: Optional[str] = None,
+        debug_errors: Optional[bool] = None,
     ) -> None:
-        self._openapi_spec = openapi_spec
-        self._validator: Optional[OpenApiValidator] = (
-            OpenApiValidator(openapi_spec) if openapi_spec else None
+        # Logging & debug -------------------------------------------------
+        resolved_level = resolve_log_level(log_level)
+        logger.setLevel(resolved_level)
+        self._debug_errors = resolve_bool_feature(
+            debug_errors, Constants.AGENT_DEBUG_ERRORS
         )
-        self._tracing = TracingHelper(enabled=enable_tracing)
-        self._metrics = MetricsHelper(enabled=enable_metrics)
-        self._access_log = AccessLogHelper(enabled=enable_access_log)
+
+        self._openapi_spec = openapi_spec
+        _validation_on = resolve_bool_feature(
+            enable_request_validation, Constants.AGENT_ENABLE_REQUEST_VALIDATION
+        )
+        self._validator: Optional[OpenApiValidator] = (
+            OpenApiValidator(openapi_spec)
+            if openapi_spec and _validation_on
+            else None
+        )
+        _tracing_on = resolve_bool_feature(enable_tracing, Constants.AGENT_ENABLE_TRACING)
+        self._tracing: Optional[TracingHelper] = TracingHelper() if _tracing_on else None
+        _metrics_on = resolve_bool_feature(enable_metrics, Constants.AGENT_ENABLE_METRICS)
+        self._metrics: Optional[MetricsHelper] = MetricsHelper() if _metrics_on else None
+        _access_log_on = resolve_bool_feature(enable_access_log, Constants.AGENT_ENABLE_ACCESS_LOG)
+        self._access_log: Optional[AccessLogHelper] = AccessLogHelper() if _access_log_on else None
         self._timeout_graceful_shutdown = resolve_graceful_shutdown_timeout(
             timeout_graceful_shutdown
         )
@@ -201,7 +235,7 @@ class AgentServer(ABC):
     # Run helpers
     # ------------------------------------------------------------------
 
-    def _build_hypercorn_config(self, host: str, port: int) -> HypercornConfig:
+    def _build_hypercorn_config(self, host: str, port: int) -> object:
         """Create a Hypercorn config with resolved host, port and timeouts.
 
         :param host: Network interface to bind.
@@ -209,8 +243,10 @@ class AgentServer(ABC):
         :param port: Port to bind.
         :type port: int
         :return: Configured Hypercorn config.
-        :rtype: HypercornConfig
+        :rtype: hypercorn.config.Config
         """
+        from hypercorn.config import Config as HypercornConfig
+
         config = HypercornConfig()
         config.bind = [f"{host}:{port}"]
         config.graceful_timeout = float(self._timeout_graceful_shutdown)
@@ -227,6 +263,8 @@ class AgentServer(ABC):
         :param port: Port to bind. Defaults to ``AGENT_SERVER_PORT`` env var or 8088.
         :type port: Optional[int]
         """
+        from hypercorn.asyncio import serve as _hypercorn_serve
+
         resolved_port = resolve_port(port)
         logger.info("AgentServer starting on %s:%s", host, resolved_port)
         config = self._build_hypercorn_config(host, resolved_port)
@@ -243,6 +281,8 @@ class AgentServer(ABC):
         :param port: Port to bind. Defaults to ``AGENT_SERVER_PORT`` env var or 8088.
         :type port: Optional[int]
         """
+        from hypercorn.asyncio import serve as _hypercorn_serve
+
         resolved_port = resolve_port(port)
         logger.info("AgentServer starting on %s:%s (async)", host, resolved_port)
         config = self._build_hypercorn_config(host, resolved_port)
@@ -307,7 +347,7 @@ class AgentServer(ABC):
             Route("/readiness", self._readiness_endpoint, methods=["GET"], name="readiness"),
         ]
 
-        if self._metrics.enabled:
+        if self._metrics is not None:
             routes.append(
                 Route("/metrics", self._metrics_endpoint, methods=["GET"], name="metrics")
             )
@@ -325,9 +365,9 @@ class AgentServer(ABC):
             )
         # Observability middleware (innermost — only measures requests that
         # pass body-size and concurrency gates).
-        if self._access_log.enabled:
+        if self._access_log is not None:
             self.app.add_middleware(AccessLogMiddleware, access_log=self._access_log)
-        if self._metrics.enabled:
+        if self._metrics is not None:
             self.app.add_middleware(MetricsMiddleware, metrics=self._metrics)
         # CORS must be added last so it wraps outermost — this ensures
         # error responses from inner middleware (413, 429) also carry
@@ -388,17 +428,22 @@ class AgentServer(ABC):
 
         # Use manual span management so that streaming responses keep the
         # span open until the last chunk is yielded (or an error occurs).
-        otel_span = self._tracing.start_span(
-            "AgentServer.invoke",
-            attributes={"invocation.id": invocation_id},
-            carrier=carrier,
+        otel_span = (
+            self._tracing.start_span(
+                "AgentServer.invoke",
+                attributes={"invocation.id": invocation_id},
+                carrier=carrier,
+            )
+            if self._tracing is not None
+            else None
         )
         try:
             invoke_awaitable = self.invoke(request)
             timeout = self._request_timeout or None  # 0 → None (no limit)
             response = await asyncio.wait_for(invoke_awaitable, timeout=timeout)
         except asyncio.TimeoutError:
-            self._tracing.end_span(otel_span)
+            if self._tracing is not None:
+                self._tracing.end_span(otel_span)
             logger.error(
                 "Invocation %s timed out after %ss",
                 invocation_id,
@@ -411,9 +456,10 @@ class AgentServer(ABC):
                 headers={Constants.INVOCATION_ID_HEADER: invocation_id},
             )
         except Exception as exc:  # pylint: disable=broad-exception-caught
-            self._tracing.end_span(otel_span, exc=exc)
+            if self._tracing is not None:
+                self._tracing.end_span(otel_span, exc=exc)
             logger.error("Error processing invocation %s: %s", invocation_id, exc, exc_info=True)
-            message = str(exc) if os.environ.get(Constants.AGENT_DEBUG_ERRORS) else "Internal server error"
+            message = str(exc) if self._debug_errors else "Internal server error"
             return error_response(
                 "internal_error",
                 message,
@@ -423,9 +469,9 @@ class AgentServer(ABC):
 
         # For streaming responses, wrap the body iterator so the span stays
         # open until all chunks are sent and captures any streaming errors.
-        if isinstance(response, StreamingResponse):
+        if isinstance(response, StreamingResponse) and self._tracing is not None:
             response.body_iterator = self._tracing.trace_stream(response.body_iterator, otel_span)
-        else:
+        elif self._tracing is not None:
             self._tracing.end_span(otel_span)
 
         # Auto-inject invocation_id header if developer didn't set it
@@ -445,17 +491,23 @@ class AgentServer(ABC):
         invocation_id = request.path_params["invocation_id"]
         request.state.invocation_id = invocation_id
         carrier = extract_w3c_carrier(request.headers)
-        with self._tracing.span(
-            "AgentServer.get_invocation",
-            attributes={"invocation.id": invocation_id},
-            carrier=carrier,
-        ) as _otel_span:
+        span_cm = (
+            self._tracing.span(
+                "AgentServer.get_invocation",
+                attributes={"invocation.id": invocation_id},
+                carrier=carrier,
+            )
+            if self._tracing is not None
+            else contextlib.nullcontext(None)
+        )
+        with span_cm as _otel_span:
             try:
                 return await self.get_invocation(request)
             except Exception as exc:  # pylint: disable=broad-exception-caught
-                self._tracing.record_error(_otel_span, exc)
+                if self._tracing is not None:
+                    self._tracing.record_error(_otel_span, exc)
                 logger.error("Error in get_invocation %s: %s", invocation_id, exc, exc_info=True)
-                message = str(exc) if os.environ.get(Constants.AGENT_DEBUG_ERRORS) else "Internal server error"
+                message = str(exc) if self._debug_errors else "Internal server error"
                 return error_response(
                     "internal_error",
                     message,
@@ -473,17 +525,23 @@ class AgentServer(ABC):
         invocation_id = request.path_params["invocation_id"]
         request.state.invocation_id = invocation_id
         carrier = extract_w3c_carrier(request.headers)
-        with self._tracing.span(
-            "AgentServer.cancel_invocation",
-            attributes={"invocation.id": invocation_id},
-            carrier=carrier,
-        ) as _otel_span:
+        span_cm = (
+            self._tracing.span(
+                "AgentServer.cancel_invocation",
+                attributes={"invocation.id": invocation_id},
+                carrier=carrier,
+            )
+            if self._tracing is not None
+            else contextlib.nullcontext(None)
+        )
+        with span_cm as _otel_span:
             try:
                 return await self.cancel_invocation(request)
             except Exception as exc:  # pylint: disable=broad-exception-caught
-                self._tracing.record_error(_otel_span, exc)
+                if self._tracing is not None:
+                    self._tracing.record_error(_otel_span, exc)
                 logger.error("Error in cancel_invocation %s: %s", invocation_id, exc, exc_info=True)
-                message = str(exc) if os.environ.get(Constants.AGENT_DEBUG_ERRORS) else "Internal server error"
+                message = str(exc) if self._debug_errors else "Internal server error"
                 return error_response(
                     "internal_error",
                     message,

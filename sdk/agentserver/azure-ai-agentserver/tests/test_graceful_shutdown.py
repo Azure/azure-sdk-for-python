@@ -85,7 +85,7 @@ class TestConstants:
 class TestRunPassesTimeout:
     """Ensure run() forwards the timeout to Hypercorn config."""
 
-    @patch("azure.ai.agentserver.server._base._hypercorn_serve", new_callable=AsyncMock)
+    @patch("hypercorn.asyncio.serve", new_callable=AsyncMock)
     @patch("azure.ai.agentserver.server._base.asyncio")
     def test_run_passes_timeout(self, mock_asyncio, _mock_serve):
         agent = _StubAgent(timeout_graceful_shutdown=15)
@@ -95,7 +95,7 @@ class TestRunPassesTimeout:
         config = agent._build_hypercorn_config("127.0.0.1", 8088)
         assert config.graceful_timeout == 15.0
 
-    @patch("azure.ai.agentserver.server._base._hypercorn_serve", new_callable=AsyncMock)
+    @patch("hypercorn.asyncio.serve", new_callable=AsyncMock)
     @patch("azure.ai.agentserver.server._base.asyncio")
     def test_run_passes_default_timeout(self, mock_asyncio, _mock_serve):
         agent = _StubAgent()
@@ -113,7 +113,7 @@ class TestRunAsyncPassesTimeout:
     """Ensure run_async() forwards the timeout to Hypercorn config."""
 
     @pytest.mark.asyncio
-    @patch("azure.ai.agentserver.server._base._hypercorn_serve", new_callable=AsyncMock)
+    @patch("hypercorn.asyncio.serve", new_callable=AsyncMock)
     async def test_run_async_passes_timeout(self, mock_serve):
         agent = _StubAgent(timeout_graceful_shutdown=20)
         await agent.run_async()
@@ -124,7 +124,7 @@ class TestRunAsyncPassesTimeout:
         assert config.graceful_timeout == 20.0
 
     @pytest.mark.asyncio
-    @patch("azure.ai.agentserver.server._base._hypercorn_serve", new_callable=AsyncMock)
+    @patch("hypercorn.asyncio.serve", new_callable=AsyncMock)
     async def test_run_async_passes_default_timeout(self, mock_serve):
         agent = _StubAgent()
         await agent.run_async()

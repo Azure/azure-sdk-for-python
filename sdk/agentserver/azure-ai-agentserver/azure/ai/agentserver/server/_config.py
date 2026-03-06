@@ -149,3 +149,42 @@ def resolve_max_concurrent_requests(limit: Optional[int]) -> int:
     if env_limit is not None:
         return max(0, env_limit)
     return Constants.DEFAULT_MAX_CONCURRENT_REQUESTS
+
+
+def resolve_bool_feature(value: Optional[bool], env_var: str) -> bool:
+    """Resolve an opt-in boolean feature from argument, env var, or default (False).
+
+    :param value: Explicitly requested value or None.
+    :type value: Optional[bool]
+    :param env_var: Name of the environment variable to consult.
+    :type env_var: str
+    :return: Whether the feature is enabled.
+    :rtype: bool
+    """
+    if value is not None:
+        return bool(value)
+    return os.environ.get(env_var, "").lower() == "true"
+
+
+_VALID_LOG_LEVELS = ("DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL")
+
+
+def resolve_log_level(level: Optional[str]) -> str:
+    """Resolve the library log level from argument, env var, or default (``WARNING``).
+
+    :param level: Explicitly requested level (e.g. ``"DEBUG"``) or None.
+    :type level: Optional[str]
+    :return: Validated, upper-cased log level string.
+    :rtype: str
+    :raises ValueError: If the value is not one of DEBUG/INFO/WARNING/ERROR/CRITICAL.
+    """
+    if level is not None:
+        normalized = level.upper()
+    else:
+        normalized = os.environ.get(Constants.AGENT_LOG_LEVEL, "WARNING").upper()
+    if normalized not in _VALID_LOG_LEVELS:
+        raise ValueError(
+            f"Invalid log level: {normalized!r} "
+            f"(expected one of {', '.join(_VALID_LOG_LEVELS)})"
+        )
+    return normalized

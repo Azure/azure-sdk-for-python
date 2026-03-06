@@ -99,7 +99,7 @@ class GreetingAgent(AgentServer):
     """
 
     def __init__(self) -> None:
-        super().__init__(openapi_spec=OPENAPI_SPEC)
+        super().__init__(openapi_spec=OPENAPI_SPEC, enable_request_validation=True)
 
     async def invoke(self, request: Request) -> Response:
         """Return a localised greeting.

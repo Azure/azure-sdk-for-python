@@ -79,7 +79,7 @@ trace.set_tracer_provider(_MODULE_PROVIDER)
 async def test_tracing_disabled_by_default():
     """Agent created without enable_tracing has tracing off."""
     agent = _EchoTracedAgent()
-    assert agent._tracing.enabled is False  # noqa: SLF001
+    assert agent._tracing is None  # noqa: SLF001
 
 
 @pytest.mark.asyncio
@@ -178,7 +178,7 @@ async def test_tracing_enabled_via_env_var(monkeypatch, span_exporter):
     """AGENT_ENABLE_TRACING=true activates tracing."""
     monkeypatch.setenv("AGENT_ENABLE_TRACING", "true")
     agent = _EchoTracedAgent()
-    assert agent._tracing.enabled is True  # noqa: SLF001
+    assert agent._tracing is not None  # noqa: SLF001
 
     transport = httpx.ASGITransport(app=agent.app)
     async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as client:
@@ -193,7 +193,7 @@ async def test_tracing_constructor_overrides_env_var(monkeypatch, span_exporter)
     """Constructor enable_tracing=False overrides AGENT_ENABLE_TRACING=true."""
     monkeypatch.setenv("AGENT_ENABLE_TRACING", "true")
     agent = _EchoTracedAgent(enable_tracing=False)
-    assert agent._tracing.enabled is False  # noqa: SLF001
+    assert agent._tracing is None  # noqa: SLF001
 
 
 @pytest.mark.asyncio

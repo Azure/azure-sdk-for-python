@@ -33,9 +33,6 @@ tracing = [
 metrics = [
     "prometheus_client>=0.20.0",
 ]
-logging = [
-    "python-json-logger>=3.0.0",
-]
 
 [build-system]
 requires = ["setuptools>=69", "wheel"]

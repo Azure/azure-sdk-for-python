@@ -2,28 +2,17 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import logging
-import os
-
-_VALID_LEVELS = ("DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL")
 
 
 def get_logger() -> logging.Logger:
-    """Return the library-scoped logger with level from ``AGENT_LOG_LEVEL``.
+    """Return the library-scoped logger.
 
-    Reads the ``AGENT_LOG_LEVEL`` environment variable (default ``WARNING``)
-    and applies it to the ``azure.ai.agentserver`` logger.  No handlers or
-    formatters are configured — the caller (or the application root logger)
-    controls output format.
+    The log level is configured by the ``log_level`` constructor parameter
+    of :class:`AgentServer` (or the ``AGENT_LOG_LEVEL`` env var as fallback).
+    This function simply returns the named logger without forcing a level so
+    that the level already set by the constructor is preserved.
 
-    :return: Configured logger instance for azure.ai.agentserver.
+    :return: Logger instance for azure.ai.agentserver.
     :rtype: logging.Logger
     """
-    logger = logging.getLogger("azure.ai.agentserver")
-    level = os.getenv("AGENT_LOG_LEVEL", "WARNING").upper()
-    if level not in _VALID_LEVELS:
-        raise ValueError(
-            f"Invalid value for AGENT_LOG_LEVEL: {level!r} "
-            f"(expected one of {', '.join(_VALID_LEVELS)})"
-        )
-    logger.setLevel(level)
-    return logger
+    return logging.getLogger("azure.ai.agentserver")

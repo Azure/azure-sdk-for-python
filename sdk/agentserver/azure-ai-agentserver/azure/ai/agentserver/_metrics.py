@@ -20,8 +20,7 @@ text exposition format.
 from __future__ import annotations
 
 import logging
-import os
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Any
 
 from ._constants import Constants
 
@@ -63,17 +62,14 @@ _SIZE_BUCKETS = (
 
 
 class MetricsHelper:
-    """Lightweight wrapper around ``prometheus_client`` that can be a complete no-op.
+    """Lightweight wrapper around ``prometheus_client``.
 
-    :param enabled: Explicit enable flag, or *None* to read from
-        ``AGENT_ENABLE_METRICS`` env var (default ``false``).
-    :type enabled: Optional[bool]
+    Only instantiate when metrics are enabled.  If ``prometheus_client`` is
+    not installed, a warning is logged and all methods become no-ops.
     """
 
-    def __init__(self, enabled: Optional[bool] = None) -> None:
-        if enabled is None:
-            enabled = os.getenv(Constants.AGENT_ENABLE_METRICS, "false").lower() == "true"
-        self._enabled = enabled and _HAS_PROMETHEUS
+    def __init__(self) -> None:
+        self._enabled = _HAS_PROMETHEUS
         self._registry: Any = None
         self._request_total: Any = None
         self._request_duration: Any = None
@@ -115,16 +111,11 @@ class MetricsHelper:
                 buckets=_SIZE_BUCKETS,
                 registry=self._registry,
             )
-        elif enabled and not _HAS_PROMETHEUS:
+        elif not _HAS_PROMETHEUS:
             logger.warning(
                 "Metrics were enabled but prometheus_client is not installed. "
                 "Install it with: pip install azure-ai-agentserver[metrics]"
             )
-
-    @property
-    def enabled(self) -> bool:
-        """Whether metrics collection is active."""
-        return self._enabled
 
     def inc_in_flight(self) -> None:
         """Increment the in-flight request gauge."""

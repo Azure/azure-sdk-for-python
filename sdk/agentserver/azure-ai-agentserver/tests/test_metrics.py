@@ -60,48 +60,21 @@ class _StreamAgent(AgentServer):
 
 
 class TestMetricsHelperInit:
-    """Test MetricsHelper initialization and gating."""
+    """Test MetricsHelper initialization."""
 
-    def test_disabled_by_default(self):
+    def test_creates_registry(self):
+        """MetricsHelper() creates a Prometheus registry with expected metrics."""
         helper = MetricsHelper()
-        assert not helper.enabled
-
-    def test_enabled_via_constructor(self):
-        helper = MetricsHelper(enabled=True)
-        assert helper.enabled
-
-    def test_enabled_via_env_var(self):
-        with patch.dict(os.environ, {Constants.AGENT_ENABLE_METRICS: "true"}):
-            helper = MetricsHelper()
-            assert helper.enabled
-
-    def test_env_var_false(self):
-        with patch.dict(os.environ, {Constants.AGENT_ENABLE_METRICS: "false"}):
-            helper = MetricsHelper()
-            assert not helper.enabled
-
-    def test_constructor_overrides_env_var(self):
-        with patch.dict(os.environ, {Constants.AGENT_ENABLE_METRICS: "true"}):
-            helper = MetricsHelper(enabled=False)
-            assert not helper.enabled
-
-    def test_render_empty_when_disabled(self):
-        helper = MetricsHelper(enabled=False)
-        assert helper.render() == b""
-
-    def test_render_nonempty_when_enabled(self):
-        helper = MetricsHelper(enabled=True)
         data = helper.render()
-        # Should contain at least the HELP lines for our metrics
         assert b"agent_request_total" in data
 
-    def test_record_request_noop_when_disabled(self):
-        helper = MetricsHelper(enabled=False)
+    def test_record_request_works(self):
+        helper = MetricsHelper()
         # Should not raise
         helper.record_request("POST", "/invocations", 200, 0.1, 100, 50)
 
-    def test_inc_dec_in_flight_noop_when_disabled(self):
-        helper = MetricsHelper(enabled=False)
+    def test_inc_dec_in_flight(self):
+        helper = MetricsHelper()
         helper.inc_in_flight()
         helper.dec_in_flight()
 
@@ -110,7 +83,7 @@ class TestMetricsHelperRecording:
     """Test that MetricsHelper records metric values correctly."""
 
     def test_request_total_increments(self):
-        helper = MetricsHelper(enabled=True)
+        helper = MetricsHelper()
         helper.record_request("POST", "/invocations", 200, 0.1, 100, 50)
         helper.record_request("POST", "/invocations", 200, 0.2, 100, 50)
         data = helper.render().decode()
@@ -118,26 +91,26 @@ class TestMetricsHelperRecording:
         assert 'agent_request_total{method="POST",path="/invocations",status="200"} 2.0' in data
 
     def test_duration_histogram_recorded(self):
-        helper = MetricsHelper(enabled=True)
+        helper = MetricsHelper()
         helper.record_request("POST", "/invocations", 200, 1.5, 100, 50)
         data = helper.render().decode()
         assert "agent_request_duration_seconds_count" in data
         assert "agent_request_duration_seconds_sum" in data
 
     def test_request_body_bytes_recorded(self):
-        helper = MetricsHelper(enabled=True)
+        helper = MetricsHelper()
         helper.record_request("POST", "/invocations", 200, 0.1, 1024, 512)
         data = helper.render().decode()
         assert "agent_request_body_bytes_count" in data
 
     def test_response_body_bytes_recorded(self):
-        helper = MetricsHelper(enabled=True)
+        helper = MetricsHelper()
         helper.record_request("POST", "/invocations", 200, 0.1, 100, 2048)
         data = helper.render().decode()
         assert "agent_response_body_bytes_count" in data
 
     def test_in_flight_gauge(self):
-        helper = MetricsHelper(enabled=True)
+        helper = MetricsHelper()
         helper.inc_in_flight()
         helper.inc_in_flight()
         data = helper.render().decode()
@@ -147,7 +120,7 @@ class TestMetricsHelperRecording:
         assert "agent_request_in_flight 1.0" in data
 
     def test_different_status_codes_separate_labels(self):
-        helper = MetricsHelper(enabled=True)
+        helper = MetricsHelper()
         helper.record_request("POST", "/invocations", 200, 0.1, 0, 0)
         helper.record_request("POST", "/invocations", 500, 0.2, 0, 0)
         data = helper.render().decode()

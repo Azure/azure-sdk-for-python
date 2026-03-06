@@ -110,7 +110,7 @@ class ValidatedAgent(AgentServer):
     """Agent with OpenAPI validation that returns a greeting."""
 
     def __init__(self):
-        super().__init__(openapi_spec=SAMPLE_OPENAPI_SPEC)
+        super().__init__(openapi_spec=SAMPLE_OPENAPI_SPEC, enable_request_validation=True)
 
     async def invoke(self, request: Request) -> Response:
         data = await request.json()

@@ -24,7 +24,7 @@ def _make_echo_agent(spec: dict) -> AgentServer:
 
     class _EchoValidated(AgentServer):
         def __init__(self):
-            super().__init__(openapi_spec=spec)
+            super().__init__(openapi_spec=spec, enable_request_validation=True)
 
         async def invoke(self, request: Request) -> Response:
             data = await request.json()
@@ -253,7 +253,7 @@ async def test_non_json_body_skips_validation(no_spec_client):
                         }
                     }
                 }
-            })
+            }, enable_request_validation=True)
 
         async def invoke(self, request: Request) -> Response:
             body = await request.body()

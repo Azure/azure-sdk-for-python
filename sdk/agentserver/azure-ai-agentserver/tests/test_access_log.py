@@ -17,7 +17,7 @@ from azure.ai.agentserver import AgentServer
 from azure.ai.agentserver._access_log import (
     AccessLogHelper,
     _ACCESS_LOGGER_NAME,
-    _KeyValueFormatter,
+    _JsonFormatter,
 )
 from azure.ai.agentserver._constants import Constants
 
@@ -90,34 +90,17 @@ class _LogCapture(logging.Handler):
 
 
 class TestAccessLogHelperInit:
-    """Test AccessLogHelper initialization and gating."""
+    """Test AccessLogHelper initialization."""
 
-    def test_disabled_by_default(self):
+    def test_creates_logger(self):
+        """AccessLogHelper() sets up the access logger."""
         helper = AccessLogHelper()
-        assert not helper.enabled
+        assert helper._logger.name == _ACCESS_LOGGER_NAME  # noqa: SLF001
 
-    def test_enabled_via_constructor(self):
-        helper = AccessLogHelper(enabled=True)
-        assert helper.enabled
-
-    def test_enabled_via_env_var(self):
-        with patch.dict(os.environ, {Constants.AGENT_ENABLE_ACCESS_LOG: "true"}):
-            helper = AccessLogHelper()
-            assert helper.enabled
-
-    def test_env_var_false(self):
-        with patch.dict(os.environ, {Constants.AGENT_ENABLE_ACCESS_LOG: "false"}):
-            helper = AccessLogHelper()
-            assert not helper.enabled
-
-    def test_constructor_overrides_env_var(self):
-        with patch.dict(os.environ, {Constants.AGENT_ENABLE_ACCESS_LOG: "true"}):
-            helper = AccessLogHelper(enabled=False)
-            assert not helper.enabled
-
-    def test_log_request_noop_when_disabled(self):
-        helper = AccessLogHelper(enabled=False)
-        # Should not raise
+    def test_log_request_emits(self):
+        helper = AccessLogHelper()
+        capture = _LogCapture()
+        logging.getLogger(_ACCESS_LOGGER_NAME).addHandler(capture)
         helper.log_request(
             method="POST",
             path="/invocations",
@@ -130,13 +113,14 @@ class TestAccessLogHelperInit:
             user_agent="test",
             protocol="HTTP/1.1",
         )
+        assert len(capture.records) == 1
 
 
 class TestAccessLogHelperEmit:
     """Test that AccessLogHelper emits structured log entries."""
 
     def test_emits_log_record(self):
-        helper = AccessLogHelper(enabled=True)
+        helper = AccessLogHelper()
         capture = _LogCapture()
         logging.getLogger(_ACCESS_LOGGER_NAME).addHandler(capture)
 
@@ -167,7 +151,7 @@ class TestAccessLogHelperEmit:
         assert rec.user_agent == "python-httpx/0.27"  # type: ignore[attr-defined]
 
     def test_log_message_format(self):
-        helper = AccessLogHelper(enabled=True)
+        helper = AccessLogHelper()
         capture = _LogCapture()
         logging.getLogger(_ACCESS_LOGGER_NAME).addHandler(capture)
 
@@ -190,11 +174,11 @@ class TestAccessLogHelperEmit:
         assert "200" in rec.getMessage()
 
 
-class TestKeyValueFormatter:
-    """Test the fallback key=value formatter."""
+class TestJsonFormatter:
+    """Test the stdlib JSON formatter."""
 
-    def test_formats_fields(self):
-        formatter = _KeyValueFormatter()
+    def test_formats_fields_as_json(self):
+        formatter = _JsonFormatter()
         record = logging.LogRecord(
             name="test",
             level=logging.INFO,
@@ -216,13 +200,17 @@ class TestKeyValueFormatter:
         record.user_agent = "test-ua"  # type: ignore[attr-defined]
 
         formatted = formatter.format(record)
-        assert "method=POST" in formatted
-        assert "path=/invocations" in formatted
-        assert "status=200" in formatted
-        assert "protocol=HTTP/2" in formatted
-        assert "duration_ms=42.3" in formatted
-        assert "invocation_id=inv-1" in formatted
-        assert "client_ip=10.0.0.1" in formatted
+        parsed = json.loads(formatted)
+        assert parsed["method"] == "POST"
+        assert parsed["path"] == "/invocations"
+        assert parsed["status"] == 200
+        assert parsed["protocol"] == "HTTP/2"
+        assert parsed["duration_ms"] == 42.3
+        assert parsed["invocation_id"] == "inv-1"
+        assert parsed["client_ip"] == "10.0.0.1"
+        assert parsed["user_agent"] == "test-ua"
+        assert "timestamp" in parsed
+        assert parsed["level"] == "INFO"
 
 
 # ===========================================================================
@@ -353,30 +341,19 @@ class TestAccessLogWithEnvVar:
         assert len(capture.records) == 1
 
 
-class TestAccessLogJsonFormat:
-    """Test JSON formatting when python-json-logger is installed."""
+class TestAccessLogJsonOutput:
+    """Test that AccessLogHelper emits valid JSON."""
 
     @pytest.mark.asyncio
     async def test_json_format_output(self):
-        helper = AccessLogHelper(enabled=True)
-
-        # Get the handler's formatter output
-        access_logger = logging.getLogger(_ACCESS_LOGGER_NAME)
-        # Find a handler with JsonFormatter
-        json_handler = None
-        for h in access_logger.handlers:
-            from pythonjsonlogger.json import JsonFormatter
-
-            if isinstance(h.formatter, JsonFormatter):
-                json_handler = h
-                break
-
-        if json_handler is None:
-            pytest.skip("python-json-logger not producing JsonFormatter handler")
+        helper = AccessLogHelper()
 
         # Capture formatted output
+        access_logger = logging.getLogger(_ACCESS_LOGGER_NAME)
         capture = _LogCapture()
-        capture.setFormatter(json_handler.formatter)
+        # Use the same formatter the helper installed
+        if access_logger.handlers:
+            capture.setFormatter(access_logger.handlers[0].formatter)
         access_logger.addHandler(capture)
 
         helper.log_request(

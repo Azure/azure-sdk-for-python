@@ -1,24 +1,22 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-"""Tests for the _logger module."""
+"""Tests for the library-scoped logger."""
 import logging
-import pytest
 
 
-def test_invalid_log_level_raises(monkeypatch):
-    """An invalid AGENT_LOG_LEVEL value raises ValueError."""
-    monkeypatch.setenv("AGENT_LOG_LEVEL", "BOGUS")
-    from azure.ai.agentserver._logger import get_logger
-
-    with pytest.raises(ValueError, match="AGENT_LOG_LEVEL"):
-        get_logger()
+def test_library_logger_exists():
+    """The azure.ai.agentserver logger is a standard named logger."""
+    lib_logger = logging.getLogger("azure.ai.agentserver")
+    assert lib_logger.name == "azure.ai.agentserver"
 
 
-def test_valid_log_level_is_applied(monkeypatch):
-    """A valid AGENT_LOG_LEVEL is respected."""
-    monkeypatch.setenv("AGENT_LOG_LEVEL", "debug")
-    from azure.ai.agentserver._logger import get_logger
+def test_log_level_preserved_across_imports():
+    """Importing the server module does not reset a level already set."""
+    lib_logger = logging.getLogger("azure.ai.agentserver")
+    lib_logger.setLevel(logging.ERROR)
 
-    logger = get_logger()
-    assert logger.level == logging.DEBUG
+    # Re-importing the base module should not override the level.
+    from azure.ai.agentserver.server import _base  # noqa: F401
+
+    assert lib_logger.level == logging.ERROR
