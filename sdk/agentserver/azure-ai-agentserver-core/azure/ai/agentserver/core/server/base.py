@@ -60,21 +60,18 @@ class AgentRunContextMiddleware(BaseHTTPMiddleware):
             request_context.set(ctx)
 
     def set_run_context_to_context_var(self, run_context):
-        agent_id, agent_name = "", ""
-        agent_obj = run_context.get_agent_id_object()
-        if agent_obj:
-            agent_name = getattr(agent_obj, "name", "")
-            agent_version = getattr(agent_obj, "version", "")
-            agent_id = f"{agent_name}:{agent_version}"
+        agent_name, agent_id = get_agent_name(run_context)
 
         res = {
             "azure.ai.agentserver.response_id": run_context.response_id or "",
             "azure.ai.agentserver.conversation_id": run_context.conversation_id or "",
             "azure.ai.agentserver.streaming": str(run_context.stream or False),
+            "gen_ai.operation.name": "invoke_agent",
             "gen_ai.agent.id": agent_id,
-            "gen_ai.agent.name": agent_name,
+            "gen_ai.agent.name": agent_name or "",
             "gen_ai.provider.name": "AzureAI Hosted Agents",
             "gen_ai.response.id": run_context.response_id or "",
+            "gen_ai.conversation.id": run_context.conversation_id or "",
         }
         ctx = request_context.get() or {}
         ctx.update(res)
@@ -87,10 +84,12 @@ class FoundryCBAgent:
             # Set up tracing context and span
             context = request.state.agent_run_context
             ctx = request_context.get()
+            agent_name, _ = get_agent_name(context)
+            span_name = f"invoke_agent {agent_name}" if agent_name else "invoke_agent"
             with self.tracer.start_as_current_span(
-                name=f"HostedAgents-{context.response_id}",
+                name=span_name,
                 attributes=ctx,
-                kind=trace.SpanKind.SERVER,
+                kind=trace.SpanKind.CLIENT,
             ):
                 try:
                     logger.info("Start processing CreateResponse request:")
@@ -302,6 +301,30 @@ class FoundryCBAgent:
         processor = BatchSpanProcessor(exporter_instance)
         provider.add_span_processor(processor)
         logger.info(f"Tracing setup with OTLP exporter: {endpoint}")
+
+
+def get_agent_name(agent_run_context: AgentRunContext) -> tuple:
+    """
+    Extract the agent name and agent id from an AgentRunContext.
+
+    :param agent_run_context: The AgentRunContext instance to extract from.
+    :type agent_run_context: AgentRunContext
+    :return: Tuple of (agent_name, agent_id). Agent id is formatted as "name:version".
+             Returns (None, "") if agent information is not available.
+    :rtype: tuple
+    """
+    agent_name = None
+    agent_id = ""
+    
+    if agent_run_context:
+        agent_obj = agent_run_context.get_agent_id_object()
+        if agent_obj:
+            agent_name = getattr(agent_obj, "name", None)
+            agent_version = getattr(agent_obj, "version", "")
+            if agent_name:
+                agent_id = f"{agent_name}:{agent_version}"
+    
+    return agent_name, agent_id
 
 
 def _event_to_sse_chunk(event: ResponseStreamEvent) -> str:
