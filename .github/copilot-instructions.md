@@ -20,6 +20,17 @@
   - **Do not proceed** with any other tool execution until this step is complete.
   - **Skip this check only** for queries that do not require tool execution.
 
+### RULE 4: USE VIRTUAL ENVIRONMENTS
+**ALWAYS run Python commands in a virtual environment (venv).**
+- All Python operations (pip, tox, pytest, etc.) must be executed within an activated virtual environment
+- Create a virtual environment using: `python -m venv env`
+- Activate before running commands:
+  - Windows (PowerShell): `env\Scripts\Activate.ps1`
+  - Linux/Mac: `source env/bin/activate`
+  - Windows (CMD): `env\Scripts\activate.bat`
+- Reference: [Python virtual environment documentation](https://docs.python.org/3/tutorial/venv.html)
+- Reference: [Azure SDK dev setup guide](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/dev_setup.md)
+
 ---
 
 ## PYLINT OPERATIONS
@@ -30,8 +41,12 @@
 - [Official pylint guide](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/pylint_checking.md)
 - [Tox formatting guide](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md#tox)
 
+**PREREQUISITES:**
+- Ensure you are in an activated virtual environment before running pylint commands
+
 **COMMAND:**
 ```bash
+# After activating your virtual environment
 tox -e pylint --c <path_to_tox.ini> --root .
 ```
 
@@ -68,6 +83,7 @@ tox -e pylint --c <path_to_tox.ini> --root .
 - [MyPy fixing guide](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/static_type_checking_cheat_sheet.md)
 
 **REQUIREMENTS:**
+- Ensure you are in an activated virtual environment before running MyPy commands
 - Use Python 3.9 compatible environment
 - Follow official fixing guidelines
 - Use tox mcp tool for running MyPy
