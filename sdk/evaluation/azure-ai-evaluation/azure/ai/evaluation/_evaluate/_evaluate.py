@@ -3432,7 +3432,7 @@ def _calculate_aoai_evaluation_summary(
                         "completion_tokens": 0,
                         "cached_tokens": 0,
                     }
-                # Aggregate usage statistics
+                # Aggregate usage statistics for the model
                 model_stats = model_usage_stats[model_name]
                 model_stats["invocation_count"] += 1
                 if isinstance(usage_data, dict):
