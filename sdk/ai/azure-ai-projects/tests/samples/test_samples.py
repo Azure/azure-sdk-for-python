@@ -69,10 +69,7 @@ class TestSamples(AzureRecordedTestCase):
         "sample_path",
         get_sample_paths(
             "memories",
-            samples_to_skip=[
-                "sample_memory_advanced.py",
-                "sample_memory_basic.py",
-            ],
+            samples_to_skip=[],
         ),
     )
     @servicePreparer()
@@ -195,10 +192,7 @@ class TestSamples(AzureRecordedTestCase):
         "sample_path",
         get_sample_paths(
             "finetuning",
-            samples_to_skip=[
-                "sample_finetuning_reinforcement_job.py",  # 403 PermissionDeniedError: missing Microsoft.MachineLearningServices/workspaces/agents/action
-                "sample_finetuning_dpo_job.py",  # 401 AuthenticationError: missing AIServices/agents/write data action
-            ],
+            samples_to_skip=[],
         ),
     )
     @fineTuningServicePreparer()
