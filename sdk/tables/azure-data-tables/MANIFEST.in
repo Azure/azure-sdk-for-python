@@ -1,8 +1,7 @@
-recursive-include tests *.py *.yaml
 include *.md
-include azure/__init__.py
-include azure/data/__init__.py
 include LICENSE
+include azure/data/tables/_generated/py.typed
 recursive-include tests *.py
 recursive-include samples *.py *.md
-include azure/data/tables/py.typed
+include azure/__init__.py
+include azure/data/__init__.py

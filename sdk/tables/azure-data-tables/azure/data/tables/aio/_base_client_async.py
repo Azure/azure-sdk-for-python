@@ -29,7 +29,7 @@ from azure.core.rest import HttpRequest
 from ._authentication_async import _configure_credential
 from .._common_conversion import _is_cosmos_endpoint, _get_account
 from .._constants import DEFAULT_STORAGE_ENDPOINT_SUFFIX
-from .._generated.aio import AzureTable
+from .._generated.aio import TablesClient as AzureTable
 from .._base_client import extract_batch_part_metadata, parse_query, format_query_string, get_api_version, AudienceType
 from .._error import (
     RequestTooLargeError,
@@ -120,14 +120,20 @@ class AsyncTablesBaseClient:  # pylint: disable=too-many-instance-attributes
             }
         self._hosts = _hosts
 
-        self._policies = self._configure_policies(audience=audience, hosts=self._hosts, **kwargs)
+        auth_policy, self._policies = self._configure_policies(audience=audience, hosts=self._hosts, **kwargs)
         if self._cosmos_endpoint:
             self._policies.insert(0, CosmosPatchTransformPolicy())
 
-        self._client = AzureTable(self.url, policies=kwargs.pop("policies", self._policies), **kwargs)
+        self._client = AzureTable(
+            self.url,
+            credential=credential or False,
+            authentication_policy=auth_policy,
+            policies=kwargs.pop("policies", self._policies),
+            **kwargs,
+        )
         # Incompatible assignment when assigning a str value to a Literal type variable
-        self._client._config.version = get_api_version(
-            api_version, self._client._config.version
+        self._client._config.api_version = get_api_version(
+            api_version, self._client._config.api_version
         )  # type: ignore[assignment]
 
     @property
@@ -194,7 +200,7 @@ class AsyncTablesBaseClient:  # pylint: disable=too-many-instance-attributes
         :return: The Storage API version.
         :type: str
         """
-        return self._client._config.version  # pylint: disable=protected-access
+        return self._client._config.api_version  # pylint: disable=protected-access
 
     async def __aenter__(self) -> Self:
         await self._client.__aenter__()
@@ -219,9 +225,9 @@ class AsyncTablesBaseClient:  # pylint: disable=too-many-instance-attributes
         """
         return f"{self.scheme}://{hostname}{self._query_str}"
 
-    def _configure_policies(self, *, audience: Optional[str] = None, **kwargs: Any) -> List[Any]:
+    def _configure_policies(self, *, audience: Optional[str] = None, **kwargs: Any) -> tuple[Any, List[Any]]:
         credential_policy = _configure_credential(self.credential, self._cosmos_endpoint, audience=audience)
-        return [
+        return credential_policy, [
             RequestIdPolicy(**kwargs),
             StorageHeadersPolicy(**kwargs),
             UserAgentPolicy(sdk_moniker=SDK_MONIKER, **kwargs),

@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding: utf-8
 
 # -------------------------------------------------------------------------
@@ -1946,8 +1947,8 @@ class TestTableEntityAsync(AzureRecordedTestCase, AsyncTableTestCase):
             entity, _ = await self._insert_random_entity()
 
             access_policy = TableAccessPolicy()
-            access_policy.start = datetime(2011, 10, 11)
-            access_policy.expiry = datetime(2025, 10, 12)
+            access_policy.start = datetime(2018, 10, 12)
+            access_policy.expiry = datetime(2028, 10, 11)
             access_policy.permission = TableSasPermissions(read=True)
             identifiers = {"testid": access_policy}
 

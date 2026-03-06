@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -965,14 +966,14 @@ class TestTableClientAsyncUnitTests(AsyncTableTestCase):
     async def test_create_client_with_api_version(self):
         url = self.account_url(self.tables_storage_account_name, "table")
         client = TableServiceClient(url, credential=self.credential)
-        assert client._client._config.version == "2019-02-02"
+        assert client._client._config.api_version == "2019-02-02"
         table = client.get_table_client("tablename")
-        assert table._client._config.version == "2019-02-02"
+        assert table._client._config.api_version == "2019-02-02"
 
         client = TableServiceClient(url, credential=self.credential, api_version="2019-07-07")
-        assert client._client._config.version == "2019-07-07"
+        assert client._client._config.api_version == "2019-07-07"
         table = client.get_table_client("tablename")
-        assert table._client._config.version == "2019-07-07"
+        assert table._client._config.api_version == "2019-07-07"
 
         with pytest.raises(ValueError):
             TableServiceClient(url, credential=self.credential, api_version="foo")

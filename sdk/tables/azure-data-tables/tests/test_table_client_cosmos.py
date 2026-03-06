@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -133,20 +134,36 @@ class TestTableClientCosmos(AzureRecordedTestCase, TableTestCase):
                 # Delete table returns a MethodNotAllowed for tablename == "\"
                 if error.error_code != "MethodNotAllowed":
                     raise
-            with pytest.raises(ValueError) as error:
-                client.create_entity({"PartitionKey": "foo", "RowKey": "foo"})
-            assert "Cosmos table names must contain from 1-255 characters" in str(error.value)
-            with pytest.raises(ValueError) as error:
-                client.upsert_entity({"PartitionKey": "foo", "RowKey": "foo"})
-            assert "Cosmos table names must contain from 1-255 characters" in str(error.value)
-            with pytest.raises(ValueError) as error:
-                client.delete_entity("PK", "RK")
-            assert "Cosmos table names must contain from 1-255 characters" in str(error.value)
-            with pytest.raises(ValueError) as error:
-                batch = []
-                batch.append(("upsert", {"PartitionKey": "A", "RowKey": "B"}))
-                client.submit_transaction(batch)
-            assert "Cosmos table names must contain from 1-255 characters" in str(error.value)
+            try:
+                with pytest.raises(ValueError) as error:
+                    client.create_entity({"PartitionKey": "foo", "RowKey": "foo"})
+                assert "Cosmos table names must contain from 1-255 characters" in str(error.value)
+            except ResourceNotFoundError:
+                # Raises ResourceNotFound for tablename == "- "
+                if invalid_name != "- ":
+                    raise
+            try:
+                with pytest.raises(ValueError) as error:
+                    client.upsert_entity({"PartitionKey": "foo", "RowKey": "foo"})
+                assert "Cosmos table names must contain from 1-255 characters" in str(error.value)
+            except ResourceNotFoundError:
+                # Raises ResourceNotFound for tablename == "- "
+                if invalid_name != "- ":
+                    raise
+            if invalid_name != "- ":  # Table name "- " raises 404, which will be swallowed by the client.
+                with pytest.raises(ValueError) as error:
+                    client.delete_entity("PK", "RK")
+                assert "Cosmos table names must contain from 1-255 characters" in str(error.value)
+            try:
+                with pytest.raises(ValueError) as error:
+                    batch = []
+                    batch.append(("upsert", {"PartitionKey": "A", "RowKey": "B"}))
+                    client.submit_transaction(batch)
+                assert "Cosmos table names must contain from 1-255 characters" in str(error.value)
+            except TableTransactionError as error:
+                if invalid_name != "- ":
+                    raise
+                assert error.error_code == "ResourceNotFound"
 
     @pytest.mark.live_test_only
     @cosmos_decorator

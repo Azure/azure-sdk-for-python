@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -21,7 +22,7 @@ from .._base_client import parse_connection_str, AudienceType
 from .._encoder import TableEntityEncoder, EncoderMapType
 from .._entity import TableEntity
 from .._decoder import TableEntityDecoder, deserialize_iso, DecoderMapType
-from .._generated.models import SignedIdentifier, TableProperties
+from .._generated.models import SignedIdentifier, TableProperties, AccessPolicy, SignedIdentifiers
 from .._models import TableAccessPolicy, TableItem, UpdateMode
 from .._serialize import (
     serialize_iso,
@@ -204,16 +205,18 @@ class TableClient(AsyncTablesBaseClient):
             )
         except HttpResponseError as error:
             _process_table_error(error, table_name=self.table_name)
+            raise
         output = {}  # type: Dict[str, Optional[TableAccessPolicy]]
-        for identifier in cast(List[SignedIdentifier], identifiers):
-            if identifier.access_policy:
-                output[identifier.id] = TableAccessPolicy(
-                    start=deserialize_iso(identifier.access_policy.start),
-                    expiry=deserialize_iso(identifier.access_policy.expiry),
-                    permission=identifier.access_policy.permission,
-                )
-            else:
-                output[identifier.id] = None
+        if identifiers.identifiers:
+            for identifier in identifiers.identifiers:
+                if identifier.access_policy:
+                    output[identifier.id] = TableAccessPolicy(
+                        start=deserialize_iso(identifier.access_policy.start),
+                        expiry=deserialize_iso(identifier.access_policy.expiry),
+                        permission=identifier.access_policy.permission,
+                    )
+                else:
+                    output[identifier.id] = None
         return output
 
     @distributed_trace_async
@@ -231,14 +234,15 @@ class TableClient(AsyncTablesBaseClient):
         for key, value in signed_identifiers.items():
             payload = None
             if value:
-                payload = TableAccessPolicy(
+                payload = AccessPolicy(
                     start=serialize_iso(value.start),
                     expiry=serialize_iso(value.expiry),
                     permission=value.permission,
                 )
             identifiers.append(SignedIdentifier(id=key, access_policy=payload))
         try:
-            await self._client.table.set_access_policy(table=self.table_name, table_acl=identifiers or None, **kwargs)
+            signed_identifiers = SignedIdentifiers(identifiers=identifiers)
+            await self._client.table.set_access_policy(table=self.table_name, table_acl=signed_identifiers, **kwargs)
         except HttpResponseError as error:
             try:
                 _process_table_error(error, table_name=self.table_name)
