@@ -1,12 +1,14 @@
 # Release History
 
-## 1.0.0b49 (Unreleased)
+## 1.0.0b49 (2026-03-09)
 
 ### Features Added
-
-- Add Browser SDK loader SDK Stats feature bit ([#42904](https://github.com/Azure/azure-sdk-for-python/pull/44162))
-
-### Breaking Changes
+- Generate exporter with TypeSpec
+  ([#44442](https://github.com/Azure/azure-sdk-for-python/pull/44442))
+- Generate LiveMetrics from TypeSpec
+  ([#44696](https://github.com/Azure/azure-sdk-for-python/pull/44696))
+- Add Browser SDK loader SDK Stats feature bit
+  ([#42904](https://github.com/Azure/azure-sdk-for-python/pull/44162))
 
 ### Bugs Fixed
 - Add environment variable to disable/enable custom properties truncation
