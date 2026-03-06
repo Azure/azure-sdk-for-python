@@ -19,6 +19,11 @@ from ._models_py3 import (  # type: ignore
     AliasPathMetadata,
     AliasPattern,
     ApiProfile,
+    BatchRequest,
+    BatchRequests,
+    BatchResponse,
+    BatchResponseItem,
+    BatchResponseStatus,
     ErrorAdditionalInfo,
     ErrorResponse,
     ExportTemplateRequest,
@@ -76,6 +81,7 @@ from ._resource_management_client_enums import (  # type: ignore
     ResourceIdentityType,
     TagsPatchOperation,
 )
+
 from ._patch import __all__ as _patch_all
 from ._patch import *
 from ._patch import patch_sdk as _patch_sdk
@@ -86,6 +92,11 @@ __all__ = [
     "AliasPathMetadata",
     "AliasPattern",
     "ApiProfile",
+    "BatchRequest",
+    "BatchRequests",
+    "BatchResponse",
+    "BatchResponseItem",
+    "BatchResponseStatus",
     "ErrorAdditionalInfo",
     "ErrorResponse",
     "ExportTemplateRequest",
