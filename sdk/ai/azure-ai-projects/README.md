@@ -53,10 +53,10 @@ To report an issue with the client library, or request additional features, plea
 
 * Python 3.9 or later.
 * An [Azure subscription][azure_sub].
-* A [project in Microsoft Foundry](https://learn.microsoft.com/azure/ai-studio/how-to/create-projects).
+* A [project in Microsoft Foundry](https://learn.microsoft.com/azure/foundry/how-to/create-projects).
 * A Foundry project endpoint URL of the form `https://your-ai-services-account-name.services.ai.azure.com/api/projects/your-project-name`. It can be found in your Microsoft Foundry Project home page. Below we will assume the environment variable `AZURE_AI_PROJECT_ENDPOINT` was defined to hold this value.
 * An Entra ID token for authentication. Your application needs an object that implements the [TokenCredential](https://learn.microsoft.com/python/api/azure-core/azure.core.credentials.tokencredential) interface. Code samples here use [DefaultAzureCredential](https://learn.microsoft.com/python/api/azure-identity/azure.identity.defaultazurecredential). To get that working, you will need:
-  * An appropriate role assignment. See [Role-based access control in Microsoft Foundry portal](https://learn.microsoft.com/azure/ai-foundry/concepts/rbac-foundry?view=foundry). Role assignment can be done via the "Access Control (IAM)" tab of your Azure AI Project resource in the Azure portal.
+  * An appropriate role assignment. See [Role-based access control in Microsoft Foundry portal](https://learn.microsoft.com/azure/foundry/concepts/rbac-foundry). Role assignment can be done via the "Access Control (IAM)" tab of your Azure AI Project resource in the Azure portal.
   * [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli) installed.
   * You are logged into your Azure account by running `az login`.
 
@@ -208,7 +208,7 @@ These tools work immediately without requiring external connections.
 
 ##### **Code Interpreter** ([documentation](https://learn.microsoft.com/azure/foundry/agents/how-to/tools/code-interpreter?pivots=python))
 
-Write and run Python code in a sandboxed environment, process files and work with diverse data formats. See [OpenAI Documentation](https://platform.openai.com/docs/guides/tools-code-interpreter).
+Write and run Python code in a sandboxed environment, process files and work with diverse data formats. See also [OpenAI Documentation](https://developers.openai.com/api/docs/guides/tools-code-interpreter).
 
 Basic tool declaration (no input files):
 
@@ -260,7 +260,7 @@ See full sample file `\agents\tools\sample_agent_code_interpreter_with_files.py`
 
 ##### **File Search** ([documentation](https://learn.microsoft.com/azure/foundry/agents/how-to/tools/file-search?pivots=python))
 
-Built-in RAG (Retrieval-Augmented Generation) tool to process and search through documents using vector stores for knowledge retrieval. See [OpenAI Documentation](https://platform.openai.com/docs/assistants/tools/file-search).
+Built-in RAG (Retrieval-Augmented Generation) tool to process and search through documents using vector stores for knowledge retrieval. See also [OpenAI Documentation](https://developers.openai.com/api/docs/guides/tools-file-search).
 
 <!-- SNIPPET:sample_agent_file_search.tool_declaration -->
 
@@ -325,10 +325,9 @@ See the full sample in file `\agents\tools\sample_agent_image_generation.py` in 
 
 ##### **Web Search / Web Search (Preview)** ([documentation](https://learn.microsoft.com/azure/foundry/agents/how-to/tools/web-search?pivots=python))
 
-Discover up-to-date web content with the GA Web Search tool or try the Web Search Preview tool for the latest enhancements. Guidance on when to use each option [can be found here](https://learn.microsoft.com/azure/ai-foundry/agents/how-to/tools/web-overview?view=foundry#determine-the-best-tool-for-your-use-cases).
+Discover up-to-date web content with the GA Web Search tool or try the Web Search Preview tool for the latest enhancements. Guidance on when to use each option [can be found here](https://learn.microsoft.com/azure/foundry/agents/how-to/tools/web-overview#determine-the-best-tool-for-your-use-cases).
 
-Warning:
-Web Search tool uses Grounding with Bing, which has additional costs and terms: [terms of use](https://www.microsoft.com/bing/apis/grounding-legal-enterprise) and [privacy statement](https://go.microsoft.com/fwlink/?LinkId=521839&clcid=0x409). Customer data will flow outside the Azure compliance boundary. Learn more [here](https://learn.microsoft.com/azure/ai-foundry/agents/how-to/tools/web-search).
+**Warning**: Web Search tool uses Grounding with Bing, which has additional costs and terms: [terms of use](https://www.microsoft.com/bing/apis/grounding-legal-enterprise) and [privacy statement](https://go.microsoft.com/fwlink/?LinkId=521839&clcid=0x409). Customer data will flow outside the Azure compliance boundary. See the note titled **Important** on [Web search tool (preview)](https://learn.microsoft.com/azure/foundry/agents/how-to/tools/web-search) page.
 
 <!-- SNIPPET:sample_agent_web_search.tool_declaration -->
 
@@ -389,7 +388,7 @@ See the full sample in file `\agents\tools\sample_agent_computer_use.py` in the 
 
 ##### **Model Context Protocol (MCP)** ([documentation](https://learn.microsoft.com/azure/foundry/agents/how-to/tools/model-context-protocol?pivots=python))
 
-Integrate MCP servers to extend agent capabilities with standardized tools and resources. See [OpenAI Documentation](https://platform.openai.com/docs/guides/tools-connectors-mcp).
+Integrate MCP servers to extend agent capabilities with standardized tools and resources. See also [OpenAI Documentation](https://developers.openai.com/api/docs/guides/tools-connectors-mcp).
 
 <!-- SNIPPET:sample_agent_mcp.tool_declaration -->
 
@@ -411,7 +410,7 @@ See the full sample in file `\agents\tools\sample_agent_mcp.py` in the [Samples]
 
 ##### **OpenAPI** ([documentation](https://learn.microsoft.com/azure/foundry/agents/how-to/tools/openapi?pivots=python))
 
-Call external APIs defined by OpenAPI specifications without additional client-side code. See [OpenAI Documentation](https://platform.openai.com/docs/guides/tools-openapi).
+Call external APIs defined by OpenAPI specifications without additional client-side code.
 
 <!-- SNIPPET:sample_agent_openapi.tool_declaration-->
 
@@ -437,7 +436,7 @@ See the full sample in file `\agents\tools\sample_agent_openapi.py` in the [Samp
 
 ##### **Function Tool** ([documentation](https://learn.microsoft.com/azure/foundry/agents/how-to/tools/function-calling?pivots=python))
 
-Define custom functions that allow agents to interact with external APIs, databases, or application logic. See [OpenAI Documentation](https://platform.openai.com/docs/guides/function-calling).
+Define custom functions that allow agents to interact with external APIs, databases, or application logic. See also [OpenAI Documentation](https://developers.openai.com/api/docs/guides/function-calling).
 
 <!-- SNIPPET:sample_agent_function_tool.tool_declaration -->
 
@@ -566,7 +565,7 @@ See the full sample in file `\agents\tools\sample_agent_ai_search.py` in the [Sa
 
 ##### **Bing Grounding** ([documentation](https://learn.microsoft.com/azure/foundry/agents/how-to/tools/bing-tools?pivots=python))
 
-Warning: Grounding with Bing Search tool uses Grounding with Bing, which has additional costs and terms: [terms of use](https://www.microsoft.com/bing/apis/grounding-legal-enterprise) and [privacy statement](https://go.microsoft.com/fwlink/?LinkId=521839&clcid=0x409). Customer data will flow outside the Azure compliance boundary. Learn more [here](https://learn.microsoft.com/azure/ai-foundry/agents/how-to/tools/bing-tools).
+**Warning**: Grounding with Bing Search tool uses Grounding with Bing, which has additional costs and terms: [terms of use](https://www.microsoft.com/bing/apis/grounding-legal-enterprise) and [privacy statement](https://go.microsoft.com/fwlink/?LinkId=521839&clcid=0x409). Customer data will flow outside the Azure compliance boundary. See the note titled **Important** on the [Grounding agents with Bing Search tools](https://learn.microsoft.com/azure/foundry/agents/how-to/tools/bing-tools?pivots=python) page.
 
 Ground agent responses with real-time web search results from Bing to provide up-to-date information:
 
@@ -590,7 +589,7 @@ See the full sample in file `\agents\tools\sample_agent_bing_grounding.py` in th
 
 ##### **Bing Custom Search (Preview)** ([documentation](https://learn.microsoft.com/azure/foundry/agents/how-to/tools/bing-tools?pivots=python#grounding-with-bing-custom-search-preview))
 
-Warning: Grounding with Bing Custom Search tool uses Grounding with Bing, which has additional costs and terms: [terms of use](https://www.microsoft.com/bing/apis/grounding-legal-enterprise) and [privacy statement](https://go.microsoft.com/fwlink/?LinkId=521839&clcid=0x409). Customer data will flow outside the Azure compliance boundary. Learn more [here](https://learn.microsoft.com/azure/ai-foundry/agents/how-to/tools/web-search).
+**Warning**: Grounding with Bing Custom Search tool uses Grounding with Bing, which has additional costs and terms: [terms of use](https://www.microsoft.com/bing/apis/grounding-legal-enterprise) and [privacy statement](https://go.microsoft.com/fwlink/?LinkId=521839&clcid=0x409). Customer data will flow outside the Azure compliance boundary. See the note titled **Important** on the [Web search tool (preview)](https://learn.microsoft.com/azure/foundry/agents/how-to/tools/web-search) page.
 
 Use custom-configured Bing search instances for domain-specific or filtered web search results:
 
@@ -1292,9 +1291,7 @@ See the full sample in file `\agents\telemetry\sample_agent_basic_with_console_t
 
 ### Additional resources
 
-For more information see:
-
-* [Trace AI applications using OpenAI SDK](https://learn.microsoft.com/azure/ai-foundry/how-to/develop/trace-application)
+For more information see [Agent tracing overview (preview)](https://learn.microsoft.com/azure/foundry/observability/concepts/trace-agent-concept).
 
 ## Troubleshooting
 
