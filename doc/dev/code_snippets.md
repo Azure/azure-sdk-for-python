@@ -4,7 +4,7 @@ All code snippets in README should be up to date and runnable. And we want to ha
 
 - [Define snippet definitions in the samples folder](#create-samples)
 - [In README, refer to the code snippets from the samples](#refer-samples)
-- [Run `python_snippet_updater.py` to keep them in sync](#python_snippet_updater-tool)
+- [Run `azpysdk update_snippet .` from the package directory to keep them in sync](#run-update_snippet-tool)
 
 ## Create samples
 
@@ -40,10 +40,13 @@ If you have a file in `samples\text_example_async.py` with a snippet named `asyn
 
 > Make sure you include a Python code fence within the snippet reference!
 
-## Run python_snippet_updater tool
+## Run update_snippet tool 
+
+The update_snippet tool is included in the [azpysdk CLI](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/tool_usage_guide.md), which is installed with `azure-sdk-tools`.
 
 ```powershell
-python <azure-sdk-for-python>/eng/tools/azure-sdk-tools/ci_tools/snippet_update/python_snippet_updater.py <path_to_the_service>
+cd <package_dir>
+azpysdk update_snippet .
 ```
 
 The script scans the snippets in samples folder and populates snippet references in README with the snippet definitions from samples folder.
