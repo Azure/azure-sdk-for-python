@@ -31,6 +31,7 @@ from .._utils.utils import ClientMixinABC
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
+List = list
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
@@ -40,7 +41,7 @@ def build_check_aml_fs_subnets_request(subscription_id: str, **kwargs: Any) -> H
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -71,7 +72,7 @@ def build_get_required_aml_fs_subnets_size_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -207,7 +208,10 @@ class _StorageCacheManagementClientOperationsMixin(
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = None
             if response.status_code == 400:
-                error = self._deserialize.failsafe_deserialize(_models.AmlFilesystemCheckSubnetError, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.AmlFilesystemCheckSubnetError,
+                    pipeline_response,
+                )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:

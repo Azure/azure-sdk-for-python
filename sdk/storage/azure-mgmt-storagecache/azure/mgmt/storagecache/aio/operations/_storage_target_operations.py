@@ -39,6 +39,7 @@ from .._configuration import StorageCacheManagementClientConfiguration
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
+List = list
 
 
 class StorageTargetOperations:

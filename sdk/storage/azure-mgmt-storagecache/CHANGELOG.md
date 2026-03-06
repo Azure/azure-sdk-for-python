@@ -1,5 +1,20 @@
 # Release History
 
+## 3.1.0 (2026-03-15)
+
+### Features Added
+
+  - Client `StorageCacheManagementClient` added operation group `expansion_jobs`
+  - Model `AmlFilesystem` added property `current_storage_capacity_ti_b`
+  - Model `AmlFilesystem` added property `cluster_uuid`
+  - Enum `AmlFilesystemHealthStateType` added member `EXPANDING`
+  - Added model `ExpansionJob`
+  - Added enum `ExpansionJobPropertiesProvisioningState`
+  - Added enum `ExpansionJobStatusType`
+  - Added model `ExpansionJobUpdate`
+  - Added model `ExpansionJobsListResult`
+  - Added model `ExpansionJobsOperations`
+
 ## 3.0.1 (2025-10-09)
 
 ### Bugs Fixed

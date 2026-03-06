@@ -17,6 +17,7 @@ from ._aml_filesystems_operations import AmlFilesystemsOperations  # type: ignor
 from ._auto_export_jobs_operations import AutoExportJobsOperations  # type: ignore
 from ._import_jobs_operations import ImportJobsOperations  # type: ignore
 from ._auto_import_jobs_operations import AutoImportJobsOperations  # type: ignore
+from ._expansion_jobs_operations import ExpansionJobsOperations  # type: ignore
 from ._storage_cache_management_client_operations import _StorageCacheManagementClientOperationsMixin  # type: ignore # pylint: disable=unused-import
 from ._operations import Operations  # type: ignore
 from ._skus_operations import SkusOperations  # type: ignore
@@ -36,6 +37,7 @@ __all__ = [
     "AutoExportJobsOperations",
     "ImportJobsOperations",
     "AutoImportJobsOperations",
+    "ExpansionJobsOperations",
     "Operations",
     "SkusOperations",
     "UsageModelsOperations",

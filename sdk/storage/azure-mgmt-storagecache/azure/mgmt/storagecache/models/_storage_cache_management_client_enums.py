@@ -18,6 +18,7 @@ class AmlFilesystemHealthStateType(str, Enum, metaclass=CaseInsensitiveEnumMeta)
     DEGRADED = "Degraded"
     TRANSITIONING = "Transitioning"
     MAINTENANCE = "Maintenance"
+    EXPANDING = "Expanding"
 
 
 class AmlFilesystemIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -179,6 +180,32 @@ class DomainJoinedType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     YES = "Yes"
     NO = "No"
     ERROR = "Error"
+
+
+class ExpansionJobPropertiesProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """ARM provisioning state, see
+    https://github.com/Azure/azure-resource-manager-rpc/blob/master/v1.0/Addendum.md#provisioningstate-property.
+    """
+
+    SUCCEEDED = "Succeeded"
+    FAILED = "Failed"
+    CREATING = "Creating"
+    DELETING = "Deleting"
+    UPDATING = "Updating"
+    CANCELED = "Canceled"
+
+
+class ExpansionJobStatusType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The operational state of the expansion job. InProgress indicates the expansion is still
+    running. Completed indicates expansion finished successfully. Failed means the expansion was
+    unable to complete due to a fatal error. Deleting indicates the expansion is being rolled back.
+    """
+
+    IN_PROGRESS = "InProgress"
+    COMPLETED = "Completed"
+    FAILED = "Failed"
+    DELETING = "Deleting"
+    ROLLING_BACK = "RollingBack"
 
 
 class FilesystemSubnetStatusType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

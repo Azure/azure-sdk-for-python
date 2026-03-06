@@ -27,7 +27,7 @@ class TestStorageCacheManagementStorageTargetsOperationsAsync(AzureMgmtRecordedT
                 resource_group_name=resource_group.name,
                 cache_name="str",
                 storage_target_name="str",
-                api_version="2025-07-01",
+                api_version="2026-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -40,7 +40,7 @@ class TestStorageCacheManagementStorageTargetsOperationsAsync(AzureMgmtRecordedT
         response = self.client.storage_targets.list_by_cache(
             resource_group_name=resource_group.name,
             cache_name="str",
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -54,7 +54,7 @@ class TestStorageCacheManagementStorageTargetsOperationsAsync(AzureMgmtRecordedT
                 resource_group_name=resource_group.name,
                 cache_name="str",
                 storage_target_name="str",
-                api_version="2025-07-01",
+                api_version="2026-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -68,7 +68,7 @@ class TestStorageCacheManagementStorageTargetsOperationsAsync(AzureMgmtRecordedT
             resource_group_name=resource_group.name,
             cache_name="str",
             storage_target_name="str",
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -107,7 +107,7 @@ class TestStorageCacheManagementStorageTargetsOperationsAsync(AzureMgmtRecordedT
                     "type": "str",
                     "unknown": {"attributes": {"str": "str"}},
                 },
-                api_version="2025-07-01",
+                api_version="2026-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -122,7 +122,7 @@ class TestStorageCacheManagementStorageTargetsOperationsAsync(AzureMgmtRecordedT
                 resource_group_name=resource_group.name,
                 cache_name="str",
                 storage_target_name="str",
-                api_version="2025-07-01",
+                api_version="2026-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 

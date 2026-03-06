@@ -23,7 +23,7 @@ class TestStorageCacheManagementUsageModelsOperationsAsync(AzureMgmtRecordedTest
     @recorded_by_proxy_async
     async def test_usage_models_list(self, resource_group):
         response = self.client.usage_models.list(
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

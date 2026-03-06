@@ -35,6 +35,7 @@ from .._configuration import StorageCacheManagementClientConfiguration
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
+List = list
 
 
 class _StorageCacheManagementClientOperationsMixin(
@@ -148,7 +149,10 @@ class _StorageCacheManagementClientOperationsMixin(
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = None
             if response.status_code == 400:
-                error = self._deserialize.failsafe_deserialize(_models.AmlFilesystemCheckSubnetError, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.AmlFilesystemCheckSubnetError,
+                    pipeline_response,
+                )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:

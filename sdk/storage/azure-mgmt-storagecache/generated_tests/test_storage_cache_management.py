@@ -22,7 +22,7 @@ class TestStorageCacheManagement(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_check_aml_fs_subnets(self, resource_group):
         response = self.client.check_aml_fs_subnets(
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -32,7 +32,7 @@ class TestStorageCacheManagement(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_get_required_aml_fs_subnets_size(self, resource_group):
         response = self.client.get_required_aml_fs_subnets_size(
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself

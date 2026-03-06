@@ -54,9 +54,9 @@ from ...operations._caches_operations import (
 )
 from .._configuration import StorageCacheManagementClientConfiguration
 
-List = list
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
+List = list
 
 
 class CachesOperations:  # pylint: disable=too-many-public-methods

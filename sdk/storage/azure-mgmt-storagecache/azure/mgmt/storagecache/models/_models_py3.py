@@ -145,6 +145,11 @@ class AmlFilesystem(TrackedResource):
     :vartype zones: list[str]
     :ivar storage_capacity_ti_b: The size of the AML file system, in TiB. This might be rounded up.
     :vartype storage_capacity_ti_b: float
+    :ivar current_storage_capacity_ti_b: The current storage capacity of the AML file system, in
+     TiB. This reflects the actual capacity including any expansions.
+    :vartype current_storage_capacity_ti_b: float
+    :ivar cluster_uuid: The unique identifier of the AML file system cluster.
+    :vartype cluster_uuid: str
     :ivar health: Health of the AML file system.
     :vartype health: ~azure.mgmt.storagecache.models.AmlFilesystemHealth
     :ivar provisioning_state: ARM provisioning state. Known values are: "Succeeded", "Failed",
@@ -176,6 +181,8 @@ class AmlFilesystem(TrackedResource):
         "type": {"readonly": True},
         "system_data": {"readonly": True},
         "location": {"required": True},
+        "current_storage_capacity_ti_b": {"readonly": True},
+        "cluster_uuid": {"readonly": True},
         "health": {"readonly": True},
         "provisioning_state": {"readonly": True},
         "client_info": {"readonly": True},
@@ -193,6 +200,8 @@ class AmlFilesystem(TrackedResource):
         "sku": {"key": "sku", "type": "SkuName"},
         "zones": {"key": "zones", "type": "[str]"},
         "storage_capacity_ti_b": {"key": "properties.storageCapacityTiB", "type": "float"},
+        "current_storage_capacity_ti_b": {"key": "properties.currentStorageCapacityTiB", "type": "float"},
+        "cluster_uuid": {"key": "properties.clusterUuid", "type": "str"},
         "health": {"key": "properties.health", "type": "AmlFilesystemHealth"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
         "filesystem_subnet": {"key": "properties.filesystemSubnet", "type": "str"},
@@ -257,6 +266,8 @@ class AmlFilesystem(TrackedResource):
         self.sku = sku
         self.zones = zones
         self.storage_capacity_ti_b = storage_capacity_ti_b
+        self.current_storage_capacity_ti_b: Optional[float] = None
+        self.cluster_uuid: Optional[str] = None
         self.health: Optional["_models.AmlFilesystemHealth"] = None
         self.provisioning_state: Optional[Union[str, "_models.AmlFilesystemProvisioningStateType"]] = None
         self.filesystem_subnet = filesystem_subnet
@@ -533,7 +544,7 @@ class AmlFilesystemHealth(_serialization.Model):
     related to provisioning.
 
     :ivar state: List of AML file system health states. Known values are: "Unavailable",
-     "Available", "Degraded", "Transitioning", and "Maintenance".
+     "Available", "Degraded", "Transitioning", "Maintenance", and "Expanding".
     :vartype state: str or ~azure.mgmt.storagecache.models.AmlFilesystemHealthStateType
     :ivar status_code: Server-defined error code for the AML file system health.
     :vartype status_code: str
@@ -557,7 +568,7 @@ class AmlFilesystemHealth(_serialization.Model):
     ) -> None:
         """
         :keyword state: List of AML file system health states. Known values are: "Unavailable",
-         "Available", "Degraded", "Transitioning", and "Maintenance".
+         "Available", "Degraded", "Transitioning", "Maintenance", and "Expanding".
         :paramtype state: str or ~azure.mgmt.storagecache.models.AmlFilesystemHealthStateType
         :keyword status_code: Server-defined error code for the AML file system health.
         :paramtype status_code: str
@@ -1393,7 +1404,7 @@ class AutoExportJob(TrackedResource):
         "last_completion_time_utc": {"key": "properties.status.lastCompletionTimeUTC", "type": "iso-8601"},
     }
 
-    def __init__(  # pylint: disable=too-many-locals
+    def __init__(
         self,
         *,
         location: str,
@@ -2976,6 +2987,166 @@ class ErrorResponse(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.error = error
+
+
+class ExpansionJob(TrackedResource):
+    """An expansion job instance. Follows Azure Resource Manager standards:
+    https://github.com/Azure/azure-resource-manager-rpc/blob/master/v1.0/resource-api-reference.md.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.storagecache.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar provisioning_state: ARM provisioning state, see
+     https://github.com/Azure/azure-resource-manager-rpc/blob/master/v1.0/Addendum.md#provisioningstate-property.
+     Known values are: "Succeeded", "Failed", "Creating", "Deleting", "Updating", and "Canceled".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.storagecache.models.ExpansionJobPropertiesProvisioningState
+    :ivar new_storage_capacity_ti_b: The new storage capacity in TiB for the AML file system after
+     expansion. This must be a multiple of the Sku step size, and greater than the current storage
+     capacity of the AML file system.
+    :vartype new_storage_capacity_ti_b: float
+    :ivar state: The operational state of the expansion job. InProgress indicates the expansion is
+     still running. Completed indicates expansion finished successfully. Failed means the expansion
+     was unable to complete due to a fatal error. Deleting indicates the expansion is being rolled
+     back. Known values are: "InProgress", "Completed", "Failed", "Deleting", and "RollingBack".
+    :vartype state: str or ~azure.mgmt.storagecache.models.ExpansionJobStatusType
+    :ivar status_code: Server-defined status code for expansion job.
+    :vartype status_code: str
+    :ivar status_message: Server-defined status message for expansion job.
+    :vartype status_message: str
+    :ivar percent_complete: The percentage of expansion job completion.
+    :vartype percent_complete: float
+    :ivar start_time_utc: The time (in UTC) the expansion job started.
+    :vartype start_time_utc: ~datetime.datetime
+    :ivar completion_time_utc: The time (in UTC) when the expansion job completed. Only populated
+     when job reaches a terminal state.
+    :vartype completion_time_utc: ~datetime.datetime
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "location": {"required": True},
+        "provisioning_state": {"readonly": True},
+        "state": {"readonly": True},
+        "status_code": {"readonly": True},
+        "status_message": {"readonly": True},
+        "percent_complete": {"readonly": True, "maximum": 100, "minimum": 0},
+        "start_time_utc": {"readonly": True},
+        "completion_time_utc": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "new_storage_capacity_ti_b": {"key": "properties.newStorageCapacityTiB", "type": "float"},
+        "state": {"key": "properties.status.state", "type": "str"},
+        "status_code": {"key": "properties.status.statusCode", "type": "str"},
+        "status_message": {"key": "properties.status.statusMessage", "type": "str"},
+        "percent_complete": {"key": "properties.status.percentComplete", "type": "float"},
+        "start_time_utc": {"key": "properties.status.startTimeUTC", "type": "iso-8601"},
+        "completion_time_utc": {"key": "properties.status.completionTimeUTC", "type": "iso-8601"},
+    }
+
+    def __init__(
+        self,
+        *,
+        location: str,
+        tags: Optional[dict[str, str]] = None,
+        new_storage_capacity_ti_b: Optional[float] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
+        :keyword new_storage_capacity_ti_b: The new storage capacity in TiB for the AML file system
+         after expansion. This must be a multiple of the Sku step size, and greater than the current
+         storage capacity of the AML file system.
+        :paramtype new_storage_capacity_ti_b: float
+        """
+        super().__init__(tags=tags, location=location, **kwargs)
+        self.provisioning_state: Optional[Union[str, "_models.ExpansionJobPropertiesProvisioningState"]] = None
+        self.new_storage_capacity_ti_b = new_storage_capacity_ti_b
+        self.state: Optional[Union[str, "_models.ExpansionJobStatusType"]] = None
+        self.status_code: Optional[str] = None
+        self.status_message: Optional[str] = None
+        self.percent_complete: Optional[float] = None
+        self.start_time_utc: Optional[datetime.datetime] = None
+        self.completion_time_utc: Optional[datetime.datetime] = None
+
+
+class ExpansionJobsListResult(_serialization.Model):
+    """Result of the request to list expansion jobs. It contains a list of expansion jobs and a URL
+    link to get the next set of results.
+
+    :ivar value: List of expansion jobs.
+    :vartype value: list[~azure.mgmt.storagecache.models.ExpansionJob]
+    :ivar next_link: URL to get the next set of expansion job list results, if there are any.
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[ExpansionJob]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self, *, value: Optional[list["_models.ExpansionJob"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: List of expansion jobs.
+        :paramtype value: list[~azure.mgmt.storagecache.models.ExpansionJob]
+        :keyword next_link: URL to get the next set of expansion job list results, if there are any.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class ExpansionJobUpdate(_serialization.Model):
+    """An expansion job update instance.
+
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    """
+
+    _attribute_map = {
+        "tags": {"key": "tags", "type": "{str}"},
+    }
+
+    def __init__(self, *, tags: Optional[dict[str, str]] = None, **kwargs: Any) -> None:
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        """
+        super().__init__(**kwargs)
+        self.tags = tags
 
 
 class ImportJob(TrackedResource):

@@ -24,7 +24,7 @@ class TestStorageCacheManagementAscOperationsOperations(AzureMgmtRecordedTestCas
         response = self.client.asc_operations.get(
             location="str",
             operation_id="str",
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
