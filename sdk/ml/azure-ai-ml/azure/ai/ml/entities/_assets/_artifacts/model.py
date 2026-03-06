@@ -270,6 +270,6 @@ class Model(Artifact):  # pylint: disable=too-many-instance-attributes
             self._arm_type: {
                 ArmConstants.NAME: self.name,
                 ArmConstants.VERSION: self.version,
-                ArmConstants.PROPERTIES_PARAMETER_NAME: self._serialize.body(properties, "ModelVersionProperties"),
+                ArmConstants.PROPERTIES_PARAMETER_NAME: properties.as_dict(),
             }
         }

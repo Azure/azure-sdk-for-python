@@ -8,8 +8,8 @@ from pytest_mock import MockFixture
 from requests import Response
 
 from azure.ai.ml import load_batch_endpoint
-from azure.ai.ml._restclient.v2023_10_01.models import BatchEndpoint as BatchEndpointData
-from azure.ai.ml._restclient.v2023_10_01.models import BatchEndpointProperties as RestBatchEndpoint
+from azure.ai.ml._restclient.arm_ml_service.models import BatchEndpoint as BatchEndpointData
+from azure.ai.ml._restclient.arm_ml_service.models import BatchEndpointProperties as RestBatchEndpoint
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
 from azure.ai.ml.constants._common import AssetTypes, AzureMLResourceType
 from azure.ai.ml.constants._endpoint import EndpointYamlFields

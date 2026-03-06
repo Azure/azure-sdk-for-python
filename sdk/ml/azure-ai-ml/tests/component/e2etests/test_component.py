@@ -13,7 +13,7 @@ from devtools_testutils import AzureRecordedTestCase, is_live
 from test_utilities.utils import assert_job_cancel, omit_with_wildcard, sleep_if_live
 
 from azure.ai.ml import MLClient, MpiDistribution, load_component, load_environment
-from azure.ai.ml._restclient.v2022_05_01.models import ListViewType
+from azure.ai.ml._restclient.arm_ml_service.models import ListViewType
 from azure.ai.ml._utils._arm_id_utils import is_ARM_id_for_resource
 from azure.ai.ml.constants._assets import IPProtectionLevel
 from azure.ai.ml.constants._common import (

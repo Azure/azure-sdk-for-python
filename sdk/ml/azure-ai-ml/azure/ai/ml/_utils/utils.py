@@ -30,7 +30,7 @@ import isodate
 import pydash
 import yaml
 
-from azure.ai.ml._restclient.v2022_05_01.models import ListViewType, ManagedServiceIdentity
+from azure.ai.ml._restclient.arm_ml_service.models import ListViewType, ManagedServiceIdentity
 from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml.constants._common import (

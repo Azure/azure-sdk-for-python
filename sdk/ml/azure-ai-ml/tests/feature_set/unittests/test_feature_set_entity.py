@@ -7,12 +7,13 @@ import json
 
 from azure.ai.ml.entities._assets._artifacts.feature_set import FeatureSet
 from azure.ai.ml.entities._load_functions import load_feature_set
-from azure.ai.ml._restclient.v2023_10_01.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import (
     FeaturesetContainer,
     FeaturesetContainerProperties,
     FeaturesetVersion,
     FeaturesetVersionProperties,
 )
+from azure.ai.ml._restclient.arm_ml_service._utils.model_base import _deserialize
 
 
 @pytest.mark.unittest
@@ -43,7 +44,7 @@ class TestFeatureSetEntity:
         )
         assert (
             feature_set_rest.properties.materialization_settings.spark_configuration
-            == feature_set.materialization_settings.spark_configuration
+            == {k: str(v) for k, v in feature_set.materialization_settings.spark_configuration.items()}
         )
         assert (
             feature_set_rest.properties.materialization_settings.resource.instance_type
@@ -60,7 +61,7 @@ class TestFeatureSetEntity:
 
     def test_from_rest_object(self) -> None:
         with open(self.FEATURE_SET_REST, "r") as f:
-            feature_set_rest = FeaturesetVersion.deserialize(json.load(f))
+            feature_set_rest = _deserialize(FeaturesetVersion, json.load(f))
             feature_set = FeatureSet._from_rest_object(featureset_rest_object=feature_set_rest)
             assert feature_set.name == feature_set_rest.name
             assert feature_set.description == feature_set_rest.properties.description
@@ -95,7 +96,7 @@ class TestFeatureSetEntity:
 
     def test_from_container_rest_object(self) -> None:
         with open(self.FEATURE_SET_CONTAINER_REST, "r") as f:
-            featureset_container_rest = FeaturesetContainer.deserialize(json.load(f))
+            featureset_container_rest = _deserialize(FeaturesetContainer, json.load(f))
             feature_set = FeatureSet._from_container_rest_object(featureset_container_rest)
             assert feature_set.name == featureset_container_rest.name
             assert feature_set.description == featureset_container_rest.properties.description

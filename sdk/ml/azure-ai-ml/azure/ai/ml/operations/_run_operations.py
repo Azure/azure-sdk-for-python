@@ -7,7 +7,7 @@
 import logging
 from typing import Any, Iterable, Optional, cast
 
-from azure.ai.ml._restclient.runhistory import AzureMachineLearningWorkspaces as RunHistoryServiceClient
+from azure.ai.ml._restclient.runhistory import RunHistoryClient as RunHistoryServiceClient
 from azure.ai.ml._restclient.runhistory.models import GetRunDataRequest, GetRunDataResult, Run, RunDetails
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations
 from azure.ai.ml.constants._common import AZUREML_RESOURCE_PROVIDER, NAMED_RESOURCE_ID_FORMAT, AzureMLResourceType
@@ -53,7 +53,10 @@ class RunOperations(_ScopeDependentOperations):
                 self._workspace_name,
                 run_id,
                 top=kwargs.pop("max_results", None),
-                cls=lambda objs: [self._translate_from_rest_object(obj) for obj in objs],
+                cls=lambda pipeline_response, deserialized, response_headers: [
+                    self._translate_from_rest_object(obj)
+                    for obj in (deserialized.value if hasattr(deserialized, "value") else deserialized)
+                ],
             ),
         )
 

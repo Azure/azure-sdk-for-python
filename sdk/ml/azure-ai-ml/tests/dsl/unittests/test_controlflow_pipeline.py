@@ -661,7 +661,7 @@ class TestParallelForPipelineUT(TestControlFlowPipelineUT):
 
         pipeline_component = my_job.component
         rest_component = pipeline_component._to_rest_object().as_dict()
-        assert rest_component["properties"]["component_spec"]["outputs"] == {"output": component_out_dict}
+        assert rest_component["properties"]["componentSpec"]["outputs"] == {"output": component_out_dict}
 
     def test_parallel_for_source(self):
         basic_component = load_component(
