@@ -674,11 +674,11 @@ class StatusLevelTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Level code."""
 
     ERROR = "Error"
-    """Error"""
+    """Error."""
     INFO = "Info"
-    """Info"""
+    """Info."""
     WARNING = "Warning"
-    """Warning"""
+    """Warning."""
 
 
 class StorageAccountType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
