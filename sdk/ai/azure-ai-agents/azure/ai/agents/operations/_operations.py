@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -1380,6 +1381,7 @@ class ThreadsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1394,11 +1396,14 @@ class ThreadsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.AgentV1Error, response)
+            error = _failsafe_deserialize(
+                _models.AgentV1Error,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.AgentThread, response.json())
 
@@ -1465,7 +1470,10 @@ class ThreadsOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.AgentThread], deserialized.get("data", []))
+            list_of_elem = _deserialize(
+                List[_models.AgentThread],
+                deserialized.get("data", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("last_id") or None, iter(list_of_elem)
@@ -1481,7 +1489,10 @@ class ThreadsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.AgentV1Error, response)
+                error = _failsafe_deserialize(
+                    _models.AgentV1Error,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -1522,6 +1533,7 @@ class ThreadsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1536,11 +1548,14 @@ class ThreadsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.AgentV1Error, response)
+            error = _failsafe_deserialize(
+                _models.AgentV1Error,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.AgentThread, response.json())
 
@@ -1686,6 +1701,7 @@ class ThreadsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1700,11 +1716,14 @@ class ThreadsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.AgentV1Error, response)
+            error = _failsafe_deserialize(
+                _models.AgentV1Error,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.AgentThread, response.json())
 
@@ -1747,6 +1766,7 @@ class ThreadsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1761,11 +1781,14 @@ class ThreadsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.AgentV1Error, response)
+            error = _failsafe_deserialize(
+                _models.AgentV1Error,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(
                 _models._models.ThreadDeletionStatus, response.json()  # pylint: disable=protected-access
@@ -1955,6 +1978,7 @@ class MessagesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1969,11 +1993,14 @@ class MessagesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.AgentV1Error, response)
+            error = _failsafe_deserialize(
+                _models.AgentV1Error,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.ThreadMessage, response.json())
 
@@ -2048,7 +2075,10 @@ class MessagesOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.ThreadMessage], deserialized.get("data", []))
+            list_of_elem = _deserialize(
+                List[_models.ThreadMessage],
+                deserialized.get("data", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("last_id") or None, iter(list_of_elem)
@@ -2107,6 +2137,7 @@ class MessagesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2121,11 +2152,14 @@ class MessagesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.AgentV1Error, response)
+            error = _failsafe_deserialize(
+                _models.AgentV1Error,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.ThreadMessage, response.json())
 
@@ -2268,6 +2302,7 @@ class MessagesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2282,11 +2317,14 @@ class MessagesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.AgentV1Error, response)
+            error = _failsafe_deserialize(
+                _models.AgentV1Error,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.ThreadMessage, response.json())
 
@@ -2337,6 +2375,7 @@ class MessagesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2351,11 +2390,14 @@ class MessagesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.AgentV1Error, response)
+            error = _failsafe_deserialize(
+                _models.AgentV1Error,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(
                 _models._models.MessageDeletionStatus, response.json()  # pylint: disable=protected-access
@@ -2560,7 +2602,7 @@ class RunsOperations:
         """
 
     @distributed_trace
-    def create(
+    def create(  # pylint: disable=too-many-locals
         self,
         thread_id: str,
         body: Union[JSON, IO[bytes]] = _Unset,
@@ -2732,6 +2774,7 @@ class RunsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2746,11 +2789,14 @@ class RunsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.AgentV1Error, response)
+            error = _failsafe_deserialize(
+                _models.AgentV1Error,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.ThreadRun, response.json())
 
@@ -2821,7 +2867,10 @@ class RunsOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.ThreadRun], deserialized.get("data", []))
+            list_of_elem = _deserialize(
+                List[_models.ThreadRun],
+                deserialized.get("data", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("last_id") or None, iter(list_of_elem)
@@ -2837,7 +2886,10 @@ class RunsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.AgentV1Error, response)
+                error = _failsafe_deserialize(
+                    _models.AgentV1Error,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -2881,6 +2933,7 @@ class RunsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2895,11 +2948,14 @@ class RunsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.AgentV1Error, response)
+            error = _failsafe_deserialize(
+                _models.AgentV1Error,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.ThreadRun, response.json())
 
@@ -3042,6 +3098,7 @@ class RunsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3056,11 +3113,14 @@ class RunsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.AgentV1Error, response)
+            error = _failsafe_deserialize(
+                _models.AgentV1Error,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.ThreadRun, response.json())
 
@@ -3215,6 +3275,7 @@ class RunsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3229,11 +3290,14 @@ class RunsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.AgentV1Error, response)
+            error = _failsafe_deserialize(
+                _models.AgentV1Error,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.ThreadRun, response.json())
 
@@ -3279,6 +3343,7 @@ class RunsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3293,11 +3358,14 @@ class RunsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.AgentV1Error, response)
+            error = _failsafe_deserialize(
+                _models.AgentV1Error,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.ThreadRun, response.json())
 
@@ -3378,6 +3446,7 @@ class RunStepsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3392,11 +3461,14 @@ class RunStepsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.AgentV1Error, response)
+            error = _failsafe_deserialize(
+                _models.AgentV1Error,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.RunStep, response.json())
 
@@ -3478,7 +3550,10 @@ class RunStepsOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.RunStep], deserialized.get("data", []))
+            list_of_elem = _deserialize(
+                List[_models.RunStep],
+                deserialized.get("data", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("last_id") or None, iter(list_of_elem)
@@ -3494,7 +3569,10 @@ class RunStepsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.AgentV1Error, response)
+                error = _failsafe_deserialize(
+                    _models.AgentV1Error,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -3556,6 +3634,7 @@ class FilesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3570,11 +3649,14 @@ class FilesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.AgentV1Error, response)
+            error = _failsafe_deserialize(
+                _models.AgentV1Error,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.FileListResponse, response.json())
 
@@ -3614,12 +3696,11 @@ class FilesOperations:
         _body = body.as_dict() if isinstance(body, _Model) else body
         _file_fields: list[str] = ["file"]
         _data_fields: list[str] = ["purpose", "filename"]
-        _files, _data = prepare_multipart_form_data(_body, _file_fields, _data_fields)
+        _files = prepare_multipart_form_data(_body, _file_fields, _data_fields)
 
         _request = build_files_upload_file_request(
             api_version=self._config.api_version,
             files=_files,
-            data=_data,
             headers=_headers,
             params=_params,
         )
@@ -3628,6 +3709,7 @@ class FilesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3642,11 +3724,14 @@ class FilesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.AgentV1Error, response)
+            error = _failsafe_deserialize(
+                _models.AgentV1Error,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.FileInfo, response.json())
 
@@ -3689,6 +3774,7 @@ class FilesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3703,11 +3789,14 @@ class FilesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.AgentV1Error, response)
+            error = _failsafe_deserialize(
+                _models.AgentV1Error,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(
                 _models._models.FileDeletionStatus, response.json()  # pylint: disable=protected-access
@@ -3752,6 +3841,7 @@ class FilesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3766,11 +3856,14 @@ class FilesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.AgentV1Error, response)
+            error = _failsafe_deserialize(
+                _models.AgentV1Error,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.FileInfo, response.json())
 
@@ -3813,6 +3906,7 @@ class FilesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", True)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3827,10 +3921,13 @@ class FilesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.AgentV1Error, response)
+            error = _failsafe_deserialize(
+                _models.AgentV1Error,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -3913,7 +4010,10 @@ class VectorStoresOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.VectorStore], deserialized.get("data", []))
+            list_of_elem = _deserialize(
+                List[_models.VectorStore],
+                deserialized.get("data", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("last_id") or None, iter(list_of_elem)
@@ -3929,7 +4029,10 @@ class VectorStoresOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.AgentV1Error, response)
+                error = _failsafe_deserialize(
+                    _models.AgentV1Error,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -4087,6 +4190,7 @@ class VectorStoresOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4101,11 +4205,14 @@ class VectorStoresOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.AgentV1Error, response)
+            error = _failsafe_deserialize(
+                _models.AgentV1Error,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.VectorStore, response.json())
 
@@ -4148,6 +4255,7 @@ class VectorStoresOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4162,11 +4270,14 @@ class VectorStoresOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.AgentV1Error, response)
+            error = _failsafe_deserialize(
+                _models.AgentV1Error,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.VectorStore, response.json())
 
@@ -4310,6 +4421,7 @@ class VectorStoresOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4324,11 +4436,14 @@ class VectorStoresOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.AgentV1Error, response)
+            error = _failsafe_deserialize(
+                _models.AgentV1Error,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.VectorStore, response.json())
 
@@ -4372,6 +4487,7 @@ class VectorStoresOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4386,11 +4502,14 @@ class VectorStoresOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.AgentV1Error, response)
+            error = _failsafe_deserialize(
+                _models.AgentV1Error,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(
                 _models._models.VectorStoreDeletionStatus, response.json()  # pylint: disable=protected-access
@@ -4486,7 +4605,10 @@ class VectorStoreFilesOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.VectorStoreFile], deserialized.get("data", []))
+            list_of_elem = _deserialize(
+                List[_models.VectorStoreFile],
+                deserialized.get("data", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("last_id") or None, iter(list_of_elem)
@@ -4502,7 +4624,10 @@ class VectorStoreFilesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.AgentV1Error, response)
+                error = _failsafe_deserialize(
+                    _models.AgentV1Error,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -4640,6 +4765,7 @@ class VectorStoreFilesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4654,11 +4780,14 @@ class VectorStoreFilesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.AgentV1Error, response)
+            error = _failsafe_deserialize(
+                _models.AgentV1Error,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.VectorStoreFile, response.json())
 
@@ -4704,6 +4833,7 @@ class VectorStoreFilesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4718,11 +4848,14 @@ class VectorStoreFilesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.AgentV1Error, response)
+            error = _failsafe_deserialize(
+                _models.AgentV1Error,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.VectorStoreFile, response.json())
 
@@ -4772,6 +4905,7 @@ class VectorStoreFilesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4786,11 +4920,14 @@ class VectorStoreFilesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.AgentV1Error, response)
+            error = _failsafe_deserialize(
+                _models.AgentV1Error,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(
                 _models._models.VectorStoreFileDeletionStatus, response.json()  # pylint: disable=protected-access
@@ -4950,6 +5087,7 @@ class VectorStoreFileBatchesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4964,11 +5102,14 @@ class VectorStoreFileBatchesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.AgentV1Error, response)
+            error = _failsafe_deserialize(
+                _models.AgentV1Error,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.VectorStoreFileBatch, response.json())
 
@@ -5014,6 +5155,7 @@ class VectorStoreFileBatchesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -5028,11 +5170,14 @@ class VectorStoreFileBatchesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.AgentV1Error, response)
+            error = _failsafe_deserialize(
+                _models.AgentV1Error,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.VectorStoreFileBatch, response.json())
 
@@ -5079,6 +5224,7 @@ class VectorStoreFileBatchesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -5093,11 +5239,14 @@ class VectorStoreFileBatchesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.AgentV1Error, response)
+            error = _failsafe_deserialize(
+                _models.AgentV1Error,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.VectorStoreFileBatch, response.json())
 
@@ -5177,7 +5326,10 @@ class VectorStoreFileBatchesOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.VectorStoreFile], deserialized.get("data", []))
+            list_of_elem = _deserialize(
+                List[_models.VectorStoreFile],
+                deserialized.get("data", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("last_id") or None, iter(list_of_elem)
@@ -5193,7 +5345,10 @@ class VectorStoreFileBatchesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.AgentV1Error, response)
+                error = _failsafe_deserialize(
+                    _models.AgentV1Error,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -5298,7 +5453,7 @@ class _AgentsClientOperationsMixin(
         """
 
     @distributed_trace
-    def create_agent(
+    def create_agent(  # pylint: disable=too-many-locals
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
@@ -5408,6 +5563,7 @@ class _AgentsClientOperationsMixin(
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -5422,11 +5578,14 @@ class _AgentsClientOperationsMixin(
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.AgentV1Error, response)
+            error = _failsafe_deserialize(
+                _models.AgentV1Error,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.Agent, response.json())
 
@@ -5493,7 +5652,10 @@ class _AgentsClientOperationsMixin(
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Agent], deserialized.get("data", []))
+            list_of_elem = _deserialize(
+                List[_models.Agent],
+                deserialized.get("data", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("last_id") or None, iter(list_of_elem)
@@ -5509,7 +5671,10 @@ class _AgentsClientOperationsMixin(
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.AgentV1Error, response)
+                error = _failsafe_deserialize(
+                    _models.AgentV1Error,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -5550,6 +5715,7 @@ class _AgentsClientOperationsMixin(
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -5564,11 +5730,14 @@ class _AgentsClientOperationsMixin(
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.AgentV1Error, response)
+            error = _failsafe_deserialize(
+                _models.AgentV1Error,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.Agent, response.json())
 
@@ -5683,7 +5852,7 @@ class _AgentsClientOperationsMixin(
         """
 
     @distributed_trace
-    def update_agent(
+    def update_agent(  # pylint: disable=too-many-locals
         self,
         agent_id: str,
         body: Union[JSON, IO[bytes]] = _Unset,
@@ -5797,6 +5966,7 @@ class _AgentsClientOperationsMixin(
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -5811,11 +5981,14 @@ class _AgentsClientOperationsMixin(
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.AgentV1Error, response)
+            error = _failsafe_deserialize(
+                _models.AgentV1Error,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.Agent, response.json())
 
@@ -5858,6 +6031,7 @@ class _AgentsClientOperationsMixin(
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -5872,11 +6046,14 @@ class _AgentsClientOperationsMixin(
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.AgentV1Error, response)
+            error = _failsafe_deserialize(
+                _models.AgentV1Error,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(
                 _models._models.AgentDeletionStatus, response.json()  # pylint: disable=protected-access
@@ -6023,7 +6200,7 @@ class _AgentsClientOperationsMixin(
         """
 
     @distributed_trace
-    def create_thread_and_run(
+    def create_thread_and_run(  # pylint: disable=too-many-locals
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
@@ -6178,6 +6355,7 @@ class _AgentsClientOperationsMixin(
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -6192,11 +6370,14 @@ class _AgentsClientOperationsMixin(
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.AgentV1Error, response)
+            error = _failsafe_deserialize(
+                _models.AgentV1Error,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.ThreadRun, response.json())
 
