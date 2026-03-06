@@ -296,30 +296,23 @@ class AutoUpgradeProfileProperties(_Model):
     :vartype node_image_selection:
      ~azure.mgmt.containerservicefleet.models.AutoUpgradeNodeImageSelection
     :ivar disabled: If set to False: the auto upgrade has effect - target managed clusters will be
-     upgraded on schedule.
-     If set to True: the auto upgrade has no effect - no upgrade will be run on the target managed
-     clusters.
-     This is a boolean and not an enum because enabled/disabled are all available states of the auto
-     upgrade profile.
-     By default, this is set to False.
+     upgraded on schedule. If set to True: the auto upgrade has no effect - no upgrade will be run
+     on the target managed clusters. This is a boolean and not an enum because enabled/disabled are
+     all available states of the auto upgrade profile. By default, this is set to False.
     :vartype disabled: bool
     :ivar auto_upgrade_profile_status: The status of the auto upgrade profile.
     :vartype auto_upgrade_profile_status:
      ~azure.mgmt.containerservicefleet.models.AutoUpgradeProfileStatus
     :ivar target_kubernetes_version:   This is the target Kubernetes version for auto-upgrade. The
-     format must be ``{major version}.{minor version}``. For example, "1.30".
-       By default, this is empty.
-       If upgrade channel is set to TargetKubernetesVersion, this field must not be empty.
-       If upgrade channel is Rapid, Stable or NodeImage, this field must be empty.
+     format must be ``{major version}.{minor version}``. For example, "1.30". By default, this is
+     empty. If upgrade channel is set to TargetKubernetesVersion, this field must not be empty. If
+     upgrade channel is Rapid, Stable or NodeImage, this field must be empty.
     :vartype target_kubernetes_version: str
     :ivar long_term_support:   If upgrade channel is not TargetKubernetesVersion, this field must
-     be False.
-       If set to True: Fleet auto upgrade will continue generate update runs for patches of minor
-     versions earlier than N-2
-       (where N is the latest supported minor version) if those minor versions support Long-Term
-     Support (LTS).
-       By default, this is set to False.
-       For more information on AKS LTS, please see
+     be False. If set to True: Fleet auto upgrade will continue generate update runs for patches of
+     minor versions earlier than N-2 (where N is the latest supported minor version) if those minor
+     versions support Long-Term Support (LTS). By default, this is set to False. For more
+     information on AKS LTS, please see
      `https://learn.microsoft.com/en-us/azure/aks/long-term-support
      <https://learn.microsoft.com/en-us/azure/aks/long-term-support>`_.
     :vartype long_term_support: bool
@@ -344,12 +337,9 @@ class AutoUpgradeProfileProperties(_Model):
     """The node image upgrade to be applied to the target clusters in auto upgrade."""
     disabled: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """If set to False: the auto upgrade has effect - target managed clusters will be upgraded on
-     schedule.
-     If set to True: the auto upgrade has no effect - no upgrade will be run on the target managed
-     clusters.
-     This is a boolean and not an enum because enabled/disabled are all available states of the auto
-     upgrade profile.
-     By default, this is set to False."""
+     schedule. If set to True: the auto upgrade has no effect - no upgrade will be run on the target
+     managed clusters. This is a boolean and not an enum because enabled/disabled are all available
+     states of the auto upgrade profile. By default, this is set to False."""
     auto_upgrade_profile_status: Optional["_models.AutoUpgradeProfileStatus"] = rest_field(
         name="autoUpgradeProfileStatus", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -357,22 +347,18 @@ class AutoUpgradeProfileProperties(_Model):
     target_kubernetes_version: Optional[str] = rest_field(
         name="targetKubernetesVersion", visibility=["read", "create", "update", "delete", "query"]
     )
-    """  This is the target Kubernetes version for auto-upgrade. The format must be ``{major
-     version}.{minor version}``. For example, \"1.30\".
-       By default, this is empty.
-       If upgrade channel is set to TargetKubernetesVersion, this field must not be empty.
-       If upgrade channel is Rapid, Stable or NodeImage, this field must be empty."""
+    """This is the target Kubernetes version for auto-upgrade. The format must be ``{major
+     version}.{minor version}``. For example, \"1.30\". By default, this is empty. If upgrade
+     channel is set to TargetKubernetesVersion, this field must not be empty. If upgrade channel is
+     Rapid, Stable or NodeImage, this field must be empty."""
     long_term_support: Optional[bool] = rest_field(
         name="longTermSupport", visibility=["read", "create", "update", "delete", "query"]
     )
-    """  If upgrade channel is not TargetKubernetesVersion, this field must be False.
-       If set to True: Fleet auto upgrade will continue generate update runs for patches of minor
-     versions earlier than N-2
-       (where N is the latest supported minor version) if those minor versions support Long-Term
-     Support (LTS).
-       By default, this is set to False.
-       For more information on AKS LTS, please see
-     `https://learn.microsoft.com/en-us/azure/aks/long-term-support
+    """If upgrade channel is not TargetKubernetesVersion, this field must be False. If set to True:
+     Fleet auto upgrade will continue generate update runs for patches of minor versions earlier
+     than N-2 (where N is the latest supported minor version) if those minor versions support
+     Long-Term Support (LTS). By default, this is set to False. For more information on AKS LTS,
+     please see `https://learn.microsoft.com/en-us/azure/aks/long-term-support
      <https://learn.microsoft.com/en-us/azure/aks/long-term-support>`_."""
 
     @overload
@@ -1830,7 +1816,7 @@ class LabelSelectorRequirement(_Model):
      Exists and DoesNotExist. Required. Known values are: \"In\", \"NotIn\", \"Exists\", and
      \"DoesNotExist\"."""
     values_property: Optional[list[str]] = rest_field(
-        name="values", visibility=["read", "create", "update", "delete", "query"]
+        name="values", visibility=["read", "create", "update", "delete", "query"], original_tsp_name="values"
     )
     """values is an array of string values. If the operator is In or NotIn, the values array must be
      non-empty. If the operator is Exists or DoesNotExist, the values array must be empty. This
@@ -2232,7 +2218,7 @@ class Operation(_Model):
 
 
 class OperationDisplay(_Model):
-    """Localized display information for and operation.
+    """Localized display information for an operation.
 
     :ivar provider: The localized friendly form of the resource provider name, e.g. "Microsoft
      Monitoring Insights" or "Microsoft Compute".
@@ -2452,7 +2438,9 @@ class PropertySelectorRequirement(_Model):
     """Operator specifies the relationship between a cluster's observed value of the specified
      property and the values given in the requirement. Required. Known values are: \"Gt\", \"Ge\",
      \"Eq\", \"Ne\", \"Lt\", and \"Le\"."""
-    values_property: list[str] = rest_field(name="values", visibility=["read", "create", "update", "delete", "query"])
+    values_property: list[str] = rest_field(
+        name="values", visibility=["read", "create", "update", "delete", "query"], original_tsp_name="values"
+    )
     """Values are a list of values of the specified property which Fleet will compare against the
      observed values of individual member clusters in accordance with the given operator. At this
      moment, each value should be a Kubernetes quantity. For more information, see
@@ -2580,9 +2568,8 @@ class SkipTarget(_Model):
     :ivar type: The skip target type. Required. Known values are: "Member", "Group", "Stage", and
      "AfterStageWait".
     :vartype type: str or ~azure.mgmt.containerservicefleet.models.TargetType
-    :ivar name: The skip target's name.
-     To skip a member/group/stage, use the member/group/stage's name;
-     Tp skip an after stage wait, use the parent stage's name. Required.
+    :ivar name: The skip target's name. To skip a member/group/stage, use the member/group/stage's
+     name; Tp skip an after stage wait, use the parent stage's name. Required.
     :vartype name: str
     """
 
@@ -2590,9 +2577,8 @@ class SkipTarget(_Model):
     """The skip target type. Required. Known values are: \"Member\", \"Group\", \"Stage\", and
      \"AfterStageWait\"."""
     name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The skip target's name.
-     To skip a member/group/stage, use the member/group/stage's name;
-     Tp skip an after stage wait, use the parent stage's name. Required."""
+    """The skip target's name. To skip a member/group/stage, use the member/group/stage's name; Tp
+     skip an after stage wait, use the parent stage's name. Required."""
 
     @overload
     def __init__(
@@ -2744,8 +2730,8 @@ class Toleration(_Model):
 class UpdateGroup(_Model):
     """A group to be updated.
 
-    :ivar name: Name of the group.
-     It must match a group name of an existing fleet member. Required.
+    :ivar name: Name of the group. It must match a group name of an existing fleet member.
+     Required.
     :vartype name: str
     :ivar before_gates: A list of Gates that will be created before this Group is executed.
     :vartype before_gates: list[~azure.mgmt.containerservicefleet.models.GateConfiguration]
@@ -2754,8 +2740,7 @@ class UpdateGroup(_Model):
     """
 
     name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Name of the group.
-     It must match a group name of an existing fleet member. Required."""
+    """Name of the group. It must match a group name of an existing fleet member. Required."""
     before_gates: Optional[list["_models.GateConfiguration"]] = rest_field(
         name="beforeGates", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -2975,10 +2960,10 @@ class UpdateRunProperties(_Model):
      UpdateRunStrategy changes can be made directly on the "strategy" field before launching the
      UpdateRun.
     :vartype update_strategy_id: str
-    :ivar strategy: The strategy defines the order in which the clusters will be updated.
-     If not set, all members will be updated sequentially. The UpdateRun status will show a single
-     UpdateStage and a single UpdateGroup targeting all members.
-     The strategy of the UpdateRun can be modified until the run is started.
+    :ivar strategy: The strategy defines the order in which the clusters will be updated. If not
+     set, all members will be updated sequentially. The UpdateRun status will show a single
+     UpdateStage and a single UpdateGroup targeting all members. The strategy of the UpdateRun can
+     be modified until the run is started.
     :vartype strategy: ~azure.mgmt.containerservicefleet.models.UpdateRunStrategy
     :ivar managed_cluster_update: The update to be applied to all clusters in the UpdateRun. The
      managedClusterUpdate can be modified until the run is started. Required.
@@ -3017,10 +3002,10 @@ class UpdateRunProperties(_Model):
     strategy: Optional["_models.UpdateRunStrategy"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """The strategy defines the order in which the clusters will be updated.
-     If not set, all members will be updated sequentially. The UpdateRun status will show a single
-     UpdateStage and a single UpdateGroup targeting all members.
-     The strategy of the UpdateRun can be modified until the run is started."""
+    """The strategy defines the order in which the clusters will be updated. If not set, all members
+     will be updated sequentially. The UpdateRun status will show a single UpdateStage and a single
+     UpdateGroup targeting all members. The strategy of the UpdateRun can be modified until the run
+     is started."""
     managed_cluster_update: "_models.ManagedClusterUpdate" = rest_field(
         name="managedClusterUpdate", visibility=["read", "create", "update", "delete", "query"]
     )

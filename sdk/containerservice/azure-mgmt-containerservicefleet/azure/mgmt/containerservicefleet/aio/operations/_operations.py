@@ -1119,9 +1119,16 @@ class FleetsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list_by_subscription(self, **kwargs: Any) -> AsyncItemPaged["_models.Fleet"]:
+    def list_by_subscription(
+        self, *, top: Optional[int] = None, skip_token: Optional[str] = None, **kwargs: Any
+    ) -> AsyncItemPaged["_models.Fleet"]:
         """Lists fleets in the specified subscription.
 
+        :keyword top: The number of result items to return. Default value is None.
+        :paramtype top: int
+        :keyword skip_token: The page-continuation token to use with a paged version of this API.
+         Default value is None.
+        :paramtype skip_token: str
         :return: An iterator like instance of Fleet
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.containerservicefleet.models.Fleet]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1144,6 +1151,8 @@ class FleetsOperations:
 
                 _request = build_fleets_list_by_subscription_request(
                     subscription_id=self._config.subscription_id,
+                    top=top,
+                    skip_token=skip_token,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -2166,7 +2175,14 @@ class FleetMembersOperations:
 
     @distributed_trace
     def list_by_fleet(
-        self, resource_group_name: str, fleet_name: str, **kwargs: Any
+        self,
+        resource_group_name: str,
+        fleet_name: str,
+        *,
+        top: Optional[int] = None,
+        skip_token: Optional[str] = None,
+        filter: Optional[str] = None,
+        **kwargs: Any
     ) -> AsyncItemPaged["_models.FleetMember"]:
         """List FleetMember resources by Fleet.
 
@@ -2175,6 +2191,13 @@ class FleetMembersOperations:
         :type resource_group_name: str
         :param fleet_name: The name of the Fleet resource. Required.
         :type fleet_name: str
+        :keyword top: The number of result items to return. Default value is None.
+        :paramtype top: int
+        :keyword skip_token: The page-continuation token to use with a paged version of this API.
+         Default value is None.
+        :paramtype skip_token: str
+        :keyword filter: Filter the result list using the given expression. Default value is None.
+        :paramtype filter: str
         :return: An iterator like instance of FleetMember
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.containerservicefleet.models.FleetMember]
@@ -2200,6 +2223,9 @@ class FleetMembersOperations:
                     resource_group_name=resource_group_name,
                     fleet_name=fleet_name,
                     subscription_id=self._config.subscription_id,
+                    top=top,
+                    skip_token=skip_token,
+                    filter=filter,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -3749,11 +3775,29 @@ class GatesOperations:
     @api_version_validation(
         method_added_on="2025-04-01-preview",
         params_added_on={
-            "2025-04-01-preview": ["api_version", "subscription_id", "resource_group_name", "fleet_name", "accept"]
+            "2025-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "fleet_name",
+                "filter",
+                "top",
+                "skip_token",
+                "accept",
+            ]
         },
         api_versions_list=["2025-04-01-preview", "2025-08-01-preview"],
     )
-    def list_by_fleet(self, resource_group_name: str, fleet_name: str, **kwargs: Any) -> AsyncItemPaged["_models.Gate"]:
+    def list_by_fleet(
+        self,
+        resource_group_name: str,
+        fleet_name: str,
+        *,
+        filter: Optional[str] = None,
+        top: Optional[int] = None,
+        skip_token: Optional[str] = None,
+        **kwargs: Any
+    ) -> AsyncItemPaged["_models.Gate"]:
         """List Gate resources by Fleet.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -3761,6 +3805,13 @@ class GatesOperations:
         :type resource_group_name: str
         :param fleet_name: The name of the Fleet resource. Required.
         :type fleet_name: str
+        :keyword filter: Filter the result list using the given expression. Default value is None.
+        :paramtype filter: str
+        :keyword top: The number of result items to return. Default value is None.
+        :paramtype top: int
+        :keyword skip_token: The page-continuation token to use with a paged version of this API.
+         Default value is None.
+        :paramtype skip_token: str
         :return: An iterator like instance of Gate
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.containerservicefleet.models.Gate]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3785,6 +3836,9 @@ class GatesOperations:
                     resource_group_name=resource_group_name,
                     fleet_name=fleet_name,
                     subscription_id=self._config.subscription_id,
+                    filter=filter,
+                    top=top,
+                    skip_token=skip_token,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -4518,7 +4572,15 @@ class UpdateRunsOperations:
     @api_version_validation(
         method_added_on="2023-03-15-preview",
         params_added_on={
-            "2023-03-15-preview": ["api_version", "subscription_id", "resource_group_name", "fleet_name", "accept"]
+            "2023-03-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "fleet_name",
+                "top",
+                "skip_token",
+                "accept",
+            ]
         },
         api_versions_list=[
             "2023-03-15-preview",
@@ -4534,7 +4596,13 @@ class UpdateRunsOperations:
         ],
     )
     def list_by_fleet(
-        self, resource_group_name: str, fleet_name: str, **kwargs: Any
+        self,
+        resource_group_name: str,
+        fleet_name: str,
+        *,
+        top: Optional[int] = None,
+        skip_token: Optional[str] = None,
+        **kwargs: Any
     ) -> AsyncItemPaged["_models.UpdateRun"]:
         """List UpdateRun resources by Fleet.
 
@@ -4543,6 +4611,11 @@ class UpdateRunsOperations:
         :type resource_group_name: str
         :param fleet_name: The name of the Fleet resource. Required.
         :type fleet_name: str
+        :keyword top: The number of result items to return. Default value is None.
+        :paramtype top: int
+        :keyword skip_token: The page-continuation token to use with a paged version of this API.
+         Default value is None.
+        :paramtype skip_token: str
         :return: An iterator like instance of UpdateRun
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.containerservicefleet.models.UpdateRun]
@@ -4568,6 +4641,8 @@ class UpdateRunsOperations:
                     resource_group_name=resource_group_name,
                     fleet_name=fleet_name,
                     subscription_id=self._config.subscription_id,
+                    top=top,
+                    skip_token=skip_token,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -6070,7 +6145,15 @@ class FleetUpdateStrategiesOperations:
     @api_version_validation(
         method_added_on="2023-08-15-preview",
         params_added_on={
-            "2023-08-15-preview": ["api_version", "subscription_id", "resource_group_name", "fleet_name", "accept"]
+            "2023-08-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "fleet_name",
+                "top",
+                "skip_token",
+                "accept",
+            ]
         },
         api_versions_list=[
             "2023-08-15-preview",
@@ -6084,7 +6167,13 @@ class FleetUpdateStrategiesOperations:
         ],
     )
     def list_by_fleet(
-        self, resource_group_name: str, fleet_name: str, **kwargs: Any
+        self,
+        resource_group_name: str,
+        fleet_name: str,
+        *,
+        top: Optional[int] = None,
+        skip_token: Optional[str] = None,
+        **kwargs: Any
     ) -> AsyncItemPaged["_models.FleetUpdateStrategy"]:
         """List FleetUpdateStrategy resources by Fleet.
 
@@ -6093,6 +6182,11 @@ class FleetUpdateStrategiesOperations:
         :type resource_group_name: str
         :param fleet_name: The name of the Fleet resource. Required.
         :type fleet_name: str
+        :keyword top: The number of result items to return. Default value is None.
+        :paramtype top: int
+        :keyword skip_token: The page-continuation token to use with a paged version of this API.
+         Default value is None.
+        :paramtype skip_token: str
         :return: An iterator like instance of FleetUpdateStrategy
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.containerservicefleet.models.FleetUpdateStrategy]
@@ -6118,6 +6212,8 @@ class FleetUpdateStrategiesOperations:
                     resource_group_name=resource_group_name,
                     fleet_name=fleet_name,
                     subscription_id=self._config.subscription_id,
+                    top=top,
+                    skip_token=skip_token,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -6804,12 +6900,26 @@ class AutoUpgradeProfilesOperations:
     @api_version_validation(
         method_added_on="2024-05-02-preview",
         params_added_on={
-            "2024-05-02-preview": ["api_version", "subscription_id", "resource_group_name", "fleet_name", "accept"]
+            "2024-05-02-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "fleet_name",
+                "top",
+                "skip_token",
+                "accept",
+            ]
         },
         api_versions_list=["2024-05-02-preview", "2025-03-01", "2025-04-01-preview", "2025-08-01-preview"],
     )
     def list_by_fleet(
-        self, resource_group_name: str, fleet_name: str, **kwargs: Any
+        self,
+        resource_group_name: str,
+        fleet_name: str,
+        *,
+        top: Optional[int] = None,
+        skip_token: Optional[str] = None,
+        **kwargs: Any
     ) -> AsyncItemPaged["_models.AutoUpgradeProfile"]:
         """List AutoUpgradeProfile resources by Fleet.
 
@@ -6818,6 +6928,11 @@ class AutoUpgradeProfilesOperations:
         :type resource_group_name: str
         :param fleet_name: The name of the Fleet resource. Required.
         :type fleet_name: str
+        :keyword top: The number of result items to return. Default value is None.
+        :paramtype top: int
+        :keyword skip_token: The page-continuation token to use with a paged version of this API.
+         Default value is None.
+        :paramtype skip_token: str
         :return: An iterator like instance of AutoUpgradeProfile
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.containerservicefleet.models.AutoUpgradeProfile]
@@ -6843,6 +6958,8 @@ class AutoUpgradeProfilesOperations:
                     resource_group_name=resource_group_name,
                     fleet_name=fleet_name,
                     subscription_id=self._config.subscription_id,
+                    top=top,
+                    skip_token=skip_token,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,

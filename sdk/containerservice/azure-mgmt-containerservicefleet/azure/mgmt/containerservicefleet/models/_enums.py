@@ -187,14 +187,14 @@ class GateType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class LabelSelectorOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """A label selector operator is the set of operators that can be used in a selector requirement."""
 
-    IN = "In"
-    """Label Selector Operator In"""
+    INEnum = "In"
+    """Label Selector Operator In."""
     NOT_IN = "NotIn"
-    """Label Selector Operator NotIn"""
+    """Label Selector Operator NotIn."""
     EXISTS = "Exists"
-    """Label Selector Operator Exists"""
+    """Label Selector Operator Exists."""
     DOES_NOT_EXIST = "DoesNotExist"
-    """Label Selector Operator DoesNotExist"""
+    """Label Selector Operator DoesNotExist."""
 
 
 class ManagedClusterUpgradeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -347,9 +347,9 @@ class TolerationOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """A toleration operator is the set of operators that can be used in a toleration."""
 
     EXISTS = "Exists"
-    """Toleration Operator Exists"""
+    """Toleration Operator Exists."""
     EQUAL = "Equal"
-    """Toleration Operator Equal"""
+    """Toleration Operator Equal."""
 
 
 class UpdateRunProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -403,4 +403,4 @@ class UpgradeChannel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
       For information on the behavior of update run for Kubernetes version upgrade,
       see
     `https://learn.microsoft.com/en-us/azure/kubernetes-fleet/update-orchestration?tabs=azure-portal
-    <https://learn.microsoft.com/en-us/azure/kubernetes-fleet/update-orchestration?tabs=azure-portal>`_"""
+    <https://learn.microsoft.com/en-us/azure/kubernetes-fleet/update-orchestration?tabs=azure-portal>`_."""

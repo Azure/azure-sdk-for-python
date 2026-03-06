@@ -249,7 +249,7 @@ def build_fleets_list_by_resource_group_request(  # pylint: disable=name-too-lon
 
 
 def build_fleets_list_by_subscription_request(  # pylint: disable=name-too-long
-    subscription_id: str, **kwargs: Any
+    subscription_id: str, *, top: Optional[int] = None, skip_token: Optional[str] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -267,6 +267,10 @@ def build_fleets_list_by_subscription_request(  # pylint: disable=name-too-long
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if top is not None:
+        _params["$top"] = _SERIALIZER.query("top", top, "int")
+    if skip_token is not None:
+        _params["$skipToken"] = _SERIALIZER.query("skip_token", skip_token, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -461,7 +465,14 @@ def build_fleet_members_delete_request(
 
 
 def build_fleet_members_list_by_fleet_request(  # pylint: disable=name-too-long
-    resource_group_name: str, fleet_name: str, subscription_id: str, **kwargs: Any
+    resource_group_name: str,
+    fleet_name: str,
+    subscription_id: str,
+    *,
+    top: Optional[int] = None,
+    skip_token: Optional[str] = None,
+    filter: Optional[str] = None,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -481,6 +492,12 @@ def build_fleet_members_list_by_fleet_request(  # pylint: disable=name-too-long
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if top is not None:
+        _params["$top"] = _SERIALIZER.query("top", top, "int")
+    if skip_token is not None:
+        _params["$skipToken"] = _SERIALIZER.query("skip_token", skip_token, "str")
+    if filter is not None:
+        _params["$filter"] = _SERIALIZER.query("filter", filter, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -749,7 +766,14 @@ def build_gates_update_request(
 
 
 def build_gates_list_by_fleet_request(
-    resource_group_name: str, fleet_name: str, subscription_id: str, **kwargs: Any
+    resource_group_name: str,
+    fleet_name: str,
+    subscription_id: str,
+    *,
+    filter: Optional[str] = None,
+    top: Optional[int] = None,
+    skip_token: Optional[str] = None,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -769,6 +793,12 @@ def build_gates_list_by_fleet_request(
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if filter is not None:
+        _params["$filter"] = _SERIALIZER.query("filter", filter, "str")
+    if top is not None:
+        _params["$top"] = _SERIALIZER.query("top", top, "int")
+    if skip_token is not None:
+        _params["$skipToken"] = _SERIALIZER.query("skip_token", skip_token, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -890,7 +920,13 @@ def build_update_runs_delete_request(
 
 
 def build_update_runs_list_by_fleet_request(
-    resource_group_name: str, fleet_name: str, subscription_id: str, **kwargs: Any
+    resource_group_name: str,
+    fleet_name: str,
+    subscription_id: str,
+    *,
+    top: Optional[int] = None,
+    skip_token: Optional[str] = None,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -910,6 +946,10 @@ def build_update_runs_list_by_fleet_request(
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if top is not None:
+        _params["$top"] = _SERIALIZER.query("top", top, "int")
+    if skip_token is not None:
+        _params["$skipToken"] = _SERIALIZER.query("skip_token", skip_token, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -1160,7 +1200,13 @@ def build_fleet_update_strategies_delete_request(  # pylint: disable=name-too-lo
 
 
 def build_fleet_update_strategies_list_by_fleet_request(  # pylint: disable=name-too-long
-    resource_group_name: str, fleet_name: str, subscription_id: str, **kwargs: Any
+    resource_group_name: str,
+    fleet_name: str,
+    subscription_id: str,
+    *,
+    top: Optional[int] = None,
+    skip_token: Optional[str] = None,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -1180,6 +1226,10 @@ def build_fleet_update_strategies_list_by_fleet_request(  # pylint: disable=name
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if top is not None:
+        _params["$top"] = _SERIALIZER.query("top", top, "int")
+    if skip_token is not None:
+        _params["$skipToken"] = _SERIALIZER.query("skip_token", skip_token, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -1301,7 +1351,13 @@ def build_auto_upgrade_profiles_delete_request(  # pylint: disable=name-too-long
 
 
 def build_auto_upgrade_profiles_list_by_fleet_request(  # pylint: disable=name-too-long
-    resource_group_name: str, fleet_name: str, subscription_id: str, **kwargs: Any
+    resource_group_name: str,
+    fleet_name: str,
+    subscription_id: str,
+    *,
+    top: Optional[int] = None,
+    skip_token: Optional[str] = None,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -1321,6 +1377,10 @@ def build_auto_upgrade_profiles_list_by_fleet_request(  # pylint: disable=name-t
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if top is not None:
+        _params["$top"] = _SERIALIZER.query("top", top, "int")
+    if skip_token is not None:
+        _params["$skipToken"] = _SERIALIZER.query("skip_token", skip_token, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -2390,9 +2450,16 @@ class FleetsOperations:
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list_by_subscription(self, **kwargs: Any) -> ItemPaged["_models.Fleet"]:
+    def list_by_subscription(
+        self, *, top: Optional[int] = None, skip_token: Optional[str] = None, **kwargs: Any
+    ) -> ItemPaged["_models.Fleet"]:
         """Lists fleets in the specified subscription.
 
+        :keyword top: The number of result items to return. Default value is None.
+        :paramtype top: int
+        :keyword skip_token: The page-continuation token to use with a paged version of this API.
+         Default value is None.
+        :paramtype skip_token: str
         :return: An iterator like instance of Fleet
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.containerservicefleet.models.Fleet]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2415,6 +2482,8 @@ class FleetsOperations:
 
                 _request = build_fleets_list_by_subscription_request(
                     subscription_id=self._config.subscription_id,
+                    top=top,
+                    skip_token=skip_token,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -3429,7 +3498,14 @@ class FleetMembersOperations:
 
     @distributed_trace
     def list_by_fleet(
-        self, resource_group_name: str, fleet_name: str, **kwargs: Any
+        self,
+        resource_group_name: str,
+        fleet_name: str,
+        *,
+        top: Optional[int] = None,
+        skip_token: Optional[str] = None,
+        filter: Optional[str] = None,
+        **kwargs: Any
     ) -> ItemPaged["_models.FleetMember"]:
         """List FleetMember resources by Fleet.
 
@@ -3438,6 +3514,13 @@ class FleetMembersOperations:
         :type resource_group_name: str
         :param fleet_name: The name of the Fleet resource. Required.
         :type fleet_name: str
+        :keyword top: The number of result items to return. Default value is None.
+        :paramtype top: int
+        :keyword skip_token: The page-continuation token to use with a paged version of this API.
+         Default value is None.
+        :paramtype skip_token: str
+        :keyword filter: Filter the result list using the given expression. Default value is None.
+        :paramtype filter: str
         :return: An iterator like instance of FleetMember
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.containerservicefleet.models.FleetMember]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3462,6 +3545,9 @@ class FleetMembersOperations:
                     resource_group_name=resource_group_name,
                     fleet_name=fleet_name,
                     subscription_id=self._config.subscription_id,
+                    top=top,
+                    skip_token=skip_token,
+                    filter=filter,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -5007,11 +5093,29 @@ class GatesOperations:
     @api_version_validation(
         method_added_on="2025-04-01-preview",
         params_added_on={
-            "2025-04-01-preview": ["api_version", "subscription_id", "resource_group_name", "fleet_name", "accept"]
+            "2025-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "fleet_name",
+                "filter",
+                "top",
+                "skip_token",
+                "accept",
+            ]
         },
         api_versions_list=["2025-04-01-preview", "2025-08-01-preview"],
     )
-    def list_by_fleet(self, resource_group_name: str, fleet_name: str, **kwargs: Any) -> ItemPaged["_models.Gate"]:
+    def list_by_fleet(
+        self,
+        resource_group_name: str,
+        fleet_name: str,
+        *,
+        filter: Optional[str] = None,
+        top: Optional[int] = None,
+        skip_token: Optional[str] = None,
+        **kwargs: Any
+    ) -> ItemPaged["_models.Gate"]:
         """List Gate resources by Fleet.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -5019,6 +5123,13 @@ class GatesOperations:
         :type resource_group_name: str
         :param fleet_name: The name of the Fleet resource. Required.
         :type fleet_name: str
+        :keyword filter: Filter the result list using the given expression. Default value is None.
+        :paramtype filter: str
+        :keyword top: The number of result items to return. Default value is None.
+        :paramtype top: int
+        :keyword skip_token: The page-continuation token to use with a paged version of this API.
+         Default value is None.
+        :paramtype skip_token: str
         :return: An iterator like instance of Gate
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.containerservicefleet.models.Gate]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5043,6 +5154,9 @@ class GatesOperations:
                     resource_group_name=resource_group_name,
                     fleet_name=fleet_name,
                     subscription_id=self._config.subscription_id,
+                    filter=filter,
+                    top=top,
+                    skip_token=skip_token,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -5774,7 +5888,15 @@ class UpdateRunsOperations:
     @api_version_validation(
         method_added_on="2023-03-15-preview",
         params_added_on={
-            "2023-03-15-preview": ["api_version", "subscription_id", "resource_group_name", "fleet_name", "accept"]
+            "2023-03-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "fleet_name",
+                "top",
+                "skip_token",
+                "accept",
+            ]
         },
         api_versions_list=[
             "2023-03-15-preview",
@@ -5789,7 +5911,15 @@ class UpdateRunsOperations:
             "2025-08-01-preview",
         ],
     )
-    def list_by_fleet(self, resource_group_name: str, fleet_name: str, **kwargs: Any) -> ItemPaged["_models.UpdateRun"]:
+    def list_by_fleet(
+        self,
+        resource_group_name: str,
+        fleet_name: str,
+        *,
+        top: Optional[int] = None,
+        skip_token: Optional[str] = None,
+        **kwargs: Any
+    ) -> ItemPaged["_models.UpdateRun"]:
         """List UpdateRun resources by Fleet.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -5797,6 +5927,11 @@ class UpdateRunsOperations:
         :type resource_group_name: str
         :param fleet_name: The name of the Fleet resource. Required.
         :type fleet_name: str
+        :keyword top: The number of result items to return. Default value is None.
+        :paramtype top: int
+        :keyword skip_token: The page-continuation token to use with a paged version of this API.
+         Default value is None.
+        :paramtype skip_token: str
         :return: An iterator like instance of UpdateRun
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.containerservicefleet.models.UpdateRun]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5821,6 +5956,8 @@ class UpdateRunsOperations:
                     resource_group_name=resource_group_name,
                     fleet_name=fleet_name,
                     subscription_id=self._config.subscription_id,
+                    top=top,
+                    skip_token=skip_token,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -7323,7 +7460,15 @@ class FleetUpdateStrategiesOperations:
     @api_version_validation(
         method_added_on="2023-08-15-preview",
         params_added_on={
-            "2023-08-15-preview": ["api_version", "subscription_id", "resource_group_name", "fleet_name", "accept"]
+            "2023-08-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "fleet_name",
+                "top",
+                "skip_token",
+                "accept",
+            ]
         },
         api_versions_list=[
             "2023-08-15-preview",
@@ -7337,7 +7482,13 @@ class FleetUpdateStrategiesOperations:
         ],
     )
     def list_by_fleet(
-        self, resource_group_name: str, fleet_name: str, **kwargs: Any
+        self,
+        resource_group_name: str,
+        fleet_name: str,
+        *,
+        top: Optional[int] = None,
+        skip_token: Optional[str] = None,
+        **kwargs: Any
     ) -> ItemPaged["_models.FleetUpdateStrategy"]:
         """List FleetUpdateStrategy resources by Fleet.
 
@@ -7346,6 +7497,11 @@ class FleetUpdateStrategiesOperations:
         :type resource_group_name: str
         :param fleet_name: The name of the Fleet resource. Required.
         :type fleet_name: str
+        :keyword top: The number of result items to return. Default value is None.
+        :paramtype top: int
+        :keyword skip_token: The page-continuation token to use with a paged version of this API.
+         Default value is None.
+        :paramtype skip_token: str
         :return: An iterator like instance of FleetUpdateStrategy
         :rtype:
          ~azure.core.paging.ItemPaged[~azure.mgmt.containerservicefleet.models.FleetUpdateStrategy]
@@ -7371,6 +7527,8 @@ class FleetUpdateStrategiesOperations:
                     resource_group_name=resource_group_name,
                     fleet_name=fleet_name,
                     subscription_id=self._config.subscription_id,
+                    top=top,
+                    skip_token=skip_token,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -8057,12 +8215,26 @@ class AutoUpgradeProfilesOperations:
     @api_version_validation(
         method_added_on="2024-05-02-preview",
         params_added_on={
-            "2024-05-02-preview": ["api_version", "subscription_id", "resource_group_name", "fleet_name", "accept"]
+            "2024-05-02-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "fleet_name",
+                "top",
+                "skip_token",
+                "accept",
+            ]
         },
         api_versions_list=["2024-05-02-preview", "2025-03-01", "2025-04-01-preview", "2025-08-01-preview"],
     )
     def list_by_fleet(
-        self, resource_group_name: str, fleet_name: str, **kwargs: Any
+        self,
+        resource_group_name: str,
+        fleet_name: str,
+        *,
+        top: Optional[int] = None,
+        skip_token: Optional[str] = None,
+        **kwargs: Any
     ) -> ItemPaged["_models.AutoUpgradeProfile"]:
         """List AutoUpgradeProfile resources by Fleet.
 
@@ -8071,6 +8243,11 @@ class AutoUpgradeProfilesOperations:
         :type resource_group_name: str
         :param fleet_name: The name of the Fleet resource. Required.
         :type fleet_name: str
+        :keyword top: The number of result items to return. Default value is None.
+        :paramtype top: int
+        :keyword skip_token: The page-continuation token to use with a paged version of this API.
+         Default value is None.
+        :paramtype skip_token: str
         :return: An iterator like instance of AutoUpgradeProfile
         :rtype:
          ~azure.core.paging.ItemPaged[~azure.mgmt.containerservicefleet.models.AutoUpgradeProfile]
@@ -8096,6 +8273,8 @@ class AutoUpgradeProfilesOperations:
                     resource_group_name=resource_group_name,
                     fleet_name=fleet_name,
                     subscription_id=self._config.subscription_id,
+                    top=top,
+                    skip_token=skip_token,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
