@@ -24,24 +24,20 @@ Intelligently fixes pylint issues by:
 
 ## Running Pylint
 
-**Command for entire package:**
+**Command:**
 ```powershell
 cd sdk/ml/azure-ai-ml
-tox -e pylint --c ../../../eng/tox/tox.ini --root .
+azpysdk pylint .
 ```
 
-**Command for specific file/module:**
-```powershell
-cd sdk/ml/azure-ai-ml
-tox -e pylint --c ../../../eng/tox/tox.ini --root . -- path/to/file.py
-```
+> **Note:** `azpysdk` runs at the package level only. To focus on specific files, run the full check and filter the output by file path.
 
 ## Reference Documentation
 
 - [Azure SDK Python Pylint Guidelines](https://github.com/Azure/azure-sdk-tools/blob/main/tools/pylint-extensions/azure-pylint-guidelines-checker/README.md)
 - [Official Pylint Documentation](https://pylint.readthedocs.io/en/stable/user_guide/checkers/features.html)
 - [Azure SDK Python Pylint Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/pylint_checking.md)
-- [Tox Formatting Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md#tox)
+- [Tool Usage Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/tool_usage_guide.md)
 
 ## Fixing Strategy
 
@@ -92,23 +88,17 @@ pip install -e .
 
 Based on the GitHub issue details, determine which files to check:
 
-**Option A - Issue specifies files:**
+**Option A - Run pylint on the package and filter output:**
 ```powershell
 # Ensure you're in azure-ai-ml directory (within activated venv)
 cd sdk/ml/azure-ai-ml
 
-# Run pylint on specific files mentioned in the issue (within activated venv)
-tox -e pylint --c ../../../eng/tox/tox.ini --root . -- path/to/specific_file.py
+# Run pylint on the full package, then filter output for files from the issue
+azpysdk pylint .
+# Review output for warnings in the specific files/modules mentioned in the issue
 ```
 
-**Option B - Issue mentions module/directory:**
-```powershell
-# Run pylint on specific module (within activated venv)
-cd sdk/ml/azure-ai-ml
-tox -e pylint --c ../../../eng/tox/tox.ini --root . -- azure/ai/ml/specific_module/
-```
-
-**Option C - Check modified files (if no specific target):**
+**Option B - Check modified files (if no specific target):**
 ```powershell
 git diff --name-only HEAD | Select-String "sdk/ml/azure-ai-ml"
 git diff --cached --name-only | Select-String "sdk/ml/azure-ai-ml"
@@ -122,8 +112,9 @@ git diff --cached --name-only | Select-String "sdk/ml/azure-ai-ml"
 # Navigate to azure-ai-ml directory
 cd sdk/ml/azure-ai-ml
 
-# Run pylint targeting the specific area from the issue (within activated venv)
-tox -e pylint --c ../../../eng/tox/tox.ini --root . -- <target-from-issue>
+# Run pylint on the package (within activated venv)
+azpysdk pylint .
+# Filter output for the specific files/modules from the issue
 ```
 
 ### Step 5: Analyze Warnings
@@ -295,8 +286,9 @@ pip install -e .
 # 2. Identify target from issue
 $targetFile = "azure/ai/ml/operations/job_operations.py"
 
-# 3. Run pylint on specific file
-tox -e pylint --c ../../../eng/tox/tox.ini --root . -- $targetFile
+# 3. Run pylint on the package and check output for target file
+azpysdk pylint .
+# Filter output for warnings in $targetFile
 
 # 4. Analyze output and identify fixable issues
 # Cross-reference with GitHub issue #12345
@@ -307,7 +299,7 @@ grep -r "similar_pattern" azure/ai/ml/
 # 6. Apply fixes to identified files
 
 # 7. Re-run pylint to verify
-tox -e pylint --c ../../../eng/tox/tox.ini --root . -- $targetFile
+azpysdk pylint .
 
 # 8. Report results
 

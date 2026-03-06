@@ -77,13 +77,13 @@ The code generator already produces a file-level suppression on line 1 of each `
 | `from collections.abc import MutableMapping` | `# pylint: disable=import-error` | Not resolvable in the pylint virtualenv |
 | `return super().__new__(cls)` (in `Model.__new__`) | `# pylint: disable=no-value-for-parameter` | False positive - pylint cannot resolve the MRO for `__new__` |
 
-> **Critical: Run Black _before_ adding pylint suppressions.** Black reformats imports (turning single-line into multi-line), which changes where `# pylint: disable` comments must go. If you add suppressions first and then run Black, the comments may end up on the wrong line. The correct order is: (1) run `tox -e black`, (2) restore tests/samples, (3) add pylint suppressions.
+> **Critical: Run Black _before_ adding pylint suppressions.** Black reformats imports (turning single-line into multi-line), which changes where `# pylint: disable` comments must go. If you add suppressions first and then run Black, the comments may end up on the wrong line. The correct order is: (1) run `azpysdk black .`, (2) restore tests/samples, (3) add pylint suppressions.
 
 > **Emitter version variability:** The emitter may add different inline suppressions to different functions. For example, `build_data_get_mosaics_tile_json_request` gets the full `too-many-locals,too-many-branches,too-many-statements`, while `build_data_get_mosaics_tile_request` only gets `too-many-locals`. Always check the pylint output to see if additional suppressions are needed beyond what the emitter provides.
 
 ### Sphinx Docstring Fixes
 
-The code generator sometimes produces RST formatting bugs in docstrings (e.g., code block terminators merged with following text, incorrect bullet continuation indentation). These must be fixed in **both** sync and async `_operations.py`. Run `tox -e sphinx` after each regeneration — Sphinx treats warnings as errors, so any formatting issues will cause a build failure.
+The code generator sometimes produces RST formatting bugs in docstrings (e.g., code block terminators merged with following text, incorrect bullet continuation indentation). These must be fixed in **both** sync and async `_operations.py`. Run `azpysdk sphinx .` after each regeneration — Sphinx treats warnings as errors, so any formatting issues will cause a build failure.
 
 ### Sample and Test Updates
 
@@ -99,7 +99,7 @@ If the TypeSpec renames or removes API operations, the hand-written samples unde
 
 ## Local Validation
 
-Run the following checks **from the package root** before pushing. All commands use the shared tox config:
+Run the following checks **from the package root** before pushing. All commands use the `azpysdk` CLI:
 
 ```bash
 cd sdk/planetarycomputer/azure-planetarycomputer
@@ -108,37 +108,37 @@ cd sdk/planetarycomputer/azure-planetarycomputer
 ### Formatting (Black)
 
 ```bash
-tox -e black -c ../../../eng/tox/tox.ini --root .
+azpysdk black .
 ```
 
 ### Linting (Pylint)
 
 ```bash
-tox -e pylint -c ../../../eng/tox/tox.ini --root .
+azpysdk pylint .
 ```
 
 ### Type Checking (MyPy)
 
 ```bash
-tox -e mypy -c ../../../eng/tox/tox.ini --root .
+azpysdk mypy .
 ```
 
 ### Type Checking (Pyright)
 
 ```bash
-tox -e pyright -c ../../../eng/tox/tox.ini --root .
+azpysdk pyright .
 ```
 
 ### Documentation (Sphinx)
 
 ```bash
-tox -e sphinx -c ../../../eng/tox/tox.ini --root .
+azpysdk sphinx .
 ```
 
 ### API Stub Generation
 
 ```bash
-tox -e apistub -c ../../../eng/tox/tox.ini --root .
+azpysdk apistub .
 ```
 
 > **Tip:** Running `black`, `pylint`, `mypy`, `pyright`, and `sphinx` locally catches the vast majority of CI failures before you push.
@@ -283,19 +283,19 @@ After running `npx tsp-client update`:
 
 - [ ] Delete `generated_samples/` and `generated_tests/`
 - [ ] Restore `tests/` and `samples/` — `git checkout -- tests/ samples/`
-- [ ] Run `tox -e black` — formatting (MUST be done before adding pylint suppressions)
+- [ ] Run `azpysdk black .` — formatting (MUST be done before adding pylint suppressions)
 - [ ] Restore `tests/` and `samples/` again if Black modified them
 - [ ] Add inline `# pylint: disable=import-error` to `MutableMapping` imports (3 files)
 - [ ] Add `# pylint: disable=unused-import` on the `from ... import (` line for `_deserialize_xml` (2 files)
 - [ ] Add `# pylint: disable=too-many-locals,too-many-branches,too-many-statements` inline on `build_data_get_mosaics_tile_*` functions (check emitter output — may need to add missing suppressions)
 - [ ] Add inline `# pylint: disable=no-value-for-parameter` to `Model.__new__` in `model_base.py`
-- [ ] Fix any Sphinx docstring issues (both sync and async `_operations.py`) — check `tox -e sphinx` output
-- [ ] Run `tox -e pylint` — linting (should score 10.00/10)
-- [ ] Run `tox -e sphinx` — documentation (should build with 0 warnings)
-- [ ] Run `tox -e mypy` and `tox -e pyright` — type checking (will catch renamed/removed APIs in samples)
+- [ ] Fix any Sphinx docstring issues (both sync and async `_operations.py`) — check `azpysdk sphinx .` output
+- [ ] Run `azpysdk pylint .` — linting (should score 10.00/10)
+- [ ] Run `azpysdk sphinx .` — documentation (should build with 0 warnings)
+- [ ] Run `azpysdk mypy .` and `azpysdk pyright .` — type checking (will catch renamed/removed APIs in samples)
 - [ ] Update samples if any operations were renamed or removed
 - [ ] Update tests: fix API calls (not method names!), update `isinstance` checks for changed return types
 - [ ] Run `pytest tests/ -v` in playback mode — should be 202 passed
-- [ ] Run `tox -e apistub` — API stub generation
+- [ ] Run `azpysdk apistub .` — API stub generation
 - [ ] Re-record tests if HTTP request/response data changed (see Testing section)
 - [ ] Update `CHANGELOG.md` with a release date if preparing a release

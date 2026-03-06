@@ -7,16 +7,13 @@
 5. Update the README file and Changelog with the latest version number
 6. Submit a PR
 
-## Running tox locally
+## Running checks locally
 
-Tox is the testing and virtual environment management tool that is used to verify our sdk will be installed correctly with different Python versions and interpreters. To run tox follow these instructions
+The `azpysdk` CLI is the tool used to run local quality checks for this SDK. To install and run checks, follow the instructions in the repo's [contributing guide](https://github.com/Azure/azure-sdk-for-python/blob/main/CONTRIBUTING.md#building-and-testing).
 
-Please see the repo's [contributing guide](https://github.com/Azure/azure-sdk-for-python/blob/main/CONTRIBUTING.md#building-and-testing) for instructions
-on how to install and run `tox`.
+### Troubleshooting check errors
 
-### Troubleshooting tox errors
-
-- Tox will complain if there are no tests. Add an empty test in case you need to bypass this
+- Checks will complain if there are no tests. Add an empty test in case you need to bypass this
 - Make sure there is an `__init__.py` file inside of every directory inside of `azure` (Example: `azure/media` should have an __init__.py file)
 - Follow the ReadMe guidelines outlined here: https://review.learn.microsoft.com/help/platform/reference-document-sdk-client-libraries#readme. ReadMe titles are case SENSITIVE and use sentence casing.
 - Make sure MANIFEST.in includes all required folders. (Most likely the required folders will be tests, samples, and the generated folder) 

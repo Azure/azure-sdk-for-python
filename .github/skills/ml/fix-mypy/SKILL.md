@@ -24,22 +24,18 @@ Intelligently fixes mypy issues by:
 
 ## Running MyPy
 
-**Command for entire package:**
+**Command:**
 ```powershell
 cd sdk/ml/azure-ai-ml
-tox -e mypy --c ../../../eng/tox/tox.ini --root .
+azpysdk mypy .
 ```
 
-**Command for specific file/module:**
-```powershell
-cd sdk/ml/azure-ai-ml
-tox -e mypy --c ../../../eng/tox/tox.ini --root . -- path/to/file.py
-```
+> **Note:** `azpysdk` runs at the package level only. To focus on specific files, run the full check and filter the output by file path.
 
 ## Reference Documentation
 
 - [Azure SDK Python MyPy Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/static_type_checking_cheat_sheet.md)
-- [Tox Guidance](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md#tox)
+- [Tool Usage Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/tool_usage_guide.md)
 - [Official MyPy Documentation](https://mypy.readthedocs.io/en/stable/)
 - [MyPy Common Issues](https://mypy.readthedocs.io/en/stable/common_issues.html)
 
@@ -94,23 +90,17 @@ pip install -e .
 
 Based on the GitHub issue details, determine which files to check:
 
-**Option A - Issue specifies files:**
+**Option A - Run mypy on the package and filter output:**
 ```powershell
 # Ensure you're in azure-ai-ml directory (within activated venv)
 cd sdk/ml/azure-ai-ml
 
-# Run mypy on specific files mentioned in the issue (within activated venv)
-tox -e mypy --c ../../../eng/tox/tox.ini --root . -- path/to/specific_file.py
+# Run mypy on the full package, then filter output for files from the issue
+azpysdk mypy .
+# Review output for errors in the specific files/modules mentioned in the issue
 ```
 
-**Option B - Issue mentions module/directory:**
-```powershell
-# Run mypy on specific module (within activated venv)
-cd sdk/ml/azure-ai-ml
-tox -e mypy --c ../../../eng/tox/tox.ini --root . -- azure/ai/ml/specific_module/
-```
-
-**Option C - Check modified files (if no specific target):**
+**Option B - Check modified files (if no specific target):**
 ```powershell
 git diff --name-only HEAD | Select-String "sdk/ml/azure-ai-ml"
 git diff --cached --name-only | Select-String "sdk/ml/azure-ai-ml"
@@ -124,8 +114,9 @@ git diff --cached --name-only | Select-String "sdk/ml/azure-ai-ml"
 # Navigate to azure-ai-ml directory
 cd sdk/ml/azure-ai-ml
 
-# Run mypy targeting the specific area from the issue (within activated venv)
-tox -e mypy --c ../../../eng/tox/tox.ini --root . -- <target-from-issue>
+# Run mypy on the package (within activated venv)
+azpysdk mypy .
+# Filter output for the specific files/modules from the issue
 ```
 
 ### Step 5: Analyze Type Errors
@@ -346,8 +337,9 @@ pip install -e .
 # 2. Identify target from issue
 $targetFile = "azure/ai/ml/operations/job_operations.py"
 
-# 3. Run mypy on specific file
-tox -e mypy --c ../../../eng/tox/tox.ini --root . -- $targetFile
+# 3. Run mypy on the package and check output for target file
+azpysdk mypy .
+# Filter output for errors in $targetFile
 
 # 4. Analyze output and identify fixable issues
 # Cross-reference with GitHub issue #12345
@@ -358,7 +350,7 @@ grep -r "from typing import" azure/ai/ml/ | findstr "operations"
 # 6. Apply fixes to identified files
 
 # 7. Re-run mypy to verify
-tox -e mypy --c ../../../eng/tox/tox.ini --root . -- $targetFile
+azpysdk mypy .
 
 # 8. Report results
 
