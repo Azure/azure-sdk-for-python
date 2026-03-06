@@ -2,6 +2,7 @@ from helpers import AuthoringTestHelper
 from testcase import QuestionAnsweringAuthoringTestCase
 
 from azure.core.credentials import AzureKeyCredential
+from azure.core.exceptions import ResourceExistsError
 from azure.ai.language.questionanswering.authoring import QuestionAnsweringAuthoringClient, models as _models
 
 
@@ -11,10 +12,13 @@ class TestExportAndImport(QuestionAnsweringAuthoringTestCase):
         client = QuestionAnsweringAuthoringClient(
             qna_authoring_creds["endpoint"], AzureKeyCredential(qna_authoring_creds["key"])
         )
-        project_name = "IsaacNewton"
-        AuthoringTestHelper.create_test_project(
-            client, project_name=project_name, polling_interval=0 if self.is_playback else None # pylint: disable=using-constant-test
-        )
+        project_name = qna_authoring_creds["project"]
+        try:
+            AuthoringTestHelper.create_test_project(
+                client, project_name=project_name, polling_interval=0 if self.is_playback else None # pylint: disable=using-constant-test
+            )
+        except ResourceExistsError:
+            pass
         export_poller = client.begin_export(
             project_name=project_name,
             file_format="json",
@@ -27,15 +31,18 @@ class TestExportAndImport(QuestionAnsweringAuthoringTestCase):
         client = QuestionAnsweringAuthoringClient(
             qna_authoring_creds["endpoint"], AzureKeyCredential(qna_authoring_creds["key"])
         )
-        project_name = "IsaacNewton"
+        project_name = qna_authoring_creds["project"]
         # Create project without deleting it; we just need it present for import.
-        AuthoringTestHelper.create_test_project(
-            client,
-            project_name=project_name,
-            get_export_url=False,
-            delete_old_project=False,
-            polling_interval=0 if self.is_playback else None, # pylint: disable=using-constant-test
-        )
+        try:
+            AuthoringTestHelper.create_test_project(
+                client,
+                project_name=project_name,
+                get_export_url=False,
+                delete_old_project=False,
+                polling_interval=0 if self.is_playback else None, # pylint: disable=using-constant-test
+            )
+        except ResourceExistsError:
+            pass
         # Wait briefly until project is visible (eventual consistency safeguard)
         visible = any(p.get("projectName") == project_name for p in client.list_projects())
         if not visible:

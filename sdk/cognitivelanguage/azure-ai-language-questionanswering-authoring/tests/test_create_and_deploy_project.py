@@ -3,6 +3,7 @@ from helpers import AuthoringTestHelper
 from testcase import QuestionAnsweringAuthoringTestCase
 
 from azure.core.credentials import AzureKeyCredential
+from azure.core.exceptions import ResourceExistsError
 from azure.ai.language.questionanswering.authoring import QuestionAnsweringAuthoringClient
 
 
@@ -23,16 +24,19 @@ class TestCreateAndDeploy(QuestionAnsweringAuthoringTestCase):
         client = QuestionAnsweringAuthoringClient(
             qna_authoring_creds["endpoint"], AzureKeyCredential(qna_authoring_creds["key"])
         )
-        project_name = "IsaacNewton"
-        client.create_project( # pylint: disable=no-value-for-parameter
-            project_name=project_name,
-            options={
-                "description": "Biography of Sir Isaac Newton",
-                "language": "en",
-                "multilingualResource": True,
-                "settings": {"defaultAnswer": "no answer"},
-            },
-        )
+        project_name = qna_authoring_creds["project"]
+        try:
+            client.create_project( # pylint: disable=no-value-for-parameter
+                project_name=project_name,
+                options={
+                    "description": "Biography of Sir Isaac Newton",
+                    "language": "en",
+                    "multilingualResource": True,
+                    "settings": {"defaultAnswer": "no answer"},
+                },
+            )
+        except ResourceExistsError:
+            pass
         found = any(p.get("projectName") == project_name for p in client.list_projects())
         assert found
 
@@ -40,13 +44,16 @@ class TestCreateAndDeploy(QuestionAnsweringAuthoringTestCase):
         client = QuestionAnsweringAuthoringClient(
             qna_authoring_creds["endpoint"], AzureKeyCredential(qna_authoring_creds["key"])
         )
-        project_name = "IsaacNewton"
-        AuthoringTestHelper.create_test_project(
-            client,
-            project_name=project_name,
-            is_deployable=True,
-            polling_interval=0 if self.is_playback else None, # pylint: disable=using-constant-test
-        )
+        project_name = qna_authoring_creds["project"]
+        try:
+            AuthoringTestHelper.create_test_project(
+                client,
+                project_name=project_name,
+                is_deployable=True,
+                polling_interval=0 if self.is_playback else None, # pylint: disable=using-constant-test
+            )
+        except ResourceExistsError:
+            pass
         deployment_poller = client.begin_deploy_project(
             project_name=project_name,
             deployment_name="production",

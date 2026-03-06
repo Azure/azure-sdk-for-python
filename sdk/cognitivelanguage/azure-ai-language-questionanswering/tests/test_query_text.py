@@ -1,7 +1,7 @@
 # pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # -------------------------------------------------------------------------
-# Runtime tests: text records querying (authoring removed)
+# Inference tests: text records querying (authoring removed)
 # -------------------------------------------------------------------------
 import pytest
 from testcase import QuestionAnsweringTestCase

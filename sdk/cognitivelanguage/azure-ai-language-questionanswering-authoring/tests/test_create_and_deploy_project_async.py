@@ -3,6 +3,7 @@ from helpers import AuthoringAsyncTestHelper
 from testcase import QuestionAnsweringAuthoringTestCase
 
 from azure.core.credentials import AzureKeyCredential
+from azure.core.exceptions import ResourceExistsError
 from azure.ai.language.questionanswering.authoring.aio import QuestionAnsweringAuthoringClient
 
 
@@ -13,17 +14,20 @@ class TestCreateAndDeployAsync(QuestionAnsweringAuthoringTestCase):
         client = QuestionAnsweringAuthoringClient(
             qna_authoring_creds["endpoint"], AzureKeyCredential(qna_authoring_creds["key"])
         )
-        project_name = "IsaacNewton"
+        project_name = qna_authoring_creds["project"]
         async with client:
-            await client.create_project( # pylint: disable=no-value-for-parameter
-                project_name=project_name,
-                options={
-                    "description": "Biography of Sir Isaac Newton",
-                    "language": "en",
-                    "multilingualResource": True,
-                    "settings": {"defaultAnswer": "no answer"},
-                },
-            )
+            try:
+                await client.create_project( # pylint: disable=no-value-for-parameter
+                    project_name=project_name,
+                    options={
+                        "description": "Biography of Sir Isaac Newton",
+                        "language": "en",
+                        "multilingualResource": True,
+                        "settings": {"defaultAnswer": "no answer"},
+                    },
+                )
+            except ResourceExistsError:
+                pass
             found = False
             async for p in client.list_projects():
                 if p.get("projectName") == project_name:
@@ -35,14 +39,17 @@ class TestCreateAndDeployAsync(QuestionAnsweringAuthoringTestCase):
         client = QuestionAnsweringAuthoringClient(
             qna_authoring_creds["endpoint"], AzureKeyCredential(qna_authoring_creds["key"])
         )
-        project_name = "IsaacNewton"
+        project_name = qna_authoring_creds["project"]
         async with client:
-            await AuthoringAsyncTestHelper.create_test_project(
-                client,
-                project_name=project_name,
-                is_deployable=True,
-                polling_interval=0 if self.is_playback else None, # pylint: disable=using-constant-test
-            )
+            try:
+                await AuthoringAsyncTestHelper.create_test_project(
+                    client,
+                    project_name=project_name,
+                    is_deployable=True,
+                    polling_interval=0 if self.is_playback else None, # pylint: disable=using-constant-test
+                )
+            except ResourceExistsError:
+                pass
             deployment_poller = await client.begin_deploy_project(
                 project_name=project_name,
                 deployment_name="production",

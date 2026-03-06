@@ -4,6 +4,7 @@ from helpers import AuthoringTestHelper
 from testcase import QuestionAnsweringAuthoringTestCase
 
 from azure.core.credentials import AzureKeyCredential
+from azure.core.exceptions import ResourceExistsError
 from azure.ai.language.questionanswering.authoring import QuestionAnsweringAuthoringClient
 from azure.ai.language.questionanswering.authoring import models as _models
 
@@ -13,17 +14,20 @@ class TestSourcesQnasSynonyms(QuestionAnsweringAuthoringTestCase):
         client = QuestionAnsweringAuthoringClient(
             qna_authoring_creds["endpoint"], AzureKeyCredential(qna_authoring_creds["key"])
         )
-        project_name = "IsaacNewton"
-        AuthoringTestHelper.create_test_project(client, project_name=project_name)
-        source_display_name = "MicrosoftFAQ"
+        project_name = qna_authoring_creds["project"]
+        try:
+            AuthoringTestHelper.create_test_project(client, project_name=project_name)
+        except ResourceExistsError:
+            pass
+        source_display_name = "surface-book-user-guide-EN"
         update_source_ops = [
             _models.UpdateSourceRecord(
                 {
                     "op": "add",
                     "value": {
                         "displayName": source_display_name,
-                        "source": "https://www.microsoft.com/en-in/software-download/faq",
-                        "sourceUri": "https://www.microsoft.com/en-in/software-download/faq",
+                        "source": "https://download.microsoft.com/download/7/B/1/7B10C82E-F520-4080-8516-5CF0D803EEE0/surface-book-user-guide-EN.pdf",
+                        "sourceUri": "https://download.microsoft.com/download/7/B/1/7B10C82E-F520-4080-8516-5CF0D803EEE0/surface-book-user-guide-EN.pdf",
                         "sourceKind": "url",
                         "contentStructureKind": "unstructured",
                         "refresh": False,
@@ -44,8 +48,11 @@ class TestSourcesQnasSynonyms(QuestionAnsweringAuthoringTestCase):
         client = QuestionAnsweringAuthoringClient(
             qna_authoring_creds["endpoint"], AzureKeyCredential(qna_authoring_creds["key"])
         )
-        project_name = "IsaacNewton"
-        AuthoringTestHelper.create_test_project(client, project_name=project_name)
+        project_name = qna_authoring_creds["project"]
+        try:
+            AuthoringTestHelper.create_test_project(client, project_name=project_name)
+        except ResourceExistsError:
+            pass
         question = "What is the easiest way to use azure services in my .NET project?"
         answer = "Using Microsoft's Azure SDKs"
         update_qna_ops = [
@@ -76,8 +83,11 @@ class TestSourcesQnasSynonyms(QuestionAnsweringAuthoringTestCase):
         client = QuestionAnsweringAuthoringClient(
             qna_authoring_creds["endpoint"], AzureKeyCredential(qna_authoring_creds["key"])
         )
-        project_name = "IsaacNewton"
-        AuthoringTestHelper.create_test_project(client, project_name=project_name)
+        project_name = qna_authoring_creds["project"]
+        try:
+            AuthoringTestHelper.create_test_project(client, project_name=project_name)
+        except ResourceExistsError:
+            pass
         synonyms_model = _models.SynonymAssets(
             value=[
                 _models.WordAlterations(alterations=["qnamaker", "qna maker"]),
@@ -91,4 +101,44 @@ class TestSourcesQnasSynonyms(QuestionAnsweringAuthoringTestCase):
         assert any(
             ("qnamaker" in s.get("alterations", []) and "qna maker" in s.get("alterations", []))
             for s in client.list_synonyms(project_name=project_name)
+        )
+
+    def test_add_qna_with_explicitlytaggedheading(self, recorded_test, qna_authoring_creds):  # type: ignore[name-defined] # pylint: disable=unused-argument
+        client = QuestionAnsweringAuthoringClient(
+            qna_authoring_creds["endpoint"], AzureKeyCredential(qna_authoring_creds["key"])
+        )
+        project_name = qna_authoring_creds["project"]
+        try:
+            AuthoringTestHelper.create_test_project(client, project_name=project_name)
+        except ResourceExistsError:
+            pass
+        update_qna_ops = [
+            _models.UpdateQnaRecord(
+                {
+                    "op": "add",
+                    "value": {
+                        "id": 0,
+                        "answer": "Check the battery level in Settings.",
+                        "questions": ["How do I check the battery level?"],
+                        "metadata": {"explicitlytaggedheading": "check the battery level"},
+                    },
+                }
+            )
+        ]
+        poller = client.begin_update_qnas( # pylint: disable=no-value-for-parameter
+            project_name=project_name,
+            qnas=cast(list[_models.UpdateQnaRecord], update_qna_ops),
+            content_type="application/json",
+            polling_interval=0 if self.is_playback else None,  # type: ignore[arg-type] # pylint: disable=using-constant-test
+        )
+        poller.result()
+        deploy_poller = client.begin_deploy_project(
+            project_name=project_name,
+            deployment_name="production",
+            polling_interval=0 if self.is_playback else None,  # type: ignore[arg-type] # pylint: disable=using-constant-test
+        )
+        deploy_poller.result()
+        assert any(
+            (q.get("metadata") or {}).get("explicitlytaggedheading") == "check the battery level"
+            for q in client.list_qnas(project_name=project_name)
         )
