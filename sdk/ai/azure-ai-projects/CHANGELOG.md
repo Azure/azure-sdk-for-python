@@ -1,5 +1,15 @@
 # Release History
 
+## 2.0.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 2.0.0 (2026-03-06)
 
 First stable release of the client library that uses the Generally Available (GA) version "v1" of the Foundry REST APIs.
