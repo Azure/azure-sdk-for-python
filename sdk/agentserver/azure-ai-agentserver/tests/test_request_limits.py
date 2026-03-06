@@ -171,33 +171,24 @@ class TestMaxRequestBodySizeEnforcement:
             assert resp.status_code == 413
 
     @pytest.mark.asyncio
-    async def test_chunked_transfer_also_enforced(self):
-        """Streaming uploads without Content-Length are bounded by the
-        counting-receive guard (Envoy-style byte counting)."""
+    async def test_chunked_transfer_passes_through(self):
+        """Requests without Content-Length (e.g. chunked/streamed) pass through.
+
+        Streaming data arrives in small frames and is processed incrementally,
+        so memory is naturally bounded per chunk.  Infrastructure-level limits
+        (gateways, Hypercorn max_content_length) guard those cases.
+        """
         agent = _EchoAgent(max_request_body_size=100)
         transport = httpx.ASGITransport(app=agent.app)
         async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as client:
-            # Use streaming upload which omits Content-Length
+            # Streaming upload omits Content-Length
             async def _stream():
                 yield b"x" * 200  # larger than the 100-byte limit
 
             resp = await client.post("/invocations", content=_stream())
-            assert resp.status_code == 413
-            data = resp.json()
-            assert data["error"]["code"] == "payload_too_large"
-
-    @pytest.mark.asyncio
-    async def test_chunked_transfer_within_limit_succeeds(self):
-        """Streaming uploads within the limit should succeed normally."""
-        agent = _EchoAgent(max_request_body_size=1024)
-        transport = httpx.ASGITransport(app=agent.app)
-        async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as client:
-            async def _stream():
-                yield b"x" * 512  # within the 1024-byte limit
-
-            resp = await client.post("/invocations", content=_stream())
+            # Passes through — middleware only checks Content-Length
             assert resp.status_code == 200
-            assert len(resp.content) == 512
+            assert len(resp.content) == 200
 
 
 # ===========================================================================

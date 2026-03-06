@@ -23,16 +23,18 @@ _HEALTH_PATHS = frozenset(("/liveness", "/readiness"))
 
 
 class MaxBodySizeMiddleware:
-    """ASGI middleware that rejects requests whose body exceeds a configured limit.
+    """ASGI middleware that rejects requests whose ``Content-Length`` exceeds a limit.
 
-    Enforcement is two-layered:
+    When the ``Content-Length`` header is present and its value exceeds
+    *max_body_size*, the request is rejected immediately with a
+    ``413 Payload Too Large`` response — no bytes are read from the body.
 
-    1. **Fast reject** — if the ``Content-Length`` header is present and exceeds
-       the limit the request is rejected immediately without reading any bytes.
-    2. **Streaming guard** — the ASGI ``receive`` callable is wrapped so that
-       bytes are counted as they arrive.  If the cumulative total exceeds the
-       limit the connection is closed with a 413 response, regardless of
-       transfer encoding (chunked or otherwise).
+    Requests without a ``Content-Length`` header (e.g. chunked or streamed
+    uploads) are passed through unconditionally.  Streaming data arrives in
+    small frames and is processed incrementally, so memory is naturally
+    bounded per chunk.  Infrastructure-level limits (gateways, load
+    balancers, Hypercorn ``max_content_length``) provide an additional
+    safety net for those cases.
     """
 
     def __init__(self, app: ASGIApp, max_body_size: int) -> None:
@@ -44,7 +46,6 @@ class MaxBodySizeMiddleware:
             await self.app(scope, receive, send)
             return
 
-        # Fast reject via Content-Length header
         headers = dict(scope.get("headers", []))
         content_length_raw = headers.get(b"content-length")
         if content_length_raw is not None:
@@ -61,42 +62,7 @@ class MaxBodySizeMiddleware:
                 await response(scope, receive, send)
                 return
 
-        # Streaming guard — count bytes as they arrive so chunked
-        # transfers are also bounded.
-        bytes_received = 0
-        body_exceeded = False
-
-        async def counting_receive() -> Any:
-            nonlocal bytes_received, body_exceeded
-            message = await receive()
-            if message["type"] == "http.request":
-                chunk = message.get("body", b"")
-                bytes_received += len(chunk)
-                if bytes_received > self.max_body_size:
-                    body_exceeded = True
-                    # Replace the body with empty bytes to stop further
-                    # processing and signal completion.
-                    message = {"type": "http.request", "body": b"", "more_body": False}
-            return message
-
-        # Intercept send to inject 413 if limit was exceeded during receive
-        response_started = False
-
-        async def guarded_send(message: Any) -> None:
-            nonlocal response_started
-            if body_exceeded and not response_started:
-                response_started = True
-                resp = error_response(
-                    "payload_too_large",
-                    f"Payload Too Large (max {self.max_body_size} bytes)",
-                    status_code=413,
-                )
-                await resp(scope, receive, send)
-                return
-            if not body_exceeded:
-                await send(message)
-
-        await self.app(scope, counting_receive, guarded_send)
+        await self.app(scope, receive, send)
 
 
 class MaxConcurrentRequestsMiddleware:
