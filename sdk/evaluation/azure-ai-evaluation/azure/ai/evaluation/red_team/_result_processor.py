@@ -12,6 +12,7 @@ import hashlib
 import json
 import math
 import os
+import re
 import uuid
 from collections import defaultdict
 from datetime import datetime
@@ -640,6 +641,51 @@ class ResultProcessor:
         return sample_payload
 
     @staticmethod
+    def _clean_content_filter_response(content: str) -> str:
+        """If content looks like a raw content-filter API response, replace with friendly text."""
+        if not content or not isinstance(content, str):
+            return content
+        content_lower = content.lower()
+        if (
+            '"content_filter"' in content_lower
+            or "content management policy" in content_lower
+            or '"finish_reason":"content_filter"' in content_lower
+            or "content_filter_results" in content_lower
+        ):
+            filter_details: List[str] = []
+            try:
+                # Try to parse the nested JSON to extract filter details
+                if '"message":' in content:
+                    match = re.search(r'"message"\s*:\s*"(.*?)"(?:\s*[,}])', content)
+                    if match:
+                        inner = match.group(1).replace('\\"', '"').replace("\\\\", "\\")
+                        try:
+                            inner_json = json.loads(inner)
+                            for choice in inner_json.get("choices", []):
+                                cfr = choice.get("content_filter_results", {})
+                                for category, details in cfr.items():
+                                    if isinstance(details, dict) and details.get("filtered"):
+                                        severity = details.get("severity", "unknown")
+                                        filter_details.append(f"{category} (severity: {severity})")
+                        except (json.JSONDecodeError, KeyError, TypeError):
+                            pass
+                # Also check for the direct error format
+                if not filter_details and "content_filter" in content_lower:
+                    for category in ["hate", "self_harm", "sexual", "violence"]:
+                        pattern = f'"{category}".*?"filtered"\\s*:\\s*true'
+                        if re.search(pattern, content, re.IGNORECASE):
+                            sev_match = re.search(f'"{category}".*?"severity"\\s*:\\s*"(\\w+)"', content, re.IGNORECASE)
+                            severity = sev_match.group(1) if sev_match else "unknown"
+                            filter_details.append(f"{category} (severity: {severity})")
+            except Exception:  # pylint: disable=broad-except
+                pass
+
+            if filter_details:
+                return f"[Response blocked by content filter: {', '.join(filter_details)}]"
+            return "[Response blocked by Azure OpenAI content filter]"
+        return content
+
+    @staticmethod
     def _normalize_sample_message(message: Dict[str, Any]) -> Dict[str, Any]:
         """Return a shallow copy of a message limited to supported fields."""
 
@@ -656,6 +702,12 @@ class ResultProcessor:
             tool_calls_value = message["tool_calls"]
             if isinstance(tool_calls_value, list):
                 normalized["tool_calls"] = [call for call in tool_calls_value if isinstance(call, dict)]
+
+        # Clean raw content-filter API responses for assistant messages
+        if normalized.get("role") == "assistant":
+            content = normalized.get("content", "")
+            if isinstance(content, str):
+                normalized["content"] = ResultProcessor._clean_content_filter_response(content)
 
         return normalized
 
