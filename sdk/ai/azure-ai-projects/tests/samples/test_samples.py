@@ -30,7 +30,7 @@ class TestSamples(AzureRecordedTestCase):
     @servicePreparer()
     @additionalSampleTests(
         [
-            AdditionalSampleTestDetail( # 2/28/2026 westus2 get 500
+            AdditionalSampleTestDetail(
                 test_id="sample_agent_azure_function",
                 sample_filename="sample_agent_azure_function.py",
                 env_vars={
