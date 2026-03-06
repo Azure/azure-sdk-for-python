@@ -13,6 +13,8 @@ import test_config
 from azure.cosmos.aio import CosmosClient, _retry_utility_async, DatabaseProxy
 from azure.cosmos import PartitionKey
 from azure.cosmos.http_constants import StatusCodes, SubStatusCodes, HttpHeaders
+from azure.cosmos._change_feed.feed_range_internal import FeedRangeInternalEpk
+from azure.cosmos._routing.routing_range import Range
 from azure.core.pipeline.transport._aiohttp import AioHttpTransportResponse
 from azure.core.rest import HttpRequest, AsyncHttpResponse
 from typing import Awaitable, Callable
@@ -127,6 +129,59 @@ class TestSessionAsync(unittest.IsolatedAsyncioTestCase):
             self.assertIsNotNone(token, "Session token should be present")
             self.assertNotIn(',', token,
                              f"Expected single partition token, got compound token: {token}")
+
+        finally:
+            await self.created_db.delete_container(test_container)
+
+    async def test_session_token_compound_not_sent_for_multi_partition_feed_range_query_async(self):
+        """
+        Verify that when querying with a feed range spanning multiple physical partitions,
+        each individual request sends only the relevant partition's session token,
+        not the entire compound token.
+        """
+        test_container = await self.created_db.create_container(
+            "Container multi partition test" + str(uuid.uuid4()),
+            PartitionKey(path="/pk"),
+            offer_throughput=11000
+        )
+
+        try:
+            # Create items across multiple partition keys
+            for i in range(100):
+                await test_container.create_item({
+                    'id': str(uuid.uuid4()),
+                    'pk': f"pk_{i:04d}"
+                })
+
+            # Get feed ranges and verify multiple exist
+            feed_ranges = [feed_range async for feed_range in test_container.read_feed_ranges()]
+            self.assertGreater(len(feed_ranges), 1, "Expected multiple feed ranges")
+
+            # Create a full-range feed range that spans all physical partitions
+            full_range = FeedRangeInternalEpk(
+                Range("", "FF", True, False)
+            ).to_dict()
+
+            # Capture all session tokens sent across multiple requests
+            captured_tokens = []
+
+            def capture_session_token(request):
+                token = request.http_request.headers.get(HttpHeaders.SessionToken)
+                if token:
+                    captured_tokens.append(token)
+
+            # Query with full range feed range (spans all partitions)
+            _ = [item async for item in test_container.query_items(
+                query="SELECT * FROM c",
+                feed_range=full_range,
+                raw_request_hook=capture_session_token
+            )]
+
+            # Verify each request sent only a single partition token (no commas)
+            self.assertGreater(len(captured_tokens), 0, "Expected at least one request with session token")
+            for token in captured_tokens:
+                self.assertNotIn(',', token,
+                                 f"Expected single partition token per request, got compound token: {token}")
 
         finally:
             await self.created_db.delete_container(test_container)
