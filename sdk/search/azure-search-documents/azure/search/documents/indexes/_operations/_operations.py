@@ -286,7 +286,28 @@ def build_search_index_get_index_request(name: str, **kwargs: Any) -> HttpReques
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_search_index_list_indexes_request(*, select: Optional[list[str]] = None, **kwargs: Any) -> HttpRequest:
+def build_search_index_list_indexes_request(**kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
+    accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
+
+    # Construct URL
+    _url = "/indexes"
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_search_index_list_indexes_with_selected_properties_request(  # pylint: disable=name-too-long
+    *, select: Optional[list[str]] = None, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -2210,13 +2231,9 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_indexes(self, *, select: Optional[list[str]] = None, **kwargs: Any) -> ItemPaged["_models1.SearchIndex"]:
+    def _list_indexes(self, **kwargs: Any) -> ItemPaged["_models1.SearchIndex"]:
         """Lists all indexes available for a search service.
 
-        :keyword select: Selects which top-level properties to retrieve. Specified as a comma-separated
-         list of JSON property names, or '*' for all properties. The default is all properties. Default
-         value is None.
-        :paramtype select: list[str]
         :return: An iterator like instance of SearchIndex
         :rtype: ~azure.core.paging.ItemPaged[~azure.search.documents.indexes.models.SearchIndex]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2238,7 +2255,6 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
             if not next_link:
 
                 _request = build_search_index_list_indexes_request(
-                    select=select,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -2275,6 +2291,101 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
             list_of_elem = _deserialize(list[_models1.SearchIndex], deserialized.get("value", []))
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models2.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+    @distributed_trace
+    def _list_indexes_with_selected_properties(
+        self, *, select: Optional[list[str]] = None, **kwargs: Any
+    ) -> ItemPaged["_models1._models.SearchIndexResponse"]:
+        """Lists all indexes available for a search service.
+
+        :keyword select: Selects which top-level properties to retrieve. Specified as a comma-separated
+         list of JSON property names, or '*' for all properties. The default is all properties. Default
+         value is None.
+        :paramtype select: list[str]
+        :return: An iterator like instance of SearchIndexResponse
+        :rtype:
+         ~azure.core.paging.ItemPaged[~azure.search.documents.indexes.models._models.SearchIndexResponse]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[list[_models1._models.SearchIndexResponse]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_search_index_list_indexes_with_selected_properties_request(
+                    select=select,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        def extract_data(pipeline_response):
+            # pylint: disable=protected-access
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(list[_models1._models.SearchIndexResponse], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return None, iter(list_of_elem)

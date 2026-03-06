@@ -10,7 +10,7 @@ from typing import Optional
 from azure.ai.projects.telemetry import AIProjectInstrumentor, _utils
 from azure.core.settings import settings
 from gen_ai_trace_verifier import GenAiTraceVerifier
-from azure.ai.projects.models import PromptAgentDefinition, PromptAgentDefinitionText
+from azure.ai.projects.models import PromptAgentDefinition, PromptAgentDefinitionTextOptions
 
 from azure.ai.projects.models import (
     Reasoning,
@@ -81,6 +81,7 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
     def test_instrumentation(self, **kwargs):
         # Make sure code is not instrumented due to a previous test exception
         AIProjectInstrumentor().uninstrument()
+        os.environ["AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING"] = "true"
         exception_caught = False
         try:
             assert AIProjectInstrumentor().is_instrumented() == False
@@ -91,11 +92,14 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
         except RuntimeError as e:
             exception_caught = True
             print(e)
+        finally:
+            os.environ.pop("AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING", None)
         assert exception_caught == False
 
     def test_instrumenting_twice_does_not_cause_exception(self, **kwargs):
         # Make sure code is not instrumented due to a previous test exception
         AIProjectInstrumentor().uninstrument()
+        os.environ["AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING"] = "true"
         exception_caught = False
         try:
             AIProjectInstrumentor().instrument()
@@ -103,7 +107,9 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
         except RuntimeError as e:
             exception_caught = True
             print(e)
-        AIProjectInstrumentor().uninstrument()
+        finally:
+            AIProjectInstrumentor().uninstrument()
+            os.environ.pop("AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING", None)
         assert exception_caught == False
 
     def test_uninstrumenting_uninstrumented_does_not_cause_exception(self, **kwargs):
@@ -120,6 +126,7 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
     def test_uninstrumenting_twice_does_not_cause_exception(self, **kwargs):
         # Make sure code is not instrumented due to a previous test exception
         AIProjectInstrumentor().uninstrument()
+        os.environ["AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING"] = "true"
         exception_caught = False
         try:
             AIProjectInstrumentor().instrument()
@@ -128,7 +135,75 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
         except RuntimeError as e:
             exception_caught = True
             print(e)
+        finally:
+            os.environ.pop("AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING", None)
         assert exception_caught == False
+
+    @pytest.mark.parametrize(
+        "env_value, should_instrument",
+        [
+            (None, False),
+            ("false", False),
+            ("False", False),
+            ("FALSE", False),
+            ("true", True),
+            ("True", True),
+            ("TRUE", True),
+        ],
+    )
+    def test_experimental_genai_tracing_gate(self, env_value: Optional[str], should_instrument: bool):
+        """
+        Test that the experimental GenAI tracing gate works correctly.
+
+        This test verifies that:
+        - When AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING is not set, instrumentation is disabled
+        - When set to "false" (case-insensitive), instrumentation is disabled
+        - When set to "true" (case-insensitive), instrumentation is enabled
+
+        Args:
+            env_value: Value for AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING environment variable.
+                      Can be None (unset), "true", "True", "TRUE", "false", "False", "FALSE".
+            should_instrument: Whether instrumentation should be enabled given the env_value.
+        """
+        # Clean up any previous state
+        AIProjectInstrumentor().uninstrument()
+        os.environ.pop("AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING", None)
+
+        # Set the environment variable
+        if env_value is not None:
+            os.environ["AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING"] = env_value
+
+        try:
+            # Setup telemetry infrastructure
+            from opentelemetry import trace
+            from opentelemetry.sdk.trace import TracerProvider
+            from opentelemetry.sdk.trace.export import SimpleSpanProcessor
+            from memory_trace_exporter import MemoryTraceExporter
+
+            tracer_provider = TracerProvider()
+            trace._TRACER_PROVIDER = tracer_provider
+            exporter = MemoryTraceExporter()
+            span_processor = SimpleSpanProcessor(exporter)
+            tracer_provider.add_span_processor(span_processor)
+
+            # Attempt to instrument
+            AIProjectInstrumentor().instrument()
+
+            # Check if instrumentation actually happened
+            is_instrumented = AIProjectInstrumentor().is_instrumented()
+
+            # Verify the result matches expectation
+            assert is_instrumented == should_instrument, (
+                f"Expected instrumentation={should_instrument} when env={'<not set>' if env_value is None else env_value}, "
+                f"but got instrumentation={is_instrumented}"
+            )
+
+        finally:
+            # Clean up
+            exporter.shutdown()
+            AIProjectInstrumentor().uninstrument()
+            trace._TRACER_PROVIDER = None
+            os.environ.pop("AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING", None)
 
     @pytest.mark.parametrize(
         "env1, env2, expected",
@@ -548,7 +623,7 @@ trigger:
             agent_definition = PromptAgentDefinition(
                 model=model,
                 instructions="You are a helpful assistant that extracts person information.",
-                text=PromptAgentDefinitionText(
+                text=PromptAgentDefinitionTextOptions(
                     format=TextResponseFormatJsonSchema(
                         name="PersonInfo",
                         schema=test_schema,
@@ -734,7 +809,7 @@ trigger:
 
             agent_definition = PromptAgentDefinition(
                 model=model,
-                text=PromptAgentDefinitionText(
+                text=PromptAgentDefinitionTextOptions(
                     format=TextResponseFormatJsonSchema(
                         name="Result",
                         schema=test_schema,

@@ -9,7 +9,7 @@ import pytest
 from azure.ai.projects.telemetry import AIProjectInstrumentor, _utils
 from azure.core.settings import settings
 from gen_ai_trace_verifier import GenAiTraceVerifier
-from azure.ai.projects.models import PromptAgentDefinition, PromptAgentDefinitionText
+from azure.ai.projects.models import PromptAgentDefinition, PromptAgentDefinitionTextOptions
 from azure.ai.projects.models import (
     Reasoning,
     FunctionTool,
@@ -420,7 +420,7 @@ trigger:
             agent_definition = PromptAgentDefinition(
                 model=model,
                 instructions="You are a helpful assistant that extracts person information.",
-                text=PromptAgentDefinitionText(
+                text=PromptAgentDefinitionTextOptions(
                     format=TextResponseFormatJsonSchema(
                         name="PersonInfo",
                         schema=test_schema,
@@ -604,7 +604,7 @@ trigger:
             agent_definition = PromptAgentDefinition(
                 model=model,
                 # No instructions provided
-                text=PromptAgentDefinitionText(
+                text=PromptAgentDefinitionTextOptions(
                     format=TextResponseFormatJsonSchema(
                         name="Result",
                         schema=test_schema,

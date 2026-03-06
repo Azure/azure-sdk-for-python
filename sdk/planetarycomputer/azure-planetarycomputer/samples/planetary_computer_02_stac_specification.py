@@ -63,7 +63,7 @@ def get_landing_page(client: PlanetaryComputerProClient):
 
 def search_collections(client: PlanetaryComputerProClient):
     """Search and list STAC collections."""
-    collections = client.stac.list_collections()
+    collections = client.stac.get_collections()
 
     # Show first few collections
     for collection in collections.collections[:3]:
