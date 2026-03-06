@@ -37,6 +37,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-06-01-preview/DisconnectedOperations_ListDeploymentManifest_MaximumSet_Gen.json
+# x-ms-original-file: 2026-03-15/DisconnectedOperations_ListDeploymentManifest_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

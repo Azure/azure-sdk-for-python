@@ -45,6 +45,23 @@ class TestDisconnectedOperationsMgmtDisconnectedOperationsOperationsAsync(AzureM
                         "billingModel": "str",
                         "connectionIntent": "str",
                         "stampId": "str",
+                        "benefitPlans": {"azureHybridWindowsServerBenefit": "str", "windowsServerVmCount": 0},
+                        "billingConfiguration": {
+                            "autoRenew": "str",
+                            "billingStatus": "str",
+                            "current": {
+                                "cores": 0,
+                                "pricingModel": "str",
+                                "endDate": "2020-02-20",
+                                "startDate": "2020-02-20",
+                            },
+                            "upcoming": {
+                                "cores": 0,
+                                "pricingModel": "str",
+                                "endDate": "2020-02-20",
+                                "startDate": "2020-02-20",
+                            },
+                        },
                         "connectionStatus": "str",
                         "deviceVersion": "str",
                         "provisioningState": "str",
@@ -74,7 +91,28 @@ class TestDisconnectedOperationsMgmtDisconnectedOperationsOperationsAsync(AzureM
             resource_group_name=resource_group.name,
             name="str",
             properties={
-                "properties": {"connectionIntent": "str", "deviceVersion": "str", "registrationStatus": "str"},
+                "properties": {
+                    "benefitPlans": {"azureHybridWindowsServerBenefit": "str", "windowsServerVmCount": 0},
+                    "billingConfiguration": {
+                        "autoRenew": "str",
+                        "billingStatus": "str",
+                        "current": {
+                            "cores": 0,
+                            "pricingModel": "str",
+                            "endDate": "2020-02-20",
+                            "startDate": "2020-02-20",
+                        },
+                        "upcoming": {
+                            "cores": 0,
+                            "pricingModel": "str",
+                            "endDate": "2020-02-20",
+                            "startDate": "2020-02-20",
+                        },
+                    },
+                    "connectionIntent": "str",
+                    "deviceVersion": "str",
+                    "registrationStatus": "str",
+                },
                 "tags": {"str": "str"},
             },
         )

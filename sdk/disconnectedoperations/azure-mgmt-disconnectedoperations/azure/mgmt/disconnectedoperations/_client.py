@@ -19,7 +19,12 @@ from azure.mgmt.core.tools import get_arm_endpoints
 
 from ._configuration import DisconnectedOperationsMgmtClientConfiguration
 from ._utils.serialization import Deserializer, Serializer
-from .operations import ArtifactsOperations, DisconnectedOperationsOperations, ImagesOperations
+from .operations import (
+    ArtifactsOperations,
+    DisconnectedOperationsOperations,
+    HardwareSettingsOperations,
+    ImagesOperations,
+)
 
 if TYPE_CHECKING:
     from azure.core import AzureClouds
@@ -36,6 +41,9 @@ class DisconnectedOperationsMgmtClient:
     :vartype images: azure.mgmt.disconnectedoperations.operations.ImagesOperations
     :ivar artifacts: ArtifactsOperations operations
     :vartype artifacts: azure.mgmt.disconnectedoperations.operations.ArtifactsOperations
+    :ivar hardware_settings: HardwareSettingsOperations operations
+    :vartype hardware_settings:
+     azure.mgmt.disconnectedoperations.operations.HardwareSettingsOperations
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
@@ -45,9 +53,9 @@ class DisconnectedOperationsMgmtClient:
     :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
-    :keyword api_version: The API version to use for this operation. Default value is
-     "2025-06-01-preview". Note that overriding this default value may result in unsupported
-     behavior.
+    :keyword api_version: The API version to use for this operation. Known values are "2026-03-15"
+     and None. Default value is "2026-03-15". Note that overriding this default value may result in
+     unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -105,6 +113,9 @@ class DisconnectedOperationsMgmtClient:
         )
         self.images = ImagesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.artifacts = ArtifactsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.hardware_settings = HardwareSettingsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
     def send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
