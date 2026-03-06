@@ -37,7 +37,7 @@ version = {attr = "azure.core.tracing.ext.opentelemetry_span._version.VERSION"}
 readme = {file = ["README.md", "CHANGELOG.md"], content-type = "text/markdown"}
 
 [tool.setuptools.packages.find]
-exclude = ["tests*", "samples*", "azure"]
+exclude = ["tests*", "samples*", "build*", "azure", "azure.core", "azure.core.tracing", "azure.core.tracing.ext"]
 
 [tool.setuptools.package-data]
 pytyped = ["py.typed"]

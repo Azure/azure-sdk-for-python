@@ -35,7 +35,7 @@ version = {attr = "azure.core.experimental._version.VERSION"}
 readme = {file = ["README.md", "CHANGELOG.md"], content-type = "text/markdown"}
 
 [tool.setuptools.packages.find]
-exclude = ["tests*", "samples*", "azure"]
+exclude = ["tests*", "samples*", "build*", "azure", "azure.core"]
 
 [tool.setuptools.package-data]
 pytyped = ["py.typed"]
