@@ -26,7 +26,7 @@ from ._shared.models import (
     UserDelegationKey,
     Services
 )
-from ._generated.models import RehydratePriority
+from ._generated.azure.storage.blobs.models import RehydratePriority
 from ._models import (
     BlobType,
     BlockState,

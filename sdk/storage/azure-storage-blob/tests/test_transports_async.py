@@ -27,6 +27,7 @@ class TestStorageTransportsAsync(AsyncStorageRecordedTestCase):
             except ResourceExistsError:
                 pass
 
+    @pytest.mark.skip("Legacy transports not supported")
     @BlobPreparer()
     async def test_legacy_transport_old_response(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
@@ -53,6 +54,7 @@ class TestStorageTransportsAsync(AsyncStorageRecordedTestCase):
         resp = await blob_client.delete_blob()
         assert resp is None
 
+    @pytest.mark.skip("Legacy transports not supported")
     @BlobPreparer()
     async def test_legacy_transport_old_response_content_validation(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
@@ -79,6 +81,7 @@ class TestStorageTransportsAsync(AsyncStorageRecordedTestCase):
         resp = await blob_client.delete_blob()
         assert resp is None
 
+    @pytest.mark.skip("Legacy transports not supported")
     @BlobPreparer()
     @recorded_by_proxy_async
     async def test_legacy_transport(self, **kwargs):
@@ -107,6 +110,7 @@ class TestStorageTransportsAsync(AsyncStorageRecordedTestCase):
         resp = await blob_client.delete_blob()
         assert resp is None
 
+    @pytest.mark.skip("Legacy transports not supported")
     @BlobPreparer()
     @recorded_by_proxy_async
     async def test_legacy_transport_content_validation(self, **kwargs):
@@ -135,6 +139,7 @@ class TestStorageTransportsAsync(AsyncStorageRecordedTestCase):
         resp = await blob_client.delete_blob()
         assert resp is None
 
+    @pytest.mark.skip("Legacy transports not supported")
     @pytest.mark.live_test_only
     @BlobPreparer()
     async def test_asyncio_transport(self, **kwargs):
@@ -163,6 +168,7 @@ class TestStorageTransportsAsync(AsyncStorageRecordedTestCase):
         resp = await blob_client.delete_blob()
         assert resp is None
 
+    @pytest.mark.skip("Legacy transports not supported")
     @pytest.mark.live_test_only
     @BlobPreparer()
     async def test_asyncio_transport_content_validation(self, **kwargs):

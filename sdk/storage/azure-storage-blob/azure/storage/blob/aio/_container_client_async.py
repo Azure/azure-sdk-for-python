@@ -35,8 +35,8 @@ from .._container_client_helpers import (
 )
 from .._deserialize import deserialize_container_properties
 from .._encryption import StorageEncryptionMixin
-from .._generated.aio import AzureBlobStorage
-from .._generated.models import SignedIdentifier
+from .._generated.azure.storage.blobs.aio import AzureBlobStorage
+from .._generated.azure.storage.blobs.models import SignedIdentifier, SignedIdentifiers
 from .._list_blobs_helper import IgnoreListBlobsDeserializer
 from .._models import ContainerProperties, BlobType, BlobProperties, FilteredBlob
 from .._serialize import get_modify_conditions, get_container_cpk_scope_info, get_api_version, get_access_conditions
@@ -164,7 +164,7 @@ class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public
         await self._client.close()
 
     def _build_generated_client(self) -> AzureBlobStorage:
-        return AzureBlobStorage(self.url, self._api_version, base_url=self.url, pipeline=self._pipeline)
+        return AzureBlobStorage(self.url, base_url=self.url, version=self._api_version, pipeline=self._pipeline)
 
     def _format_url(self, hostname):
         return _format_url(
@@ -364,7 +364,7 @@ class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public
                 _pipeline=self._pipeline, _location_mode=self._location_mode, _hosts=self._hosts,
                 require_encryption=self.require_encryption, encryption_version=self.encryption_version,
                 key_encryption_key=self.key_encryption_key, key_resolver_function=self.key_resolver_function)
-            await renamed_container._client.container.rename(self.container_name, **kwargs)   # pylint: disable = protected-access
+            await renamed_container._client.container.rename(source_container_name=self.container_name, **kwargs)   # pylint: disable = protected-access
             return renamed_container
         except HttpResponseError as error:
             process_storage_error(error)
@@ -700,7 +700,7 @@ class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public
             process_storage_error(error)
         return {
             'public_access': response.get('blob_public_access'),
-            'signed_identifiers': identifiers or []
+            'signed_identifiers': identifiers.items_property or []
         }
 
     @distributed_trace_async
@@ -772,7 +772,7 @@ class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public
         access_conditions = get_access_conditions(lease)
         try:
             return cast(Dict[str, Union[str, datetime]], await self._client.container.set_access_policy(
-                container_acl=signed_identifiers or None,
+                container_acl=SignedIdentifiers(items_property=signed_identifiers),
                 timeout=timeout,
                 access=public_access,
                 lease_access_conditions=access_conditions,

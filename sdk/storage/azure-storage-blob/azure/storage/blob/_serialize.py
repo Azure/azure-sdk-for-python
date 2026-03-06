@@ -12,7 +12,7 @@ except ImportError:
 
 from azure.core import MatchConditions
 
-from ._generated.models import (
+from ._generated.azure.storage.blobs.models import (
     ArrowConfiguration,
     BlobModifiedAccessConditions,
     BlobTag,
@@ -197,7 +197,10 @@ def serialize_blob_tags(tags: Optional[Dict[str, str]] = None) -> BlobTags:
 
 def serialize_query_format(formater: Union[str, DelimitedJsonDialect]) -> Optional[QuerySerialization]:
     if formater == "ParquetDialect":
-        qq_format = QueryFormat(type=QueryFormatType.PARQUET, parquet_text_configuration=' ')  #type: ignore [arg-type]
+        qq_format = QueryFormat(
+            type=QueryFormatType.PARQUET,
+            parquet_text_configuration=' '  # type: ignore[call-overload]
+        )
     elif isinstance(formater, DelimitedJsonDialect):
         json_serialization_settings = JsonTextConfiguration(record_separator=formater.delimiter)
         qq_format = QueryFormat(type=QueryFormatType.JSON, json_text_configuration=json_serialization_settings)
