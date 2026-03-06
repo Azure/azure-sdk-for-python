@@ -1,3 +1,45 @@
+[build-system]
+requires = ["setuptools>=77.0.3", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "azure-core-experimental"
+authors = [
+    {name = "Microsoft Corporation", email = "azpysdkhelp@microsoft.com"},
+]
+description = "Microsoft Azure Core Experimental Library for Python"
+keywords = ["azure", "azure sdk"]
+requires-python = ">=3.8"
+license = "MIT"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+dependencies = [
+    "azure-core>=1.30.0",
+]
+dynamic = ["version", "readme"]
+
+[project.urls]
+Repository = "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/core/azure-core-experimental"
+
+[tool.setuptools.dynamic]
+version = {attr = "azure.core.experimental._version.VERSION"}
+readme = {file = ["README.md", "CHANGELOG.md"], content-type = "text/markdown"}
+
+[tool.setuptools.packages.find]
+exclude = ["tests*", "samples*", "build*", "azure", "azure.core"]
+
+[tool.setuptools.package-data]
+pytyped = ["py.typed"]
+
 [tool.azure-sdk-build]
 pyright = false
 mypy = true
