@@ -2376,7 +2376,7 @@ class QueryFormat(_Model):
     parquet_text_configuration: Optional["_models.ParquetConfiguration"] = rest_field(
         name="parquetTextConfiguration",
         visibility=["read", "create", "update", "delete", "query"],
-        xml={"attribute": False, "name": "ParquetConfiguration", "text": False, "unwrapped": False},
+        xml={"attribute": False, "name": "ParquetTextConfiguration", "text": False, "unwrapped": False},
     )
     """The Parquet configuration."""
 
