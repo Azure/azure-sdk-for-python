@@ -165,7 +165,7 @@ def from_dict_to_rest_io(
 
 def from_dict_to_rest_distribution(distribution_dict: Dict) -> Union[PyTorch, Mpi, TensorFlow, Ray]:
     target_type = distribution_dict["distribution_type"].lower()
-    if target_type == "pytorch":
+    if target_type == "pytorch" or target_type == "torch.distributed":
         return PyTorch(**distribution_dict)
     if target_type == "mpi":
         return Mpi(**distribution_dict)
@@ -173,7 +173,7 @@ def from_dict_to_rest_distribution(distribution_dict: Dict) -> Union[PyTorch, Mp
         return TensorFlow(**distribution_dict)
     if target_type == "ray":
         return Ray(**distribution_dict)
-    msg = "Distribution type must be pytorch, mpi, tensorflow or ray: {}".format(target_type)
+    msg = "Distribution type must be pytorch, torch.distributed, mpi, tensorflow or ray: {}".format(target_type)
     raise ValidationException(
         message=msg,
         no_personal_data_message=msg,
