@@ -188,14 +188,28 @@ function Validate-Python-DocMsPackages($PackageInfo, $PackageInfos, $PackageSour
       -ItemType Directory `
       -Path (Join-Path $outputRoot "docsOutput")
 
-      # Force the python output to be unbuffered so we see more than just the warnings.
-      Write-Host "Executing: python -u -m py2docfx --param-file-path $outputJsonFile -o $outputDocsDir"
-      $pyOutput = python -u -m py2docfx --param-file-path $outputJsonFile -o $outputDocsDir 2>&1
-      $pyOutput | ForEach-Object { Write-Host $_ }
-      Write-Host "`n"
-      if ($LASTEXITCODE -ne 0) {
-        LogWarning "py2docfx command failed, see output above."
-        $allSucceeded = $false
+      # Create the logs directory in the temp directory. py2docfx expects this directory
+      # to exist for logging. We'll run py2docfx from the temp directory so it uses this logs dir.
+      $outputLogsDir = New-Item `
+      -ItemType Directory `
+      -Path (Join-Path $outputRoot "logs") `
+      -Force
+
+      # Change to the temp directory before running py2docfx so it uses the logs directory there
+      Push-Location $outputRoot
+      try {
+        # Force the python output to be unbuffered so we see more than just the warnings.
+        Write-Host "Executing: python -u -m py2docfx --param-file-path $outputJsonFile -o $outputDocsDir"
+        $pyOutput = python -u -m py2docfx --param-file-path $outputJsonFile -o $outputDocsDir 2>&1
+        $pyOutput | ForEach-Object { Write-Host $_ }
+        Write-Host "`n"
+        if ($LASTEXITCODE -ne 0) {
+          LogWarning "py2docfx command failed, see output above."
+          $allSucceeded = $false
+        }
+      }
+      finally {
+        Pop-Location
       }
     }
   }
