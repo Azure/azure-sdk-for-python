@@ -67,3 +67,6 @@ verifytypes = true
 ci_enabled = true
 sphinx = true
 whl_no_aio = false
+
+[tool.azure-sdk-conda]
+in_bundle = false

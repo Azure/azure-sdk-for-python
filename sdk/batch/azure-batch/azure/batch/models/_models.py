@@ -18,8 +18,8 @@ if TYPE_CHECKING:
 
 
 class AuthenticationTokenSettings(_Model):
-    """The settings for an authentication token that the Task can use to perform Batch
-    service operations.
+    """The settings for an authentication token that the Task can use to perform Batch service
+    operations.
 
     :ivar access: The Batch resources to which the token grants access. The authentication token
      grants access to a limited set of Batch service operations. Currently the only supported value
@@ -63,7 +63,7 @@ class AutomaticOsUpgradePolicy(_Model):
      applied to scale set instances in a rolling fashion when a newer version of the OS image
      becomes available. <br /><br /> If this is set to true for Windows based pools,
      `WindowsConfiguration.enableAutomaticUpdates
-     <https://learn.microsoft.com/rest/api/batchservice/pool/add?tabs=HTTP#windowsconfiguration>`_
+     <https://learn.microsoft.com/rest/api/batchservice/pools/create-pool#windowsconfiguration>`_
      cannot be set to true.
     :vartype enable_automatic_os_upgrade: bool
     :ivar use_rolling_upgrade_policy: Indicates whether rolling upgrade policy should be used
@@ -84,7 +84,7 @@ class AutomaticOsUpgradePolicy(_Model):
     """Indicates whether OS upgrades should automatically be applied to scale set instances in a
      rolling fashion when a newer version of the OS image becomes available. <br /><br /> If this is
      set to true for Windows based pools, `WindowsConfiguration.enableAutomaticUpdates
-     <https://learn.microsoft.com/rest/api/batchservice/pool/add?tabs=HTTP#windowsconfiguration>`_
+     <https://learn.microsoft.com/rest/api/batchservice/pools/create-pool#windowsconfiguration>`_
      cannot be set to true."""
     use_rolling_upgrade_policy: Optional[bool] = rest_field(
         name="useRollingUpgradePolicy", visibility=["read", "create", "update", "delete", "query"]
@@ -393,8 +393,8 @@ class AzureFileShareConfiguration(_Model):
 
 
 class BatchAffinityInfo(_Model):
-    """A locality hint that can be used by the Batch service to select a Compute Node
-    on which to start a Task.
+    """A locality hint that can be used by the Batch service to select a Compute Node on which to
+    start a Task.
 
     :ivar affinity_id: An opaque string representing the location of a Compute Node or a Task that
      has run previously. You can pass the affinityId of a Node to indicate that this Task needs to
@@ -514,8 +514,8 @@ class BatchApplicationPackageReference(_Model):
 
 
 class BatchAutoPoolSpecification(_Model):
-    """Specifies characteristics for a temporary 'auto pool'. The Batch service will
-    create this auto Pool when the Job is submitted.
+    """Specifies characteristics for a temporary 'auto pool'. The Batch service will create this auto
+    Pool when the Job is submitted.
 
     :ivar auto_pool_id_prefix: A prefix to be added to the unique identifier when a Pool is
      automatically created. The Batch service assigns each auto Pool a unique identifier on
@@ -663,8 +663,8 @@ class BatchCreateTaskCollectionResult(_Model):
 
 
 class BatchDiffDiskSettings(_Model):
-    """Specifies the ephemeral Disk Settings for the operating system disk used by the
-    compute node (VM).
+    """Specifies the ephemeral Disk Settings for the operating system disk used by the compute node
+    (VM).
 
     :ivar placement: Specifies the ephemeral disk placement for operating system disk for all VMs
      in the pool. This property can be used by user in the request to choose the location e.g.,
@@ -824,8 +824,8 @@ class BatchErrorMessage(_Model):
 
 
 class BatchInboundNatPool(_Model):
-    """A inbound NAT Pool that can be used to address specific ports on Compute Nodes
-    in a Batch Pool externally.
+    """A inbound NAT Pool that can be used to address specific ports on Compute Nodes in a Batch Pool
+    externally.
 
     :ivar name: The name of the endpoint. The name must be unique within a Batch Pool, can contain
      letters, numbers, underscores, periods, and hyphens. Names must start with a letter or number,
@@ -1550,29 +1550,24 @@ class BatchJobExecutionInfo(_Model):
 
 
 class BatchJobManagerTask(_Model):
-    """Specifies details of a Job Manager Task.
-    The Job Manager Task is automatically started when the Job is created. The
-    Batch service tries to schedule the Job Manager Task before any other Tasks in
-    the Job. When shrinking a Pool, the Batch service tries to preserve Nodes where
-    Job Manager Tasks are running for as long as possible (that is, Compute Nodes
-    running 'normal' Tasks are removed before Compute Nodes running Job Manager
-    Tasks). When a Job Manager Task fails and needs to be restarted, the system
-    tries to schedule it at the highest priority. If there are no idle Compute
-    Nodes available, the system may terminate one of the running Tasks in the Pool
-    and return it to the queue in order to make room for the Job Manager Task to
-    restart. Note that a Job Manager Task in one Job does not have priority over
-    Tasks in other Jobs. Across Jobs, only Job level priorities are observed. For
-    example, if a Job Manager in a priority 0 Job needs to be restarted, it will
-    not displace Tasks of a priority 1 Job. Batch will retry Tasks when a recovery
-    operation is triggered on a Node. Examples of recovery operations include (but
-    are not limited to) when an unhealthy Node is rebooted or a Compute Node
-    disappeared due to host failure. Retries due to recovery operations are
-    independent of and are not counted against the maxTaskRetryCount. Even if the
-    maxTaskRetryCount is 0, an internal retry due to a recovery operation may
-    occur. Because of this, all Tasks should be idempotent. This means Tasks need
-    to tolerate being interrupted and restarted without causing any corruption or
-    duplicate data. The best practice for long running Tasks is to use some form of
-    checkpointing.
+    """Specifies details of a Job Manager Task. The Job Manager Task is automatically started when the
+    Job is created. The Batch service tries to schedule the Job Manager Task before any other Tasks
+    in the Job. When shrinking a Pool, the Batch service tries to preserve Nodes where Job Manager
+    Tasks are running for as long as possible (that is, Compute Nodes running 'normal' Tasks are
+    removed before Compute Nodes running Job Manager Tasks). When a Job Manager Task fails and
+    needs to be restarted, the system tries to schedule it at the highest priority. If there are no
+    idle Compute Nodes available, the system may terminate one of the running Tasks in the Pool and
+    return it to the queue in order to make room for the Job Manager Task to restart. Note that a
+    Job Manager Task in one Job does not have priority over Tasks in other Jobs. Across Jobs, only
+    Job level priorities are observed. For example, if a Job Manager in a priority 0 Job needs to
+    be restarted, it will not displace Tasks of a priority 1 Job. Batch will retry Tasks when a
+    recovery operation is triggered on a Node. Examples of recovery operations include (but are not
+    limited to) when an unhealthy Node is rebooted or a Compute Node disappeared due to host
+    failure. Retries due to recovery operations are independent of and are not counted against the
+    maxTaskRetryCount. Even if the maxTaskRetryCount is 0, an internal retry due to a recovery
+    operation may occur. Because of this, all Tasks should be idempotent. This means Tasks need to
+    tolerate being interrupted and restarted without causing any corruption or duplicate data. The
+    best practice for long running Tasks is to use some form of checkpointing.
 
     :ivar id: A string that uniquely identifies the Job Manager Task within the Job. The ID can
      contain any combination of alphanumeric characters including hyphens and underscores and cannot
@@ -1643,14 +1638,12 @@ class BatchJobManagerTask(_Model):
      is true.
     :vartype run_exclusive: bool
     :ivar application_package_references: A list of Application Packages that the Batch service
-     will deploy to the
-     Compute Node before running the command line.Application Packages are
-     downloaded and deployed to a shared directory, not the Task working
-     directory. Therefore, if a referenced Application Package is already
-     on the Compute Node, and is up to date, then it is not re-downloaded;
-     the existing copy on the Compute Node is used. If a referenced Application
-     Package cannot be installed, for example because the package has been deleted
-     or because download failed, the Task fails.
+     will deploy to the Compute Node before running the command line.Application Packages are
+     downloaded and deployed to a shared directory, not the Task working directory. Therefore, if a
+     referenced Application Package is already on the Compute Node, and is up to date, then it is
+     not re-downloaded; the existing copy on the Compute Node is used. If a referenced Application
+     Package cannot be installed, for example because the package has been deleted or because
+     download failed, the Task fails.
     :vartype application_package_references:
      list[~azure.batch.models.BatchApplicationPackageReference]
     :ivar authentication_token_settings: The settings for an authentication token that the Task can
@@ -1755,14 +1748,12 @@ class BatchJobManagerTask(_Model):
     application_package_references: Optional[list["_models.BatchApplicationPackageReference"]] = rest_field(
         name="applicationPackageReferences", visibility=["read", "create", "update", "delete", "query"]
     )
-    """A list of Application Packages that the Batch service will deploy to the
-     Compute Node before running the command line.Application Packages are
-     downloaded and deployed to a shared directory, not the Task working
-     directory. Therefore, if a referenced Application Package is already
-     on the Compute Node, and is up to date, then it is not re-downloaded;
-     the existing copy on the Compute Node is used. If a referenced Application
-     Package cannot be installed, for example because the package has been deleted
-     or because download failed, the Task fails."""
+    """A list of Application Packages that the Batch service will deploy to the Compute Node before
+     running the command line.Application Packages are downloaded and deployed to a shared
+     directory, not the Task working directory. Therefore, if a referenced Application Package is
+     already on the Compute Node, and is up to date, then it is not re-downloaded; the existing copy
+     on the Compute Node is used. If a referenced Application Package cannot be installed, for
+     example because the package has been deleted or because download failed, the Task fails."""
     authentication_token_settings: Optional["_models.AuthenticationTokenSettings"] = rest_field(
         name="authenticationTokenSettings", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -1947,32 +1938,27 @@ class BatchJobPreparationAndReleaseTaskStatus(_Model):
 
 
 class BatchJobPreparationTask(_Model):
-    """A Job Preparation Task to run before any Tasks of the Job on any given Compute Node.
-    You can use Job Preparation to prepare a Node to run Tasks for the Job.
-    Activities commonly performed in Job Preparation include: Downloading common
-    resource files used by all the Tasks in the Job. The Job Preparation Task can
-    download these common resource files to the shared location on the Node.
-    (AZ_BATCH_NODE_ROOT_DIR\\shared), or starting a local service on the Node so
-    that all Tasks of that Job can communicate with it. If the Job Preparation Task
-    fails (that is, exhausts its retry count before exiting with exit code 0),
-    Batch will not run Tasks of this Job on the Node. The Compute Node remains
-    ineligible to run Tasks of this Job until it is reimaged. The Compute Node
-    remains active and can be used for other Jobs. The Job Preparation Task can run
-    multiple times on the same Node. Therefore, you should write the Job
-    Preparation Task to handle re-execution. If the Node is rebooted, the Job
-    Preparation Task is run again on the Compute Node before scheduling any other
-    Task of the Job, if rerunOnNodeRebootAfterSuccess is true or if the Job
-    Preparation Task did not previously complete. If the Node is reimaged, the Job
-    Preparation Task is run again before scheduling any Task of the Job. Batch will
-    retry Tasks when a recovery operation is triggered on a Node. Examples of
-    recovery operations include (but are not limited to) when an unhealthy Node is
-    rebooted or a Compute Node disappeared due to host failure. Retries due to
-    recovery operations are independent of and are not counted against the
-    maxTaskRetryCount. Even if the maxTaskRetryCount is 0, an internal retry due to
-    a recovery operation may occur. Because of this, all Tasks should be
-    idempotent. This means Tasks need to tolerate being interrupted and restarted
-    without causing any corruption or duplicate data. The best practice for long
-    running Tasks is to use some form of checkpointing.
+    """A Job Preparation Task to run before any Tasks of the Job on any given Compute Node. You can
+    use Job Preparation to prepare a Node to run Tasks for the Job. Activities commonly performed
+    in Job Preparation include: Downloading common resource files used by all the Tasks in the Job.
+    The Job Preparation Task can download these common resource files to the shared location on the
+    Node. (AZ_BATCH_NODE_ROOT_DIR\\shared), or starting a local service on the Node so that all
+    Tasks of that Job can communicate with it. If the Job Preparation Task fails (that is, exhausts
+    its retry count before exiting with exit code 0), Batch will not run Tasks of this Job on the
+    Node. The Compute Node remains ineligible to run Tasks of this Job until it is reimaged. The
+    Compute Node remains active and can be used for other Jobs. The Job Preparation Task can run
+    multiple times on the same Node. Therefore, you should write the Job Preparation Task to handle
+    re-execution. If the Node is rebooted, the Job Preparation Task is run again on the Compute
+    Node before scheduling any other Task of the Job, if rerunOnNodeRebootAfterSuccess is true or
+    if the Job Preparation Task did not previously complete. If the Node is reimaged, the Job
+    Preparation Task is run again before scheduling any Task of the Job. Batch will retry Tasks
+    when a recovery operation is triggered on a Node. Examples of recovery operations include (but
+    are not limited to) when an unhealthy Node is rebooted or a Compute Node disappeared due to
+    host failure. Retries due to recovery operations are independent of and are not counted against
+    the maxTaskRetryCount. Even if the maxTaskRetryCount is 0, an internal retry due to a recovery
+    operation may occur. Because of this, all Tasks should be idempotent. This means Tasks need to
+    tolerate being interrupted and restarted without causing any corruption or duplicate data. The
+    best practice for long running Tasks is to use some form of checkpointing.
 
     :ivar id: A string that uniquely identifies the Job Preparation Task within the Job. The ID can
      contain any combination of alphanumeric characters including hyphens and underscores and cannot
@@ -2137,8 +2123,7 @@ class BatchJobPreparationTask(_Model):
 
 
 class BatchJobPreparationTaskExecutionInfo(_Model):
-    """Contains information about the execution of a Job Preparation Task on a Compute
-    Node.
+    """Contains information about the execution of a Job Preparation Task on a Compute Node.
 
     :ivar start_time: The time at which the Task started running. If the Task has been restarted or
      retried, this is the most recent time at which the Task started running. Required.
@@ -2279,22 +2264,19 @@ class BatchJobPreparationTaskExecutionInfo(_Model):
 
 
 class BatchJobReleaseTask(_Model):
-    """A Job Release Task to run on Job completion on any Compute Node where the Job has run.
-    The Job Release Task runs when the Job ends, because of one of the following:
-    The user calls the Terminate Job API, or the Delete Job API while the Job is
-    still active, the Job's maximum wall clock time constraint is reached, and the
-    Job is still active, or the Job's Job Manager Task completed, and the Job is
-    configured to terminate when the Job Manager completes. The Job Release Task
-    runs on each Node where Tasks of the Job have run and the Job Preparation Task
-    ran and completed. If you reimage a Node after it has run the Job Preparation
-    Task, and the Job ends without any further Tasks of the Job running on that
-    Node (and hence the Job Preparation Task does not re-run), then the Job Release
-    Task does not run on that Compute Node. If a Node reboots while the Job Release
-    Task is still running, the Job Release Task runs again when the Compute Node
-    starts up. The Job is not marked as complete until all Job Release Tasks have
-    completed. The Job Release Task runs in the background. It does not occupy a
-    scheduling slot; that is, it does not count towards the taskSlotsPerNode limit
-    specified on the Pool.
+    """A Job Release Task to run on Job completion on any Compute Node where the Job has run. The Job
+    Release Task runs when the Job ends, because of one of the following: The user calls the
+    Terminate Job API, or the Delete Job API while the Job is still active, the Job's maximum wall
+    clock time constraint is reached, and the Job is still active, or the Job's Job Manager Task
+    completed, and the Job is configured to terminate when the Job Manager completes. The Job
+    Release Task runs on each Node where Tasks of the Job have run and the Job Preparation Task ran
+    and completed. If you reimage a Node after it has run the Job Preparation Task, and the Job
+    ends without any further Tasks of the Job running on that Node (and hence the Job Preparation
+    Task does not re-run), then the Job Release Task does not run on that Compute Node. If a Node
+    reboots while the Job Release Task is still running, the Job Release Task runs again when the
+    Compute Node starts up. The Job is not marked as complete until all Job Release Tasks have
+    completed. The Job Release Task runs in the background. It does not occupy a scheduling slot;
+    that is, it does not count towards the taskSlotsPerNode limit specified on the Pool.
 
     :ivar id: A string that uniquely identifies the Job Release Task within the Job. The ID can
      contain any combination of alphanumeric characters including hyphens and underscores and cannot
@@ -2434,8 +2416,7 @@ class BatchJobReleaseTask(_Model):
 
 
 class BatchJobReleaseTaskExecutionInfo(_Model):
-    """Contains information about the execution of a Job Release Task on a Compute
-    Node.
+    """Contains information about the execution of a Job Release Task on a Compute Node.
 
     :ivar start_time: The time at which the Task started running. If the Task has been restarted or
      retried, this is the most recent time at which the Task started running. Required.
@@ -2545,8 +2526,8 @@ class BatchJobReleaseTaskExecutionInfo(_Model):
 
 
 class BatchJobSchedule(_Model):
-    """A Job Schedule that allows recurring Jobs by specifying when to run Jobs and a
-    specification used to create each Job.
+    """A Job Schedule that allows recurring Jobs by specifying when to run Jobs and a specification
+    used to create each Job.
 
     :ivar id: A string that uniquely identifies the schedule within the Account. Required.
     :vartype id: str
@@ -2675,8 +2656,8 @@ class BatchJobSchedule(_Model):
 
 
 class BatchJobScheduleConfiguration(_Model):
-    """The schedule according to which Jobs will be created. All times are fixed
-    respective to UTC and are not impacted by daylight saving time.
+    """The schedule according to which Jobs will be created. All times are fixed respective to UTC and
+    are not impacted by daylight saving time.
 
     :ivar do_not_run_until: The earliest time at which any Job may be created under this Job
      Schedule. If you do not specify a doNotRunUntil time, the schedule becomes ready to create Jobs
@@ -2847,8 +2828,7 @@ class BatchJobScheduleCreateOptions(_Model):
 
 
 class BatchJobScheduleExecutionInfo(_Model):
-    """Contains information about Jobs that have been and will be run under a Job
-    Schedule.
+    """Contains information about Jobs that have been and will be run under a Job Schedule.
 
     :ivar next_run_time: The next time at which a Job will be created under this schedule. This
      property is meaningful only if the schedule is in the active state when the time comes around.
@@ -3674,8 +3654,8 @@ class BatchJobUpdateOptions(_Model):
 
 
 class BatchMetadataItem(_Model):
-    """The Batch service does not assign any meaning to this metadata; it is solely
-    for the use of user code.
+    """The Batch service does not assign any meaning to this metadata; it is solely for the use of
+    user code.
 
     :ivar name: The name of the metadata item. Required.
     :vartype name: str
@@ -3879,8 +3859,8 @@ class BatchNode(_Model):
 
 
 class BatchNodeAgentInfo(_Model):
-    """The Batch Compute Node agent is a program that runs on each Compute Node in the
-    Pool and provides Batch capability on the Compute Node.
+    """The Batch Compute Node agent is a program that runs on each Compute Node in the Pool and
+    provides Batch capability on the Compute Node.
 
     :ivar version: The version of the Batch Compute Node agent running on the Compute Node. This
      version number can be checked against the Compute Node agent release notes located at
@@ -4227,8 +4207,8 @@ class BatchNodeFile(_Model):
 
 
 class BatchNodeIdentityReference(_Model):
-    """The reference to a user assigned identity associated with the Batch pool which
-    a compute node will use.
+    """The reference to a user assigned identity associated with the Batch pool which a compute node
+    will use.
 
     :ivar resource_id: The ARM resource id of the user assigned identity.
     :vartype resource_id: str
@@ -4319,9 +4299,8 @@ class BatchNodeInfo(_Model):
 
 
 class BatchNodePlacementConfiguration(_Model):
-    """For regional placement, nodes in the pool will be allocated in the same region.
-    For zonal placement, nodes in the pool will be spread across different zones
-    with best effort balancing.
+    """For regional placement, nodes in the pool will be allocated in the same region. For zonal
+    placement, nodes in the pool will be spread across different zones with best effort balancing.
 
     :ivar policy: Node placement Policy type on Batch Pools. Allocation policy used by Batch
      Service to provision the nodes. If not specified, Batch will use the regional policy. Known
@@ -6501,19 +6480,17 @@ class BatchPublicIpAddressConfiguration(_Model):
 
 
 class BatchStartTask(_Model):
-    """Batch will retry Tasks when a recovery operation is triggered on a Node.
-    Examples of recovery operations include (but are not limited to) when an
-    unhealthy Node is rebooted or a Compute Node disappeared due to host failure.
-    Retries due to recovery operations are independent of and are not counted
-    against the maxTaskRetryCount. Even if the maxTaskRetryCount is 0, an internal
-    retry due to a recovery operation may occur. Because of this, all Tasks should
-    be idempotent. This means Tasks need to tolerate being interrupted and
-    restarted without causing any corruption or duplicate data. The best practice
-    for long running Tasks is to use some form of checkpointing. In some cases the
-    StartTask may be re-run even though the Compute Node was not rebooted. Special
-    care should be taken to avoid StartTasks which create breakaway process or
-    install/launch services from the StartTask working directory, as this will
-    block Batch from being able to re-run the StartTask.
+    """Batch will retry Tasks when a recovery operation is triggered on a Node. Examples of recovery
+    operations include (but are not limited to) when an unhealthy Node is rebooted or a Compute
+    Node disappeared due to host failure. Retries due to recovery operations are independent of and
+    are not counted against the maxTaskRetryCount. Even if the maxTaskRetryCount is 0, an internal
+    retry due to a recovery operation may occur. Because of this, all Tasks should be idempotent.
+    This means Tasks need to tolerate being interrupted and restarted without causing any
+    corruption or duplicate data. The best practice for long running Tasks is to use some form of
+    checkpointing. In some cases the StartTask may be re-run even though the Compute Node was not
+    rebooted. Special care should be taken to avoid StartTasks which create breakaway process or
+    install/launch services from the StartTask working directory, as this will block Batch from
+    being able to re-run the StartTask.
 
     :ivar command_line: The command line of the StartTask. The command line does not run under a
      shell, and therefore cannot take advantage of shell features such as environment variable
@@ -6909,8 +6886,8 @@ class BatchSubtask(_Model):
 
 
 class BatchSupportedImage(_Model):
-    """A reference to the Azure Virtual Machines Marketplace Image and additional
-    information about the Image.
+    """A reference to the Azure Virtual Machines Marketplace Image and additional information about
+    the Image.
 
     :ivar node_agent_sku_id: The ID of the Compute Node agent SKU which the Image supports.
      Required.
@@ -6985,15 +6962,14 @@ class BatchSupportedImage(_Model):
 
 
 class BatchTask(_Model):
-    """Batch will retry Tasks when a recovery operation is triggered on a Node.
-    Examples of recovery operations include (but are not limited to) when an
-    unhealthy Node is rebooted or a Compute Node disappeared due to host failure.
-    Retries due to recovery operations are independent of and are not counted
-    against the maxTaskRetryCount. Even if the maxTaskRetryCount is 0, an internal
-    retry due to a recovery operation may occur. Because of this, all Tasks should
-    be idempotent. This means Tasks need to tolerate being interrupted and
-    restarted without causing any corruption or duplicate data. The best practice
-    for long running Tasks is to use some form of checkpointing.
+    """Batch will retry Tasks when a recovery operation is triggered on a Node. Examples of recovery
+    operations include (but are not limited to) when an unhealthy Node is rebooted or a Compute
+    Node disappeared due to host failure. Retries due to recovery operations are independent of and
+    are not counted against the maxTaskRetryCount. Even if the maxTaskRetryCount is 0, an internal
+    retry due to a recovery operation may occur. Because of this, all Tasks should be idempotent.
+    This means Tasks need to tolerate being interrupted and restarted without causing any
+    corruption or duplicate data. The best practice for long running Tasks is to use some form of
+    checkpointing.
 
     :ivar id: A string that uniquely identifies the Task within the Job. The ID can contain any
      combination of alphanumeric characters including hyphens and underscores, and cannot contain
@@ -7829,9 +7805,8 @@ class BatchTaskCreateResult(_Model):
 
 
 class BatchTaskDependencies(_Model):
-    """Specifies any dependencies of a Task. Any Task that is explicitly specified or
-    within a dependency range must complete before the dependant Task will be
-    scheduled.
+    """Specifies any dependencies of a Task. Any Task that is explicitly specified or within a
+    dependency range must complete before the dependant Task will be scheduled.
 
     :ivar task_ids: The list of Task IDs that this Task depends on. All Tasks in this list must
      complete successfully before the dependent Task can be scheduled. The taskIds collection is
@@ -8105,8 +8080,8 @@ class BatchTaskGroup(_Model):
 
 
 class BatchTaskIdRange(_Model):
-    """The start and end of the range are inclusive. For example, if a range has start
-    9 and end 12, then it represents Tasks '9', '10', '11' and '12'.
+    """The start and end of the range are inclusive. For example, if a range has start 9 and end 12,
+    then it represents Tasks '9', '10', '11' and '12'.
 
     :ivar start: The first Task ID in the range. Required.
     :vartype start: int
@@ -8512,9 +8487,9 @@ class BatchVmDiskSecurityProfile(_Model):
 
 
 class BatchVmImageReference(_Model):
-    """A reference to an Azure Virtual Machines Marketplace Image or a Azure Compute Gallery Image.
-    To get the list of all Azure Marketplace Image references verified by Azure Batch, see the
-    ' List Supported Images ' operation.
+    """A reference to an Azure Virtual Machines Marketplace Image or a Azure Compute Gallery Image. To
+    get the list of all Azure Marketplace Image references verified by Azure Batch, see the ' List
+    Supported Images ' operation.
 
     :ivar publisher: The publisher of the Azure Virtual Machines Marketplace Image. For example,
      Canonical or MicrosoftWindowsServer.
@@ -8774,9 +8749,8 @@ class ContainerRegistryReference(_Model):
 
 
 class DataDisk(_Model):
-    """Settings which will be used by the data disks associated to Compute Nodes in
-    the Pool. When using attached data disks, you need to mount and format the
-    disks from within a VM to use them.
+    """Settings which will be used by the data disks associated to Compute Nodes in the Pool. When
+    using attached data disks, you need to mount and format the disks from within a VM to use them.
 
     :ivar logical_unit_number: The logical unit number. The logicalUnitNumber is used to uniquely
      identify each data disk. If attaching multiple disks, each should have a distinct
@@ -8883,9 +8857,8 @@ class DiskCustomerManagedKey(_Model):
 
 
 class DiskEncryptionConfiguration(_Model):
-    """The disk encryption configuration applied on compute nodes in the pool.
-    Disk encryption configuration is not supported on Linux pool created with
-    Azure Compute Gallery Image.
+    """The disk encryption configuration applied on compute nodes in the pool. Disk encryption
+    configuration is not supported on Linux pool created with Azure Compute Gallery Image.
 
     :ivar customer_managed_key: The Customer Managed Key reference to encrypt the OS Disk. Customer
      Managed Key will encrypt OS Disk by EncryptionAtRest, and by default we will encrypt the data
@@ -8993,8 +8966,7 @@ class EnvironmentSetting(_Model):
 
 
 class ExitCodeMapping(_Model):
-    """How the Batch service should respond if a Task exits with a particular exit
-    code.
+    """How the Batch service should respond if a Task exits with a particular exit code.
 
     :ivar code: A process exit code. Required.
     :vartype code: int
@@ -9030,8 +9002,7 @@ class ExitCodeMapping(_Model):
 
 
 class ExitCodeRangeMapping(_Model):
-    """A range of exit codes and how the Batch service should respond to exit codes
-    within that range.
+    """A range of exit codes and how the Batch service should respond to exit codes within that range.
 
     :ivar start: The first exit code in the range. Required.
     :vartype start: int
@@ -9610,10 +9581,9 @@ class MountConfiguration(_Model):
 
 
 class MultiInstanceSettings(_Model):
-    """Multi-instance Tasks are commonly used to support MPI Tasks. In the MPI case,
-    if any of the subtasks fail (for example due to exiting with a non-zero exit
-    code) the entire multi-instance Task fails. The multi-instance Task is then
-    terminated and retried, up to its retry limit.
+    """Multi-instance Tasks are commonly used to support MPI Tasks. In the MPI case, if any of the
+    subtasks fail (for example due to exiting with a non-zero exit code) the entire multi-instance
+    Task fails. The multi-instance Task is then terminated and retried, up to its retry limit.
 
     :ivar number_of_instances: The number of Compute Nodes required by the Task. If omitted, the
      default is 1.
@@ -10112,8 +10082,8 @@ class OutputFileDestination(_Model):
 
 
 class OutputFileUploadConfig(_Model):
-    """Options for an output file upload operation, including under what conditions
-    to perform the upload.
+    """Options for an output file upload operation, including under what conditions to perform the
+    upload.
 
     :ivar upload_condition: The conditions under which the Task output file or set of files should
      be uploaded. The default is taskcompletion. Required. Known values are: "tasksuccess",
@@ -10600,8 +10570,8 @@ class SecurityProfile(_Model):
 
 
 class ServiceArtifactReference(_Model):
-    """Specifies the service artifact reference id used to set same image version
-    for all virtual machines in the scale set when using 'latest' image version.
+    """Specifies the service artifact reference id used to set same image version for all virtual
+    machines in the scale set when using 'latest' image version.
 
     :ivar id: The service artifact reference id of ServiceArtifactReference. The service artifact
      reference id in the form of
@@ -10806,8 +10776,7 @@ class UploadBatchServiceLogsResult(_Model):
 
 
 class UserAccount(_Model):
-    """Properties used to create a user used to execute Tasks on an Azure Batch
-    Compute Node.
+    """Properties used to create a user used to execute Tasks on an Azure Batch Compute Node.
 
     :ivar name: The name of the user Account. Names can contain any Unicode characters up to a
      maximum length of 20. Required.
@@ -10912,8 +10881,8 @@ class UserIdentity(_Model):
 
 
 class VirtualMachineConfiguration(_Model):
-    """The configuration for Compute Nodes in a Pool based on the Azure Virtual
-    Machines infrastructure.
+    """The configuration for Compute Nodes in a Pool based on the Azure Virtual Machines
+    infrastructure.
 
     :ivar image_reference: A reference to the Azure Virtual Machines Marketplace Image or the
      custom Virtual Machine Image to use. Required.
@@ -10944,10 +10913,13 @@ class VirtualMachineConfiguration(_Model):
      <https://learn.microsoft.com/azure/virtual-machines/windows/attach-disk-ps#add-an-empty-data-disk-to-a-virtual-machine>`_.
     :vartype data_disks: list[~azure.batch.models.DataDisk]
     :ivar license_type: This only applies to Images that contain the Windows operating system, and
-     should only be used when you hold valid on-premises licenses for the Compute Nodes which will
-     be deployed. If omitted, no on-premises licensing discount is applied. Values are:
-     Windows_Server - The on-premises license is for Windows Server.
-     Windows_Client - The on-premises license is for Windows Client.
+     should only be used when you hold valid on-premises licenses for the Compute
+     Nodes which will be deployed. If omitted, no on-premises licensing discount is
+     applied. Values are:
+
+      Windows_Server - The on-premises license is for Windows
+     Server.
+      Windows_Client - The on-premises license is for Windows Client.
     :vartype license_type: str
     :ivar container_configuration: The container configuration for the Pool. If specified, setup is
      performed on each Compute Node in the Pool to allow Tasks to run in containers. All regular
@@ -11012,11 +10984,14 @@ class VirtualMachineConfiguration(_Model):
     license_type: Optional[str] = rest_field(
         name="licenseType", visibility=["read", "create", "update", "delete", "query"]
     )
-    """This only applies to Images that contain the Windows operating system, and should only be
-     used when you hold valid on-premises licenses for the Compute Nodes which will be deployed. If
-     omitted, no on-premises licensing discount is applied. Values are: Windows_Server - The
-     on-premises license is for Windows Server. Windows_Client - The on-premises license is for
-     Windows Client."""
+    """This only applies to Images that contain the Windows operating system, and
+     should only be used when you hold valid on-premises licenses for the Compute
+     Nodes which will be deployed. If omitted, no on-premises licensing discount is
+     applied. Values are:
+     
+      Windows_Server - The on-premises license is for Windows
+     Server.
+      Windows_Client - The on-premises license is for Windows Client."""
     container_configuration: Optional["_models.BatchContainerConfiguration"] = rest_field(
         name="containerConfiguration", visibility=["read", "create", "update", "delete", "query"]
     )
