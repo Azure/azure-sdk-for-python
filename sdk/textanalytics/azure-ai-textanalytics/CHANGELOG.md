@@ -1,5 +1,15 @@
 # Release History
 
+## 5.4.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 5.4.0 (2026-02-25)
 
 ### Breaking Changes
