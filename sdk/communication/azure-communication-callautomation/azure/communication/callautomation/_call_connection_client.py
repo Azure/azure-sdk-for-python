@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines, disable=line-too-long, disable=too-many-locals
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -30,6 +30,8 @@ from ._models import (
     FileSource,
     TextSource,
     SsmlSource,
+    MoveParticipantsResult,
+    TeamsPhoneCallDetails,
 )
 from ._generated._client import AzureCommunicationCallAutomationService
 from ._generated.models import (
@@ -56,6 +58,7 @@ from ._generated.models import (
     UnholdRequest,
     StartMediaStreamingRequest,
     StopMediaStreamingRequest,
+    MoveParticipantsRequest,
 )
 from ._generated.models._enums import RecognizeInputType
 from ._shared.auth_policy_utils import get_authentication_policy
@@ -232,6 +235,7 @@ class CallConnectionClient:  # pylint:disable=too-many-public-methods
         sip_headers: Optional[Mapping[str, str]] = None,
         voip_headers: Optional[Mapping[str, str]] = None,
         source_caller_id_number: Optional["PhoneNumberIdentifier"] = None,
+        teams_phone_call_details: Optional[TeamsPhoneCallDetails] = None,
         **kwargs,
     ) -> TransferCallResult:
         """Transfer this call to another participant.
@@ -254,6 +258,8 @@ class CallConnectionClient:  # pylint:disable=too-many-public-methods
         :keyword source_caller_id_number: The source caller Id, a phone number, that's will be used as the
          transferor's(Contoso) caller id when transfering a call a pstn target.
         :paramtype source_caller_id_number: ~azure.communication.callautomation.PhoneNumberIdentifier or None
+        :keyword teams_phone_call_details: Teams phone call details for the participant being added.
+        :paramtype teams_phone_call_details: ~azure.communication.callautomation.TeamsPhoneCallDetails or None
         :return: TransferCallResult
         :rtype: ~azure.communication.callautomation.TransferCallResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -262,6 +268,7 @@ class CallConnectionClient:  # pylint:disable=too-many-public-methods
             user_custom_context: Optional[CustomCallingContext] = CustomCallingContext(
                 voip_headers=dict(voip_headers) if voip_headers is not None else None,
                 sip_headers=dict(sip_headers) if sip_headers is not None else None,
+                teams_phone_call_details=teams_phone_call_details._to_generated() if teams_phone_call_details is not None else None, # pylint:disable=protected-access
             )
         else:
             user_custom_context = None
@@ -291,6 +298,7 @@ class CallConnectionClient:  # pylint:disable=too-many-public-methods
         operation_callback_url: Optional[str] = None,
         sip_headers: Optional[Mapping[str, str]] = None,
         voip_headers: Optional[Mapping[str, str]] = None,
+        teams_phone_call_details: Optional[TeamsPhoneCallDetails] = None,
         **kwargs,
     ) -> AddParticipantResult:
         """Add a participant to this call.
@@ -317,6 +325,8 @@ class CallConnectionClient:  # pylint:disable=too-many-public-methods
         :paramtype sip_headers: Dict[str, str] or None
         :keyword voip_headers: Voip Headers for Voip Call
         :paramtype voip_headers: Dict[str, str] or None
+        :keyword teams_phone_call_details: Teams phone call details for the participant being added.
+        :paramtype teams_phone_call_details: ~azure.communication.callautomation.TeamsPhoneCallDetails or None
         :return: AddParticipantResult
         :rtype: ~azure.communication.callautomation.AddParticipantResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -331,6 +341,7 @@ class CallConnectionClient:  # pylint:disable=too-many-public-methods
             user_custom_context: Optional[CustomCallingContext] = CustomCallingContext(
                 voip_headers=dict(voip_headers) if voip_headers is not None else None,
                 sip_headers=dict(sip_headers) if sip_headers is not None else None,
+                teams_phone_call_details=teams_phone_call_details._to_generated() if teams_phone_call_details is not None else None,  # pylint:disable=protected-access
             )
         else:
             user_custom_context = None
@@ -384,6 +395,46 @@ class CallConnectionClient:  # pylint:disable=too-many-public-methods
         )
 
         return RemoveParticipantResult._from_generated(response)  # pylint:disable=protected-access
+
+    @distributed_trace
+    def move_participants(
+        self,
+        target_participants: Sequence["CommunicationIdentifier"],
+        from_call: str,
+        *,
+        operation_context: Optional[str] = None,
+        operation_callback_url: Optional[str] = None,
+        **kwargs,
+    ) -> MoveParticipantsResult:
+        """Move participants from another call to this call.
+
+        :param target_participants: The participants to move to this call.
+        :type target_participants: list[~azure.communication.callautomation.CommunicationIdentifier]
+        :param from_call: The CallConnectionId for the call you want to move the participant from.
+        :type from_call: str
+        :keyword operation_context: Value that can be used to track this call and its associated events.
+        :paramtype operation_context: str
+        :keyword operation_callback_url: Set a callback URL that overrides the default callback URL set
+         by CreateCall/AnswerCall for this operation.
+         This setup is per-action. If this is not set, the default callback URL set by
+         CreateCall/AnswerCall will be used.
+        :paramtype operation_callback_url: str or None
+        :return: MoveParticipantsResult
+        :rtype: ~azure.communication.callautomation.MoveParticipantsResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        move_participants_request = MoveParticipantsRequest(
+            target_participants=[serialize_identifier(p) for p in target_participants],
+            from_call=from_call,
+            operation_context=operation_context,
+            operation_callback_uri=operation_callback_url,
+        )
+        process_repeatability_first_sent(kwargs)
+        response = self._call_connection_client.move_participants(
+            self._call_connection_id, move_participants_request, **kwargs
+        )
+
+        return MoveParticipantsResult._from_generated(response)  # pylint:disable=protected-access
 
     @overload
     def play_media(
