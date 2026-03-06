@@ -16,7 +16,11 @@
       "GETFL",
       "DETFL",
       "SETFL",
-      "Planifica"
+      "Planifica",
+      "ainvoke",
+      "oauthreq",
+      "hitl",
+      "HITL"
     ],
     "ignorePaths": [
       "*.csv",

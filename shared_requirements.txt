@@ -97,3 +97,5 @@ agent-framework-core
 langchain
 langchain-openai
 azure-ai-language-questionanswering
+cachetools
+opentelemetry-semantic-conventions-ai

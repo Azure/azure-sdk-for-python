@@ -6,10 +6,10 @@ from typing import Annotated
 from agent_framework.azure import AzureOpenAIChatClient
 from azure.identity import DefaultAzureCredential
 from dotenv import load_dotenv
+load_dotenv()
 
 from azure.ai.agentserver.agentframework import from_agent_framework
 
-load_dotenv()
 
 
 def get_weather(
