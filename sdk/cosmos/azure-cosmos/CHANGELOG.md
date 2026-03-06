@@ -10,6 +10,7 @@
 #### Breaking Changes
 
 #### Bugs Fixed
+* Fixed bug where a compound session token (containing multiple partition tokens) was sent for single-partition feed range queries. See [PR 44484](https://github.com/Azure/azure-sdk-for-python/pull/44484)
 
 #### Other Changes
 
