@@ -17,6 +17,8 @@ from azure.core.credentials import AzureKeyCredential
 
 from .._version import SDK_MONIKER
 from .._api_versions import DEFAULT_VERSION
+from .._credential.call_automation_auth_policy_utils import get_call_automation_auth_policy
+from .._credential.credential_utils import get_custom_enabled, get_custom_url
 from .._utils import serialize_phone_identifier, serialize_identifier, process_repeatability_first_sent
 from .._models import (
     CallParticipant,
@@ -109,6 +111,22 @@ class CallConnectionClient:  # pylint:disable=too-many-public-methods
             if not parsed_url.netloc:
                 raise ValueError(f"Invalid URL: {format(endpoint)}")
 
+        custom_enabled = get_custom_enabled()
+        custom_url = get_custom_url()
+        if custom_enabled and custom_url is not None:
+            self._client = AzureCommunicationCallAutomationService(
+                custom_url,
+                cast(AzureKeyCredential, credential),
+                api_version=api_version or DEFAULT_VERSION,
+                authentication_policy=get_call_automation_auth_policy(
+                    custom_url,
+                    cast(AzureKeyCredential, credential),
+                    acs_url=endpoint
+                    ),
+                sdk_moniker=SDK_MONIKER,
+                **kwargs,
+            )
+        else:
             self._client = AzureCommunicationCallAutomationService(
                 endpoint,
                 credential,  # type: ignore[arg-type]
@@ -117,8 +135,6 @@ class CallConnectionClient:  # pylint:disable=too-many-public-methods
                 sdk_moniker=SDK_MONIKER,
                 **kwargs,
             )
-        else:
-            self._client = call_automation_client
 
         self._call_connection_id = call_connection_id
         self._call_connection_client = self._client.call_connection
