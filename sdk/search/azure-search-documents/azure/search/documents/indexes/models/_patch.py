@@ -32,7 +32,7 @@ if TYPE_CHECKING:
         SearchIndexerDataIdentity,
         SearchResourceEncryptionKey,
     )
-    from ._enums import IndexerPermissionOption, SearchIndexerDataSourceType
+    from ._enums import SearchIndexerDataSourceType
 
 
 class SearchField(_SearchField):
@@ -93,7 +93,7 @@ class SearchIndexerDataSourceConnection(_SearchIndexerDataSourceConnection):
         container: "SearchIndexerDataContainer",
         description: Optional[str] = None,
         identity: Optional["SearchIndexerDataIdentity"] = None,
-        indexer_permission_options: Optional[List[Union[str, "IndexerPermissionOption"]]] = None,
+        indexer_permission_options: Optional[List[str]] = None,
         data_change_detection_policy: Optional["DataChangeDetectionPolicy"] = None,
         data_deletion_detection_policy: Optional["DataDeletionDetectionPolicy"] = None,
         e_tag: Optional[str] = None,
@@ -110,7 +110,7 @@ class SearchIndexerDataSourceConnection(_SearchIndexerDataSourceConnection):
         container: "SearchIndexerDataContainer",
         description: Optional[str] = None,
         identity: Optional["SearchIndexerDataIdentity"] = None,
-        indexer_permission_options: Optional[List[Union[str, "IndexerPermissionOption"]]] = None,
+        indexer_permission_options: Optional[List[str]] = None,
         data_change_detection_policy: Optional["DataChangeDetectionPolicy"] = None,
         data_deletion_detection_policy: Optional["DataDeletionDetectionPolicy"] = None,
         e_tag: Optional[str] = None,
@@ -138,7 +138,7 @@ class KnowledgeBase(_KnowledgeBase):
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         # Properly deserialize retrieval_reasoning_effort if it's a dict
-        effort = self.retrieval_reasoning_effort
+        effort = self.retrieval_reasoning_effort  # type: ignore[has-type]  # pylint: disable=access-member-before-definition
         if effort is not None and isinstance(effort, dict):
             self.retrieval_reasoning_effort = KnowledgeRetrievalReasoningEffort._deserialize(effort, [])
 

@@ -42,13 +42,13 @@ _SERIALIZER.client_side_validation = False
 
 
 def build_knowledge_base_retrieval_retrieve_request(  # pylint: disable=name-too-long
-    knowledge_base_name: str, *, query_source_authorization: Optional[str] = None, **kwargs: Any
+    knowledge_base_name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
 
     # Construct URL
@@ -64,10 +64,6 @@ def build_knowledge_base_retrieval_retrieve_request(  # pylint: disable=name-too
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-    if query_source_authorization is not None:
-        _headers["x-ms-query-source-authorization"] = _SERIALIZER.header(
-            "query_source_authorization", query_source_authorization, "str"
-        )
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
 
@@ -84,7 +80,6 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
         knowledge_base_name: str,
         retrieval_request: _models1.KnowledgeBaseRetrievalRequest,
         *,
-        query_source_authorization: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models1.KnowledgeBaseRetrievalResponse:
@@ -95,10 +90,6 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
         :param retrieval_request: The retrieval request to process. Required.
         :type retrieval_request:
          ~azure.search.documents.knowledgebases.models.KnowledgeBaseRetrievalRequest
-        :keyword query_source_authorization: Token identifying the user for which the query is being
-         executed. This token is used to enforce security restrictions on documents. Default value is
-         None.
-        :paramtype query_source_authorization: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -114,7 +105,6 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
         knowledge_base_name: str,
         retrieval_request: JSON,
         *,
-        query_source_authorization: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models1.KnowledgeBaseRetrievalResponse:
@@ -124,10 +114,6 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
         :type knowledge_base_name: str
         :param retrieval_request: The retrieval request to process. Required.
         :type retrieval_request: JSON
-        :keyword query_source_authorization: Token identifying the user for which the query is being
-         executed. This token is used to enforce security restrictions on documents. Default value is
-         None.
-        :paramtype query_source_authorization: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -143,7 +129,6 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
         knowledge_base_name: str,
         retrieval_request: IO[bytes],
         *,
-        query_source_authorization: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models1.KnowledgeBaseRetrievalResponse:
@@ -153,10 +138,6 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
         :type knowledge_base_name: str
         :param retrieval_request: The retrieval request to process. Required.
         :type retrieval_request: IO[bytes]
-        :keyword query_source_authorization: Token identifying the user for which the query is being
-         executed. This token is used to enforce security restrictions on documents. Default value is
-         None.
-        :paramtype query_source_authorization: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -171,8 +152,6 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
         self,
         knowledge_base_name: str,
         retrieval_request: Union[_models1.KnowledgeBaseRetrievalRequest, JSON, IO[bytes]],
-        *,
-        query_source_authorization: Optional[str] = None,
         **kwargs: Any
     ) -> _models1.KnowledgeBaseRetrievalResponse:
         """KnowledgeBase retrieves relevant data from backing stores.
@@ -184,10 +163,6 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
         :type retrieval_request:
          ~azure.search.documents.knowledgebases.models.KnowledgeBaseRetrievalRequest or JSON or
          IO[bytes]
-        :keyword query_source_authorization: Token identifying the user for which the query is being
-         executed. This token is used to enforce security restrictions on documents. Default value is
-         None.
-        :paramtype query_source_authorization: str
         :return: KnowledgeBaseRetrievalResponse. The KnowledgeBaseRetrievalResponse is compatible with
          MutableMapping
         :rtype: ~azure.search.documents.knowledgebases.models.KnowledgeBaseRetrievalResponse
@@ -216,7 +191,6 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
 
         _request = build_knowledge_base_retrieval_retrieve_request(
             knowledge_base_name=knowledge_base_name,
-            query_source_authorization=query_source_authorization,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -228,6 +202,7 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -249,7 +224,7 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models1.KnowledgeBaseRetrievalResponse, response.json())
 

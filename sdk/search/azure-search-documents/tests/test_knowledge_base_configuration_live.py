@@ -27,7 +27,6 @@ from azure.search.documents.indexes.models import (
 )
 
 from azure.search.documents.knowledgebases.models import (
-    KnowledgeRetrievalMediumReasoningEffort,
     KnowledgeRetrievalMinimalReasoningEffort,
 )
 
@@ -170,7 +169,7 @@ class TestKnowledgeBaseConfigurationLive(AzureRecordedTestCase):
                 name=ctx.base_name,
                 description="config updated",
                 knowledge_sources=[KnowledgeSourceReference(name=ctx.source_name)],
-                retrieval_reasoning_effort=KnowledgeRetrievalMediumReasoningEffort(),
+                retrieval_reasoning_effort=KnowledgeRetrievalMinimalReasoningEffort(),
                 output_mode="answerSynthesis",
                 retrieval_instructions="summarize with details",
                 answer_instructions="include citations and summaries",
