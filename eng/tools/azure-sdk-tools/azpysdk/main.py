@@ -10,6 +10,7 @@ from __future__ import annotations
 import argparse
 import shutil
 import os
+import sys
 from typing import Sequence, Optional
 
 from .import_all import import_all
@@ -27,11 +28,15 @@ from .verifytypes import verifytypes
 from .apistub import apistub
 from .verify_sdist import verify_sdist
 from .whl import whl
+from .sdist import sdist
+from .whl_no_aio import whl_no_aio
 from .verify_whl import verify_whl
 from .bandit import bandit
 from .verify_keywords import verify_keywords
 from .generate import generate
 from .breaking import breaking
+from .mindependency import mindependency
+from .latestdependency import latestdependency
 from .samples import samples
 from .devtest import devtest
 from .optional import optional
@@ -74,6 +79,11 @@ def build_parser() -> argparse.ArgumentParser:
     common.add_argument(
         "--isolate", action="store_true", default=False, help="If set, run in an isolated virtual environment."
     )
+    common.add_argument(
+        "--service",
+        default=None,
+        help="Name of service directory (under sdk/) to scope package discovery. 'auto' is treated as unset.",
+    )
 
     subparsers = parser.add_subparsers(title="commands", dest="command")
 
@@ -93,11 +103,15 @@ def build_parser() -> argparse.ArgumentParser:
     apistub().register(subparsers, [common])
     verify_sdist().register(subparsers, [common])
     whl().register(subparsers, [common])
+    sdist().register(subparsers, [common])
+    whl_no_aio().register(subparsers, [common])
     verify_whl().register(subparsers, [common])
     bandit().register(subparsers, [common])
     verify_keywords().register(subparsers, [common])
     generate().register(subparsers, [common])
     breaking().register(subparsers, [common])
+    mindependency().register(subparsers, [common])
+    latestdependency().register(subparsers, [common])
     samples().register(subparsers, [common])
     devtest().register(subparsers, [common])
     optional().register(subparsers, [common])
@@ -114,6 +128,8 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     Returns:
         Exit code to return to the OS.
     """
+    original_cwd = os.getcwd()
+
     parser = build_parser()
     args = parser.parse_args(argv)
 
@@ -123,13 +139,15 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         parser.print_help()
         return 1
 
-    # default to uv if available
-    uv_path = shutil.which("uv")
-    if uv_path:
-        os.environ["TOX_PIP_IMPL"] = "uv"
+    # default to uv if available, but respect an explicit TOX_PIP_IMPL setting
+    if "TOX_PIP_IMPL" not in os.environ:
+        uv_path = shutil.which("uv")
+        if uv_path:
+            os.environ["TOX_PIP_IMPL"] = "uv"
 
     try:
         result = args.func(args)
+        print(f"{args.command} check completed with exit code {result}")
         return int(result or 0)
     except KeyboardInterrupt:
         logger.error("Interrupted by user")
@@ -137,6 +155,8 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     except Exception as exc:  # pragma: no cover - simple top-level error handling
         logger.error(f"Error: {exc}")
         return 2
+    finally:
+        os.chdir(original_cwd)
 
 
 if __name__ == "__main__":

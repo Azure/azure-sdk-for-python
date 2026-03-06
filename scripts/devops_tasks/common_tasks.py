@@ -17,14 +17,23 @@ import logging
 from subprocess import check_call, CalledProcessError, Popen
 from argparse import Namespace
 from typing import Iterable
+from sys import executable
 
-# Assumes the presence of setuptools
-from pkg_resources import parse_version, parse_requirements, Requirement, WorkingSet, working_set
+import importlib.metadata as importlib_metadata
+
+from packaging.version import parse as parse_version
+from packaging.requirements import Requirement
 
 # this assumes the presence of "packaging"
 from packaging.specifiers import SpecifierSet
 
-from ci_tools.functions import MANAGEMENT_PACKAGE_IDENTIFIERS, NO_TESTS_ALLOWED, lambda_filter_azure_pkg, str_to_bool
+from ci_tools.functions import (
+    MANAGEMENT_PACKAGE_IDENTIFIERS,
+    NO_TESTS_ALLOWED,
+    lambda_filter_azure_pkg,
+    str_to_bool,
+    run_pip_freeze,
+)
 from ci_tools.parsing import parse_require, ParsedSetup
 
 DEV_REQ_FILE = "dev_requirements.txt"
@@ -107,9 +116,7 @@ def create_code_coverage_params(parsed_args: Namespace, package_path: str):
         coverage_args.append("--cov={}".format(namespace))
         coverage_args.append("--cov-append")
         logging.info(
-            "Code coverage is enabled for package {0}, pytest arguements: {1}".format(
-                namespace, coverage_args
-            )
+            "Code coverage is enabled for package {0}, pytest arguements: {1}".format(namespace, coverage_args)
         )
     return coverage_args
 
@@ -230,9 +237,35 @@ def find_tools_packages(root_path):
 
 def get_installed_packages(paths=None):
     """Find packages in default or given lib paths"""
-    # WorkingSet returns installed packages in given path
-    # working_set returns installed packages in default path
-    # if paths is set then find installed packages from given paths
-    ws = WorkingSet(paths) if paths else working_set
-    return ["{0}=={1}".format(p.project_name, p.version) for p in ws]
+    # Use importlib.metadata to get installed packages
+    if paths:
+        import sys
 
+        # For path-specific search, we need to create a new metadata finder
+        # that searches in the specified paths
+        packages = []
+        for path in paths:
+            if os.path.exists(path):
+                # Add the path temporarily to find distributions there
+                original_path = sys.path[:]
+                try:
+                    sys.path.insert(0, path)
+                    # Get distributions and filter by location
+                    for dist in importlib_metadata.distributions():
+                        try:
+                            # Check if the distribution is actually from this path
+                            dist_path = str(dist._path) if hasattr(dist, "_path") else ""
+                            if path in dist_path:
+                                package_name = dist.metadata["Name"]
+                                package_version = dist.version
+                                package_str = "{0}=={1}".format(package_name, package_version)
+                                if package_str not in packages:
+                                    packages.append(package_str)
+                        except Exception:
+                            # Skip packages that can't be processed
+                            continue
+                finally:
+                    sys.path[:] = original_path
+        return packages
+    else:
+        return run_pip_freeze()

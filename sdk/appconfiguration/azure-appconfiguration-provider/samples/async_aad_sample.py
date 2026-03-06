@@ -3,12 +3,11 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-
+import os
 import asyncio
+from sample_utilities import get_authority, get_credential, get_client_modifications
 from azure.appconfiguration.provider.aio import load
 from azure.appconfiguration.provider import SettingSelector
-import os
-from sample_utilities import get_authority, get_credential, get_client_modifications
 
 
 async def main():

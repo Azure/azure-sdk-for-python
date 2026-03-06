@@ -5,28 +5,27 @@
 # --------------------------------------------------------------------------
 from functools import cached_property
 from logging import getLogger, Formatter
-from typing import Dict, List, Optional, cast
-
-from opentelemetry.instrumentation.instrumentor import (  # type: ignore
-    BaseInstrumentor,
-)
+from typing import Any, Dict, List, Optional, cast
 from opentelemetry.metrics import set_meter_provider
 from opentelemetry.sdk.metrics import MeterProvider
-from opentelemetry.sdk.metrics.export import PeriodicExportingMetricReader
+from opentelemetry.sdk.metrics.export import PeriodicExportingMetricReader, MetricReader
 from opentelemetry.sdk.metrics.view import View
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
 from opentelemetry.trace import set_tracer_provider
-from opentelemetry.util._importlib_metadata import (
+from opentelemetry.util._importlib_metadata import (  # pylint: disable=import-error
     EntryPoint,
     distributions,
     entry_points,
 )
 
+from azure.monitor.opentelemetry._browser_sdk_loader import setup_snippet_injection
+from azure.monitor.opentelemetry._browser_sdk_loader._config import BrowserSDKConfig
 from azure.monitor.opentelemetry._constants import (
     _ALL_SUPPORTED_INSTRUMENTED_LIBRARIES,
     _AZURE_SDK_INSTRUMENTATION_NAME,
+    BROWSER_SDK_LOADER_CONFIG_ARG,
     DISABLE_LOGGING_ARG,
     DISABLE_METRICS_ARG,
     DISABLE_TRACING_ARG,
@@ -38,8 +37,12 @@ from azure.monitor.opentelemetry._constants import (
     SAMPLING_RATIO_ARG,
     SAMPLING_TRACES_PER_SECOND_ARG,
     SPAN_PROCESSORS_ARG,
+    LOG_RECORD_PROCESSORS_ARG,
+    METRIC_READERS_ARG,
     VIEWS_ARG,
     ENABLE_TRACE_BASED_SAMPLING_ARG,
+    SAMPLING_ARG,
+    SAMPLER_TYPE,
 )
 from azure.monitor.opentelemetry._types import ConfigurationValue
 from azure.monitor.opentelemetry.exporter._quickpulse import (  # pylint: disable=import-error,no-name-in-module
@@ -73,6 +76,7 @@ from azure.monitor.opentelemetry._diagnostics.diagnostic_logging import (
 from azure.monitor.opentelemetry._utils.configurations import (
     _get_configurations,
     _is_instrumentation_enabled,
+    _get_sampler_from_name,
 )
 from azure.monitor.opentelemetry._utils.instrumentation import (
     get_dist_dependency_conflicts,
@@ -102,8 +106,12 @@ def configure_azure_monitor(**kwargs) -> None:  # pylint: disable=C4758
      Attributes take priority over default attributes and those from Resource Detectors.
     :keyword list[~opentelemetry.sdk.trace.SpanProcessor] span_processors: List of `SpanProcessor` objects
      to process every span prior to exporting. Will be run sequentially.
+    :keyword list[~opentelemetry.sdk._logs.LogRecordProcessor] log_record_processors: List of `LogRecordProcessor`
+     objects to process every log record prior to exporting. Will be run sequentially.
+    :keyword list[~opentelemetry.sdk.metrics.MetricReader] metric_readers: List of MetricReader objects to read and
+     export metrics. Each reader can have its own exporter and collection interval.
     :keyword bool enable_live_metrics: Boolean value to determine whether to enable live metrics feature.
-     Defaults to `False`.
+     Defaults to `True`.
     :keyword bool enable_performance_counters: Boolean value to determine whether to enable performance counters.
      Defaults to `True`.
     :keyword str storage_directory: Storage directory in which to store retry files. Defaults to
@@ -112,6 +120,9 @@ def configure_azure_monitor(**kwargs) -> None:  # pylint: disable=C4758
      metric output.
     :keyword bool enable_trace_based_sampling_for_logs: Boolean value to determine whether to enable trace based
      sampling for logs. Defaults to `False`
+    :keyword dict browser_sdk_loader_config: Configuration dictionary for browser SDK loader behavior.
+     Supports keys like 'connection_string' (separate connection string for browser SDK), 'enabled' (boolean),
+     and framework-specific options. Defaults to `{}`.
     :rtype: None
     """
 
@@ -124,40 +135,51 @@ def configure_azure_monitor(**kwargs) -> None:  # pylint: disable=C4758
     disable_metrics = configurations[DISABLE_METRICS_ARG]
     enable_live_metrics_config = configurations[ENABLE_LIVE_METRICS_ARG]
 
-    # Setup live metrics
-    if enable_live_metrics_config:
-        _setup_live_metrics(configurations)
-
-    # Setup tracing pipeline
-    if not disable_tracing:
-        _setup_tracing(configurations)
-
-    # Setup logging pipeline
-    if not disable_logging:
-        _setup_logging(configurations)
-
-    # Setup metrics pipeline
+    # Set up metrics pipeline
+    # Set up metrics with Performance Counters before _PerformanceCountersSpanProcessor and
+    # _PerformanceCountersLogRecordProcessor. This avoids a circular dependency in the case that Performance Counter
+    # setup produces a log.
     if not disable_metrics:
         _setup_metrics(configurations)
 
-    # Setup instrumentations
-    # Instrumentations need to be setup last so to use the global providers
-    # instanstiated in the other setup steps
+    # Set up live metrics
+    if enable_live_metrics_config:
+        _setup_live_metrics(configurations)
+
+    # Set up tracing pipeline
+    if not disable_tracing:
+        _setup_tracing(configurations)
+
+    # Set up logging pipeline
+    if not disable_logging:
+        _setup_logging(configurations)
+
+    # Set up instrumentations
+    # Instrumentations need to be set up last so to use the global providers
+    # instantiated in the other setup steps
     _setup_instrumentations(configurations)
+
+    # Setup browser SDK loader for supported frameworks
+    _setup_browser_sdk_loader(configurations)
 
 
 def _setup_tracing(configurations: Dict[str, ConfigurationValue]):
     resource: Resource = configurations[RESOURCE_ARG]  # type: ignore
     enable_performance_counters_config = configurations[ENABLE_PERFORMANCE_COUNTERS_ARG]
-    if SAMPLING_TRACES_PER_SECOND_ARG in configurations:
-        traces_per_second = configurations[SAMPLING_TRACES_PER_SECOND_ARG]
-        tracer_provider = TracerProvider(
-            sampler=RateLimitedSampler(target_spans_per_second_limit=cast(float, traces_per_second)), resource=resource
-        )
-    else:
+    if SAMPLING_ARG in configurations:
+        sampler_arg = configurations[SAMPLING_ARG]
+        sampler_type = configurations[SAMPLER_TYPE]
+        sampler = _get_sampler_from_name(sampler_type, sampler_arg)
+        tracer_provider = TracerProvider(sampler=sampler, resource=resource)
+    elif SAMPLING_RATIO_ARG in configurations:
         sampling_ratio = configurations[SAMPLING_RATIO_ARG]
         tracer_provider = TracerProvider(
             sampler=ApplicationInsightsSampler(sampling_ratio=cast(float, sampling_ratio)), resource=resource
+        )
+    else:
+        traces_per_second = configurations[SAMPLING_TRACES_PER_SECOND_ARG]
+        tracer_provider = TracerProvider(
+            sampler=RateLimitedSampler(target_spans_per_second_limit=cast(float, traces_per_second)), resource=resource
         )
 
     for span_processor in configurations[SPAN_PROCESSORS_ARG]:  # type: ignore
@@ -212,15 +234,17 @@ def _setup_logging(configurations: Dict[str, ConfigurationValue]):
         enable_performance_counters_config = configurations[ENABLE_PERFORMANCE_COUNTERS_ARG]
         logger_provider = LoggerProvider(resource=resource)
         enable_trace_based_sampling_for_logs = configurations[ENABLE_TRACE_BASED_SAMPLING_ARG]
+        for custom_log_record_processor in configurations[LOG_RECORD_PROCESSORS_ARG]:  # type: ignore
+            logger_provider.add_log_record_processor(custom_log_record_processor)  # type: ignore
         if configurations.get(ENABLE_LIVE_METRICS_ARG):
             qlp = _QuickpulseLogRecordProcessor()
             logger_provider.add_log_record_processor(qlp)
         if enable_performance_counters_config:
             pclp = _PerformanceCountersLogRecordProcessor()
             logger_provider.add_log_record_processor(pclp)
-        log_exporter = AzureMonitorLogExporter(**configurations)
+        log_record_exporter = AzureMonitorLogExporter(**configurations)
         log_record_processor = _AzureBatchLogRecordProcessor(
-            log_exporter,
+            log_record_exporter,
             {"enable_trace_based_sampling_for_logs": enable_trace_based_sampling_for_logs},
         )
         logger_provider.add_log_record_processor(log_record_processor)
@@ -270,11 +294,12 @@ def _setup_logging(configurations: Dict[str, ConfigurationValue]):
 def _setup_metrics(configurations: Dict[str, ConfigurationValue]):
     resource: Resource = configurations[RESOURCE_ARG]  # type: ignore
     views: List[View] = configurations[VIEWS_ARG]  # type: ignore
+    readers: list[MetricReader] = configurations[METRIC_READERS_ARG]  # type: ignore
     enable_performance_counters_config = configurations[ENABLE_PERFORMANCE_COUNTERS_ARG]
     metric_exporter = AzureMonitorMetricExporter(**configurations)
-    reader = PeriodicExportingMetricReader(metric_exporter)
+    readers.append(PeriodicExportingMetricReader(metric_exporter))
     meter_provider = MeterProvider(
-        metric_readers=[reader],
+        metric_readers=readers,
         resource=resource,
         views=views,
     )
@@ -326,7 +351,7 @@ def _setup_instrumentations(configurations: Dict[str, ConfigurationValue]):
                 )
                 continue
             # Load the instrumentor via entrypoint
-            instrumentor: BaseInstrumentor = entry_point.load()
+            instrumentor: Any = entry_point.load()
             # tell instrumentation to not run dep checks again as we already did it above
             instrumentor().instrument(skip_dep_check=True)
         except Exception as ex:  # pylint: disable=broad-except
@@ -340,9 +365,17 @@ def _setup_instrumentations(configurations: Dict[str, ConfigurationValue]):
 
 def _send_attach_warning():
     if _is_attach_enabled() and not _is_on_functions():
+        # TODO: When AKS attach is public, update this message with disablement instructions for AKS
+        message = (
+            "Distro detected that automatic instrumentation may have occurred. Only use autoinstrumentation if you "
+            "are not using manual instrumentation of OpenTelemetry in your code, such as with "
+            "azure-monitor-opentelemetry or azure-monitor-opentelemetry-exporter. For App Service resources, disable "
+            "autoinstrumentation in the Application Insights experience on your App Service resource or by setting "
+            "the ApplicationInsightsAgent_EXTENSION_VERSION app setting to 'disabled'."
+        )
+        _logger.warning(message)
         AzureDiagnosticLogging.warning(
-            "Distro detected that automatic attach may have occurred. Check your data to ensure "
-            "that telemetry is not being duplicated. This may impact your cost.",
+            message,
             _DISTRO_DETECTS_ATTACH,
         )
 
@@ -384,3 +417,42 @@ def _setup_additional_azure_sdk_instrumentations(configurations: Dict[str, Confi
                     class_name,
                     exc_info=ex,
                 )
+
+
+def _setup_browser_sdk_loader(configurations: Dict[str, ConfigurationValue]):
+    """Setup browser SDK loader for supported frameworks.
+
+    :param configurations: Configuration dictionary containing browser SDK loader settings.
+    :type configurations: Dict[str, ConfigurationValue]
+    """
+    try:
+        # Get browser SDK loader configuration
+        browser_sdk_loader_config_value = configurations.get(BROWSER_SDK_LOADER_CONFIG_ARG)
+        if isinstance(browser_sdk_loader_config_value, dict):
+            browser_sdk_loader_config = browser_sdk_loader_config_value
+        else:
+            # Create typed empty dict to satisfy mypy
+            browser_sdk_loader_config = cast(Dict[str, Any], {})
+
+        # Check if browser SDK loader should be enabled (default False)
+        enabled = browser_sdk_loader_config.get("enabled", False)
+        if not enabled:
+            _logger.debug("Browser SDK loader disabled via configuration")
+            return
+
+        # Get connection string (use browser SDK config first, then main config)
+        connection_string = browser_sdk_loader_config.get("connection_string") or cast(
+            str, configurations.get("connection_string", "")
+        )
+        if not connection_string or not isinstance(connection_string, str):
+            _logger.debug("No valid connection string - skipping browser SDK loader setup")
+            return
+
+        # Create BrowserSDKConfig object
+        browser_config = BrowserSDKConfig(enabled=enabled, connection_string=connection_string)
+
+        # Setup snippet injection for supported frameworks
+        setup_snippet_injection(browser_config)
+
+    except Exception as ex:  # pylint: disable=broad-except
+        _logger.debug("Failed to setup browser SDK loader: %s", ex, exc_info=True)

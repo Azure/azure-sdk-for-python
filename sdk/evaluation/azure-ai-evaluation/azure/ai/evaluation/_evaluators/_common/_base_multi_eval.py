@@ -39,25 +39,46 @@ class MultiEvaluatorBase(EvaluatorBase[T]):
         a single large dictionary containing each evaluation. Inputs are passed
         directly to each evaluator without additional processing.
 
+        Special handling:  evaluation_per_turn dicts from multiple evaluators are merged
+        together rather than overwriting each other.
 
         :param eval_input: The input to the evaluation function.
         :type eval_input: Dict
-        :return: The evaluation result.
+        :return:  The evaluation result.
         :rtype: Dict
         """
         results: Dict[str, T] = {}
+        combined_evaluation_per_turn: Dict[str, List] = {}
+
         if self._parallel:
             with ThreadPoolExecutor() as executor:
                 # pylint: disable=no-value-for-parameter
                 futures = {executor.submit(evaluator, **eval_input): evaluator for evaluator in self._evaluators}
 
                 for future in as_completed(futures):
-                    results.update(future.result())
+                    result = future.result()
+
+                    # Extract evaluation_per_turn before updating to avoid overwriting
+                    if "evaluation_per_turn" in result:
+                        ept = result.pop("evaluation_per_turn")
+                        combined_evaluation_per_turn.update(ept)
+
+                    results.update(result)
         else:
             for evaluator in self._evaluators:
                 result = evaluator(**eval_input)
+
+                # Extract evaluation_per_turn before updating to avoid overwriting
+                if "evaluation_per_turn" in result:
+                    ept = result.pop("evaluation_per_turn")
+                    combined_evaluation_per_turn.update(ept)
+
                 # Ignore is to avoid mypy getting upset over the amount of duck-typing
                 # that's going on to shove evaluators around like this.
                 results.update(result)  # type: ignore[arg-type]
+
+        # Add the combined evaluation_per_turn back to results
+        if combined_evaluation_per_turn:
+            results["evaluation_per_turn"] = combined_evaluation_per_turn
 
         return results

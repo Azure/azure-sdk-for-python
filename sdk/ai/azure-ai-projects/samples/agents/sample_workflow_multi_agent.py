@@ -14,7 +14,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b1" python-dotenv aiohttp
+    pip install "azure-ai-projects>=2.0.0" python-dotenv aiohttp
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
@@ -30,9 +30,7 @@ from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
     PromptAgentDefinition,
-    ResponseStreamEventType,
     WorkflowAgentDefinition,
-    ItemType,
 )
 
 load_dotenv()
@@ -41,7 +39,7 @@ endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
 
 with (
     DefaultAzureCredential() as credential,
-    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+    AIProjectClient(endpoint=endpoint, credential=credential, allow_preview=True) as project_client,
     project_client.get_openai_client() as openai_client,
 ):
     # Create Teacher Agent
@@ -109,6 +107,10 @@ trigger:
       output:
         messages: Local.LatestMessage
 
+    - kind: SendActivity
+      id: send_teacher_reply
+      activity: "{{Last(Local.LatestMessage).Text}}"                
+
     - kind: SetVariable
       id: set_variable_turncount
       variable: Local.TurnCount
@@ -148,22 +150,23 @@ trigger:
 
     stream = openai_client.responses.create(
         conversation=conversation.id,
-        extra_body={"agent": {"name": workflow.name, "type": "agent_reference"}},
+        extra_body={"agent_reference": {"name": workflow.name, "type": "agent_reference"}},
         input="1 + 1 = ?",
         stream=True,
-        metadata={"x-ms-debug-mode-enabled": "1"},
     )
 
     for event in stream:
         print(f"Event {event.sequence_number} type '{event.type}'", end="")
         if (
-            event.type == ResponseStreamEventType.RESPONSE_OUTPUT_ITEM_ADDED
-            or event.type == ResponseStreamEventType.RESPONSE_OUTPUT_ITEM_DONE
-        ) and event.item.type == ItemType.WORKFLOW_ACTION:
+            event.type == "response.output_item.added" or event.type == "response.output_item.done"
+        ) and event.item.type == "workflow_action":
             print(
                 f": item action ID '{event.item.action_id}' is '{event.item.status}' (previous action ID: '{event.item.previous_action_id}')",
                 end="",
             )
+        elif event.type == "response.completed":
+            response = openai_client.responses.retrieve(event.response.id)
+            print(f": Final Response: {response}", end="")
         print("", flush=True)
 
     openai_client.conversations.delete(conversation_id=conversation.id)

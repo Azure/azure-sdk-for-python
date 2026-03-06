@@ -58,6 +58,8 @@ from ._gallery_images_operations import GalleryImagesOperations  # type: ignore
 from ._gallery_image_versions_operations import GalleryImageVersionsOperations  # type: ignore
 from ._gallery_in_vm_access_control_profiles_operations import GalleryInVMAccessControlProfilesOperations  # type: ignore
 from ._gallery_in_vm_access_control_profile_versions_operations import GalleryInVMAccessControlProfileVersionsOperations  # type: ignore
+from ._gallery_scripts_operations import GalleryScriptsOperations  # type: ignore
+from ._gallery_script_versions_operations import GalleryScriptVersionsOperations  # type: ignore
 from ._gallery_sharing_profile_operations import GallerySharingProfileOperations  # type: ignore
 from ._soft_deleted_resource_operations import SoftDeletedResourceOperations  # type: ignore
 from ._cloud_service_role_instances_operations import CloudServiceRoleInstancesOperations  # type: ignore
@@ -116,6 +118,8 @@ __all__ = [
     "GalleryImageVersionsOperations",
     "GalleryInVMAccessControlProfilesOperations",
     "GalleryInVMAccessControlProfileVersionsOperations",
+    "GalleryScriptsOperations",
+    "GalleryScriptVersionsOperations",
     "GallerySharingProfileOperations",
     "SoftDeletedResourceOperations",
     "CloudServiceRoleInstancesOperations",

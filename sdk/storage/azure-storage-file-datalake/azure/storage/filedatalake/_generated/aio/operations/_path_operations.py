@@ -69,7 +69,7 @@ class PathOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
-    async def create(
+    async def create(  # pylint: disable=too-many-locals
         self,
         request_id_parameter: Optional[str] = None,
         timeout: Optional[int] = None,
@@ -329,7 +329,7 @@ class PathOperations:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
-    async def update(
+    async def update(  # pylint: disable=too-many-locals
         self,
         action: Union[str, _models.PathUpdateAction],
         mode: Union[str, _models.PathSetAccessControlRecursiveMode],
@@ -1463,7 +1463,7 @@ class PathOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def flush_data(
+    async def flush_data(  # pylint: disable=too-many-locals
         self,
         timeout: Optional[int] = None,
         position: Optional[int] = None,
@@ -1662,7 +1662,7 @@ class PathOperations:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
-    async def append_data(
+    async def append_data(  # pylint: disable=too-many-locals
         self,
         body: IO[bytes],
         position: Optional[int] = None,

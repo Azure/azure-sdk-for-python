@@ -27,17 +27,12 @@ NOTE:
 # [START conversation_authoring_list_assigned_resource_deployments_async]
 import os
 import asyncio
-from datetime import date, datetime
 from azure.identity.aio import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
 from azure.ai.language.conversations.authoring.aio import ConversationAuthoringClient
-from azure.ai.language.conversations.authoring.models import (
-    AssignedProjectDeploymentsMetadata,
-    AssignedProjectDeploymentMetadata,
-)
 
 
-async def sample_list_assigned_resource_deployments_async():
+async def sample_list_assigned_deployments_async():
     # settings
     endpoint = os.environ["AZURE_CONVERSATIONS_AUTHORING_ENDPOINT"]
 
@@ -62,7 +57,7 @@ async def sample_list_assigned_resource_deployments_async():
 
 
 async def main():
-    await sample_list_assigned_resource_deployments_async()
+    await sample_list_assigned_deployments_async()
 
 
 if __name__ == "__main__":

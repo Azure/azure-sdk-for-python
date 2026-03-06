@@ -1,5 +1,3 @@
 {
-  "apiVersion": "2025-10-15",
-  "service_name": "Cognitive Services",
-  "msDocService": "cognitive-services"
+  "apiVersion": "2025-10-15"
 }

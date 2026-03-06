@@ -22,5 +22,5 @@ def test_configure_logging_various_levels(mock_basic_config, cli_args, level_env
     configure_logging(cli_args)
     assert logger.level == expected_level
     mock_basic_config.assert_called_with(
-        level=expected_level, format="%(asctime)s [%(levelname)s] %(name)s: %(message)s"
+        level=expected_level, format="%(asctime)s [%(levelname)s] %(name)s: %(message)s", force=True
     )

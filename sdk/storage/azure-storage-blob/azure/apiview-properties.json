@@ -47,6 +47,7 @@
         "azure.storage.blob.models.RetentionPolicy": null,
         "azure.storage.blob.models.SequenceNumberAccessConditions": null,
         "azure.storage.blob.models.SignedIdentifier": null,
+        "azure.storage.blob.models.SourceCpkInfo": null,
         "azure.storage.blob.models.SourceModifiedAccessConditions": null,
         "azure.storage.blob.models.StaticWebsite": null,
         "azure.storage.blob.models.StorageError": null,

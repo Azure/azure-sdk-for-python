@@ -1,14 +1,58 @@
 # Release History
 
-## 1.0.0b47 (Unreleased)
+## 1.0.0b49 (Unreleased)
 
 ### Features Added
+
+- Add Browser SDK loader SDK Stats feature bit ([#42904](https://github.com/Azure/azure-sdk-for-python/pull/44162))
 
 ### Breaking Changes
 
 ### Bugs Fixed
+- Add environment variable to disable/enable custom properties truncation
+  ([#45479](https://github.com/Azure/azure-sdk-for-python/pull/45479))
+- Fix io counters import issue in performance counters
+  ([#45286](https://github.com/Azure/azure-sdk-for-python/pull/45286))
+- Remove custom properties truncation
+  ([#45118](https://github.com/Azure/azure-sdk-for-python/pull/45118))
+- Fix fallback logic when connection string is provided only via environment variable
+  ([#45252](https://github.com/Azure/azure-sdk-for-python/pull/45252))
 
 ### Other Changes
+
+## 1.0.0b48 (2026-02-05)
+
+### Bugs Fixed
+- Fix CPU usage calculation logic for live metrics
+  ([#45005](https://github.com/Azure/azure-sdk-for-python/pull/45005))
+
+### Other Changes
+- Fix Ingestion-Side Sampling Disk Persist Behavior
+  ([#44980](https://github.com/Azure/azure-sdk-for-python/pull/44980))
+
+## 1.0.0b47 (2026-02-03)
+
+### Features Added
+- Rename metric names for customer sdk stats and set it on by default
+  ([#44849](https://github.com/Azure/azure-sdk-for-python/pull/44849))
+- Add auto detection for application ID from connection string if not set 
+  ([#44644](https://github.com/Azure/azure-sdk-for-python/pull/44644))
+- Add support for user id and authId
+  ([#44662](https://github.com/Azure/azure-sdk-for-python/pull/44662))
+
+### Bugs Fixed
+- Add custom metric mapping for customer sdkstats metric names to preserve casing
+  ([#44855](https://github.com/Azure/azure-sdk-for-python/pull/44855))
+- Fix customer SDK stats metrics to display drop code and retry code enum values without the prefix
+  ([#44852](https://github.com/Azure/azure-sdk-for-python/pull/44852))
+
+### Other Changes
+- Feature tracking for when customer sdkstats is disabled by the user
+  ([#44888](https://github.com/Azure/azure-sdk-for-python/pull/44888))
+- Update maximum size of custom properties
+  ([#44684](https://github.com/Azure/azure-sdk-for-python/pull/44684))
+- Declare support for Python 3.13 and 3.14
+  ([#44550](https://github.com/Azure/azure-sdk-for-python/pull/44550))
 
 ## 1.0.0b46 (2025-12-04)
 

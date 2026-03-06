@@ -218,6 +218,32 @@ def add_sanitizers(
         ]
         add_remove_header_sanitizer(headers=",".join(headers_to_ignore))
 
+        # Sanitize the aml-user-token header to prevent recording mismatches
+        add_header_regex_sanitizer(key="aml-user-token", regex="^.*$", value="YOU SHALL NOT PASS")
+
+        # Sanitize the category field in sync_evals requests to handle taxonomy variations
+        # The category comes from risk_sub_type/taxonomy and can vary between live and playback
+        add_body_key_sanitizer(
+            json_path="$.data_source.source.content.item.properties.category", value="sanitized_category"
+        )
+        add_body_key_sanitizer(
+            json_path="$.data_source.source.content.item.properties.taxonomy", value="sanitized_taxonomy"
+        )
+
+        # Sanitize the response field in sync_evals requests to handle variable content
+        # The response can include conversation_objective which varies per attack
+        # Use (?s).+ regex so multi-line response values are fully replaced (default .+ doesn't match newlines).
+        add_body_key_sanitizer(
+            json_path="$.data_source.source.content.item.response", value="sanitized_response", regex="(?s).+"
+        )
+
+        # Sanitize the query field in sync_evals requests to handle dynamic adversarial prompts.
+        # The query contains generated attack text that varies between live and playback.
+        # Use (?s).+ regex so multi-line query values are fully replaced (default .+ doesn't match newlines).
+        add_body_key_sanitizer(
+            json_path="$.data_source.source.content.item.query", value="sanitized_query", regex="(?s).+"
+        )
+
     azure_workspace_triad_sanitizer()
     azureopenai_connection_sanitizer()
     openai_stainless_default_headers()
@@ -301,7 +327,7 @@ def simple_conversation():
 def redirect_openai_requests():
     """Route requests from the openai package to the test proxy."""
     config = TestProxyConfig(
-        recording_id=get_recording_id(), recording_mode="record" if is_live() else "playback", proxy_url=PROXY_URL
+        recording_id=get_recording_id(), recording_mode="record" if is_live() else "playback", proxy_url=PROXY_URL()
     )
 
     with TestProxyHttpxClientBase.record_with_proxy(config):
@@ -527,8 +553,10 @@ def mock_trace_destination_to_cloud(project_scope: dict):
 @pytest.fixture
 def mock_validate_trace_destination():
     """Mock validate trace destination config to use in unit tests."""
-
-    with patch("promptflow._sdk._tracing.TraceDestinationConfig.validate", return_value=None):
+    try:
+        with patch("promptflow._sdk._tracing.TraceDestinationConfig.validate", return_value=None):
+            yield
+    except (ModuleNotFoundError, AttributeError, ImportError):
         yield
 
 

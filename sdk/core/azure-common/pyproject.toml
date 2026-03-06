@@ -6,3 +6,6 @@ mypy = false
 pylint = false
 regression = false
 black = false
+
+[tool.azure-sdk-conda]
+in_bundle = false
