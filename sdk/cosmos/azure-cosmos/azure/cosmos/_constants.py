@@ -111,6 +111,10 @@ class _Constants:
         EXCLUDED_LOCATIONS: Literal["excludedLocations"] = "excludedLocations"
         AVAILABILITY_STRATEGY: Literal["availabilityStrategy"] = "availabilityStrategy"
         """Availability strategy config. Used either at client level or request level"""
+        READ_TIMEOUT: Literal["read_timeout"] = "read_timeout"
+        """Socket read timeout in seconds. Used either at client level or request level."""
+        TIMEOUT: Literal["timeout"] = "timeout"
+        """Absolute timeout in seconds for the combined HTTP request and response processing."""
 
     class UserAgentFeatureFlags(IntEnum):
         """

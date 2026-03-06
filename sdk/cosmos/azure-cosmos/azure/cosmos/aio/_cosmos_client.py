@@ -83,12 +83,7 @@ def _build_connection_policy(kwargs: dict[str, Any]) -> ConnectionPolicy:
     else:
         policy.RequestTimeout = kwargs.pop('connection_timeout', policy.RequestTimeout)
 
-    # Check if read_timeout is explicitly provided in kwargs (client-level)
-    if 'read_timeout' in kwargs:
-        policy.ReadTimeout = kwargs.pop('read_timeout')
-        # Otherwise, check if policy has the new read_timeout property
-    elif hasattr(policy, 'read_timeout') and policy.read_timeout is not None:
-        policy.ReadTimeout = policy.read_timeout
+    policy.ReadTimeout = kwargs.pop(Constants.Kwargs.READ_TIMEOUT, policy.ReadTimeout)
 
     policy.ConnectionMode = kwargs.pop('connection_mode', policy.ConnectionMode)
     policy.ProxyConfiguration = kwargs.pop('proxy_config', policy.ProxyConfiguration)
@@ -155,6 +150,9 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         More on consistency levels and possible values: https://aka.ms/cosmos-consistency-levels
     :keyword int timeout: An absolute timeout in seconds, for the combined HTTP request and response processing.
     :keyword int connection_timeout: The HTTP request timeout in seconds.
+    :keyword float read_timeout: The socket read timeout in seconds. This is the time the client will wait for a
+        response from the server after a connection has been established. If not specified, the default value of
+        65 seconds is used. This can be overridden at the request level.
     :keyword str connection_mode: The connection mode for the client - currently only supports 'Gateway'.
     :keyword proxy_config: Connection proxy configuration.
     :paramtype proxy_config: ~azure.cosmos.ProxyConfiguration

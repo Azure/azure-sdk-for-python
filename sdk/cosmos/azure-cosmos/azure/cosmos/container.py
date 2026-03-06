@@ -105,10 +105,10 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
                 kwargs['excluded_locations'] = options['excludedLocations']
             if Constants.OperationStartTime in options:
                 kwargs[Constants.OperationStartTime] = options[Constants.OperationStartTime]
-            if "timeout" in options:
-                kwargs['timeout'] = options['timeout']
-            if "read_timeout" in options:
-                kwargs['read_timeout'] = options['read_timeout']
+            if Constants.Kwargs.TIMEOUT in options:
+                kwargs[Constants.Kwargs.TIMEOUT] = options[Constants.Kwargs.TIMEOUT]
+            if Constants.Kwargs.READ_TIMEOUT in options:
+                kwargs[Constants.Kwargs.READ_TIMEOUT] = options[Constants.Kwargs.READ_TIMEOUT]
         return self._get_properties(**kwargs)
 
     def _get_properties(self, **kwargs: Any) -> dict[str, Any]:
