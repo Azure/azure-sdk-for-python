@@ -32,7 +32,7 @@ def main():
 
     response = client.managed_ops.begin_update(
         managed_ops_name="default",
-        properties={"properties": {"desiredConfiguration": {"defenderCspm": "Enable", "defenderForServers": "Enable"}}},
+        properties={"properties": {"desiredConfiguration": {"defenderCspm": "str", "defenderForServers": "str"}}},
     ).result()
     print(response)
 
