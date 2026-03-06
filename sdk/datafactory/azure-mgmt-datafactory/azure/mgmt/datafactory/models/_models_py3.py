@@ -1800,6 +1800,12 @@ class AmazonRdsForOracleSource(CopySource):
     :ivar additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects(AdditionalColumns) (or Expression with resultType array of objects).
     :vartype additional_columns: JSON
+    :ivar number_precision: Specifies the precision for NUMBER types. Type: integer (or Expression with resultType
+     integer).
+    :vartype number_precision: JSON
+    :ivar number_scale: Specifies the number_scale for NUMBER types. Type: integer (or Expression with resultType
+     integer).
+    :vartype number_scale: JSON
     """
 
     _validation = {
@@ -1818,6 +1824,8 @@ class AmazonRdsForOracleSource(CopySource):
         "partition_option": {"key": "partitionOption", "type": "object"},
         "partition_settings": {"key": "partitionSettings", "type": "AmazonRdsForOraclePartitionSettings"},
         "additional_columns": {"key": "additionalColumns", "type": "object"},
+        "number_precision": { "key": "numberPrecision", "type": "object"},
+        "number_scale": { "key": "numberScale", "type": "object"},
     }
 
     def __init__(
@@ -1833,6 +1841,8 @@ class AmazonRdsForOracleSource(CopySource):
         partition_option: Optional[JSON] = None,
         partition_settings: Optional["_models.AmazonRdsForOraclePartitionSettings"] = None,
         additional_columns: Optional[JSON] = None,
+        number_precision: Optional[JSON] = None,
+        number_scale: Optional[JSON] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1867,6 +1877,12 @@ class AmazonRdsForOracleSource(CopySource):
         :keyword additional_columns: Specifies the additional columns to be added to source data. Type:
          array of objects(AdditionalColumns) (or Expression with resultType array of objects).
         :paramtype additional_columns: JSON
+        :ivar number_precision: Specifies the precision for NUMBER types. Type: integer (or Expression with resultType
+         integer).
+        :vartype number_precision: JSON
+        :ivar number_scale: Specifies the number_scale for NUMBER types. Type: integer (or Expression with resultType
+         integer).
+        :vartype number_scale: JSON
         """
         super().__init__(
             additional_properties=additional_properties,
@@ -1882,6 +1898,8 @@ class AmazonRdsForOracleSource(CopySource):
         self.partition_option = partition_option
         self.partition_settings = partition_settings
         self.additional_columns = additional_columns
+        self.number_precision = number_precision
+        self.number_scale = number_scale
 
 
 class AmazonRdsForOracleTableDataset(Dataset):
@@ -49899,6 +49917,12 @@ class OracleSource(CopySource):
     :ivar additional_columns: Specifies the additional columns to be added to source data. Type:
      array of objects(AdditionalColumns) (or Expression with resultType array of objects).
     :vartype additional_columns: JSON
+    :ivar number_precision: Specifies the precision for NUMBER types. Type: integer (or Expression with resultType
+     integer).
+    :vartype number_precision: JSON
+    :ivar number_scale: Specifies the number_scale for NUMBER types. Type: integer (or Expression with resultType
+     integer).
+    :vartype number_scale: JSON
     """
 
     _validation = {
@@ -49917,6 +49941,8 @@ class OracleSource(CopySource):
         "partition_option": {"key": "partitionOption", "type": "object"},
         "partition_settings": {"key": "partitionSettings", "type": "OraclePartitionSettings"},
         "additional_columns": {"key": "additionalColumns", "type": "object"},
+        "number_precision": { "key": "numberPrecision", "type": "object"},
+        "number_scale": { "key": "numberScale", "type": "object"},
     }
 
     def __init__(
@@ -49932,6 +49958,8 @@ class OracleSource(CopySource):
         partition_option: Optional[JSON] = None,
         partition_settings: Optional["_models.OraclePartitionSettings"] = None,
         additional_columns: Optional[JSON] = None,
+        number_precision: Optional[JSON] = None,
+        number_scale: Optional[JSON] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -49965,6 +49993,12 @@ class OracleSource(CopySource):
         :keyword additional_columns: Specifies the additional columns to be added to source data. Type:
          array of objects(AdditionalColumns) (or Expression with resultType array of objects).
         :paramtype additional_columns: JSON
+        :ivar number_precision: Specifies the precision for NUMBER types. Type: integer (or Expression with resultType
+         integer).
+        :vartype number_precision: JSON
+        :ivar number_scale: Specifies the number_scale for NUMBER types. Type: integer (or Expression with resultType
+         integer).
+        :vartype number_scale: JSON
         """
         super().__init__(
             additional_properties=additional_properties,
@@ -49980,6 +50014,8 @@ class OracleSource(CopySource):
         self.partition_option = partition_option
         self.partition_settings = partition_settings
         self.additional_columns = additional_columns
+        self.number_precision = number_precision
+        self.number_scale = number_scale
 
 
 class OracleTableDataset(Dataset):
