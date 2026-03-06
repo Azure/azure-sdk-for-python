@@ -1,0 +1,70 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://Sanitized.management.azure.com/subscriptions/31b0b6a5-2647-47eb-8a38-7d12047ee8ec/resourceGroups/olawal/providers/Microsoft.Discovery/storageContainers/test-sc-8bef0d1a?api-version=2026-02-01-preview",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Connection": "keep-alive",
+        "Content-Length": "235",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-mgmt-discovery/1.0.0b1 Python/3.11.9 (Windows-10-10.0.26200-SP0)"
+      },
+      "RequestBody": {
+        "location": "uksouth",
+        "properties": {
+          "storageStore": {
+            "kind": "AzureStorageBlob",
+            "storageAccountId": "/subscriptions/31b0b6a5-2647-47eb-8a38-7d12047ee8ec/resourceGroups/olawal/providers/Microsoft.Storage/storageAccounts/mytststr"
+          }
+        }
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "593",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 02 Mar 2026 20:45:52 GMT",
+        "ETag": "\"9101ee8a-0000-1000-0000-69a5f7000000\"",
+        "Expires": "-1",
+        "mise-correlation-id": "b83707e3-b44e-4ce3-b628-47b7c5fc7b8b",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "x-azure-ref": "Sanitized",
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-build-version": "1",
+        "x-ms-correlation-request-id": "a97e7fdb-968f-4c4a-8988-5373a62a8cb5",
+        "x-ms-operation-identifier": "tenantId=00000000-0000-0000-0000-000000000000,objectId=00000000-0000-0000-0000-000000000000/eastus2euap/7affb2b8-0fa0-4fcd-9228-6f4380dc12d9",
+        "x-ms-providerhub-traffic": "True",
+        "x-ms-ratelimit-remaining-subscription-writes": "799",
+        "x-ms-routing-request-id": "EASTUS2EUAP:20260302T204553Z:a97e7fdb-968f-4c4a-8988-5373a62a8cb5",
+        "x-ms-throttling-version": "v2",
+        "X-MSEdge-Ref": "Ref A: 16838EA751A546F7BF37A5F6CA3A82AB Ref B: SN4AA2022305031 Ref C: 2026-03-02T20:45:47Z"
+      },
+      "ResponseBody": {
+        "id": "Sanitized",
+        "name": "Sanitized",
+        "type": "microsoft.discovery/storagecontainers",
+        "location": "uksouth",
+        "tags": {},
+        "systemData": {
+          "createdBy": "Sanitized",
+          "createdByType": "User",
+          "createdAt": "2026-03-02T20:45:51.2603686Z",
+          "lastModifiedBy": "Sanitized",
+          "lastModifiedByType": "User",
+          "lastModifiedAt": "2026-03-02T20:45:51.2603686Z"
+        },
+        "properties": {
+          "storageStore": {
+            "storageAccountId": "/subscriptions/31b0b6a5-2647-47eb-8a38-7d12047ee8ec/resourceGroups/olawal/providers/Microsoft.Storage/storageAccounts/mytststr",
+            "kind": "AzureStorageBlob"
+          },
+          "provisioningState": "Succeeded"
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}

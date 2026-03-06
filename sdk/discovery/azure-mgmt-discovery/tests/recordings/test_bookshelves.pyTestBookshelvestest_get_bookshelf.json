@@ -1,0 +1,62 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://Sanitized.management.azure.com/subscriptions/31b0b6a5-2647-47eb-8a38-7d12047ee8ec/resourceGroups/olawal/providers/Microsoft.Discovery/bookshelves/test-bookshelf-05fbc43d?api-version=2026-02-01-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-mgmt-discovery/1.0.0b1 Python/3.11.9 (Windows-10-10.0.26200-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "617",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Tue, 03 Mar 2026 16:56:19 GMT",
+        "ETag": "\"65016e0f-0000-1100-0000-69a5e2920000\"",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "0dd430d4-b434-4dfa-90df-9b60abf4a803",
+        "x-ms-providerhub-traffic": "True",
+        "x-ms-ratelimit-remaining-subscription-reads": "1099",
+        "x-ms-routing-request-id": "EASTUS2EUAP:20260303T165620Z:0dd430d4-b434-4dfa-90df-9b60abf4a803",
+        "x-ms-throttling-version": "v2",
+        "X-MSEdge-Ref": "Ref A: 1601489564644BE09FE97C6EB94742BD Ref B: DM2AA1091212011 Ref C: 2026-03-03T16:56:19Z"
+      },
+      "ResponseBody": {
+        "id": "Sanitized",
+        "name": "Sanitized",
+        "type": "microsoft.discovery/bookshelves",
+        "location": "uksouth",
+        "tags": {},
+        "systemData": {
+          "createdBy": "Sanitized",
+          "createdByType": "User",
+          "createdAt": "2026-03-02T19:01:52.2939662Z",
+          "lastModifiedBy": "Sanitized",
+          "lastModifiedByType": "User",
+          "lastModifiedAt": "2026-03-02T19:01:52.2939662Z"
+        },
+        "properties": {
+          "managedResourceGroup": "mrg-dbksf-test-bookshelf-05fbc43d-w1nf6q",
+          "managedOnBehalfOfConfiguration": {
+            "moboBrokerResources": [
+              {
+                "id": "Sanitized"
+              }
+            ]
+          },
+          "workloadIdentities": {},
+          "provisioningState": "Succeeded",
+          "bookshelfUri": "https://test-bookshelf-05fbc43d.bookshelf-dev.discovery.azure.com"
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}

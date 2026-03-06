@@ -1,0 +1,366 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://Sanitized.management.azure.com/subscriptions/31b0b6a5-2647-47eb-8a38-7d12047ee8ec/providers/Microsoft.Discovery/workspaces?api-version=2026-02-01-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-mgmt-discovery/1.0.0b1 Python/3.11.9 (Windows-10-10.0.26200-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Pragma": "no-cache",
+        "Content-Length": "14176",
+        "Content-Type": "application/json; charset=utf-8",
+        "Expires": "-1",
+        "x-ms-original-request-ids": "e8db88e0-ee84-4bab-b52b-2192290fd359, 8ef79aee-3c20-4ded-a660-a37e3e5a3d8a, ee2f1d3d-51bf-4352-a382-280a8e3630e0",
+        "x-ms-ratelimit-remaining-subscription-reads": "1099",
+        "x-ms-ratelimit-remaining-subscription-global-reads": "16499",
+        "x-ms-request-id": "06af92d8-dc60-485d-8488-dcb9636118aa",
+        "x-ms-correlation-request-id": "06af92d8-dc60-485d-8488-dcb9636118aa",
+        "x-ms-routing-request-id": "SOUTHCENTRALUS:20260304T203845Z:06af92d8-dc60-485d-8488-dcb9636118aa",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-MSEdge-Ref": "Ref A: 6E4DD90850C44594B7ACC6D7947D373F Ref B: SN4AA2022301017 Ref C: 2026-03-04T20:38:44Z",
+        "Date": "Wed, 04 Mar 2026 20:38:44 GMT"
+      },
+      "ResponseBody": {
+        "value": [
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "microsoft.discovery/workspaces",
+            "location": "uksouth",
+            "tags": {
+              "WorkspaceSubnetId": "/subscriptions/31b0b6a5-2647-47eb-8a38-7d12047ee8ec/resourceGroups/fixedrg-dev-uksouth1/providers/Microsoft.Network/virtualNetworks/vnet-dev-uksouth1/subnets/copilot-subnet"
+            },
+            "systemData": {
+              "createdBy": "Sanitized",
+              "createdByType": "Application",
+              "createdAt": "2026-01-15T00:34:10.0773703Z",
+              "lastModifiedBy": "Sanitized",
+              "lastModifiedByType": "Application",
+              "lastModifiedAt": "2026-01-15T00:34:10.0773703Z"
+            },
+            "properties": {
+              "managedResourceGroup": "mrg-dwsp-itworkrp114-4bncru",
+              "supercomputerIds": [
+                "/subscriptions/31b0b6a5-2647-47eb-8a38-7d12047ee8ec/resourceGroups/rp114-rg/providers/Microsoft.Discovery/supercomputers/itsuperp114"
+              ],
+              "workspaceApiUri": "https://itworkrp114.workspace-dev.discovery.azure.com",
+              "workspaceUiUri": "https://studio.discovery.microsoft.com/workspaces/itworkrp114",
+              "workspaceIdentity": {
+                "id": "Sanitized"
+              },
+              "managedOnBehalfOfConfiguration": {
+                "moboBrokerResources": [
+                  {
+                    "id": "Sanitized"
+                  }
+                ]
+              },
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "microsoft.discovery/workspaces",
+            "location": "uk south",
+            "tags": {},
+            "systemData": {
+              "createdBy": "Sanitized",
+              "createdByType": "User",
+              "createdAt": "2026-02-19T05:22:08.6568882Z",
+              "lastModifiedBy": "Sanitized",
+              "lastModifiedByType": "User",
+              "lastModifiedAt": "2026-02-19T05:22:08.6568882Z"
+            },
+            "properties": {
+              "managedResourceGroup": "mrg-dwsp-wrksptest53-9ke163",
+              "supercomputerIds": [],
+              "workspaceApiUri": "https://wrksptest53.workspace-dev.discovery.azure.com",
+              "workspaceUiUri": "https://studio.discovery.microsoft.com/workspaces/wrksptest53",
+              "workspaceIdentity": {
+                "id": "Sanitized",
+                "principalId": "ed0545f1-159d-4851-9d51-38cace7712d7",
+                "clientId": "1764701a-3d97-4612-9134-bec5e4b4ae0e"
+              },
+              "managedOnBehalfOfConfiguration": {
+                "moboBrokerResources": [
+                  {
+                    "id": "Sanitized"
+                  }
+                ]
+              },
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "microsoft.discovery/workspaces",
+            "location": "uksouth",
+            "tags": {
+              "SkipAssociateKeyVaultToNsp": "true"
+            },
+            "systemData": {
+              "createdBy": "Sanitized",
+              "createdByType": "User",
+              "createdAt": "2026-02-25T13:40:46.4913501Z",
+              "lastModifiedBy": "Sanitized",
+              "lastModifiedByType": "User",
+              "lastModifiedAt": "2026-02-25T13:40:46.4913501Z"
+            },
+            "properties": {
+              "managedResourceGroup": "mrg-dwsp-wksp25021-9r5ibw",
+              "supercomputerIds": [],
+              "workspaceApiUri": "https://wksp25021.workspace-dev.discovery.azure.com",
+              "workspaceUiUri": "https://studio.discovery.microsoft.com/workspaces/wksp25021",
+              "workspaceIdentity": {
+                "id": "Sanitized",
+                "principalId": "76442198-a696-4763-a8da-c63b99d25643",
+                "clientId": "3cec3bd3-5f2a-4158-b60b-264f105008ab"
+              },
+              "agentSubnetId": "/subscriptions/31b0b6a5-2647-47eb-8a38-7d12047ee8ec/resourceGroups/fixedrg-dev-uksouth1/providers/Microsoft.Network/virtualNetworks/vnet-dev-uksouth1/subnets/agentSubnet",
+              "privateEndpointSubnetId": "/subscriptions/31b0b6a5-2647-47eb-8a38-7d12047ee8ec/resourceGroups/fixedrg-dev-uksouth1/providers/Microsoft.Network/virtualNetworks/vnet-dev-uksouth1/subnets/PESubnet",
+              "workspaceSubnetId": "/subscriptions/31b0b6a5-2647-47eb-8a38-7d12047ee8ec/resourceGroups/fixedrg-dev-uksouth1/providers/Microsoft.Network/virtualNetworks/vnet-dev-uksouth1/subnets/copilot-subnet",
+              "managedOnBehalfOfConfiguration": {
+                "moboBrokerResources": [
+                  {
+                    "id": "Sanitized"
+                  }
+                ]
+              },
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "microsoft.discovery/workspaces",
+            "location": "uksouth",
+            "tags": {
+              "SkipAssociateKeyVaultToNsp": "true"
+            },
+            "systemData": {
+              "createdBy": "Sanitized",
+              "createdByType": "User",
+              "createdAt": "2026-03-02T20:01:56.834174Z",
+              "lastModifiedBy": "Sanitized",
+              "lastModifiedByType": "User",
+              "lastModifiedAt": "2026-03-02T20:01:56.834174Z"
+            },
+            "properties": {
+              "managedResourceGroup": "mrg-dwsp-wksp03031-2788mh",
+              "supercomputerIds": [],
+              "workspaceApiUri": "https://wksp03031.workspace-dev.discovery.azure.com",
+              "workspaceUiUri": "https://studio.discovery.microsoft.com/workspaces/wksp03031",
+              "workspaceIdentity": {
+                "id": "Sanitized",
+                "principalId": "76442198-a696-4763-a8da-c63b99d25643",
+                "clientId": "3cec3bd3-5f2a-4158-b60b-264f105008ab"
+              },
+              "agentSubnetId": "/subscriptions/31b0b6a5-2647-47eb-8a38-7d12047ee8ec/resourceGroups/fixedrg-dev-uksouth1/providers/Microsoft.Network/virtualNetworks/vnet-dev-uksouth1/subnets/agentSubnet8",
+              "privateEndpointSubnetId": "/subscriptions/31b0b6a5-2647-47eb-8a38-7d12047ee8ec/resourceGroups/fixedrg-dev-uksouth1/providers/Microsoft.Network/virtualNetworks/vnet-dev-uksouth1/subnets/PESubnet2",
+              "workspaceSubnetId": "/subscriptions/31b0b6a5-2647-47eb-8a38-7d12047ee8ec/resourceGroups/fixedrg-dev-uksouth1/providers/Microsoft.Network/virtualNetworks/vnet-dev-uksouth1/subnets/copilot-subnet",
+              "managedOnBehalfOfConfiguration": {
+                "moboBrokerResources": [
+                  {
+                    "id": "Sanitized"
+                  }
+                ]
+              },
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "microsoft.discovery/workspaces",
+            "location": "uksouth",
+            "tags": {
+              "SkipAssociateKeyVaultToNsp": "true"
+            },
+            "systemData": {
+              "lastModifiedBy": "Sanitized",
+              "lastModifiedByType": "User",
+              "lastModifiedAt": "2026-03-04T11:23:08.6609326Z"
+            },
+            "properties": {
+              "managedResourceGroup": "mrg-dwsp-wksp04031-gaebre",
+              "supercomputerIds": [],
+              "workspaceApiUri": "https://wksp04031.workspace-dev.discovery.azure.com",
+              "workspaceUiUri": "https://studio.discovery.microsoft.com/workspaces/wksp04031",
+              "workspaceIdentity": {
+                "id": "Sanitized",
+                "principalId": "76442198-a696-4763-a8da-c63b99d25643",
+                "clientId": "3cec3bd3-5f2a-4158-b60b-264f105008ab"
+              },
+              "agentSubnetId": "/subscriptions/31b0b6a5-2647-47eb-8a38-7d12047ee8ec/resourceGroups/fixedrg-dev-uksouth1/providers/Microsoft.Network/virtualNetworks/vnet-dev-uksouth1/subnets/agentSubnet8",
+              "privateEndpointSubnetId": "/subscriptions/31b0b6a5-2647-47eb-8a38-7d12047ee8ec/resourceGroups/fixedrg-dev-uksouth1/providers/Microsoft.Network/virtualNetworks/vnet-dev-uksouth1/subnets/PESubnet2",
+              "workspaceSubnetId": "/subscriptions/31b0b6a5-2647-47eb-8a38-7d12047ee8ec/resourceGroups/fixedrg-dev-uksouth1/providers/Microsoft.Network/virtualNetworks/vnet-dev-uksouth1/subnets/copilot-subnet",
+              "managedOnBehalfOfConfiguration": {
+                "moboBrokerResources": [
+                  {
+                    "id": "Sanitized"
+                  }
+                ]
+              },
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "microsoft.discovery/workspaces",
+            "location": "uksouth",
+            "tags": {
+              "SkipAssociateKeyVaultToNsp": "true",
+              "networkIsolation": "true"
+            },
+            "systemData": {
+              "createdBy": "Sanitized",
+              "createdByType": "User",
+              "createdAt": "2026-03-04T15:12:31.9121216Z",
+              "lastModifiedBy": "Sanitized",
+              "lastModifiedByType": "User",
+              "lastModifiedAt": "2026-03-04T15:12:31.9121216Z"
+            },
+            "properties": {
+              "managedResourceGroup": "mrg-dwsp-wksp04033-bs476h",
+              "supercomputerIds": [],
+              "workspaceApiUri": "https://wksp04033.workspace-dev.discovery.azure.com",
+              "workspaceUiUri": "https://studio.discovery.microsoft.com/workspaces/wksp04033",
+              "workspaceIdentity": {
+                "id": "Sanitized",
+                "principalId": "76442198-a696-4763-a8da-c63b99d25643",
+                "clientId": "3cec3bd3-5f2a-4158-b60b-264f105008ab"
+              },
+              "agentSubnetId": "/subscriptions/31b0b6a5-2647-47eb-8a38-7d12047ee8ec/resourceGroups/fixedrg-dev-uksouth1/providers/Microsoft.Network/virtualNetworks/vnet-dev-uksouth1/subnets/agentSubnet9",
+              "privateEndpointSubnetId": "/subscriptions/31b0b6a5-2647-47eb-8a38-7d12047ee8ec/resourceGroups/fixedrg-dev-uksouth1/providers/Microsoft.Network/virtualNetworks/vnet-dev-uksouth1/subnets/PESubnet2",
+              "workspaceSubnetId": "/subscriptions/31b0b6a5-2647-47eb-8a38-7d12047ee8ec/resourceGroups/fixedrg-dev-uksouth1/providers/Microsoft.Network/virtualNetworks/vnet-dev-uksouth1/subnets/copilot-subnet",
+              "managedOnBehalfOfConfiguration": {
+                "moboBrokerResources": [
+                  {
+                    "id": "Sanitized"
+                  }
+                ]
+              },
+              "provisioningState": "Failed"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "microsoft.discovery/workspaces",
+            "location": "uksouth",
+            "tags": {},
+            "systemData": {
+              "createdBy": "Sanitized",
+              "createdByType": "User",
+              "createdAt": "2026-03-04T19:36:15.7991238Z",
+              "lastModifiedBy": "Sanitized",
+              "lastModifiedByType": "User",
+              "lastModifiedAt": "2026-03-04T19:36:15.7991238Z"
+            },
+            "properties": {
+              "managedResourceGroup": "mrg-dwsp-test-wrksp-create01-w3qqoq",
+              "supercomputerIds": [],
+              "workspaceApiUri": "https://test-wrksp-create01.workspace-dev.discovery.azure.com",
+              "workspaceUiUri": "https://studio.discovery.microsoft.com/workspaces/test-wrksp-create01",
+              "workspaceIdentity": {
+                "id": "Sanitized",
+                "principalId": "43959abc-ba88-4e2f-9f69-a7d3cc984c75",
+                "clientId": "3fe9d307-c0dc-410b-8dfe-116741e50bfb"
+              },
+              "customerManagedKeys": "Enabled",
+              "keyVaultProperties": {
+                "keyVaultUri": "https://newapik.vault.azure.net/",
+                "keyName": "discoverykey",
+                "keyVersion": "2c9db3cf55d247b4a1c1831fbbdad906"
+              },
+              "logAnalyticsClusterId": "/subscriptions/31b0b6a5-2647-47eb-8a38-7d12047ee8ec/resourceGroups/olawal/providers/Microsoft.OperationalInsights/clusters/mycluse",
+              "managedOnBehalfOfConfiguration": {
+                "moboBrokerResources": [
+                  {
+                    "id": "Sanitized"
+                  }
+                ]
+              },
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "microsoft.discovery/workspaces",
+            "location": "centraluseuap",
+            "tags": {},
+            "systemData": {
+              "lastModifiedBy": "Sanitized",
+              "lastModifiedByType": "User",
+              "lastModifiedAt": "2026-02-04T09:19:20.1363722Z"
+            },
+            "properties": {
+              "managedResourceGroup": "mrg-dwsp-wrksptest45-4rxpj0",
+              "supercomputerIds": [],
+              "workspaceApiUri": "https://wrksptest45.workspace-dev.discovery.azure.com",
+              "workspaceUiUri": "https://studio.discovery.microsoft.com/workspaces/wrksptest45",
+              "workspaceIdentity": {
+                "id": "Sanitized"
+              },
+              "managedOnBehalfOfConfiguration": {
+                "moboBrokerResources": [
+                  {
+                    "id": "Sanitized"
+                  }
+                ]
+              },
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "microsoft.discovery/workspaces",
+            "location": "eastus",
+            "tags": {},
+            "systemData": {
+              "createdBy": "Sanitized",
+              "createdByType": "User",
+              "createdAt": "2026-02-26T00:24:42.4610232Z",
+              "lastModifiedBy": "Sanitized",
+              "lastModifiedByType": "User",
+              "lastModifiedAt": "2026-02-26T00:24:42.4610232Z"
+            },
+            "properties": {
+              "managedResourceGroup": "mrg-dwsp-testwseusalch-69oxho",
+              "supercomputerIds": [],
+              "workspaceApiUri": "https://testwseusalch.workspace.discovery.azure.com",
+              "workspaceUiUri": "https://studio.discovery.microsoft.com/workspaces/testwseusalch",
+              "workspaceIdentity": {
+                "id": "Sanitized",
+                "principalId": "76442198-a696-4763-a8da-c63b99d25643",
+                "clientId": "3cec3bd3-5f2a-4158-b60b-264f105008ab"
+              },
+              "managedOnBehalfOfConfiguration": {
+                "moboBrokerResources": [
+                  {
+                    "id": "Sanitized"
+                  }
+                ]
+              },
+              "provisioningState": "Failed"
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "Variables": {}
+}

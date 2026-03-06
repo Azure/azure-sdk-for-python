@@ -1,0 +1,1501 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://Sanitized.management.azure.com/providers/Microsoft.Discovery/operations?api-version=2026-02-01-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-mgmt-discovery/1.0.0b1 Python/3.11.9 (Windows-10-10.0.26200-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "29943",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 02 Mar 2026 15:38:40 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "eb9a66a6-5d8e-4ccc-91c8-2fe6f009614d",
+        "x-ms-operation-identifier": "",
+        "x-ms-providerhub-traffic": "True",
+        "x-ms-ratelimit-remaining-tenant-reads": "2199",
+        "x-ms-routing-request-id": "EASTUS2EUAP:20260302T153841Z:eb9a66a6-5d8e-4ccc-91c8-2fe6f009614d",
+        "x-ms-throttling-version": "v2",
+        "X-MSEdge-Ref": "Ref A: A75CCC15437A42808BE41661E746D215 Ref B: SN4AA2022302037 Ref C: 2026-03-02T15:38:41Z"
+      },
+      "ResponseBody": {
+        "value": [
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "Microsoft.Discovery",
+              "operation": "Register the Microsoft.Discovery",
+              "description": "Register the subscription for Microsoft.Discovery"
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "Microsoft.Discovery",
+              "operation": "Unregister the Microsoft.Discovery",
+              "description": "Unregister the subscription for Microsoft.Discovery"
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "locations/operationStatuses",
+              "operation": "read_operationStatuses",
+              "description": "read operationStatuses"
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "locations/operationStatuses",
+              "operation": "write_operationStatuses",
+              "description": "write operationStatuses"
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "operations",
+              "operation": "read_operations",
+              "description": "read operations"
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "checkNameAvailability",
+              "operation": "action_checkNameAvailability",
+              "description": "action checkNameAvailability"
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "workspaces",
+              "operation": "Workspaces_ListBySubscription",
+              "description": "List Workspace resources by subscription ID"
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "workspaces",
+              "operation": "Workspaces_ListByResourceGroup",
+              "description": "List Workspace resources by resource group"
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "workspaces",
+              "operation": "Workspaces_Get",
+              "description": "Get a Workspace"
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "workspaces",
+              "operation": "Workspaces_CreateOrUpdate",
+              "description": "Create a Workspace"
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "workspaces",
+              "operation": "Workspaces_Delete",
+              "description": "Delete a Workspace"
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "workspaces",
+              "operation": "Workspaces_Update",
+              "description": "Update a Workspace"
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "supercomputers",
+              "operation": "Supercomputers_ListBySubscription",
+              "description": "List Supercomputer resources by subscription ID"
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "supercomputers",
+              "operation": "Supercomputers_ListByResourceGroup",
+              "description": "List Supercomputer resources by resource group"
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "supercomputers",
+              "operation": "Supercomputers_Get",
+              "description": "Get a Supercomputer"
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "supercomputers",
+              "operation": "Supercomputers_CreateOrUpdate",
+              "description": "Create a Supercomputer"
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "supercomputers",
+              "operation": "Supercomputers_Delete",
+              "description": "Delete a Supercomputer"
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "supercomputers",
+              "operation": "Supercomputers_Update",
+              "description": "Update a Supercomputer"
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "storages",
+              "operation": "Storages_ListBySubscription",
+              "description": "List Storage resources by subscription ID"
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "storages",
+              "operation": "Storages_ListByResourceGroup",
+              "description": "List Storage resources by resource group"
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "storages",
+              "operation": "Storages_Get",
+              "description": "Get a Storage"
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "storages",
+              "operation": "Storages_CreateOrUpdate",
+              "description": "Create a Storage"
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "storages",
+              "operation": "Storages_Delete",
+              "description": "Delete a Storage"
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "storages",
+              "operation": "Storages_Update",
+              "description": "Update a Storage"
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "agents",
+              "operation": "Agents_ListBySubscription",
+              "description": "List Agent resources by subscription ID"
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "bookshelves",
+              "operation": "Bookshelves_ListBySubscription",
+              "description": "List Bookshelf resources by subscription ID"
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "dataContainers",
+              "operation": "DataContainers_ListBySubscription",
+              "description": "List DataContainer resources by subscription ID"
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "dataAssets",
+              "operation": "DataAssets_ListBySubscription",
+              "description": "List DataAsset resources by subscription ID"
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "storageContainers",
+              "operation": "StorageContainers_ListBySubscription",
+              "description": "List StorageContainer resources by subscription ID"
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "storageAssets",
+              "operation": "StorageAssets_ListBySubscription",
+              "description": "List StorageAsset resources by subscription ID"
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "chatModelDeployments",
+              "operation": "ChatModelDeployments_ListBySubscription",
+              "description": "List ChatModelDeployment resources by subscription ID"
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "models",
+              "operation": "Models_ListBySubscription",
+              "description": "List Model resources by subscription ID"
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "nodePools",
+              "operation": "NodePools_ListBySubscription",
+              "description": "List NodePool resources by subscription ID"
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "tools",
+              "operation": "Tools_ListBySubscription",
+              "description": "List Tool resources by subscription ID"
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "workflows",
+              "operation": "Workflows_ListBySubscription",
+              "description": "List Workflow resources by subscription ID"
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "projects",
+              "operation": "Projects_ListBySubscription",
+              "description": "List Project resources by subscription ID"
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "agents",
+              "operation": "Agents_ListByResourceGroup",
+              "description": "List Agent resources by resource group"
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "agents",
+              "operation": "Agents_Get",
+              "description": "Get a Agent"
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "agents",
+              "operation": "Agents_CreateOrUpdate",
+              "description": "Create a Agent"
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "agents",
+              "operation": "Agents_Update",
+              "description": "Update a Agent"
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "agents",
+              "operation": "Agents_Delete",
+              "description": "Delete a Agent"
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "bookshelves",
+              "operation": "Bookshelves_ListByResourceGroup",
+              "description": "List Bookshelf resources by resource group"
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "bookshelves",
+              "operation": "Bookshelves_Get",
+              "description": "Get a Bookshelf"
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "bookshelves",
+              "operation": "Bookshelves_CreateOrUpdate",
+              "description": "Create a Bookshelf"
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "bookshelves",
+              "operation": "Bookshelves_Update",
+              "description": "Update a Bookshelf"
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "bookshelves",
+              "operation": "Bookshelves_Delete",
+              "description": "Delete a Bookshelf"
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "dataContainers",
+              "operation": "DataContainers_ListByResourceGroup",
+              "description": "List DataContainer resources by resource group"
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "dataContainers",
+              "operation": "DataContainers_Get",
+              "description": "Get a DataContainer"
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "dataContainers",
+              "operation": "DataContainers_CreateOrUpdate",
+              "description": "Create a DataContainer"
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "dataContainers",
+              "operation": "DataContainers_Update",
+              "description": "Update a DataContainer"
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "dataContainers",
+              "operation": "DataContainers_Delete",
+              "description": "Delete a DataContainer"
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "dataAssets",
+              "operation": "DataAssets_ListByDataContainer",
+              "description": "List DataAsset resources by DataContainer"
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "dataAssets",
+              "operation": "DataAssets_Get",
+              "description": "Get a DataAsset"
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "dataAssets",
+              "operation": "DataAssets_CreateOrUpdate",
+              "description": "Create a DataAsset"
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "dataAssets",
+              "operation": "DataAssets_Update",
+              "description": "Update a DataAsset"
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "dataAssets",
+              "operation": "DataAssets_Delete",
+              "description": "Delete a DataAsset"
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "storageContainers",
+              "operation": "StorageContainers_ListByResourceGroup",
+              "description": "List StorageContainer resources by resource group"
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "storageContainers",
+              "operation": "StorageContainers_Get",
+              "description": "Get a StorageContainer"
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "storageContainers",
+              "operation": "StorageContainers_CreateOrUpdate",
+              "description": "Create a StorageContainer"
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "storageContainers",
+              "operation": "StorageContainers_Update",
+              "description": "Update a StorageContainer"
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "storageContainers",
+              "operation": "StorageContainers_Delete",
+              "description": "Delete a StorageContainer"
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "storageAssets",
+              "operation": "StorageAssets_ListByStorageContainer",
+              "description": "List StorageAsset resources by StorageContainer"
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "storageAssets",
+              "operation": "StorageAssets_Get",
+              "description": "Get a StorageAsset"
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "storageAssets",
+              "operation": "StorageAssets_CreateOrUpdate",
+              "description": "Create a StorageAsset"
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "storageAssets",
+              "operation": "StorageAssets_Update",
+              "description": "Update a StorageAsset"
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "storageAssets",
+              "operation": "StorageAssets_Delete",
+              "description": "Delete a StorageAsset"
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "chatModelDeployments",
+              "operation": "ChatModelDeployments_ListByWorkspace",
+              "description": "List ChatModelDeployment resources by Workspace"
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "chatModelDeployments",
+              "operation": "ChatModelDeployments_Get",
+              "description": "Get a ChatModelDeployment"
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "chatModelDeployments",
+              "operation": "ChatModelDeployments_CreateOrUpdate",
+              "description": "Create a ChatModelDeployment"
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "chatModelDeployments",
+              "operation": "ChatModelDeployments_Update",
+              "description": "Update a ChatModelDeployment"
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "chatModelDeployments",
+              "operation": "ChatModelDeployments_Delete",
+              "description": "Delete a ChatModelDeployment"
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "models",
+              "operation": "Models_ListByResourceGroup",
+              "description": "List Model resources by resource group"
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "models",
+              "operation": "Models_Get",
+              "description": "Get a Model"
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "models",
+              "operation": "Models_CreateOrUpdate",
+              "description": "Create a Model"
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "models",
+              "operation": "Models_Update",
+              "description": "Update a Model"
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "models",
+              "operation": "Models_Delete",
+              "description": "Delete a Model"
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "nodePools",
+              "operation": "NodePools_ListBySupercomputer",
+              "description": "List NodePool resources by Supercomputer"
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "nodePools",
+              "operation": "NodePools_Get",
+              "description": "Get a NodePool"
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "nodePools",
+              "operation": "NodePools_CreateOrUpdate",
+              "description": "Create a NodePool"
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "nodePools",
+              "operation": "NodePools_Update",
+              "description": "Update a NodePool"
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "nodePools",
+              "operation": "NodePools_Delete",
+              "description": "Delete a NodePool"
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "tools",
+              "operation": "Tools_ListByResourceGroup",
+              "description": "List Tool resources by resource group"
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "tools",
+              "operation": "Tools_Get",
+              "description": "Get a Tool"
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "tools",
+              "operation": "Tools_CreateOrUpdate",
+              "description": "Create a Tool"
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "tools",
+              "operation": "Tools_Update",
+              "description": "Update a Tool"
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "tools",
+              "operation": "Tools_Delete",
+              "description": "Delete a Tool"
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "workflows",
+              "operation": "Workflows_ListByResourceGroup",
+              "description": "List Workflow resources by resource group"
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "workflows",
+              "operation": "Workflows_Get",
+              "description": "Get a Workflow"
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "workflows",
+              "operation": "Workflows_CreateOrUpdate",
+              "description": "Create a Workflow"
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "workflows",
+              "operation": "Workflows_Update",
+              "description": "Update a Workflow"
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "workflows",
+              "operation": "Workflows_Delete",
+              "description": "Delete a Workflow"
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "projects",
+              "operation": "Projects_ListByWorkspace",
+              "description": "List Project resources by Workspace"
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "projects",
+              "operation": "Projects_Get",
+              "description": "Get a Project"
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "projects",
+              "operation": "Projects_CreateOrUpdate",
+              "description": "Create a Project"
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "projects",
+              "operation": "Projects_Update",
+              "description": "Update a Project"
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "projects",
+              "operation": "Projects_Delete",
+              "description": "Delete a Project"
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": true,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "tools",
+              "operation": "Tools_Run",
+              "description": "Run the specified tool in the context of the specified project."
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": true,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "knowledgebases",
+              "operation": "KnowledgeBases_ListKnowledgeBases",
+              "description": "List KnowledgeBase resources"
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": true,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "knowledgebases",
+              "operation": "KnowledgeBases_GetOperationStatus",
+              "description": "Get status of a KnowledgeBase LRO (create/delete)."
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": true,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "knowledgeBaseVersions",
+              "operation": "KnowledgeBaseVersions_GetOperationStatus",
+              "description": "Get status of a KnowledgeBaseVersion LRO (create/delete)."
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": true,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "knowledgebases",
+              "operation": "KnowledgeBases_DeleteKnowledgeBase",
+              "description": "Delete a KnowledgeBase."
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": true,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "knowledgeBaseVersions",
+              "operation": "KnowledgeBaseVersions_ListKnowledgeBaseVersions",
+              "description": "List KnowledgeBaseVersion resources"
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": true,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "knowledgeBaseVersions",
+              "operation": "KnowledgeBaseVersions_DeleteKnowledgeBaseVersion",
+              "description": "Delete a KnowledgeBaseVersion."
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": true,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "knowledgeBaseVersions",
+              "operation": "KnowledgeBaseVersions_CreateOrUpdateKnowledgeBaseVersion",
+              "description": "Creates or updates a KnowledgeBaseVersion."
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": true,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "knowledgeBaseVersions",
+              "operation": "KnowledgeBaseVersions_StartIndexing",
+              "description": "Start indexing."
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": true,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "knowledgeBaseVersions",
+              "operation": "KnowledgeBaseVersions_StopIndexing",
+              "description": "Stop indexing."
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": true,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "conversations",
+              "operation": "Conversations_ListConversations",
+              "description": "List Conversation resources"
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": true,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "knowledgeBaseVersions",
+              "operation": "KnowledgeBaseVersions_Search",
+              "description": "Search the knowledge base."
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": true,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "conversations",
+              "operation": "Conversations_CreateConversation",
+              "description": "Creates a Conversation."
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": true,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "conversations",
+              "operation": "Conversations_DeleteConversation",
+              "description": "Deletes a conversation."
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": true,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "investigations",
+              "operation": "Investigations_ListInvestigations",
+              "description": "List Investigation resources"
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": true,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "investigations",
+              "operation": "Investigations_CreateOrUpdateInvestigation",
+              "description": "Creates or updates Investigation."
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": true,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "investigations",
+              "operation": "Investigations_DeleteInvestigation",
+              "description": "Delete a Investigation."
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": true,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "supercomputers/nodepools",
+              "operation": "Tools_Run",
+              "description": "Run the specified tool on a supercomputers/nodepool resource."
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": true,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "storages",
+              "operation": "Storages_Mount",
+              "description": "Mount a storage resource on a supercomputers/nodepool."
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "bookshelves/privateEndpointConnectionProxies",
+              "operation": "Bookshelves_GetPrivateEndpointConnectionProxy",
+              "description": "Get a private endpoint connection proxy on a bookshelf."
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "bookshelves/privateEndpointConnectionProxies",
+              "operation": "Bookshelves_WritePrivateEndpointConnectionProxy",
+              "description": "Create a private endpoint connection proxy on a bookshelf."
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "bookshelves/privateEndpointConnectionProxies",
+              "operation": "Bookshelves_DeletePrivateEndpointConnectionProxy",
+              "description": "Delete a private endpoint connection proxy on a bookshelf."
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "bookshelves/privateEndpointConnectionProxies",
+              "operation": "Bookshelves_ValidatePrivateEndpointConnectionProxy",
+              "description": "Validate a private endpoint connection proxy on a bookshelf."
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "bookshelves/privateEndpointConnections",
+              "operation": "Bookshelves_GetPrivateEndpointConnection",
+              "description": "Get a private endpoint connection on a bookshelf."
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "bookshelves/privateEndpointConnections",
+              "operation": "Bookshelves_WritePrivateEndpointConnection",
+              "description": "Create a private endpoint connection on a bookshelf."
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "bookshelves/privateEndpointConnections",
+              "operation": "Bookshelves_DeletePrivateEndpointConnection",
+              "description": "Delete a private endpoint connection on a bookshelf."
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "bookshelves/privateLinkResources",
+              "operation": "Bookshelves_GetPrivateLinkResource",
+              "description": "Get a private link resource on a bookshelf."
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "bookshelves/privateEndpointConnectionsApproval",
+              "operation": "Bookshelves_PrivateEndpointConnectionsApproval",
+              "description": "Approve a private endpoint connection on a bookshelf."
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "workspaces/privateEndpointConnectionProxies",
+              "operation": "Workspaces_GetPrivateEndpointConnectionProxy",
+              "description": "Get a private endpoint connection proxy on a workspace."
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "workspaces/privateEndpointConnectionProxies",
+              "operation": "Workspaces_WritePrivateEndpointConnectionProxy",
+              "description": "Create a private endpoint connection proxy on a workspace."
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "workspaces/privateEndpointConnectionProxies",
+              "operation": "Workspaces_DeletePrivateEndpointConnectionProxy",
+              "description": "Delete a private endpoint connection proxy on a workspace."
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "workspaces/privateEndpointConnectionProxies",
+              "operation": "Workspaces_ValidatePrivateEndpointConnectionProxy",
+              "description": "Validate a private endpoint connection proxy on a workspace."
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "workspaces/privateEndpointConnections",
+              "operation": "Workspaces_GetPrivateEndpointConnection",
+              "description": "Get a private endpoint connection on a workspace."
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "workspaces/privateEndpointConnections",
+              "operation": "Workspaces_WritePrivateEndpointConnection",
+              "description": "Create a private endpoint connection on a workspace."
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "workspaces/privateEndpointConnections",
+              "operation": "Workspaces_DeletePrivateEndpointConnection",
+              "description": "Delete a private endpoint connection on a workspace."
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "workspaces/privateLinkResources",
+              "operation": "Workspaces_GetPrivateLinkResource",
+              "description": "Get a private link resource on a workspace."
+            },
+            "properties": null
+          },
+          {
+            "name": "Sanitized",
+            "isDataAction": false,
+            "display": {
+              "provider": "Microsoft.Discovery",
+              "resource": "workspaces/privateEndpointConnectionsApproval",
+              "operation": "Workspaces_PrivateEndpointConnectionsApproval",
+              "description": "Approve a private endpoint connection on a workspace."
+            },
+            "properties": null
+          }
+        ]
+      }
+    }
+  ],
+  "Variables": {}
+}
