@@ -4,6 +4,7 @@ This folder contains documentation for developers of SDKs: internal teams at Mic
 
 Overview of the documents:
 - [Developer Set-Up](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/dev_setup.md) : How to create a development environment for this repo
+- [Using Copilot Agents to Fix CI Issues](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/agents.md): How to use GitHub Copilot to troubleshoot and fix common CI failures in your PRs
 - [Release](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/release.md) : How to release a package when ready
 - [Packaging](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/packaging.md) : How to organize packaging information for packages under `azure`
 - [Changelog](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/changelog_updates.md) : How to document package changes using Chronus (for packages with `pyproject.toml`)
