@@ -6,14 +6,22 @@ import base64
 import os
 import platform
 import logging
+import time
 from contextvars import ContextVar
 from string import ascii_letters, digits
 from typing import List, Optional
 
 from urllib.parse import urlparse
 
+from azure.core.credentials import AccessTokenInfo
 from azure.core.exceptions import ClientAuthenticationError
-from .._constants import EnvironmentVariables, KnownAuthorities
+from .._constants import (
+    DEFAULT_REFRESH_OFFSET,
+    DEFAULT_TOKEN_REFRESH_RETRY_DELAY,
+    EnvironmentVariables,
+    KnownAuthorities,
+)
+from .._enums import TokenRefreshStatus
 
 within_credential_chain = ContextVar("within_credential_chain", default=False)
 within_dac = ContextVar("within_dac", default=False)
@@ -23,6 +31,35 @@ _LOGGER = logging.getLogger(__name__)
 VALID_TENANT_ID_CHARACTERS = frozenset(ascii_letters + digits + "-.")
 VALID_SCOPE_CHARACTERS = frozenset(ascii_letters + digits + "_-.:/")
 VALID_SUBSCRIPTION_CHARACTERS = frozenset(ascii_letters + digits + "_-. ")
+
+
+def get_refresh_status(token: AccessTokenInfo, last_request_time: int) -> TokenRefreshStatus:
+    """Determine the refresh status of a token.
+
+    :param ~azure.core.credentials.AccessTokenInfo token: The token to evaluate.
+    :param int last_request_time: The time of the last failed proactive refresh attempt.
+    :return: The refresh status of the token.
+    :rtype: TokenRefreshStatus
+    """
+    now = int(time.time())
+
+    # Token is expired - must refresh.
+    if now >= token.expires_on:
+        return TokenRefreshStatus.REQUIRED
+
+    # A recent proactive refresh failed - back off to avoid hammering the token endpoint.
+    if now - last_request_time < DEFAULT_TOKEN_REFRESH_RETRY_DELAY:
+        return TokenRefreshStatus.NOT_NEEDED
+
+    # Token has a server-recommended refresh time that has passed.
+    if token.refresh_on is not None and now >= token.refresh_on:
+        return TokenRefreshStatus.RECOMMENDED
+
+    # Token is nearing expiration - proactively refresh before it expires.
+    if token.expires_on - now <= DEFAULT_REFRESH_OFFSET:
+        return TokenRefreshStatus.RECOMMENDED
+
+    return TokenRefreshStatus.NOT_NEEDED
 
 
 def normalize_authority(authority: str) -> str:

@@ -8,8 +8,8 @@ import time
 from typing import Any, Optional
 
 from azure.core.credentials import AccessToken, AccessTokenInfo, TokenRequestOptions
-from .utils import within_credential_chain
-from .._constants import DEFAULT_REFRESH_OFFSET, DEFAULT_TOKEN_REFRESH_RETRY_DELAY
+from .utils import get_refresh_status, within_credential_chain
+from .._enums import TokenRefreshStatus
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -44,16 +44,6 @@ class GetTokenMixin(abc.ABC):
         :return: An access token with the desired scopes.
         :rtype: ~azure.core.credentials.AccessTokenInfo
         """
-
-    def _should_refresh(self, token: AccessTokenInfo) -> bool:
-        now = int(time.time())
-        if token.refresh_on is not None and now >= token.refresh_on:
-            return True
-        if token.expires_on - now > DEFAULT_REFRESH_OFFSET:
-            return False
-        if now - self._last_request_time < DEFAULT_TOKEN_REFRESH_RETRY_DELAY:
-            return False
-        return True
 
     def get_token(
         self,
@@ -133,18 +123,22 @@ class GetTokenMixin(abc.ABC):
                 *scopes, claims=claims, tenant_id=tenant_id, enable_cae=enable_cae, **kwargs
             )
             if not token:
-                self._last_request_time = int(time.time())
                 token = self._request_token(
                     *scopes, claims=claims, tenant_id=tenant_id, enable_cae=enable_cae, **kwargs
                 )
-            elif self._should_refresh(token):
-                try:
-                    self._last_request_time = int(time.time())
+            else:
+                refresh_status = get_refresh_status(token, self._last_request_time)
+                if refresh_status == TokenRefreshStatus.REQUIRED:
                     token = self._request_token(
                         *scopes, claims=claims, tenant_id=tenant_id, enable_cae=enable_cae, **kwargs
                     )
-                except Exception:  # pylint:disable=broad-except
-                    pass
+                elif refresh_status == TokenRefreshStatus.RECOMMENDED:
+                    try:
+                        token = self._request_token(
+                            *scopes, claims=claims, tenant_id=tenant_id, enable_cae=enable_cae, **kwargs
+                        )
+                    except Exception:  # pylint:disable=broad-except
+                        self._last_request_time = int(time.time())
             _LOGGER.log(
                 logging.DEBUG if within_credential_chain.get() else logging.INFO,
                 "%s.%s succeeded",

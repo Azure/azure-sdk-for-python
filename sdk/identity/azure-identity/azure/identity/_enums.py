@@ -65,3 +65,17 @@ class RegionalAuthority(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     US_WEST = "westus"
     US_WEST_2 = "westus2"
     US_WEST_CENTRAL = "westcentralus"
+
+
+class TokenRefreshStatus(Enum):
+    """Represents the refresh status of a token.
+
+    REQUIRED: The token is expired or otherwise unusable and must be refreshed.
+    RECOMMENDED: The token is still valid but is approaching expiration or past its
+        recommended refresh time. A proactive refresh is desirable but not critical.
+    NOT_NEEDED: The token is valid and does not need to be refreshed.
+    """
+
+    REQUIRED = "required"
+    RECOMMENDED = "recommended"
+    NOT_NEEDED = "not_needed"

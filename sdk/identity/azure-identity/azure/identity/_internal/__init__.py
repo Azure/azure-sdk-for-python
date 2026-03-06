@@ -11,6 +11,7 @@ from .interactive import InteractiveCredential
 from .utils import (
     encode_base64,
     get_default_authority,
+    get_refresh_status,
     normalize_authority,
     process_credential_exclusions,
     resolve_tenant,
@@ -59,4 +60,5 @@ __all__ = [
     "within_dac",
     "wrap_exceptions",
     "validate_tenant_id",
+    "get_refresh_status",
 ]
