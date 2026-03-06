@@ -151,8 +151,6 @@ def _build_connection_policy(kwargs: dict[str, Any]) -> ConnectionPolicy:
     policy.ResponsePayloadOnWriteDisabled = kwargs.pop('no_response_on_write', False)
     policy.RetryNonIdempotentWrites = kwargs.pop(Constants.Kwargs.RETRY_WRITE, False)
     return policy
-
-
 class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
     """A client-side logical representation of an Azure Cosmos DB account.
 
