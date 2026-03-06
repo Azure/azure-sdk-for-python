@@ -10,6 +10,7 @@
 #### Breaking Changes
 
 #### Bugs Fixed
+* Fixed bug where client-level `read_timeout` configuration was not being automatically applied to all queries. See [PR 44472](https://github.com/Azure/azure-sdk-for-python/pull/44472)
 
 #### Other Changes
 
