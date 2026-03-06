@@ -25,9 +25,9 @@ class TestAgentMemorySearchAsync(TestBase):
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     async def test_agent_memory_search_async(self, **kwargs):
 
-        model = kwargs.get("azure_ai_projects_tests_model_deployment_name")
-        chat_model = kwargs.get("azure_ai_projects_tests_memory_store_chat_model_deployment_name")
-        embedding_model = kwargs.get("azure_ai_projects_tests_memory_store_embedding_model_deployment_name")
+        model = kwargs.get("azure_ai_model_deployment_name")
+        chat_model = kwargs.get("memory_store_chat_model_deployment_name")
+        embedding_model = kwargs.get("memory_store_embedding_model_deployment_name")
 
         assert isinstance(model, str)
         assert isinstance(chat_model, str)

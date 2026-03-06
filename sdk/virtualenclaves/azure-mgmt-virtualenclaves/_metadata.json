@@ -1,0 +1,7 @@
+{
+  "apiVersion": "2025-05-01-preview",
+  "commit": "1bd335533d57d11a33d41be9b5841e6986ec3567",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/mission/Mission.Management",
+  "emitterVersion": "0.52.1"
+}

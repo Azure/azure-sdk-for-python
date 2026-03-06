@@ -154,7 +154,7 @@ with (
     else:
         print("\n✗ Evaluation run failed. Cannot generate cluster insights.")
 
-    project_client.datasets.delete(name=dataset.id, version=dataset.version)
+    project_client.datasets.delete(name=dataset.name, version=dataset.version)
     print("Dataset deleted")
 
     openai_client.evals.delete(eval_id=eval_object.id)

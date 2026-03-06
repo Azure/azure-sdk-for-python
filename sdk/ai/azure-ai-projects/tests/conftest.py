@@ -13,7 +13,7 @@ mimetypes.add_type("text/markdown", ".md")
 
 import os
 import pytest
-from dotenv import load_dotenv, find_dotenv
+from dotenv import find_dotenv, load_dotenv
 from devtools_testutils import (
     remove_batch_sanitizers,
     add_general_regex_sanitizer,
@@ -24,7 +24,6 @@ from devtools_testutils import (
 
 if not load_dotenv(find_dotenv(), override=True):
     print("Did not find a .env file. Using default environment variable values for tests.")
-
 
 def pytest_collection_modifyitems(items):
     if os.environ.get("AZURE_TEST_RUN_LIVE") == "true":

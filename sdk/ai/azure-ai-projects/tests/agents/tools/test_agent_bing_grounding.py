@@ -45,14 +45,14 @@ class TestAgentBingGrounding(TestBase):
         DELETE /agents/{agent_name}/versions/{agent_version} project_client.agents.delete_version()
         """
 
-        model = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+        model = kwargs.get("azure_ai_model_deployment_name")
 
-        # Note: This test requires AZURE_AI_PROJECTS_TESTS_BING_PROJECT_CONNECTION_ID environment variable
+        # Note: This test requires bing_project_connection_id environment variable
         # to be set with a valid Bing connection ID from the project
-        bing_connection_id = kwargs.get("azure_ai_projects_tests_bing_project_connection_id")
+        bing_connection_id = kwargs.get("bing_project_connection_id")
 
         if not bing_connection_id:
-            pytest.fail("AZURE_AI_PROJECTS_TESTS_BING_PROJECT_CONNECTION_ID environment variable not set")
+            pytest.fail("bing_project_connection_id environment variable not set")
 
         assert isinstance(bing_connection_id, str), "bing_connection_id must be a string"
 
@@ -145,12 +145,12 @@ class TestAgentBingGrounding(TestBase):
         Bing grounding and provide accurate responses with citations.
         """
 
-        model = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+        model = kwargs.get("azure_ai_model_deployment_name")
 
-        bing_connection_id = kwargs.get("azure_ai_projects_tests_bing_project_connection_id")
+        bing_connection_id = kwargs.get("bing_project_connection_id")
 
         if not bing_connection_id:
-            pytest.fail("AZURE_AI_PROJECTS_TESTS_BING_PROJECT_CONNECTION_ID environment variable not set")
+            pytest.fail("bing_project_connection_id environment variable not set")
 
         assert isinstance(bing_connection_id, str), "bing_connection_id must be a string"
 

@@ -27,7 +27,7 @@ class TestAgentCodeInterpreterAsync(TestBase):
         without any file uploads or downloads - just pure code execution.
         """
 
-        model = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+        model = kwargs.get("azure_ai_model_deployment_name")
         agent_name = "code-interpreter-simple-agent-async"
 
         async with (

@@ -28,7 +28,7 @@ class TestAgentOpenApiAsync(TestBase):
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     async def test_agent_openapi_async(self, **kwargs):
 
-        model = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+        model = kwargs.get("azure_ai_model_deployment_name")
 
         async with (
             self.create_async_client(operation_group="agents", **kwargs) as project_client,
