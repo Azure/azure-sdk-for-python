@@ -1,0 +1,32 @@
+<Results>
+  <Result>
+    <Input>
+      <Description>1 Path List</Description>
+      <PartitionKeyValue>["/path1"]</PartitionKeyValue>
+    </Input>
+    <Output>
+      <PartitionKeyHashV1>000000000000000000000000A6C6298A</PartitionKeyHashV1>
+      <PartitionKeyHashV2>B499FD5198AE0F1EB6B77F6E428D2FF0</PartitionKeyHashV2>
+    </Output>
+  </Result>
+  <Result>
+    <Input>
+      <Description>2 Path List</Description>
+      <PartitionKeyValue>["/path1","/path2"]</PartitionKeyValue>
+    </Input>
+    <Output>
+      <PartitionKeyHashV1>000000000000000000000000A6C6298A0000000000000000000000009D008F2C</PartitionKeyHashV1>
+      <PartitionKeyHashV2>B499FD5198AE0F1EB6B77F6E428D2FF0E7A1848BD1102A3B65AFF266874D0FF5</PartitionKeyHashV2>
+    </Output>
+  </Result>
+  <Result>
+    <Input>
+      <Description>3 Path List</Description>
+      <PartitionKeyValue>["/path1","/path2","/path3"]</PartitionKeyValue>
+    </Input>
+    <Output>
+      <PartitionKeyHashV1>000000000000000000000000A6C6298A0000000000000000000000009D008F2C0000000000000000000000003E47FEA2</PartitionKeyHashV1>
+      <PartitionKeyHashV2>B499FD5198AE0F1EB6B77F6E428D2FF0E7A1848BD1102A3B65AFF266874D0FF5ECA5ABC953544CF9BD94776DA5E6EA52</PartitionKeyHashV2>
+    </Output>
+  </Result>
+</Results>
