@@ -213,7 +213,7 @@ These tools work immediately without requiring external connections.
 
 ##### **Code Interpreter** ([documentation](https://learn.microsoft.com/azure/foundry/agents/how-to/tools/code-interpreter?pivots=python))
 
-Write and run Python code in a sandboxed environment, process files and work with diverse data formats. See [OpenAI Documentation](https://platform.openai.com/docs/guides/tools-code-interpreter).
+Write and run Python code in a sandboxed environment, process files and work with diverse data formats. See also [OpenAI Documentation](https://platform.openai.com/docs/guides/tools-code-interpreter).
 
 Basic tool declaration (no input files):
 
@@ -265,7 +265,7 @@ See full sample file `\agents\tools\sample_agent_code_interpreter_with_files.py`
 
 ##### **File Search** ([documentation](https://learn.microsoft.com/azure/foundry/agents/how-to/tools/file-search?pivots=python))
 
-Built-in RAG (Retrieval-Augmented Generation) tool to process and search through documents using vector stores for knowledge retrieval. See [OpenAI Documentation](https://platform.openai.com/docs/assistants/tools/file-search).
+Built-in RAG (Retrieval-Augmented Generation) tool to process and search through documents using vector stores for knowledge retrieval. See also [OpenAI Documentation](https://platform.openai.com/docs/assistants/tools/file-search).
 
 <!-- SNIPPET:sample_agent_file_search.tool_declaration -->
 
@@ -394,7 +394,7 @@ See the full sample in file `\agents\tools\sample_agent_computer_use.py` in the 
 
 ##### **Model Context Protocol (MCP)** ([documentation](https://learn.microsoft.com/azure/foundry/agents/how-to/tools/model-context-protocol?pivots=python))
 
-Integrate MCP servers to extend agent capabilities with standardized tools and resources. See [OpenAI Documentation](https://platform.openai.com/docs/guides/tools-connectors-mcp).
+Integrate MCP servers to extend agent capabilities with standardized tools and resources. See also [OpenAI Documentation](https://developers.openai.com/api/docs/guides/tools-connectors-mcp).
 
 <!-- SNIPPET:sample_agent_mcp.tool_declaration -->
 
@@ -416,7 +416,7 @@ See the full sample in file `\agents\tools\sample_agent_mcp.py` in the [Samples]
 
 ##### **OpenAPI** ([documentation](https://learn.microsoft.com/azure/foundry/agents/how-to/tools/openapi?pivots=python))
 
-Call external APIs defined by OpenAPI specifications without additional client-side code. See [OpenAI Documentation](https://platform.openai.com/docs/guides/tools-openapi).
+Call external APIs defined by OpenAPI specifications without additional client-side code.
 
 <!-- SNIPPET:sample_agent_openapi.tool_declaration-->
 
@@ -442,7 +442,7 @@ See the full sample in file `\agents\tools\sample_agent_openapi.py` in the [Samp
 
 ##### **Function Tool** ([documentation](https://learn.microsoft.com/azure/foundry/agents/how-to/tools/function-calling?pivots=python))
 
-Define custom functions that allow agents to interact with external APIs, databases, or application logic. See [OpenAI Documentation](https://platform.openai.com/docs/guides/function-calling).
+Define custom functions that allow agents to interact with external APIs, databases, or application logic. See also [OpenAI Documentation](https://platform.openai.com/docs/guides/function-calling).
 
 <!-- SNIPPET:sample_agent_function_tool.tool_declaration -->
 
