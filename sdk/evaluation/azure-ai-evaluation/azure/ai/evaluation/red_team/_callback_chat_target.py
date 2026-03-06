@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import logging
+import os
 from typing import Any, Callable, Dict, List, Optional
 
 from openai import RateLimitError as OpenAIRateLimitError
@@ -23,7 +24,9 @@ class _CallbackChatTarget(PromptChatTarget):
     def __init__(
         self,
         *,
-        callback: Callable[[List[Dict], bool, Optional[str], Optional[Dict[str, Any]]], Dict],
+        callback: Callable[
+            [List[Dict], bool, Optional[str], Optional[Dict[str, Any]]], Dict
+        ],
         stream: bool = False,
         retry_enabled: bool = True,
     ) -> None:
@@ -105,14 +108,30 @@ class _CallbackChatTarget(PromptChatTarget):
         self._validate_request(prompt_request=message)
         request = message.get_piece(0)
 
+        # Handle binary_path by reading file content and converting to text.
+        # XPIA (indirect jailbreak) strategy creates file-based context prompts with
+        # binary_path data type, but model targets only support text content.
+        request_content = request.converted_value or request.original_value or ""
+        if request.converted_value_data_type == "binary_path" and os.path.isfile(
+            request_content
+        ):
+            with open(request_content, "r", encoding="utf-8", errors="replace") as f:
+                request_content = f.read()
+
         # Get conversation history and convert to chat message format
-        conversation_history = self._memory.get_conversation(conversation_id=request.conversation_id)
+        conversation_history = self._memory.get_conversation(
+            conversation_id=request.conversation_id
+        )
         messages: List[Dict[str, str]] = []
         for msg in conversation_history:
             for piece in msg.message_pieces:
                 messages.append(
                     {
-                        "role": (piece.api_role if hasattr(piece, "api_role") else str(piece.role)),
+                        "role": (
+                            piece.api_role
+                            if hasattr(piece, "api_role")
+                            else str(piece.role)
+                        ),
                         "content": piece.converted_value or piece.original_value or "",
                     }
                 )
@@ -120,8 +139,12 @@ class _CallbackChatTarget(PromptChatTarget):
         # Add current request
         messages.append(
             {
-                "role": (request.api_role if hasattr(request, "api_role") else str(request.role)),
-                "content": request.converted_value or request.original_value or "",
+                "role": (
+                    request.api_role
+                    if hasattr(request, "api_role")
+                    else str(request.role)
+                ),
+                "content": request_content,
             }
         )
 
@@ -130,7 +153,11 @@ class _CallbackChatTarget(PromptChatTarget):
         # Extract context from request labels if available
         # The context is stored in memory labels when the prompt is sent by orchestrator
         context_dict = {}
-        if hasattr(request, "labels") and request.labels and "context" in request.labels:
+        if (
+            hasattr(request, "labels")
+            and request.labels
+            and "context" in request.labels
+        ):
             context_data = request.labels["context"]
             if context_data and isinstance(context_data, dict):
                 # context_data is always a dict with 'contexts' list
@@ -143,17 +170,27 @@ class _CallbackChatTarget(PromptChatTarget):
                 # Check if any context has agent-specific fields for logging
                 has_agent_fields = any(
                     isinstance(ctx, dict)
-                    and ("context_type" in ctx and "tool_name" in ctx and ctx["tool_name"] is not None)
+                    and (
+                        "context_type" in ctx
+                        and "tool_name" in ctx
+                        and ctx["tool_name"] is not None
+                    )
                     for ctx in contexts
                 )
 
                 if has_agent_fields:
                     tool_names = [
-                        ctx.get("tool_name") for ctx in contexts if isinstance(ctx, dict) and "tool_name" in ctx
+                        ctx.get("tool_name")
+                        for ctx in contexts
+                        if isinstance(ctx, dict) and "tool_name" in ctx
                     ]
-                    logger.debug(f"Extracted agent context: {len(contexts)} context source(s), tool_names={tool_names}")
+                    logger.debug(
+                        f"Extracted agent context: {len(contexts)} context source(s), tool_names={tool_names}"
+                    )
                 else:
-                    logger.debug(f"Extracted model context: {len(contexts)} context source(s)")
+                    logger.debug(
+                        f"Extracted model context: {len(contexts)} context source(s)"
+                    )
 
         # Invoke callback with exception translation for retry handling
         try:
@@ -161,13 +198,21 @@ class _CallbackChatTarget(PromptChatTarget):
             response = await self._callback(messages=messages, stream=self._stream, session_state=None, context=context_dict)  # type: ignore
         except OpenAIRateLimitError as e:
             # Translate OpenAI RateLimitError to PyRIT RateLimitException for retry decorator
-            logger.warning(f"Rate limit error from callback, translating for retry: {e}")
+            logger.warning(
+                f"Rate limit error from callback, translating for retry: {e}"
+            )
             raise RateLimitException(status_code=429, message=str(e)) from e
         except Exception as e:
             # Check for rate limit indicators in error message (fallback detection)
             error_str = str(e).lower()
-            if "rate limit" in error_str or "429" in error_str or "too many requests" in error_str:
-                logger.warning(f"Rate limit detected in error message, translating for retry: {e}")
+            if (
+                "rate limit" in error_str
+                or "429" in error_str
+                or "too many requests" in error_str
+            ):
+                logger.warning(
+                    f"Rate limit detected in error message, translating for retry: {e}"
+                )
                 raise RateLimitException(status_code=429, message=str(e)) from e
             raise
 
@@ -183,7 +228,11 @@ class _CallbackChatTarget(PromptChatTarget):
             if isinstance(response, dict) and "token_usage" in response:
                 token_usage = response["token_usage"]
 
-        if not isinstance(response, dict) or "messages" not in response or not response["messages"]:
+        if (
+            not isinstance(response, dict)
+            or "messages" not in response
+            or not response["messages"]
+        ):
             raise ValueError(
                 f"Callback returned invalid response: expected dict with non-empty 'messages', got {type(response)}"
             )
@@ -191,18 +240,25 @@ class _CallbackChatTarget(PromptChatTarget):
         response_text = response["messages"][-1]["content"]
 
         # Check for empty response and raise EmptyResponseException for retry
-        if not response_text or (isinstance(response_text, str) and response_text.strip() == ""):
+        if not response_text or (
+            isinstance(response_text, str) and response_text.strip() == ""
+        ):
             logger.warning("Callback returned empty response")
             raise EmptyResponseException(message="Callback returned empty response")
 
-        response_entry = construct_response_from_request(request=request, response_text_pieces=[response_text])
+        response_entry = construct_response_from_request(
+            request=request, response_text_pieces=[response_text]
+        )
 
         # Add token_usage to the response entry's labels (not the request)
         if token_usage:
             response_entry.get_piece(0).labels["token_usage"] = token_usage
             logger.debug(f"Captured token usage from callback: {token_usage}")
 
-        logger.debug("Received the following response from the prompt target" + f"{response_text}")
+        logger.debug(
+            "Received the following response from the prompt target"
+            + f"{response_text}"
+        )
         return [response_entry]
 
     def _validate_request(self, *, prompt_request: Message) -> None:
@@ -212,7 +268,8 @@ class _CallbackChatTarget(PromptChatTarget):
         data_type = prompt_request.get_piece(0).converted_value_data_type
         if data_type not in ("text", "image_path", "binary_path"):
             raise ValueError(
-                f"This target only supports text, image_path, and binary_path prompt input. " f"Received: {data_type}."
+                f"This target only supports text, image_path, and binary_path prompt input. "
+                f"Received: {data_type}."
             )
 
     def is_json_response_supported(self) -> bool:
