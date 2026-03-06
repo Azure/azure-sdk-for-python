@@ -16,7 +16,7 @@ from azure.mgmt.resource.policy import PolicyClient
     pip install azure-identity
     pip install azure-mgmt-resource-policy
 # USAGE
-    python create_or_update_policy_definition.py
+    python create_or_update_policy_definition_external_evaluation_enforcement_settings.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -32,26 +32,27 @@ def main():
     )
 
     response = client.policy_definitions.create_or_update(
-        policy_definition_name="ResourceNaming",
+        policy_definition_name="RandomizeVMAllocation",
         parameters={
             "properties": {
-                "description": "Force resource names to begin with given 'prefix' and/or end with given 'suffix'",
-                "displayName": "Enforce resource naming convention",
-                "metadata": {"category": "Naming"},
-                "mode": "All",
-                "parameters": {
-                    "prefix": {
-                        "metadata": {"description": "Resource name prefix", "displayName": "Prefix"},
-                        "type": "String",
-                    },
-                    "suffix": {
-                        "metadata": {"description": "Resource name suffix", "displayName": "Suffix"},
-                        "type": "String",
-                    },
+                "description": "Randomly disable VM allocation in eastus by having policy rule reference the outcome of invoking an external endpoint using the CoinFlip endpoint that returns random values.",
+                "displayName": "Randomize VM Allocation",
+                "externalEvaluationEnforcementSettings": {
+                    "endpointSettings": {"details": {"successProbability": 0.5}, "kind": "CoinFlip"},
+                    "missingTokenAction": "audit",
+                    "roleDefinitionIds": [
+                        "subscriptions/ae640e6b-ba3e-4256-9d62-2993eecfa6f2/providers/Microsoft.Authorization/roleDefinitions/f0cc2aea-b517-48f6-8f9e-0c01c687907b"
+                    ],
                 },
+                "metadata": {"category": "VM"},
+                "mode": "Indexed",
                 "policyRule": {
                     "if": {
-                        "not": {"field": "name", "like": "[concat(parameters('prefix'), '*', parameters('suffix'))]"}
+                        "allOf": [
+                            {"equals": "Microsoft.Compute/virtualMachines", "field": "type"},
+                            {"equals": "eastus", "field": "location"},
+                            {"equals": "false", "value": "[claims().isValid]"},
+                        ]
                     },
                     "then": {"effect": "deny"},
                 },
@@ -61,6 +62,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/resources/resource-manager/Microsoft.Authorization/policy/stable/2025-03-01/examples/createOrUpdatePolicyDefinition.json
+# x-ms-original-file: specification/resources/resource-manager/Microsoft.Authorization/policy/stable/2025-03-01/examples/createOrUpdatePolicyDefinitionExternalEvaluationEnforcementSettings.json
 if __name__ == "__main__":
     main()

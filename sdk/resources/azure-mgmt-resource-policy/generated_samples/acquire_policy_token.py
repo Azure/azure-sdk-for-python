@@ -16,7 +16,7 @@ from azure.mgmt.resource.policy import PolicyClient
     pip install azure-identity
     pip install azure-mgmt-resource-policy
 # USAGE
-    python list_variable_values_for_management_group.py
+    python acquire_policy_token.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -28,17 +28,20 @@ from azure.mgmt.resource.policy import PolicyClient
 def main():
     client = PolicyClient(
         credential=DefaultAzureCredential(),
-        subscription_id="SUBSCRIPTION_ID",
+        subscription_id="ae640e6b-ba3e-4256-9d62-2993eecfa6f2",
     )
 
-    response = client.variable_values.list_for_management_group(
-        management_group_id="DevOrg",
-        variable_name="DemoTestVariable",
+    response = client.policy_tokens.acquire(
+        parameters={
+            "operation": {
+                "httpMethod": "delete",
+                "uri": "https://management.azure.com/subscriptions/ae640e6b-ba3e-4256-9d62-2993eecfa6f2/resourceGroups/testRG/providers/Microsoft.Compute/virtualMachines/testVM?api-version=2024-01-01",
+            }
+        },
     )
-    for item in response:
-        print(item)
+    print(response)
 
 
-# x-ms-original-file: specification/resources/resource-manager/Microsoft.Authorization/policy/preview/2022-08-01-preview/examples/listVariableValuesForManagementGroup.json
+# x-ms-original-file: specification/resources/resource-manager/Microsoft.Authorization/policy/stable/2025-03-01/examples/acquirePolicyToken.json
 if __name__ == "__main__":
     main()
