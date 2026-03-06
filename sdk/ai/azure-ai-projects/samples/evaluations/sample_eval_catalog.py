@@ -14,7 +14,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b4" python-dotenv
+    pip install "azure-ai-projects>=2.0.0" python-dotenv
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
@@ -177,13 +177,13 @@ with (
     )
 
     print("Getting list of builtin evaluator versions")
-    evaluators = project_client.beta.evaluators.list_latest_versions(type="builtin")
+    evaluators = project_client.beta.evaluators.list(type="builtin")
     print("List of builtin evaluator versions")
     for evaluator in evaluators:
         pprint(evaluator)
 
     print("Getting list of custom evaluator versions")
-    evaluators = project_client.beta.evaluators.list_latest_versions(type="custom")
+    evaluators = project_client.beta.evaluators.list(type="custom")
     print("List of custom evaluator versions")
     for evaluator in evaluators:
         pprint(evaluator)

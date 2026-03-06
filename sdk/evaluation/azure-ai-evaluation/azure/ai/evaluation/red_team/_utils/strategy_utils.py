@@ -6,6 +6,8 @@ import random
 from typing import Dict, List, Union, Optional, Any, Callable, cast
 import logging
 
+import httpx
+
 from azure.ai.evaluation.simulator._model_tools._generated_rai_client import (
     GeneratedRAIClient,
 )
@@ -44,6 +46,16 @@ from azure.ai.evaluation._model_configurations import (
 
 # Azure OpenAI uses cognitive services scope for AAD authentication
 AZURE_OPENAI_SCOPE = "https://cognitiveservices.azure.com/.default"
+
+# Default timeouts for PyRIT's underlying httpx client (seconds).
+# Split timeouts keep connect/pool failures fast while allowing slow model responses.
+# Override the read timeout via RedTeam.scan(..., _http_timeout=<seconds>).
+DEFAULT_CONNECT_TIMEOUT = 10.0
+DEFAULT_READ_TIMEOUT = 180.0
+DEFAULT_WRITE_TIMEOUT = 30.0
+DEFAULT_POOL_TIMEOUT = 30.0
+# Backward-compatible alias used by validation and tests.
+PYRIT_HTTP_TIMEOUT = DEFAULT_READ_TIMEOUT
 
 
 def _create_token_provider(credential: Any) -> Callable[[], str]:
@@ -154,6 +166,7 @@ def get_chat_target(
         OpenAIModelConfiguration,
     ],
     credential: Optional[Any] = None,
+    http_timeout: Optional[int] = None,
 ) -> PromptChatTarget:
     """Convert various target types to a PromptChatTarget.
 
@@ -163,10 +176,30 @@ def get_chat_target(
         Used as a fallback when target doesn't have an api_key or credential field. This is useful
         in ACA environments where DefaultAzureCredential is not available.
     :type credential: Optional[Any]
+    :param http_timeout: Optional HTTP read timeout in seconds for the underlying httpx client.
+        Only overrides the read timeout; connect, write, and pool timeouts remain at their
+        fast defaults (10s, 30s, 30s). Defaults to DEFAULT_READ_TIMEOUT (180s) if not specified.
+    :type http_timeout: Optional[int]
     :return: A PromptChatTarget instance
     :rtype: PromptChatTarget
     """
     import inspect
+
+    read_timeout = http_timeout if http_timeout is not None else DEFAULT_READ_TIMEOUT
+    if not isinstance(read_timeout, (int, float)) or isinstance(read_timeout, bool):
+        raise ValueError(
+            "http_timeout must be a positive number of seconds (int or float). "
+            f"Received value: {read_timeout!r} of type {type(read_timeout).__name__}."
+        )
+    if read_timeout <= 0:
+        raise ValueError("http_timeout must be greater than 0 seconds. " f"Received value: {read_timeout!r}.")
+
+    timeout = httpx.Timeout(
+        connect=DEFAULT_CONNECT_TIMEOUT,
+        read=read_timeout,
+        write=DEFAULT_WRITE_TIMEOUT,
+        pool=DEFAULT_POOL_TIMEOUT,
+    )
 
     # Helper function for message conversion
     def _message_to_dict(message):
@@ -193,6 +226,7 @@ def get_chat_target(
                     model_name=target["azure_deployment"],
                     endpoint=target["azure_endpoint"],
                     api_key=api_key,
+                    httpx_client_kwargs={"timeout": timeout},
                 )
             elif target_credential:
                 # Use explicit TokenCredential for AAD auth (e.g., in ACA environments)
@@ -201,6 +235,7 @@ def get_chat_target(
                     model_name=target["azure_deployment"],
                     endpoint=target["azure_endpoint"],
                     api_key=token_provider,  # PyRIT accepts callable that returns token
+                    httpx_client_kwargs={"timeout": timeout},
                 )
             else:
                 # Fall back to DefaultAzureCredential via PyRIT's auth helpers
@@ -210,12 +245,14 @@ def get_chat_target(
                     model_name=target["azure_deployment"],
                     endpoint=target["azure_endpoint"],
                     api_key=get_azure_openai_auth(target["azure_endpoint"]),
+                    httpx_client_kwargs={"timeout": timeout},
                 )
         else:  # OpenAI
             chat_target = OpenAIChatTarget(
                 model_name=target["model"],
                 endpoint=target.get("base_url", None),
                 api_key=target["api_key"],
+                httpx_client_kwargs={"timeout": timeout},
             )
     else:
         # Target is callable

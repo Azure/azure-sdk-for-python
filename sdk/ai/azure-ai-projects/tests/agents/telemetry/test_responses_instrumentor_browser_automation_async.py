@@ -6,6 +6,7 @@
 """
 Async tests for ResponsesInstrumentor with browser automation agents.
 """
+
 import os
 import pytest
 from azure.ai.projects.telemetry import AIProjectInstrumentor, _utils

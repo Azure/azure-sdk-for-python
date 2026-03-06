@@ -14,9 +14,6 @@ from devtools_testutils import RecordedTransport
 from azure.ai.projects.models import PromptAgentDefinition, FileSearchTool
 
 
-@pytest.mark.skip(
-    reason="Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema"
-)
 class TestAgentFileSearchAsync(TestBase):
 
     @servicePreparer()
