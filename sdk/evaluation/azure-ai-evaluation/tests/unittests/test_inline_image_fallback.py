@@ -61,8 +61,7 @@ class TestInlineImageGracefulFallback:
         """A real local image file should still be base64-encoded as before."""
         # Create a minimal valid PNG file (1x1 pixel)
         png_data = base64.b64decode(
-            "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4"
-            "nGNgYPgPAAEDAQAIicLsAAAABJRU5ErkJggg=="
+            "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4" "nGNgYPgPAAEDAQAIicLsAAAABJRU5ErkJggg=="
         )
         img_path = tmp_path / "test_image.png"
         img_path.write_bytes(png_data)
@@ -79,9 +78,7 @@ class TestToContentStrOrListGracefulFallback:
 
     def test_text_with_unresolvable_image_ref(self, tmp_path):
         """Mixed text with unresolvable image ref should not crash."""
-        result = _to_content_str_or_list(
-            "Some text ![fig](figures/1.1) more text", tmp_path, "auto"
-        )
+        result = _to_content_str_or_list("Some text ![fig](figures/1.1) more text", tmp_path, "auto")
         # Should return a list with text chunks (no crash)
         assert isinstance(result, list)
         # All chunks should be of type "text" since the image is unresolvable
@@ -96,9 +93,7 @@ class TestToContentStrOrListGracefulFallback:
 
     def test_text_with_http_image(self, tmp_path):
         """Text with valid HTTP image URL should return list with image_url type."""
-        result = _to_content_str_or_list(
-            "Before ![alt](https://example.com/img.png) after", tmp_path, "auto"
-        )
+        result = _to_content_str_or_list("Before ![alt](https://example.com/img.png) after", tmp_path, "auto")
         assert isinstance(result, list)
         image_items = [item for item in result if item["type"] == "image_url"]
         assert len(image_items) == 1
@@ -106,9 +101,7 @@ class TestToContentStrOrListGracefulFallback:
 
     def test_multiple_unresolvable_refs(self, tmp_path):
         """Multiple unresolvable image refs in one string should all become text."""
-        result = _to_content_str_or_list(
-            "Text ![a](figures/1.1) middle ![b](figures/2.3) end", tmp_path, "auto"
-        )
+        result = _to_content_str_or_list("Text ![a](figures/1.1) middle ![b](figures/2.3) end", tmp_path, "auto")
         assert isinstance(result, list)
         for item in result:
             assert item["type"] == "text"
@@ -116,15 +109,12 @@ class TestToContentStrOrListGracefulFallback:
     def test_real_local_image_in_mixed_content(self, tmp_path):
         """Real local image file mixed with text should work as before."""
         png_data = base64.b64decode(
-            "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4"
-            "nGNgYPgPAAEDAQAIicLsAAAABJRU5ErkJggg=="
+            "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4" "nGNgYPgPAAEDAQAIicLsAAAABJRU5ErkJggg=="
         )
         img_path = tmp_path / "real.png"
         img_path.write_bytes(png_data)
 
-        result = _to_content_str_or_list(
-            f"Before ![img]({img_path.name}) after", tmp_path, "auto"
-        )
+        result = _to_content_str_or_list(f"Before ![img]({img_path.name}) after", tmp_path, "auto")
         assert isinstance(result, list)
         image_items = [item for item in result if item["type"] == "image_url"]
         assert len(image_items) == 1
