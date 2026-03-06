@@ -10,7 +10,7 @@
 
 * Placeholder
 
-### Bug Fixes
+### Bugs Fixed
 
 * Placeholder
 
