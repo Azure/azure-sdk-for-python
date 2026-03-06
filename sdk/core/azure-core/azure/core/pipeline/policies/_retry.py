@@ -28,6 +28,7 @@ from io import SEEK_SET, UnsupportedOperation
 import logging
 import time
 from enum import Enum
+import random
 from azure.core.configuration import ConnectionConfiguration
 from azure.core.pipeline import PipelineResponse, PipelineRequest, PipelineContext
 from azure.core.pipeline.transport import (
@@ -86,6 +87,7 @@ class RetryPolicyBase:
         self.backoff_factor: float = kwargs.pop("retry_backoff_factor", 0.8)
         self.backoff_max: int = kwargs.pop("retry_backoff_max", self.BACKOFF_MAX)
         self.retry_mode: RetryMode = kwargs.pop("retry_mode", RetryMode.Exponential)
+        self.jitter_factor: float = kwargs.pop("retry_jitter_factor", 0.2)
         self.timeout: int = kwargs.pop("timeout", 604800)
 
         retry_codes = self._RETRY_CODES
@@ -119,6 +121,7 @@ class RetryPolicyBase:
             "status": options.pop("retry_status", self.status_retries),
             "backoff": options.pop("retry_backoff_factor", self.backoff_factor),
             "max_backoff": options.pop("retry_backoff_max", self.backoff_max),
+            "jitter": options.pop("retry_jitter_factor", self.jitter_factor),
             "methods": options.pop("retry_on_methods", self._method_whitelist),
             "timeout": options.pop("timeout", self.timeout),
             "history": [],
@@ -133,14 +136,23 @@ class RetryPolicyBase:
         """
         # We want to consider only the last consecutive errors sequence (Ignore redirects).
         consecutive_errors_len = len(settings["history"])
-        if consecutive_errors_len <= 1:
+        if consecutive_errors_len < 1:
             return 0
 
         if self.retry_mode == RetryMode.Fixed:
             backoff_value = settings["backoff"]
         else:
             backoff_value = settings["backoff"] * (2 ** (consecutive_errors_len - 1))
-        return min(settings["max_backoff"], backoff_value)
+
+        capped_backoff = min(settings["max_backoff"], backoff_value)
+
+        if settings["jitter"]:
+            jitter_amount = capped_backoff * settings["jitter"]
+            min_delay = capped_backoff - jitter_amount
+            max_delay = capped_backoff + jitter_amount
+            return random.uniform(max(0, min_delay), max_delay)
+
+        return capped_backoff
 
     def parse_retry_after(self, retry_after: str) -> float:
         """Helper to parse Retry-After and get value in seconds.
@@ -437,7 +449,10 @@ class RetryPolicy(RetryPolicyBase, HTTPPolicy[HTTPRequestType, HTTPResponseType]
      seconds. If the backoff_factor is 0.1, then the retry will sleep
      for [0.0s, 0.2s, 0.4s, ...] between retries. The default value is 0.8.
     :keyword int retry_backoff_max: The maximum back off time. Default value is 120 seconds (2 minutes).
-    :keyword RetryMode retry_mode: Fixed or exponential delay between attemps, default is exponential.
+    :keyword float retry_jitter_factor: The factor to use to calculate the jitter. For example, if the backoff is
+     1 second with a jitter factor of 0.2, the actual backoff delay used will be a random float between 0.8 and 1.2.
+     If set to 0, no jitter will be applied. Default value is 0.2.
+    :keyword RetryMode retry_mode: Fixed or exponential delay between attempts, default is exponential.
     :keyword int timeout: Timeout setting for the operation in seconds, default is 604800s (7 days).
 
     .. admonition:: Example:
