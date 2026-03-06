@@ -63,6 +63,7 @@ async def load(  # pylint: disable=docstring-keyword-should-match-keyword-only
     key_vault_options: Optional[AzureAppConfigurationKeyVaultOptions] = None,
     refresh_on: Optional[List[Tuple[str, str]]] = None,
     refresh_interval: int = 30,
+    refresh_enabled: bool = True,
     on_refresh_success: Optional[Callable] = None,
     on_refresh_error: Optional[Callable[[Exception], Awaitable[None]]] = None,
     feature_flag_enabled: bool = False,
@@ -90,6 +91,8 @@ async def load(  # pylint: disable=docstring-keyword-should-match-keyword-only
     not supported).
     :keyword int refresh_interval: The minimum time in seconds between when a call to `refresh` will actually trigger a
      service call to update the settings. Default value is 30 seconds.
+    :keyword refresh_enabled: Optional flag to enable or disable refreshing of configuration settings. Default is True.
+    :paramtype refresh_enabled: bool
     :keyword on_refresh_success: Optional callback to be invoked when a change is found and a successful refresh has
     happened.
     :paramtype on_refresh_success: Optional[Callable]
@@ -131,6 +134,7 @@ async def load(  # pylint: disable=docstring-keyword-should-match-keyword-only
     key_vault_options: Optional[AzureAppConfigurationKeyVaultOptions] = None,
     refresh_on: Optional[List[Tuple[str, str]]] = None,
     refresh_interval: int = 30,
+    refresh_enabled: bool = True,
     on_refresh_success: Optional[Callable] = None,
     on_refresh_error: Optional[Callable[[Exception], Awaitable[None]]] = None,
     feature_flag_enabled: bool = False,
@@ -160,6 +164,8 @@ async def load(  # pylint: disable=docstring-keyword-should-match-keyword-only
     :paramtype refresh_on: List[Tuple[str, str]]
     :keyword int refresh_interval: The minimum time in seconds between when a call to `refresh` will actually trigger a
      service call to update the settings. Default value is 30 seconds.
+    :keyword refresh_enabled: Optional flag to enable or disable refreshing of configuration settings. Default is True.
+    :paramtype refresh_enabled: bool
     :keyword on_refresh_success: Optional callback to be invoked when a change is found and a successful refresh has
      happened.
     :paramtype on_refresh_success: Optional[Callable]
@@ -295,7 +301,17 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
         updated_watched_settings: Mapping[Tuple[str, str], Optional[str]] = {}
         existing_feature_flag_usage = self._tracing_context.feature_filter_usage.copy()
         try:
-            if self._watched_settings and self._refresh_timer.needs_refresh():
+            if self._refresh_enabled and not self._watched_settings and self._refresh_timer.needs_refresh():
+                configuration_refresh_attempted = True
+
+                if await client.check_page_etags(self._selects, self._page_etags, headers=headers, **kwargs):
+                    configuration_settings, page_etags = await client.load_configuration_settings(
+                        self._selects, headers=headers, **kwargs
+                    )
+                    self._page_etags = page_etags
+                    settings_refreshed = True
+
+            elif self._watched_settings and self._refresh_timer.needs_refresh():
                 configuration_refresh_attempted = True
 
                 updated_watched_settings = await client.get_updated_watched_settings(
@@ -303,7 +319,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                 )
 
                 if len(updated_watched_settings) > 0:
-                    configuration_settings = await client.load_configuration_settings(
+                    configuration_settings, _ = await client.load_configuration_settings(
                         self._selects, headers=headers, **kwargs
                     )
                     settings_refreshed = True
@@ -348,8 +364,8 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
             raise e
 
     async def refresh(self, **kwargs) -> None:
-        if not self._watched_settings and not self._feature_flag_refresh_enabled:
-            logger.debug("Refresh called but no refresh enabled.")
+        if not self._refresh_enabled:
+            logger.debug("Refresh called but refresh is not enabled.")
             return
         if not self._refresh_lock.acquire(blocking=False):  # pylint: disable= consider-using-with
             logger.debug("Refresh called but refresh already in progress.")
@@ -439,7 +455,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                 is_failover_request,
             )
             try:
-                configuration_settings = await client.load_configuration_settings(
+                configuration_settings, page_etags = await client.load_configuration_settings(
                     self._selects, headers=headers, **kwargs
                 )
                 watched_settings = self._update_watched_settings(configuration_settings)
@@ -476,6 +492,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                 with self._update_lock:
                     self._watched_settings = watched_settings
                     self._dict = processed_settings
+                    self._page_etags = page_etags
                 return True
             except AzureError as e:
                 logger.warning("Failed to load configurations from endpoint %s.\n %s", client.endpoint, e.message)

@@ -137,6 +137,7 @@ class TestSecretRefresh(AppConfigTestCase, unittest.TestCase):
             keyvault_secret_url2=appconfiguration_keyvault_secret_url2,
             on_refresh_success=mock_callback,
             refresh_interval=999999,
+            refresh_enabled=False,
         )
 
         # Verify initial state
