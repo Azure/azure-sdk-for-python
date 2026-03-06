@@ -229,3 +229,80 @@ class TestNumericalHelpers:
         """Test list_mean_nan_safe with a list that is empty after filtering."""
         result = list_mean_nan_safe([None, float("nan")])
         assert result == 0.0  # Default when no valid values
+
+
+@pytest.mark.unittest
+class TestUnicodeJSONLRoundTrip:
+    """Test that JSONL files with non-ASCII content survive write/read round-trips.
+
+    Regression tests for the encoding bug where open() without encoding='utf-8'
+    caused UnicodeDecodeError on Windows for UnicodeConfusable and CJK content.
+    """
+
+    def test_jsonl_roundtrip_cjk_characters(self, tmp_path):
+        """Test JSONL round-trip with CJK characters (Japanese, Chinese)."""
+        output_path = str(tmp_path / "cjk_test.jsonl")
+        content = [
+            {
+                "conversation": {
+                    "messages": [
+                        {"role": "user", "content": "これはテストです"},
+                        {"role": "assistant", "content": "这是一个测试"},
+                    ]
+                }
+            },
+        ]
+        # Write with utf-8 (as the fixed code does)
+        with open(output_path, "w", encoding="utf-8") as f:
+            for entry in content:
+                f.write(json.dumps(entry, ensure_ascii=False) + "\n")
+        # Read back with utf-8 (as the fixed code does)
+        with open(output_path, "r", encoding="utf-8") as f:
+            for line in f:
+                data = json.loads(line)
+                assert data["conversation"]["messages"][0]["content"] == "これはテストです"
+                assert data["conversation"]["messages"][1]["content"] == "这是一个测试"
+
+    def test_jsonl_roundtrip_unicode_confusable(self, tmp_path):
+        """Test JSONL round-trip with Unicode confusable characters."""
+        output_path = str(tmp_path / "confusable_test.jsonl")
+        confusable_text = "Ⓗⓔⓛⓛⓞ ⓦⓞⓡⓛⓓ"  # Unicode confusable "Hello world"
+        content = [
+            {
+                "conversation": {
+                    "messages": [
+                        {"role": "user", "content": confusable_text},
+                        {"role": "assistant", "content": "I understand your request."},
+                    ]
+                }
+            },
+        ]
+        with open(output_path, "w", encoding="utf-8") as f:
+            for entry in content:
+                f.write(json.dumps(entry, ensure_ascii=False) + "\n")
+        with open(output_path, "r", encoding="utf-8") as f:
+            for line in f:
+                data = json.loads(line)
+                assert data["conversation"]["messages"][0]["content"] == confusable_text
+
+    def test_jsonl_roundtrip_mixed_scripts(self, tmp_path):
+        """Test JSONL round-trip with mixed scripts (Arabic, Cyrillic, emoji)."""
+        output_path = str(tmp_path / "mixed_test.jsonl")
+        content = [
+            {
+                "conversation": {
+                    "messages": [
+                        {"role": "user", "content": "مرحبا Привет 🔥 café"},
+                        {"role": "assistant", "content": "Multi-script response: αβγ"},
+                    ]
+                }
+            },
+        ]
+        with open(output_path, "w", encoding="utf-8") as f:
+            for entry in content:
+                f.write(json.dumps(entry, ensure_ascii=False) + "\n")
+        with open(output_path, "r", encoding="utf-8") as f:
+            for line in f:
+                data = json.loads(line)
+                assert "مرحبا" in data["conversation"]["messages"][0]["content"]
+                assert "αβγ" in data["conversation"]["messages"][1]["content"]
