@@ -39,6 +39,14 @@ The following are code samples that show common scenario operations with the Azu
 
 * [change_feed_management.py](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/change_feed_management.py) - Example demontrating how to consume the Change Feed and iterate on the results.
 
+* [feed_range_management.py](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/feed_range_management.py) - Example demonstrating feed range operations including:
+    * Reading feed ranges from a container
+    * Getting a feed range for a specific partition key
+    * Checking feed range subset relationships
+    * Querying items scoped to a feed range
+    * Comparing queries scoped to feed ranges with `partition_key`-based queries
+    * Consuming change feed scoped to a feed range
+    * Parallel change feed processing using feed ranges
 
 * [access_cosmos_with_resource_token.py](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/access_cosmos_with_resource_token.py) - Example demontrating how to get and use resource token that allows restricted access to data.
 
