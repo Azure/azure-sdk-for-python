@@ -6,6 +6,7 @@
 """
 Tests for ResponsesInstrumentor with File Search tool.
 """
+
 import os
 import pytest
 from io import BytesIO
@@ -105,7 +106,7 @@ Return Policy: 30-day return policy with no questions asked
                     conversation=conversation.id,
                     input="Tell me about Contoso products",
                     stream=False,
-                    extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                    extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
                 )
 
                 assert response.output_text is not None
@@ -314,7 +315,7 @@ Return Policy: 30-day return policy with no questions asked
                     conversation=conversation.id,
                     input="Tell me about Contoso products",
                     stream=False,
-                    extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                    extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
                 )
 
                 assert response.output_text is not None
@@ -521,7 +522,7 @@ Return Policy: 30-day return policy with no questions asked
                     conversation=conversation.id,
                     input="Tell me about Contoso products",
                     stream=True,
-                    extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                    extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
                 )
 
                 # Consume the stream
@@ -726,7 +727,7 @@ Return Policy: 30-day return policy with no questions asked
                     conversation=conversation.id,
                     input="Tell me about Contoso products",
                     stream=True,
-                    extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                    extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
                 )
 
                 # Consume the stream

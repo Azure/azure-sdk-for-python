@@ -7,7 +7,9 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+
 from typing import Union, Optional, Any, List, overload, IO, cast
+from openai.types.responses import ResponseInputParam
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.polling import NoPolling
 from azure.core.utils import case_insensitive_dict
@@ -20,12 +22,167 @@ from ..models import (
     UpdateMemoriesLROPoller,
     UpdateMemoriesLROPollingMethod,
 )
-from ._operations import JSON, _Unset, ClsType, MemoryStoresOperations as GenerateMemoryStoresOperations
+from ._operations import JSON, _Unset, ClsType, BetaMemoryStoresOperations as GenerateBetaMemoryStoresOperations
 from .._validation import api_version_validation
-from .._utils.model_base import _deserialize
+from .._utils.model_base import _deserialize, _serialize
 
 
-class MemoryStoresOperations(GenerateMemoryStoresOperations):
+def _serialize_memory_input_items(
+    items: Optional[Union[str, ResponseInputParam]],
+) -> Optional[List[dict[str, Any]]]:
+    """Serialize OpenAI response input items to the payload shape expected by memory APIs.
+
+    :param items: The items to serialize. Can be a plain string or an OpenAI ResponseInputParam.
+    :type items: Optional[Union[str, openai.types.responses.ResponseInputParam]]
+    :return: A list of serialized item dictionaries, or None if items is None.
+    :rtype: Optional[List[dict[str, Any]]]
+    """
+
+    if items is None:
+        return None
+
+    if isinstance(items, str):
+        return [{"role": "user", "type": "message", "content": items}]
+
+    if not isinstance(items, list):
+        raise TypeError("items must serialize to a list of dictionaries.")
+
+    serialized_items: List[dict[str, Any]] = []
+    for item in items:
+        if hasattr(item, "model_dump"):
+            item = cast(Any, item).model_dump()
+        elif hasattr(item, "as_dict"):
+            item = cast(Any, item).as_dict()
+
+        serialized_item = _serialize(item)
+        if not isinstance(serialized_item, dict):
+            raise TypeError("items must serialize to a dictionary .")
+        serialized_items.append(serialized_item)
+    return serialized_items
+
+
+class BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
+
+    # A message or list of messages to store in memory. When using a list, each item needs to correspond to a dictionary with `role`, `content` and `type` properties (with type equals `message`). For example: {\"role\": \"user\", \"type\": \"message\", \"content\": \"my user message\"}"
+    @overload
+    def search_memories(
+        self,
+        name: str,
+        *,
+        scope: str,
+        content_type: str = "application/json",
+        items: Optional[Union[str, ResponseInputParam]] = None,
+        previous_search_id: Optional[str] = None,
+        options: Optional[_models.MemorySearchOptions] = None,
+        **kwargs: Any,
+    ) -> _models.MemoryStoreSearchResult:
+        """Search for relevant memories from a memory store based on conversation context.
+
+        :param name: The name of the memory store to search. Required.
+        :type name: str
+        :keyword scope: The namespace that logically groups and isolates memories, such as a user ID.
+         Required.
+        :paramtype scope: str
+        :keyword items: A message or list of messages used to extract relevant memories. When using a
+         list, each item needs to correspond to a dictionary with `role`, `content` and `type`
+         keys. For example: {"role": "user", "type": "message", "content": "my user message"}.
+         Only messages with `type` equals `message` are currently processed. Others are ignored.
+         Default value is None.
+        :paramtype items: Union[str, openai.types.responses.ResponseInputParam]
+        :keyword previous_search_id: The unique ID of the previous search request, enabling incremental
+         memory search from where the last operation left off. Default value is None.
+        :paramtype previous_search_id: str
+        :keyword options: Memory search options. Default value is None.
+        :paramtype options: ~azure.ai.projects.models.MemorySearchOptions
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: MemoryStoreSearchResult. The MemoryStoreSearchResult is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.MemoryStoreSearchResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def search_memories(
+        self, name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.MemoryStoreSearchResult:
+        """Search for relevant memories from a memory store based on conversation context.
+
+        :param name: The name of the memory store to search. Required.
+        :type name: str
+        :param body: Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: MemoryStoreSearchResult. The MemoryStoreSearchResult is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.MemoryStoreSearchResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def search_memories(
+        self, name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.MemoryStoreSearchResult:
+        """Search for relevant memories from a memory store based on conversation context.
+
+        :param name: The name of the memory store to search. Required.
+        :type name: str
+        :param body: Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: MemoryStoreSearchResult. The MemoryStoreSearchResult is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.MemoryStoreSearchResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def search_memories(
+        self,
+        name: str,
+        body: Union[JSON, IO[bytes]] = _Unset,
+        *,
+        scope: str = _Unset,
+        items: Optional[Union[str, ResponseInputParam]] = None,
+        previous_search_id: Optional[str] = None,
+        options: Optional[_models.MemorySearchOptions] = None,
+        **kwargs: Any,
+    ) -> _models.MemoryStoreSearchResult:
+        """Search for relevant memories from a memory store based on conversation context.
+
+        :param name: The name of the memory store to search. Required.
+        :type name: str
+        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
+        :keyword scope: The namespace that logically groups and isolates memories, such as a user ID.
+         Required.
+        :paramtype scope: str
+        :keyword items: A message or list of messages used to extract relevant memories. When using a
+         list, each item needs to correspond to a dictionary with `role`, `content` and `type`
+         keys. For example: {"role": "user", "type": "message", "content": "my user message"}.
+         Only messages with `type` equals `message` are currently processed. Others are ignored.
+         Default value is None.
+        :paramtype items: Union[str, openai.types.responses.ResponseInputParam]
+        :keyword previous_search_id: The unique ID of the previous search request, enabling incremental
+         memory search from where the last operation left off. Default value is None.
+        :paramtype previous_search_id: str
+        :keyword options: Memory search options. Default value is None.
+        :paramtype options: ~azure.ai.projects.models.MemorySearchOptions
+        :return: MemoryStoreSearchResult. The MemoryStoreSearchResult is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.MemoryStoreSearchResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        return super()._search_memories(
+            name=name,
+            body=body,
+            scope=scope,
+            items=_serialize_memory_input_items(items),
+            previous_search_id=previous_search_id,
+            options=options,
+            **kwargs,
+        )
 
     @overload
     def begin_update_memories(
@@ -34,7 +191,7 @@ class MemoryStoresOperations(GenerateMemoryStoresOperations):
         *,
         scope: str,
         content_type: str = "application/json",
-        items: Optional[List[_models.InputItem]] = None,
+        items: Optional[Union[str, ResponseInputParam]] = None,
         previous_update_id: Optional[str] = None,
         update_delay: Optional[int] = None,
         **kwargs: Any,
@@ -46,11 +203,12 @@ class MemoryStoresOperations(GenerateMemoryStoresOperations):
         :keyword scope: The namespace that logically groups and isolates memories, such as a user ID.
          Required.
         :paramtype scope: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword items: Conversation items from which to extract memories. Default value is None.
-        :paramtype items: list[~azure.ai.projects.models.InputItem]
+        :keyword items: A message or list of messages you would like to store in memory. When using a
+         list, each item needs to correspond to a dictionary with `role`, `content` and `type`
+         keys. For example: {"role": "user", "type": "message", "content": "my user message"}.
+         Only messages with `type` equals `message` are currently processed. Others are ignored.
+         Default value is None.
+        :paramtype items: Union[str, openai.types.responses.ResponseInputParam]
         :keyword previous_update_id: The unique ID of the previous update request, enabling incremental
          memory updates from where the last operation left off. Default value is None.
         :paramtype previous_update_id: str
@@ -60,6 +218,9 @@ class MemoryStoresOperations(GenerateMemoryStoresOperations):
          Set to 0 to immediately trigger the update without delay.
          Defaults to 300 (5 minutes). Default value is None.
         :paramtype update_delay: int
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
         :return: An instance of UpdateMemoriesLROPoller that returns MemoryStoreUpdateCompletedResult. The
          MemoryStoreUpdateCompletedResult is compatible with MutableMapping
         :rtype:
@@ -69,7 +230,12 @@ class MemoryStoresOperations(GenerateMemoryStoresOperations):
 
     @overload
     def begin_update_memories(
-        self, name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        name: str,
+        body: JSON,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any,
     ) -> UpdateMemoriesLROPoller:
         """Update memory store with conversation memories.
 
@@ -89,7 +255,12 @@ class MemoryStoresOperations(GenerateMemoryStoresOperations):
 
     @overload
     def begin_update_memories(
-        self, name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self,
+        name: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any,
     ) -> UpdateMemoriesLROPoller:
         """Update memory store with conversation memories.
 
@@ -109,9 +280,9 @@ class MemoryStoresOperations(GenerateMemoryStoresOperations):
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={"2025-11-15-preview": ["api_version", "name", "content_type", "accept"]},
-        api_versions_list=["2025-11-15-preview"],
+        method_added_on="v1",
+        params_added_on={"v1": ["api_version", "name", "content_type", "accept"]},
+        api_versions_list=["v1"],
     )
     def begin_update_memories(
         self,
@@ -119,7 +290,7 @@ class MemoryStoresOperations(GenerateMemoryStoresOperations):
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
         scope: str = _Unset,
-        items: Optional[List[_models.InputItem]] = None,
+        items: Optional[Union[str, ResponseInputParam]] = None,
         previous_update_id: Optional[str] = None,
         update_delay: Optional[int] = None,
         **kwargs: Any,
@@ -133,8 +304,12 @@ class MemoryStoresOperations(GenerateMemoryStoresOperations):
         :keyword scope: The namespace that logically groups and isolates memories, such as a user ID.
          Required.
         :paramtype scope: str
-        :keyword items: Conversation items from which to extract memories. Default value is None.
-        :paramtype items: list[~azure.ai.projects.models.InputItem]
+        :keyword items: A message or list of messages you would like to store in memory. When using a
+         list, each item needs to correspond to a dictionary with `role`, `content` and `type`
+         keys. For example: {"role": "user", "type": "message", "content": "my user message"}.
+         Only messages with `type` equals `message` are currently processed. Others are ignored.
+         Default value is None.
+        :paramtype items: Union[str, openai.types.responses.ResponseInputParam]
         :keyword previous_update_id: The unique ID of the previous update request, enabling incremental
          memory updates from where the last operation left off. Default value is None.
         :paramtype previous_update_id: str
@@ -163,7 +338,7 @@ class MemoryStoresOperations(GenerateMemoryStoresOperations):
                 name=name,
                 body=body,
                 scope=scope,
-                items=items,
+                items=_serialize_memory_input_items(items),
                 previous_update_id=previous_update_id,
                 update_delay=update_delay,
                 content_type=content_type,
@@ -174,9 +349,9 @@ class MemoryStoresOperations(GenerateMemoryStoresOperations):
             )
             raw_result.http_response.read()  # type: ignore
 
-            raw_result.http_response.status_code = 202  # type:  ignore
+            raw_result.http_response.status_code = 202  # type: ignore
             raw_result.http_response.headers["Operation-Location"] = (  # type: ignore
-                f"{self._config.endpoint}/memory_stores/{name}/updates/{raw_result.http_response.json().get('update_id')}?api-version=2025-11-15-preview"  # type: ignore
+                f"{self._config.endpoint}/memory_stores/{name}/updates/{raw_result.http_response.json().get('update_id')}?api-version=v1"  # type: ignore
             )
 
         kwargs.pop("error_map", None)

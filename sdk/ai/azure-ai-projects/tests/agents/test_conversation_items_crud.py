@@ -7,6 +7,7 @@
 
 from test_base import TestBase, servicePreparer
 from devtools_testutils import recorded_by_proxy, RecordedTransport
+import pytest
 
 
 class TestConversationItemsCrud(TestBase):

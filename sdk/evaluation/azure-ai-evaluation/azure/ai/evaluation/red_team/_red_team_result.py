@@ -532,7 +532,11 @@ class RedTeamRun(TypedDict, total=False):
 
 @experimental
 class RedTeamResult:
-    def __init__(self, scan_result: Optional[ScanResult] = None, attack_details: Optional[List[AttackDetails]] = None):
+    def __init__(
+        self,
+        scan_result: Optional[ScanResult] = None,
+        attack_details: Optional[List[AttackDetails]] = None,
+    ):
         self.scan_result = scan_result
         self.attack_details = attack_details
 

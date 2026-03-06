@@ -25,19 +25,21 @@ try:
         enduser_attributes as _enduser_attributes,
     )
 except ImportError:
-    _enduser_attributes = None
+    _enduser_attributes = None  # type: ignore
 
 from azure.monitor.opentelemetry.exporter import _utils
 from azure.monitor.opentelemetry.exporter._constants import (
     _APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE,
     _DEFAULT_LOG_MESSAGE,
     _EXCEPTION_ENVELOPE_NAME,
+    _EXPORTER_DOMAIN_SCHEMA_VERSION,
     _MESSAGE_ENVELOPE_NAME,
     _MICROSOFT_CUSTOM_EVENT_NAME,
 )
-from azure.monitor.opentelemetry.exporter._generated.models import (
+from azure.monitor.opentelemetry.exporter._generated.exporter.models import (
     ContextTagKeys,
     MessageData,
+    MonitorDomain,
     MonitorBase,
     TelemetryEventData,
     TelemetryExceptionData,
@@ -85,7 +87,7 @@ class AzureMonitorLogExporter(BaseExporter, LogRecordExporter):
         :param batch: OpenTelemetry ReadableLogRecord(s) to export.
         :type batch: ~typing.Sequence[~opentelemetry._logs.ReadableLogRecord]
         :return: The result of the export.
-        :rtype: ~opentelemetry.sdk._logs.export.ReadableLogRecord
+        :rtype: ~opentelemetry.sdk._logs.export.LogRecordExportResult
         """
         envelopes = [self._log_to_envelope(log) for log in batch]
         try:
@@ -146,13 +148,12 @@ def _convert_log_to_envelope(readable_log_record: ReadableLogRecord) -> Telemetr
     time_stamp = log_record.timestamp if log_record.timestamp is not None else log_record.observed_timestamp
     envelope = _utils._create_telemetry_item(time_stamp)
     tags = envelope.tags or {}
-    envelope.tags = tags
     tags.update(_utils._populate_part_a_fields(readable_log_record.resource))  # type: ignore
     tags[ContextTagKeys.AI_OPERATION_ID] = "{:032x}".format(log_record.trace_id or _DEFAULT_TRACE_ID)  # type: ignore
     if log_record.attributes and _ENDUSER_ID_ATTRIBUTE in log_record.attributes:
-        tags[ContextTagKeys.AI_USER_AUTH_USER_ID] = log_record.attributes[_ENDUSER_ID_ATTRIBUTE]
+        tags[ContextTagKeys.AI_USER_AUTH_USER_ID] = log_record.attributes[_ENDUSER_ID_ATTRIBUTE]  # type: ignore
     if log_record.attributes and _ENDUSER_PSEUDO_ID_ATTRIBUTE in log_record.attributes:
-        tags[ContextTagKeys.AI_USER_ID] = log_record.attributes[_ENDUSER_PSEUDO_ID_ATTRIBUTE]
+        tags[ContextTagKeys.AI_USER_ID] = log_record.attributes[_ENDUSER_PSEUDO_ID_ATTRIBUTE]  # type: ignore
 
     tags[ContextTagKeys.AI_OPERATION_PARENT_ID] = "{:016x}".format(  # type: ignore
         log_record.span_id or _DEFAULT_SPAN_ID
@@ -200,8 +201,9 @@ def _convert_log_to_envelope(readable_log_record: ReadableLogRecord) -> Telemetr
             has_full_stack=has_full_stack,
             stack=str(stack_trace)[:32768],
         )
-        data = TelemetryExceptionData(  # type: ignore
-            severity_level=severity_level,  # type: ignore
+        data: MonitorDomain = TelemetryExceptionData(
+            version=_EXPORTER_DOMAIN_SCHEMA_VERSION,
+            severity_level=severity_level,
             properties=properties,
             exceptions=[exc_details],
         )
@@ -214,7 +216,8 @@ def _convert_log_to_envelope(readable_log_record: ReadableLogRecord) -> Telemetr
             event_name = str(log_record.attributes.get(_MICROSOFT_CUSTOM_EVENT_NAME))  # type: ignore
         else:
             event_name = _map_body_to_message(log_record.body)
-        data = TelemetryEventData(  # type: ignore
+        data = TelemetryEventData(
+            version=_EXPORTER_DOMAIN_SCHEMA_VERSION,
             name=event_name,
             properties=properties,
         )
@@ -223,15 +226,21 @@ def _convert_log_to_envelope(readable_log_record: ReadableLogRecord) -> Telemetr
         envelope.name = _MESSAGE_ENVELOPE_NAME
         # pylint: disable=line-too-long
         # Severity number: https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/logs/data-model.md#field-severitynumber
-        data = MessageData(  # type: ignore
+        data = MessageData(
+            version=_EXPORTER_DOMAIN_SCHEMA_VERSION,
             message=_map_body_to_message(log_record.body),
-            severity_level=severity_level,  # type: ignore
+            severity_level=severity_level,
             properties=properties,
         )
-        data.message = data.message.strip()
-        if len(data.message) == 0:
-            data.message = _DEFAULT_LOG_MESSAGE
+        if hasattr(data, "message"):
+            data.message = data.message.strip()
+            if len(data.message) == 0:
+                data.message = _DEFAULT_LOG_MESSAGE
         envelope.data = MonitorBase(base_data=data, base_type="MessageData")
+
+        # Assign updated tags after all tag modifications to avoid losing changes when
+        # TelemetryItem clones the incoming mapping in its setter.
+        envelope.tags = tags
 
     return envelope
 

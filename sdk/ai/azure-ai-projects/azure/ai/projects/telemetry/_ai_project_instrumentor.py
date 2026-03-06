@@ -13,10 +13,7 @@ from datetime import datetime
 from enum import Enum
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union, TYPE_CHECKING
 from urllib.parse import urlparse
-from azure.ai.projects.models._models import (
-    Tool,
-    ItemResource,
-)
+from azure.ai.projects.models._models import Tool
 from azure.core import CaseInsensitiveEnumMeta  # type: ignore
 from azure.core.settings import settings
 from azure.core.tracing import AbstractSpan
@@ -59,7 +56,6 @@ from ._utils import (
     _get_use_message_events,
 )
 from ._responses_instrumentor import _ResponsesInstrumentorPreview
-
 
 _Unset: Any = object()
 
@@ -181,12 +177,18 @@ class AIProjectInstrumentor:
     """
     A class for managing the trace instrumentation of the AIProjectClient.
 
-    This class allows enabling or disabling tracing for AI Projects.
+    This class allows enabling or disabling tracing for AI Projects
     and provides functionality to check whether instrumentation is active.
+
+    .. warning::
+        GenAI tracing is an experimental preview feature. To use this feature, you must set the
+        environment variable ``AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING=true`` (case insensitive)
+        before calling the ``instrument()`` method. Spans, attributes, and events may be modified
+        in future versions.
 
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         if not _tracing_library_available:
             raise ModuleNotFoundError(
                 "Azure Core Tracing Opentelemetry is not installed. "
@@ -205,6 +207,13 @@ class AIProjectInstrumentor:
     ) -> None:
         """
         Enable trace instrumentation for AIProjectClient.
+
+        .. warning::
+            GenAI tracing is an experimental preview feature. To use this feature, you must set the
+            environment variable ``AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING=true`` (case insensitive).
+            If this environment variable is not set or set to any value other than "true",
+            instrumentation will not be enabled and this method will return immediately without effect.
+            Spans, attributes, and events may be modified in future versions.
 
         :param enable_content_recording: Whether content recording is enabled as part
           of the traces or not. Content in this context refers to chat message content
@@ -236,6 +245,15 @@ class AIProjectInstrumentor:
         :type enable_baggage_propagation: bool, optional
 
         """
+        # Check experimental feature gate
+        experimental_enabled = os.environ.get("AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING", "false")
+        if experimental_enabled.lower() != "true":
+            logger.warning(
+                "GenAI tracing is not enabled. Set environment variable "
+                "AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING=true to enable this experimental feature."
+            )
+            return
+
         self._impl.instrument(enable_content_recording, enable_trace_context_propagation, enable_baggage_propagation)
         self._responses_impl.instrument(enable_content_recording)
 
@@ -272,8 +290,11 @@ class _AIAgentsInstrumentorPreview:
     """
     A class for managing the trace instrumentation of AI Agents.
 
-    This class allows enabling or disabling tracing for AI Agents.
+    This class allows enabling or disabling tracing for AI Agents
     and provides functionality to check whether instrumentation is active.
+
+    .. note::
+        This is a private implementation class. Use the public AIProjectInstrumentor class instead.
     """
 
     def _str_to_bool(self, s):
@@ -289,6 +310,9 @@ class _AIAgentsInstrumentorPreview:
     ):
         """
         Enable trace instrumentation for AI Agents.
+
+        .. note::
+            This is a private implementation method. Use AIProjectInstrumentor.instrument() instead.
 
         :param enable_content_recording: Whether content recording is enabled as part
           of the traces or not. Content in this context refers to chat message content
@@ -715,7 +739,7 @@ class _AIAgentsInstrumentorPreview:
         description: Optional[str] = None,
         instructions: Optional[str] = None,
         _tools: Optional[List[Tool]] = None,
-        _tool_resources: Optional[ItemResource] = None,
+        _tool_resources: Optional[Any] = None,  # TODO: Used to be: _tool_resources: Optional[ItemResource] = None,
         # _toolset: Optional["ToolSet"] = None,
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
@@ -925,7 +949,7 @@ class _AIAgentsInstrumentorPreview:
         if text:
             # Handle different types of text objects
             if hasattr(text, "format"):
-                # Azure AI Agents PromptAgentDefinitionText model object
+                # Azure AI Agents PromptAgentDefinitionTextOptions model object
                 format_info = getattr(text, "format", None)
                 if format_info:
                     if hasattr(format_info, "type"):

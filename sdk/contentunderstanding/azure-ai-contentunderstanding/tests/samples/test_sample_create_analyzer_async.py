@@ -50,7 +50,7 @@ class TestSampleCreateAnalyzerAsync(ContentUnderstandingClientTestBaseAsync):
         """
         # Get variables from test proxy (recorded values in playback, empty dict in recording)
         variables = kwargs.pop("variables", {})
-        
+
         client = self.create_async_client(endpoint=contentunderstanding_endpoint)
 
         # Generate a unique analyzer ID
