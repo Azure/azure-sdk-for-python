@@ -6,6 +6,7 @@ Overview of the documents:
 - [Developer Set-Up](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/dev_setup.md) : How to create a development environment for this repo
 - [Release](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/release.md) : How to release a package when ready
 - [Packaging](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/packaging.md) : How to organize packaging information for packages under `azure`
+- [Changelog](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/changelog_updates.md) : How to document package changes using Chronus (for packages with `pyproject.toml`)
 - [Testing](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md): How to write unit and functional tests for a library
 - [Docstrings](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/docstring.md): How to document an SDK (API View) and our documentation at [MS Docs][ms_docs] and the [azure.github.io][azure_github_io] site.
 - [Type Hints and Type Checking](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/static_type_checking.md) / [Cheatsheet](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/static_type_checking_cheat_sheet.md): How to add type hints to your library code and run type checking.

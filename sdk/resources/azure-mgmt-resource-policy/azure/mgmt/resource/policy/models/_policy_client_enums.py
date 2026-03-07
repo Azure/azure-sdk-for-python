@@ -60,14 +60,19 @@ class AliasType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Alias value is secret."""
 
 
-class AssignmentScopeValidation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The option whether validate the exemption is at or under the assignment scope."""
+class AssignmentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of policy assignment. Possible values are NotSpecified, System, SystemHidden, and
+    Custom. Immutable.
+    """
 
-    DEFAULT = "Default"
-    """This option will validate the exemption is at or under the assignment scope."""
-    DO_NOT_VALIDATE = "DoNotValidate"
-    """This option will bypass the validation the exemption scope is at or under the policy assignment
-    scope."""
+    NOT_SPECIFIED = "NotSpecified"
+    """The not specified assignment type."""
+    SYSTEM = "System"
+    """The system assignment type."""
+    SYSTEM_HIDDEN = "SystemHidden"
+    """The system hidden assignment type."""
+    CUSTOM = "Custom"
+    """The custom assignment type."""
 
 
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -80,22 +85,25 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class EnforcementMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The policy assignment enforcement mode. Possible values are Default and DoNotEnforce."""
+    """The policy assignment enforcement mode. Possible values are Default, DoNotEnforce, and Enroll."""
 
     DEFAULT = "Default"
     """The policy effect is enforced during resource creation or update."""
     DO_NOT_ENFORCE = "DoNotEnforce"
     """The policy effect is not enforced during resource creation or update."""
+    ENROLL = "Enroll"
+    """The policy effect is not enforced during resource creation or update until the resource or
+    scope of the resource is enrolled to the assignment instance. Enrollment occurs upon deployment
+    of the policy enrollment resource."""
 
 
-class ExemptionCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The policy exemption category. Possible values are Waiver and Mitigated."""
+class ExternalEndpointResult(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The result of the external endpoint. Possible values are Succeeded and Failed."""
 
-    WAIVER = "Waiver"
-    """This category of exemptions usually means the scope is not applicable for the policy."""
-    MITIGATED = "Mitigated"
-    """This category of exemptions usually means the mitigation actions have been applied to the
-    scope."""
+    SUCCEEDED = "Succeeded"
+    """The external endpoint succeeded."""
+    FAILED = "Failed"
+    """The external endpoint failed."""
 
 
 class OverrideKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -103,27 +111,51 @@ class OverrideKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     POLICY_EFFECT = "policyEffect"
     """It will override the policy effect type."""
+    DEFINITION_VERSION = "definitionVersion"
+    """It will override the definition version property value of the policy assignment."""
 
 
 class ParameterType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The data type of the parameter."""
 
     STRING = "String"
+    """The string parameter type."""
     ARRAY = "Array"
+    """The array parameter type."""
     OBJECT = "Object"
+    """The object parameter type."""
     BOOLEAN = "Boolean"
+    """The boolean parameter type."""
     INTEGER = "Integer"
+    """The integer parameter type."""
     FLOAT = "Float"
+    """The float parameter type."""
     DATE_TIME = "DateTime"
+    """The date-time parameter type."""
+
+
+class PolicyTokenResult(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The result of the completed token acquisition operation. Possible values are Succeeded and
+    Failed.
+    """
+
+    SUCCEEDED = "Succeeded"
+    """The token acquisition succeeded."""
+    FAILED = "Failed"
+    """The token acquisition failed."""
 
 
 class PolicyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of policy definition. Possible values are NotSpecified, BuiltIn, Custom, and Static."""
 
     NOT_SPECIFIED = "NotSpecified"
+    """The not specified policy definition type."""
     BUILT_IN = "BuiltIn"
+    """The built in policy definition type."""
     CUSTOM = "Custom"
+    """The custom policy definition type."""
     STATIC = "Static"
+    """The static policy definition type."""
 
 
 class ResourceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

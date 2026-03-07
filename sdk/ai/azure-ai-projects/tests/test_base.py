@@ -24,8 +24,6 @@ from azure.ai.projects.models import (
     DeploymentType,
     Index,
     IndexType,
-    InputContentType,
-    InputItemType,
     ModelDeployment,
 )
 from openai.types.responses import Response
@@ -44,16 +42,21 @@ servicePreparer = functools.partial(
     EnvironmentVariableLoader,
     "",
     azure_ai_project_endpoint="https://sanitized-account-name.services.ai.azure.com/api/projects/sanitized-project-name",
-    azure_ai_model_deployment_name="gpt-4o",
-    image_generation_model_deployment_name="gpt-image-1-mini",
+    azure_ai_model_deployment_name="sanitized-model-deployment-name",
+    image_generation_model_deployment_name="sanitized-gpt-image",
     container_app_resource_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/00000/providers/Microsoft.App/containerApps/00000",
     container_ingress_subdomain_suffix="00000",
     bing_project_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sanitized-resource-group/providers/Microsoft.CognitiveServices/accounts/sanitized-account/projects/sanitized-project/connections/sanitized-bing-connection",
     ai_search_project_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sanitized-resource-group/providers/Microsoft.CognitiveServices/accounts/sanitized-account/projects/sanitized-project/connections/sanitized-ai-search-connection",
+    bing_custom_search_project_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sanitized-resource-group/providers/Microsoft.CognitiveServices/accounts/sanitized-account/projects/sanitized-project/connections/sanitized-bing-custom-search-connection",
+    fabric_project_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sanitized-resource-group/providers/Microsoft.CognitiveServices/accounts/sanitized-account/projects/sanitized-project/connections/sanitized-fabric-connection",
+    openapi_project_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sanitized-resource-group/providers/Microsoft.CognitiveServices/accounts/sanitized-account/projects/sanitized-project/connections/sanitized-openapi-connection",
+    a2a_project_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sanitized-resource-group/providers/Microsoft.CognitiveServices/accounts/sanitized-account/projects/sanitized-project/connections/sanitized-a2a-connection",
     ai_search_index_name="sanitized-index-name",
     mcp_project_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sanitized-resource-group/providers/Microsoft.CognitiveServices/accounts/sanitized-account/projects/sanitized-project/connections/sanitized-mcp-connection",
     browser_automation_project_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sanitized-resource-group/providers/Microsoft.CognitiveServices/accounts/sanitized-account/projects/sanitized-project/connections/sanitized-browser-automation-connection",
     sharepoint_project_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sanitized-resource-group/providers/Microsoft.CognitiveServices/accounts/sanitized-account/projects/sanitized-project/connections/sanitized-sharepoint-connection",
+    bing_custom_search_instance_name="sanitized-bing-custom-search-instance",
     completed_oai_model_sft_fine_tuning_job_id="sanitized-ftjob-id",
     completed_oai_model_rft_fine_tuning_job_id="sanitized-ftjob-id",
     completed_oai_model_dpo_fine_tuning_job_id="sanitized-ftjob-id",
@@ -67,8 +70,18 @@ servicePreparer = functools.partial(
     fabric_user_input="List all customers!",
     a2a_user_input="What can the secondary agent do?",
     bing_custom_user_input="Tell me more about foundry agent service",
-    memory_store_chat_model_deployment_name="gpt-4.1-mini",
+    memory_store_chat_model_deployment_name="sanitized-gpt-memory",
     memory_store_embedding_model_deployment_name="text-embedding-ada-002",
+)
+
+fineTuningServicePreparer = functools.partial(
+    EnvironmentVariableLoader,
+    "",
+    azure_ai_project_endpoint="https://sanitized-account-name.services.ai.azure.com/api/projects/sanitized-project-name",
+    azure_ai_model_deployment_name="sanitized-model-deployment-name",
+    azure_ai_projects_azure_subscription_id="00000000-0000-0000-0000-000000000000",
+    azure_ai_projects_azure_resource_group="sanitized-resource-group",
+    azure_ai_projects_azure_aoai_account="sanitized-aoai-account",
 )
 
 # Fine-tuning job type constants
@@ -162,17 +175,6 @@ class TestBase(AzureRecordedTestCase):
         "connection_name": "naposaniwestus3",
         "connection_type": ConnectionType.AZURE_OPEN_AI,
         "model_deployment_name": "gpt-4o-mini",
-    }
-
-    test_connections_params = {
-        "connection_name": "custom_keys_connection",
-        "connection_type": ConnectionType.CUSTOM,
-    }
-
-    test_deployments_params = {
-        "model_publisher": "Cohere",
-        "model_name": "gpt-4o",
-        "model_deployment_name": "DeepSeek-V3",
     }
 
     test_agents_params = {
@@ -299,6 +301,7 @@ class TestBase(AzureRecordedTestCase):
         # fetch environment variables
         endpoint = kwargs.pop("azure_ai_project_endpoint")
         credential = self.get_credential(AIProjectClient, is_async=False)
+        allow_preview = kwargs.pop("allow_preview", operation_group in {"agents", "tracing"})
 
         print(f"Creating AIProjectClient with endpoint: {endpoint}")
 
@@ -306,6 +309,7 @@ class TestBase(AzureRecordedTestCase):
         client = AIProjectClient(
             endpoint=endpoint,
             credential=credential,
+            allow_preview=allow_preview,
         )
 
         return client
@@ -315,6 +319,7 @@ class TestBase(AzureRecordedTestCase):
         # fetch environment variables
         endpoint = kwargs.pop("azure_ai_project_endpoint")
         credential = self.get_credential(AsyncAIProjectClient, is_async=True)
+        allow_preview = kwargs.pop("allow_preview", operation_group in {"agents", "tracing"})
 
         print(f"Creating AsyncAIProjectClient with endpoint: {endpoint}")
 
@@ -322,6 +327,7 @@ class TestBase(AzureRecordedTestCase):
         client = AsyncAIProjectClient(
             endpoint=endpoint,
             credential=credential,
+            allow_preview=allow_preview,
         )
 
         return client
@@ -359,12 +365,10 @@ class TestBase(AzureRecordedTestCase):
         if expected_is_default is not None:
             assert connection.is_default == expected_is_default
 
-        if isinstance(connection.credentials, ApiKeyCredentials):
-            assert connection.credentials.type == CredentialType.API_KEY
+        if connection.credentials.type == CredentialType.API_KEY:
             if include_credentials:
                 assert connection.credentials.api_key is not None
-        elif isinstance(connection.credentials, CustomCredential):
-            assert connection.credentials.type == CredentialType.CUSTOM
+        elif connection.credentials.type == CredentialType.CUSTOM:
             if include_credentials:
                 assert TestBase.is_valid_dict(connection.credentials.credential_keys)
 
@@ -556,7 +560,7 @@ class TestBase(AzureRecordedTestCase):
         expected_type: Optional[str] = None,
         expected_id: Optional[str] = None,
         expected_role: Optional[str] = None,
-        expected_content_type: Optional[InputContentType] = None,
+        expected_content_type: Optional[str] = None,
         expected_content_text: Optional[str] = None,
     ) -> None:
         assert item

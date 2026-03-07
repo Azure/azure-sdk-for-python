@@ -7,6 +7,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+
 import os
 import re
 import logging
@@ -19,37 +20,26 @@ from azure.identity import get_bearer_token_provider
 from ._client import AIProjectClient as AIProjectClientGenerated
 from .operations import TelemetryOperations
 
-
 logger = logging.getLogger(__name__)
 
 
 class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-instance-attributes
     """AIProjectClient.
 
+    :ivar beta: BetaOperations operations
+    :vartype beta: azure.ai.projects.operations.BetaOperations
     :ivar agents: AgentsOperations operations
     :vartype agents: azure.ai.projects.operations.AgentsOperations
+    :ivar evaluation_rules: EvaluationRulesOperations operations
+    :vartype evaluation_rules: azure.ai.projects.operations.EvaluationRulesOperations
     :ivar connections: ConnectionsOperations operations
     :vartype connections: azure.ai.projects.operations.ConnectionsOperations
     :ivar datasets: DatasetsOperations operations
     :vartype datasets: azure.ai.projects.operations.DatasetsOperations
     :ivar deployments: DeploymentsOperations operations
     :vartype deployments: azure.ai.projects.operations.DeploymentsOperations
-    :ivar evaluation_taxonomies: EvaluationTaxonomiesOperations operations
-    :vartype evaluation_taxonomies: azure.ai.projects.operations.EvaluationTaxonomiesOperations
-    :ivar evaluation_rules: EvaluationRulesOperations operations
-    :vartype evaluation_rules: azure.ai.projects.operations.EvaluationRulesOperations
-    :ivar evaluators: EvaluatorsOperations operations
-    :vartype evaluators: azure.ai.projects.operations.EvaluatorsOperations
     :ivar indexes: IndexesOperations operations
     :vartype indexes: azure.ai.projects.operations.IndexesOperations
-    :ivar insights: InsightsOperations operations
-    :vartype insights: azure.ai.projects.operations.InsightsOperations
-    :ivar memory_stores: MemoryStoresOperations operations
-    :vartype memory_stores: azure.ai.projects.operations.MemoryStoresOperations
-    :ivar red_teams: RedTeamsOperations operations
-    :vartype red_teams: azure.ai.projects.operations.RedTeamsOperations
-    :ivar schedules: SchedulesOperations operations
-    :vartype schedules: azure.ai.projects.operations.SchedulesOperations
     :param endpoint: Foundry Project endpoint in the form
      "https://{ai-services-account-name}.services.ai.azure.com/api/projects/{project-name}". If you
      only have one Project in your Foundry Hub, or to target the default Project in your Hub, use
@@ -58,12 +48,24 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
     :type endpoint: str
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials.TokenCredential
-    :keyword api_version: The API version to use for this operation. Default value is "v1". Note
-     that overriding this default value may result in unsupported behavior.
+    :param allow_preview: Whether to enable preview features. Optional, default is False.
+     Set this to True to create a Hosted Agent (using :class:`~azure.ai.projects.models.HostedAgentDefinition`)
+     or a Workflow Agent (using :class:`~azure.ai.projects.models.WorkflowAgentDefinition`).
+     Set this to True to use human evaluation rule action (class :class:`~azure.ai.projects.models.HumanEvaluationPreviewRuleAction`).
+     Methods on the `.beta` sub-client (class :class:`~azure.ai.projects.operations.BetaOperations`)
+     are all in preview, but do not require setting `allow_preview=True` since it's implied by the sub-client name.
+     When preview features are enabled, the client libraries sends the HTTP request header `Foundry-Features`
+     with the appropriate value in all relevant calls to the service.
+    :type allow_preview: bool
+    :keyword api_version: The API version to use for this operation. Known values are "v1" and
+     None. Default value is "v1". Note that overriding this default value may result in unsupported
+     behavior.
     :paramtype api_version: str
     """
 
-    def __init__(self, endpoint: str, credential: TokenCredential, **kwargs: Any) -> None:
+    def __init__(
+        self, endpoint: str, credential: TokenCredential, *, allow_preview: bool = False, **kwargs: Any
+    ) -> None:
 
         self._console_logging_enabled: bool = (
             os.environ.get("AZURE_AI_PROJECTS_CONSOLE_LOGGING", "false").lower() == "true"
@@ -90,7 +92,7 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
         self._kwargs = kwargs.copy()
         self._custom_user_agent = self._kwargs.get("user_agent", None)
 
-        super().__init__(endpoint=endpoint, credential=credential, **kwargs)
+        super().__init__(endpoint=endpoint, credential=credential, allow_preview=allow_preview, **kwargs)
 
         self.telemetry = TelemetryOperations(self)  # type: ignore
 

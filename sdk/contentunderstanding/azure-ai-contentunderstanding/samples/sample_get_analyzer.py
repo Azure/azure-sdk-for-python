@@ -116,9 +116,7 @@ def main() -> None:
     )
 
     # Create analyzer configuration
-    config = ContentAnalyzerConfig(
-        return_details=True
-    )
+    config = ContentAnalyzerConfig(return_details=True)
 
     # Create the custom analyzer
     custom_analyzer = ContentAnalyzer(

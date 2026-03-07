@@ -13,9 +13,6 @@ import pytest
 # from azure.ai.projects.models import ResponsesUserMessageItemParam, ItemContentInputText
 
 
-@pytest.mark.skip(
-    reason="Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema"
-)
 class TestConversationCrudAsync(TestBase):
 
     # To run only this test:

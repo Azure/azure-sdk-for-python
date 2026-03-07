@@ -15,14 +15,10 @@ from typing import Callable, Dict, Any, Optional
 
 from opentelemetry.semconv.resource import ResourceAttributes
 from opentelemetry.sdk.resources import Resource
-from opentelemetry.sdk.util import ns_to_iso_str
 from opentelemetry.util.types import Attributes
 
 from azure.core.pipeline.policies import BearerTokenCredentialPolicy
-from azure.monitor.opentelemetry.exporter._generated.models import (
-    ContextTagKeys,
-    TelemetryItem,
-)
+from azure.monitor.opentelemetry.exporter._generated.exporter.models import ContextTagKeys, TelemetryItem
 from azure.monitor.opentelemetry.exporter._version import VERSION as ext_version
 from azure.monitor.opentelemetry.exporter._connection_string_parser import ConnectionStringParser
 from azure.monitor.opentelemetry.exporter._constants import (
@@ -33,6 +29,7 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _KUBERNETES_SERVICE_HOST,
     _PYTHON_APPLICATIONINSIGHTS_ENABLE_TELEMETRY,
     _WEBSITE_SITE_NAME,
+    AZURE_MONITOR_DISABLE_CUSTOM_DIMENSIONS_LIMIT,
 )
 from azure.monitor.opentelemetry.exporter._constants import (
     _TYPE_MAP,
@@ -233,11 +230,12 @@ class PeriodicTask(threading.Thread):
 
 
 def _create_telemetry_item(timestamp: int) -> TelemetryItem:
+    ts = datetime.datetime.fromtimestamp(timestamp / 1e9, tz=datetime.timezone.utc)
     return TelemetryItem(
         name="",
         instrumentation_key="",
         tags=dict(azure_monitor_context),  # type: ignore
-        time=ns_to_iso_str(timestamp),  # type: ignore
+        time=ts,
     )
 
 
@@ -353,21 +351,27 @@ def _is_any_synthetic_source(properties: Optional[Any]) -> bool:
 
 # pylint: disable=W0622
 def _filter_custom_properties(properties: Attributes, filter=None) -> Dict[str, str]:
-    max_length = 64 * 1024
-    truncated_properties: Dict[str, str] = {}
+    disable_custom_dimensions_limit = (
+        environ.get(AZURE_MONITOR_DISABLE_CUSTOM_DIMENSIONS_LIMIT, "").strip().lower() == "true"
+    )
+    processed_properties: Dict[str, str] = {}
     if not properties:
-        return truncated_properties
+        return processed_properties
     for key, val in properties.items():
         # Apply filter function
         if filter is not None:
             if not filter(key, val):
                 continue
-        # Apply truncation rules
-        # Max key length is 150, value is 64 * 1024
+        # Apply truncation/filtering rules
+        # Max key length is 150
         if not key or len(key) > 150 or val is None:
             continue
-        truncated_properties[key] = str(val)[:max_length]
-    return truncated_properties
+        if disable_custom_dimensions_limit:
+            processed_properties[key] = str(val)
+        else:
+            max_length = 64 * 1024
+            processed_properties[key] = str(val)[:max_length]
+    return processed_properties
 
 
 def _get_auth_policy(credential, default_auth_policy, aad_audience=None):
