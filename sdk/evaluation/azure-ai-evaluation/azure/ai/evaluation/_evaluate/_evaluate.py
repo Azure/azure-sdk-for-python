@@ -3431,6 +3431,8 @@ def _calculate_aoai_evaluation_summary(
                     and result_item["metric"] not in dup_usage_list
                 ):
                     sample_data_list.append(result_item["sample"])
+            if "sample" in aoai_result and aoai_result["sample"] and isinstance(aoai_result["sample"], dict):
+                sample_data_list.append(aoai_result["sample"])
 
         for sample_data in sample_data_list:
             if sample_data and isinstance(sample_data, dict) and "usage" in sample_data:

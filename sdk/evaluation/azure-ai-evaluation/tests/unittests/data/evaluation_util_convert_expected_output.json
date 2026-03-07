@@ -492,6 +492,14 @@
                 "prompt_tokens": 2130,
                 "completion_tokens": 465,
                 "cached_tokens": 0
+            },
+            {
+                "model_name": "gpt-4o-mini-2024-07-18",
+                "invocation_count": 1,
+                "total_tokens": 26,
+                "prompt_tokens": 18,
+                "completion_tokens": 8,
+                "cached_tokens": 0
             }
         ],
         "per_testing_criteria_results": [
