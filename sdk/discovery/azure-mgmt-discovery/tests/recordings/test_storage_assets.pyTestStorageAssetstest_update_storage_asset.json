@@ -1,0 +1,66 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://Sanitized.management.azure.com/subscriptions/31b0b6a5-2647-47eb-8a38-7d12047ee8ec/resourceGroups/olawal/providers/Microsoft.Discovery/storageContainers/test-sc-8bef0d1a/storageAssets/test-sa-482ad005?api-version=2026-02-01-preview",
+      "RequestMethod": "PATCH",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Connection": "keep-alive",
+        "Content-Length": "46",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-mgmt-discovery/1.0.0b1 Python/3.11.9 (Windows-10-10.0.26200-SP0)"
+      },
+      "RequestBody": {
+        "tags": {
+          "SkipAutoDeleteTill": "2026-12-31"
+        }
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "529",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 05 Mar 2026 15:24:42 GMT",
+        "ETag": "\"34010cee-0000-1000-0000-69a9a03a0000\"",
+        "Expires": "-1",
+        "mise-correlation-id": "20278466-5aac-4316-8254-681410f23aa2",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "x-azure-ref": "Sanitized",
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-build-version": "1",
+        "x-ms-correlation-request-id": "1ffbcbfa-2b29-421e-9bf1-f6d7e8fc2d3f",
+        "x-ms-operation-identifier": "tenantId=00000000-0000-0000-0000-000000000000,objectId=00000000-0000-0000-0000-000000000000/eastus2euap/63f61a44-0d5f-47de-b453-09118032ee47",
+        "x-ms-providerhub-traffic": "True",
+        "x-ms-ratelimit-remaining-subscription-writes": "799",
+        "x-ms-routing-request-id": "EASTUS2EUAP:20260305T152442Z:1ffbcbfa-2b29-421e-9bf1-f6d7e8fc2d3f",
+        "x-ms-throttling-version": "v2",
+        "X-MSEdge-Ref": "Ref A: 06A1444688884787918F4527029B6586 Ref B: SN4AA2022303027 Ref C: 2026-03-05T15:24:39Z"
+      },
+      "ResponseBody": {
+        "id": "Sanitized",
+        "name": "Sanitized",
+        "type": "microsoft.discovery/storagecontainers/storageassets",
+        "location": "uksouth",
+        "tags": {
+          "SkipAutoDeleteTill": "2026-12-31"
+        },
+        "systemData": {
+          "createdBy": "Sanitized",
+          "createdByType": "User",
+          "createdAt": "2026-03-03T16:00:59.1416626Z",
+          "lastModifiedBy": "Sanitized",
+          "lastModifiedByType": "User",
+          "lastModifiedAt": "2026-03-05T15:24:40.3080887Z"
+        },
+        "properties": {
+          "description": "Test storage asset for SDK validation",
+          "path": "data/test-assets",
+          "provisioningState": "Succeeded"
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}

@@ -1,0 +1,52 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://Sanitized.management.azure.com/subscriptions/31b0b6a5-2647-47eb-8a38-7d12047ee8ec/resourceGroups/olawal/providers/Microsoft.Discovery/workspaces/test-wrksp-create01/chatModelDeployments/test-deploy-chatmodel01?api-version=2026-02-01-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-mgmt-discovery/1.0.0b1 Python/3.11.9 (Windows-10-10.0.26200-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Pragma": "no-cache",
+        "Content-Length": "625",
+        "Content-Type": "application/json; charset=utf-8",
+        "Expires": "-1",
+        "ETag": "\"1407f7ee-0000-1000-0000-69a8a1690000\"",
+        "x-ms-providerhub-traffic": "True",
+        "x-ms-request-id": "dd68dafc-13fb-41a4-88d6-473d7f5a55aa",
+        "x-ms-correlation-request-id": "ba5d9da8-d1b1-4372-9221-70a801bbb0c5",
+        "x-ms-ratelimit-remaining-subscription-reads": "1099",
+        "x-ms-routing-request-id": "EASTUS2EUAP:20260304T211830Z:ba5d9da8-d1b1-4372-9221-70a801bbb0c5",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "X-Cache": "CONFIG_NOCACHE",
+        "Date": "Wed, 04 Mar 2026 21:18:30 GMT"
+      },
+      "ResponseBody": {
+        "id": "Sanitized",
+        "name": "Sanitized",
+        "type": "microsoft.discovery/workspaces/chatmodeldeployments",
+        "location": "uksouth",
+        "systemData": {
+          "createdBy": "Sanitized",
+          "createdByType": "User",
+          "createdAt": "2026-03-04T21:17:26.2873892Z",
+          "lastModifiedBy": "Sanitized",
+          "lastModifiedByType": "User",
+          "lastModifiedAt": "2026-03-04T21:17:26.2873892Z"
+        },
+        "properties": {
+          "modelFormat": "OpenAI",
+          "modelName": "gpt-4o",
+          "provisioningState": "Succeeded"
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}

@@ -1,0 +1,38 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://Sanitized.management.azure.com/subscriptions/31b0b6a5-2647-47eb-8a38-7d12047ee8ec/resourceGroups/olawal/providers/Microsoft.Discovery/tools/test-tool-50d87c62?api-version=2026-02-01-preview",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-mgmt-discovery/1.0.0b1 Python/3.11.9 (Windows-10-10.0.26200-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 204,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Date": "Thu, 05 Mar 2026 16:25:45 GMT",
+        "ETag": "\"57005f4d-0000-1000-0000-69a9ae8a0000\"",
+        "Expires": "-1",
+        "mise-correlation-id": "658a0cb8-2437-4086-b630-88d78341fe20",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "x-azure-ref": "Sanitized",
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-build-version": "1",
+        "x-ms-correlation-request-id": "2578b064-b489-4a83-bf36-8ad37814c1c6",
+        "x-ms-operation-identifier": "tenantId=00000000-0000-0000-0000-000000000000,objectId=00000000-0000-0000-0000-000000000000/eastus2euap/45996932-0745-44bc-99d5-292a2f7de8c5",
+        "x-ms-providerhub-traffic": "True",
+        "x-ms-ratelimit-remaining-subscription-deletes": "799",
+        "x-ms-routing-request-id": "EASTUS2EUAP:20260305T162546Z:2578b064-b489-4a83-bf36-8ad37814c1c6",
+        "x-ms-throttling-version": "v2",
+        "X-MSEdge-Ref": "Ref A: 2F889D57B7CF4F6F9161EEBE4786734A Ref B: SN4AA2022302047 Ref C: 2026-03-05T16:25:43Z"
+      },
+      "ResponseBody": null
+    }
+  ],
+  "Variables": {}
+}
