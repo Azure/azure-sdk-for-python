@@ -453,7 +453,7 @@ class StorageContentValidation(SansIOHTTPPolicy):
                 original_stream_download = response.http_response.stream_download
                 def wrapped_stream_download(*args, **kwargs):
                     iterator = original_stream_download(*args, **kwargs)
-                    decoder = StructuredMessageDecoder(iterator, content_length, chunk_size=DATA_BLOCK_SIZE)
+                    decoder = StructuredMessageDecoder(iterator, content_length, block_size=DATA_BLOCK_SIZE)
                     decoder.request = iterator.request  # type: ignore
                     decoder.response = iterator.response  # type: ignore
                     return decoder

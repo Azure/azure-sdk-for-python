@@ -400,9 +400,9 @@ class StructuredMessageDecoder(IOBase):  # pylint: disable=too-many-instance-att
     _segment_crc64: int
     _segment_content_length: int
     _segment_content_offset: int
-    _chunk_size: int
+    _block_size: int
 
-    def __init__(self, inner_iterator: Iterator[bytes], content_length: int, *, chunk_size: int = 4096) -> None:
+    def __init__(self, inner_iterator: Iterator[bytes], content_length: int, *, block_size: int = 4096) -> None:
         self.message_length = content_length
         # The stream should be at least long enough to hold minimum header length
         if self.message_length < StructuredMessageConstants.V1_HEADER_LENGTH:
@@ -417,7 +417,7 @@ class StructuredMessageDecoder(IOBase):  # pylint: disable=too-many-instance-att
         self._segment_crc64 = 0
         self._segment_content_length = 0
         self._segment_content_offset = 0
-        self._chunk_size = chunk_size
+        self._block_size = block_size
         super().__init__()
 
     @property
@@ -450,7 +450,7 @@ class StructuredMessageDecoder(IOBase):  # pylint: disable=too-many-instance-att
         return self
 
     def __next__(self) -> bytes:
-        data = self.read(self._chunk_size)
+        data = self.read(self._block_size)
         if not data:
             raise StopIteration
         return data
