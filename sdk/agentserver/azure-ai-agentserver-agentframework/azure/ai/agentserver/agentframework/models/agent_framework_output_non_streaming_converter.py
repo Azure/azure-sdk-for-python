@@ -213,7 +213,7 @@ class AgentFrameworkOutputNonStreamingConverter:  # pylint: disable=name-too-lon
     def _construct_response_data(self, output_items: List[dict]) -> dict:
         agent_id = AgentIdGenerator.generate(self._context)
 
-        response_data = {
+        response_data: dict[str, Any] = {
             "object": "response",
             "metadata": {},
             "agent": agent_id,
