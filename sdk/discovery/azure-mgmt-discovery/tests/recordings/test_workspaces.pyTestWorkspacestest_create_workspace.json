@@ -1,0 +1,97 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://Sanitized.management.azure.com/subscriptions/31b0b6a5-2647-47eb-8a38-7d12047ee8ec/resourceGroups/olawal/providers/Microsoft.Discovery/workspaces/test-wrksp-create01?api-version=2026-02-01-preview",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-mgmt-discovery/1.0.0b1 Python/3.11.9 (Windows-10-10.0.26200-SP0)",
+        "Content-Type": "application/json",
+        "Content-Length": "1121"
+      },
+      "RequestBody": {
+        "location": "uksouth",
+        "properties": {
+          "supercomputerIds": [],
+          "workspaceIdentity": {
+            "id": "/subscriptions/31b0b6a5-2647-47eb-8a38-7d12047ee8ec/resourcegroups/olawal/providers/Microsoft.ManagedIdentity/userAssignedIdentities/myidentity"
+          },
+          "agentSubnetId": "/subscriptions/31b0b6a5-2647-47eb-8a38-7d12047ee8ec/resourceGroups/olawal/providers/Microsoft.Network/virtualNetworks/newapiv/subnets/default3",
+          "privateEndpointSubnetId": "/subscriptions/31b0b6a5-2647-47eb-8a38-7d12047ee8ec/resourceGroups/olawal/providers/Microsoft.Network/virtualNetworks/newapiv/subnets/default",
+          "workspaceSubnetId": "/subscriptions/31b0b6a5-2647-47eb-8a38-7d12047ee8ec/resourceGroups/olawal/providers/Microsoft.Network/virtualNetworks/newapiv/subnets/default2",
+          "customerManagedKeys": "Enabled",
+          "keyVaultProperties": {
+            "keyName": "discoverykey",
+            "keyVaultUri": "https://newapik.vault.azure.net/",
+            "keyVersion": "2c9db3cf55d247b4a1c1831fbbdad906"
+          },
+          "logAnalyticsClusterId": "/subscriptions/31b0b6a5-2647-47eb-8a38-7d12047ee8ec/resourceGroups/olawal/providers/Microsoft.OperationalInsights/clusters/mycluse",
+          "publicNetworkAccess": "Disabled"
+        }
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Pragma": "no-cache",
+        "Content-Length": "1606",
+        "Content-Type": "application/json; charset=utf-8",
+        "Expires": "-1",
+        "ETag": "\"9a00d931-0000-1000-0000-69a88a160000\"",
+        "x-ms-ratelimit-remaining-subscription-reads": "1099",
+        "x-ms-providerhub-traffic": "True",
+        "x-ms-request-id": "c4763dfb-9418-41c4-b9f8-8a3882a37254",
+        "x-ms-correlation-request-id": "653482e8-5fd8-4f48-acb5-01f2284cb594",
+        "x-ms-ratelimit-remaining-subscription-global-reads": "16499",
+        "x-ms-routing-request-id": "UKSOUTH:20260304T193912Z:653482e8-5fd8-4f48-acb5-01f2284cb594",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-MSEdge-Ref": "Ref A: CFE2594B44234894ABDC403EA188F3A8 Ref B: SN4AA2022302031 Ref C: 2026-03-04T19:39:12Z",
+        "Date": "Wed, 04 Mar 2026 19:39:11 GMT"
+      },
+      "ResponseBody": {
+        "id": "Sanitized",
+        "name": "Sanitized",
+        "type": "microsoft.discovery/workspaces",
+        "location": "uksouth",
+        "tags": {},
+        "systemData": {
+          "createdBy": "Sanitized",
+          "createdByType": "User",
+          "createdAt": "2026-03-04T19:36:15.7991238Z",
+          "lastModifiedBy": "Sanitized",
+          "lastModifiedByType": "User",
+          "lastModifiedAt": "2026-03-04T19:36:15.7991238Z"
+        },
+        "properties": {
+          "managedResourceGroup": "mrg-dwsp-test-wrksp-create01-w3qqoq",
+          "supercomputerIds": [],
+          "workspaceApiUri": "https://test-wrksp-create01.workspace-dev.discovery.azure.com",
+          "workspaceUiUri": "https://studio.discovery.microsoft.com/workspaces/test-wrksp-create01",
+          "workspaceIdentity": {
+            "id": "Sanitized",
+            "principalId": "43959abc-ba88-4e2f-9f69-a7d3cc984c75",
+            "clientId": "3fe9d307-c0dc-410b-8dfe-116741e50bfb"
+          },
+          "customerManagedKeys": "Enabled",
+          "keyVaultProperties": {
+            "keyVaultUri": "https://newapik.vault.azure.net/",
+            "keyName": "discoverykey",
+            "keyVersion": "2c9db3cf55d247b4a1c1831fbbdad906"
+          },
+          "logAnalyticsClusterId": "/subscriptions/31b0b6a5-2647-47eb-8a38-7d12047ee8ec/resourceGroups/olawal/providers/Microsoft.OperationalInsights/clusters/mycluse",
+          "managedOnBehalfOfConfiguration": {
+            "moboBrokerResources": [
+              {
+                "id": "Sanitized"
+              }
+            ]
+          },
+          "provisioningState": "Succeeded"
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}

@@ -1,0 +1,64 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://Sanitized.management.azure.com/subscriptions/31b0b6a5-2647-47eb-8a38-7d12047ee8ec/resourceGroups/olawal/providers/Microsoft.Discovery/storageContainers/test-sc-8bef0d1a/storageAssets?api-version=2026-02-01-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-mgmt-discovery/1.0.0b1 Python/3.11.9 (Windows-10-10.0.26200-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "478",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Tue, 03 Mar 2026 16:57:13 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "38247173-cf4f-4f5a-afa0-f852a86405fc",
+        "x-ms-original-request-ids": [
+          "1d647d30-33b9-439b-a2f0-2d58b7ac8faa",
+          "d1345bdb-60e4-46f5-815f-771fd96775b0",
+          "3caf5592-135b-49ad-8d34-e6a2688e69db",
+          "12fc2d33-a863-4941-8b59-c180e83b533b",
+          "c1debb6a-c718-42d7-9cb8-8672380d56e0",
+          "d366118e-57c6-4362-9e49-5c691c1ab793"
+        ],
+        "x-ms-ratelimit-remaining-subscription-reads": "1099",
+        "x-ms-routing-request-id": "EASTUS2EUAP:20260303T165714Z:38247173-cf4f-4f5a-afa0-f852a86405fc",
+        "x-ms-throttling-version": "v2",
+        "X-MSEdge-Ref": "Ref A: 9B840026E4E3499CB21D8C0C80CD856B Ref B: DM2AA1091212011 Ref C: 2026-03-03T16:57:13Z"
+      },
+      "ResponseBody": {
+        "value": [
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "microsoft.discovery/storagecontainers/storageassets",
+            "location": "uksouth",
+            "tags": {},
+            "systemData": {
+              "createdBy": "Sanitized",
+              "createdByType": "User",
+              "createdAt": "2026-03-03T16:00:59.1416626Z",
+              "lastModifiedBy": "Sanitized",
+              "lastModifiedByType": "User",
+              "lastModifiedAt": "2026-03-03T16:00:59.1416626Z"
+            },
+            "properties": {
+              "description": "Test storage asset for SDK validation",
+              "path": "data/test-assets",
+              "provisioningState": "Succeeded"
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "Variables": {}
+}

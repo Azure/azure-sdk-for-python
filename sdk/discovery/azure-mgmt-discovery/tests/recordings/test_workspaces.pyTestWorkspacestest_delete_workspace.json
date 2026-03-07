@@ -1,0 +1,32 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://Sanitized.management.azure.com/subscriptions/31b0b6a5-2647-47eb-8a38-7d12047ee8ec/resourceGroups/olawal/providers/Microsoft.Discovery/workspaces/test-wrksp-397d51cf?api-version=2026-02-01-preview",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-mgmt-discovery/1.0.0b1 Python/3.11.9 (Windows-10-10.0.26200-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 204,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Date": "Wed, 04 Mar 2026 19:20:57 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "0ed3acad-a11e-4466-95c3-e80274ea0724",
+        "x-ms-ratelimit-remaining-subscription-deletes": "799",
+        "x-ms-routing-request-id": "EASTUS2EUAP:20260304T192058Z:0ed3acad-a11e-4466-95c3-e80274ea0724",
+        "x-ms-throttling-version": "v2",
+        "X-MSEdge-Ref": "Ref A: 822D8F24B73C45BEA4BC6953384D07AE Ref B: SN4AA2022302035 Ref C: 2026-03-04T19:20:55Z"
+      },
+      "ResponseBody": null
+    }
+  ],
+  "Variables": {}
+}

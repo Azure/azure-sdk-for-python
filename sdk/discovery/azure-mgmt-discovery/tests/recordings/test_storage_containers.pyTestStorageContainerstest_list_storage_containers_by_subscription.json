@@ -1,0 +1,85 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://Sanitized.management.azure.com/subscriptions/31b0b6a5-2647-47eb-8a38-7d12047ee8ec/providers/Microsoft.Discovery/storageContainers?api-version=2026-02-01-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-mgmt-discovery/1.0.0b1 Python/3.11.9 (Windows-10-10.0.26200-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "1070",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Tue, 03 Mar 2026 16:56:44 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "1d3b7639-709d-410f-a99e-347bfe6e2520",
+        "x-ms-original-request-ids": [
+          "128a456b-21d4-480d-98ba-faf629e50062",
+          "02a69c46-a2bb-41dd-a69f-78b51e06c6b6",
+          "342bb941-e37d-4b38-b604-ad4758ef1a49",
+          "3df070ce-6ec2-4c6c-9b01-fc9121d9776a",
+          "d3c3125f-f407-4c4d-9f09-b676a2f8bba2",
+          "9675f956-e7b1-42d8-9e1f-2fcf6df9e339"
+        ],
+        "x-ms-ratelimit-remaining-subscription-reads": "1099",
+        "x-ms-routing-request-id": "EASTUS2EUAP:20260303T165645Z:1d3b7639-709d-410f-a99e-347bfe6e2520",
+        "x-ms-throttling-version": "v2",
+        "X-MSEdge-Ref": "Ref A: 46B242B0E81942C498579F3A2309AF54 Ref B: DM2AA1091212011 Ref C: 2026-03-03T16:56:44Z"
+      },
+      "ResponseBody": {
+        "value": [
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "microsoft.discovery/storagecontainers",
+            "location": "uksouth",
+            "tags": {},
+            "systemData": {
+              "lastModifiedBy": "Sanitized",
+              "lastModifiedByType": "Application",
+              "lastModifiedAt": "2026-03-02T20:56:51.8425901Z"
+            },
+            "properties": {
+              "storageStore": {
+                "storageAccountId": "/subscriptions/31b0b6a5-2647-47eb-8a38-7d12047ee8ec/resourceGroups/deray-private-test/providers/Microsoft.Storage/storageAccounts/derayprstg",
+                "kind": "AzureStorageBlob"
+              },
+              "provisioningState": "Succeeded"
+            }
+          },
+          {
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "microsoft.discovery/storagecontainers",
+            "location": "uksouth",
+            "tags": {},
+            "systemData": {
+              "createdBy": "Sanitized",
+              "createdByType": "User",
+              "createdAt": "2026-03-02T20:45:51.2603686Z",
+              "lastModifiedBy": "Sanitized",
+              "lastModifiedByType": "User",
+              "lastModifiedAt": "2026-03-02T20:45:51.2603686Z"
+            },
+            "properties": {
+              "storageStore": {
+                "storageAccountId": "/subscriptions/31b0b6a5-2647-47eb-8a38-7d12047ee8ec/resourceGroups/olawal/providers/Microsoft.Storage/storageAccounts/mytststr",
+                "kind": "AzureStorageBlob"
+              },
+              "provisioningState": "Succeeded"
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "Variables": {}
+}
