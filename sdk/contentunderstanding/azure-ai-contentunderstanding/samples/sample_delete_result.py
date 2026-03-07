@@ -36,6 +36,7 @@ USAGE:
 """
 
 import os
+from typing import cast
 
 from dotenv import load_dotenv
 from azure.ai.contentunderstanding import ContentUnderstandingClient
@@ -76,7 +77,7 @@ def main() -> None:
 
     # Display some sample results
     if result.contents and len(result.contents) > 0:
-        document_content: DocumentContent = result.contents[0]  # type: ignore
+        document_content = cast(DocumentContent, result.contents[0])
         if document_content.fields:
             print(f"Total fields extracted: {len(document_content.fields)}")
 

@@ -71,7 +71,9 @@ async def main() -> None:
     key = os.getenv("CONTENTUNDERSTANDING_KEY")
     credential = AzureKeyCredential(key) if key else DefaultAzureCredential()
 
-    async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client:
+    async with ContentUnderstandingClient(
+        endpoint=endpoint, credential=credential
+    ) as client:
         # [START analyze_document_from_binary]
         # Replace with the path to your local document file.
         file_path = "sample_files/sample_invoice.pdf"
@@ -110,14 +112,18 @@ async def main() -> None:
                 print(f"\nNumber of pages: {len(content.pages)}")
                 for page in content.pages:
                     unit = content.unit or "units"
-                    print(f"  Page {page.page_number}: {page.width} x {page.height} {unit}")
+                    print(
+                        f"  Page {page.page_number}: {page.width} x {page.height} {unit}"
+                    )
 
             # Check for tables
             if content.tables and len(content.tables) > 0:
                 print(f"\nNumber of tables: {len(content.tables)}")
                 table_counter = 1
                 for table in content.tables:
-                    print(f"  Table {table_counter}: {table.row_count} rows x {table.column_count} columns")
+                    print(
+                        f"  Table {table_counter}: {table.row_count} rows x {table.column_count} columns"
+                    )
                     table_counter += 1
         # [END access_document_properties]
 

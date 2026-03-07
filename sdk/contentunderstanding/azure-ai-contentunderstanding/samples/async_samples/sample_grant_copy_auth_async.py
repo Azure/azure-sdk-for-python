@@ -126,7 +126,9 @@ async def main() -> None:
     # Get source configuration
     source_endpoint = os.environ["CONTENTUNDERSTANDING_ENDPOINT"]
     source_key = os.getenv("CONTENTUNDERSTANDING_KEY")
-    source_credential = AzureKeyCredential(source_key) if source_key else DefaultAzureCredential()
+    source_credential = (
+        AzureKeyCredential(source_key) if source_key else DefaultAzureCredential()
+    )
 
     source_resource_id = os.environ["CONTENTUNDERSTANDING_SOURCE_RESOURCE_ID"]
     source_region = os.environ["CONTENTUNDERSTANDING_SOURCE_REGION"]
@@ -134,14 +136,20 @@ async def main() -> None:
     # Get target configuration
     target_endpoint = os.environ["CONTENTUNDERSTANDING_TARGET_ENDPOINT"]
     target_key = os.getenv("CONTENTUNDERSTANDING_TARGET_KEY")
-    target_credential = AzureKeyCredential(target_key) if target_key else DefaultAzureCredential()
+    target_credential = (
+        AzureKeyCredential(target_key) if target_key else DefaultAzureCredential()
+    )
 
     target_resource_id = os.environ["CONTENTUNDERSTANDING_TARGET_RESOURCE_ID"]
     target_region = os.environ["CONTENTUNDERSTANDING_TARGET_REGION"]
 
     # Create source and target clients using DefaultAzureCredential
-    source_client = ContentUnderstandingClient(endpoint=source_endpoint, credential=source_credential)
-    target_client = ContentUnderstandingClient(endpoint=target_endpoint, credential=target_credential)
+    source_client = ContentUnderstandingClient(
+        endpoint=source_endpoint, credential=source_credential
+    )
+    target_client = ContentUnderstandingClient(
+        endpoint=target_endpoint, credential=target_credential
+    )
 
     # Generate unique analyzer IDs
     base_id = f"my_analyzer_{int(time.time())}"
@@ -245,7 +253,9 @@ async def main() -> None:
             # Step 4: Verify the copy
             # Retrieve the analyzer from the target resource to verify the copy was successful
             print(f"\nStep 4: Verifying the copied analyzer...")
-            copied_analyzer = await target_client.get_analyzer(analyzer_id=target_analyzer_id)
+            copied_analyzer = await target_client.get_analyzer(
+                analyzer_id=target_analyzer_id
+            )
             print(f"  Target Analyzer ID: {copied_analyzer.analyzer_id}")
             print(f"  Description: {copied_analyzer.description}")
             print(f"  Status: {copied_analyzer.status}")
@@ -254,19 +264,27 @@ async def main() -> None:
     finally:
         # Clean up - create new client instances for cleanup since the original ones are closed
         print(f"\nCleaning up...")
-        cleanup_source_client = ContentUnderstandingClient(endpoint=source_endpoint, credential=source_credential)
-        cleanup_target_client = ContentUnderstandingClient(endpoint=target_endpoint, credential=target_credential)
+        cleanup_source_client = ContentUnderstandingClient(
+            endpoint=source_endpoint, credential=source_credential
+        )
+        cleanup_target_client = ContentUnderstandingClient(
+            endpoint=target_endpoint, credential=target_credential
+        )
 
         try:
             async with cleanup_source_client, cleanup_target_client:
                 try:
-                    await cleanup_source_client.delete_analyzer(analyzer_id=source_analyzer_id)
+                    await cleanup_source_client.delete_analyzer(
+                        analyzer_id=source_analyzer_id
+                    )
                     print(f"  Source analyzer '{source_analyzer_id}' deleted.")
                 except Exception:
                     pass
 
                 try:
-                    await cleanup_target_client.delete_analyzer(analyzer_id=target_analyzer_id)
+                    await cleanup_target_client.delete_analyzer(
+                        analyzer_id=target_analyzer_id
+                    )
                     print(f"  Target analyzer '{target_analyzer_id}' deleted.")
                 except Exception:
                     pass

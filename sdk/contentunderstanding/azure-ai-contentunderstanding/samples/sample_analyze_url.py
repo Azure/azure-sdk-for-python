@@ -41,6 +41,7 @@ USAGE:
 """
 
 import os
+from typing import cast
 
 from dotenv import load_dotenv
 from azure.ai.contentunderstanding import ContentUnderstandingClient
@@ -88,8 +89,10 @@ def main() -> None:
     # Cast AnalysisContent to DocumentContent to access document-specific properties
     # DocumentContent derives from AnalysisContent and provides additional properties
     # to access full information about document, including Pages, Tables and many others
-    document_content: DocumentContent = content  # type: ignore
-    print(f"\nPages: {document_content.start_page_number} - {document_content.end_page_number}")
+    document_content = cast(DocumentContent, content)
+    print(
+        f"\nPages: {document_content.start_page_number} - {document_content.end_page_number}"
+    )
 
     # Check for pages
     if document_content.pages and len(document_content.pages) > 0:
@@ -120,16 +123,18 @@ def main() -> None:
         # Cast AnalysisContent to AudioVisualContent to access audio/visual-specific properties
         # AudioVisualContent derives from AnalysisContent and provides additional properties
         # to access full information about audio/video, including timing, transcript phrases, and many others
-        video_content: AudioVisualContent = media  # type: ignore
+        video_content = cast(AudioVisualContent, media)
         print(f"\n--- Segment {segment_index} ---")
         print("Markdown:")
         print(video_content.markdown)
 
-        summary = video_content.fields.get("Summary")
+        summary = video_content.fields.get("Summary") if video_content.fields else None
         if summary and hasattr(summary, "value"):
             print(f"Summary: {summary.value}")
 
-        print(f"Start: {video_content.start_time_ms} ms, End: {video_content.end_time_ms} ms")
+        print(
+            f"Start: {video_content.start_time_ms} ms, End: {video_content.end_time_ms} ms"
+        )
         print(f"Frame size: {video_content.width} x {video_content.height}")
 
         print("---------------------")
@@ -154,11 +159,11 @@ def main() -> None:
     # Cast AnalysisContent to AudioVisualContent to access audio/visual-specific properties
     # AudioVisualContent derives from AnalysisContent and provides additional properties
     # to access full information about audio/video, including timing, transcript phrases, and many others
-    audio_content: AudioVisualContent = result.contents[0]  # type: ignore
+    audio_content = cast(AudioVisualContent, result.contents[0])
     print("Markdown:")
     print(audio_content.markdown)
 
-    summary = audio_content.fields.get("Summary")
+    summary = audio_content.fields.get("Summary") if audio_content.fields else None
     if summary and hasattr(summary, "value"):
         print(f"Summary: {summary.value}")
 
@@ -173,9 +178,7 @@ def main() -> None:
     print("\n" + "=" * 60)
     print("IMAGE ANALYSIS FROM URL")
     print("=" * 60)
-    image_url = (
-        "https://raw.githubusercontent.com/Azure-Samples/azure-ai-content-understanding-assets/main/image/pieChart.jpg"
-    )
+    image_url = "https://raw.githubusercontent.com/Azure-Samples/azure-ai-content-understanding-assets/main/image/pieChart.jpg"
 
     print(f"Analyzing image from URL with prebuilt-imageSearch...")
     print(f"  URL: {image_url}")
@@ -190,7 +193,7 @@ def main() -> None:
     print("Markdown:")
     print(content.markdown)
 
-    summary = content.fields.get("Summary")
+    summary = content.fields.get("Summary") if content.fields else None
     if summary and hasattr(summary, "value"):
         print(f"Summary: {summary.value}")
     # [END analyze_image_from_url]
