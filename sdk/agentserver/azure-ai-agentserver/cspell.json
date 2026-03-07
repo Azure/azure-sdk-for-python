@@ -1,11 +1,31 @@
 {
     "ignoreWords": [
+        "agentframework",
         "agentserver",
+        "appinsights",
+        "ASGI",
         "azureai",
         "ainvoke",
+        "behaviour",
+        "caplog",
+        "delenv",
+        "hypercorn",
         "invocations",
+        "langgraph",
+        "msgpack",
         "openapi",
-        "msgpack"
+        "paramtype",
+        "requestschema",
+        "rtype",
+        "serialisation",
+        "Specialised",
+        "Standardised",
+        "starlette",
+        "traceparent",
+        "tracestate",
+        "tracecontext",
+        "varint",
+        "writeonly"
     ],
     "ignorePaths": [
         "*.csv",
