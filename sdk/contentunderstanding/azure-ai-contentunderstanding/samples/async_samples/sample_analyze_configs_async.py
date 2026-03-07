@@ -1,6 +1,4 @@
 # pylint: disable=line-too-long,useless-suppression
-# mypy: disable-error-code="assignment,union-attr,attr-defined"
-# pyright: reportAssignmentType=false, reportOptionalMemberAccess=false, reportAttributeAccessIssue=false
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -52,6 +50,7 @@ USAGE:
 
 import asyncio
 import os
+from typing import cast
 
 from dotenv import load_dotenv
 from azure.ai.contentunderstanding.aio import ContentUnderstandingClient
@@ -97,7 +96,7 @@ async def main() -> None:
 
         # [START extract_charts]
         # Extract charts from document content (enabled by EnableFigureAnalysis config)
-        document_content: DocumentContent = result.contents[0]
+        document_content = cast(DocumentContent, result.contents[0])
         if document_content.figures:
             for figure in document_content.figures:
                 if isinstance(figure, DocumentChartFigure):
@@ -110,7 +109,7 @@ async def main() -> None:
 
         # [START extract_hyperlinks]
         # Extract hyperlinks from document content (enabled by EnableLayout config)
-        doc_content: DocumentContent = result.contents[0]
+        doc_content = cast(DocumentContent, result.contents[0])
         print(
             f"Found {len(doc_content.hyperlinks) if doc_content.hyperlinks else 0} hyperlink(s)"
         )
@@ -121,7 +120,7 @@ async def main() -> None:
 
         # [START extract_formulas]
         # Extract formulas from document pages (enabled by EnableFormula config)
-        content: DocumentContent = result.contents[0]
+        content = cast(DocumentContent, result.contents[0])
         all_formulas: list = []
         for page in content.pages or []:
             all_formulas.extend(page.formulas or [])
@@ -136,7 +135,7 @@ async def main() -> None:
 
         # [START extract_annotations]
         # Extract annotations from document content (enabled by EnableLayout config)
-        document: DocumentContent = result.contents[0]
+        document = cast(DocumentContent, result.contents[0])
         print(
             f"Found {len(document.annotations) if document.annotations else 0} annotation(s)"
         )

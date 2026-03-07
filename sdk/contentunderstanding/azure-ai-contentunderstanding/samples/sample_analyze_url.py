@@ -1,6 +1,4 @@
 # pylint: disable=line-too-long,useless-suppression
-# mypy: disable-error-code="assignment,union-attr,attr-defined"
-# pyright: reportAssignmentType=false, reportOptionalMemberAccess=false, reportAttributeAccessIssue=false
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -43,6 +41,7 @@ USAGE:
 """
 
 import os
+from typing import cast
 
 from dotenv import load_dotenv
 from azure.ai.contentunderstanding import ContentUnderstandingClient
@@ -90,7 +89,7 @@ def main() -> None:
     # Cast AnalysisContent to DocumentContent to access document-specific properties
     # DocumentContent derives from AnalysisContent and provides additional properties
     # to access full information about document, including Pages, Tables and many others
-    document_content: DocumentContent = content
+    document_content = cast(DocumentContent, content)
     print(
         f"\nPages: {document_content.start_page_number} - {document_content.end_page_number}"
     )
@@ -124,12 +123,12 @@ def main() -> None:
         # Cast AnalysisContent to AudioVisualContent to access audio/visual-specific properties
         # AudioVisualContent derives from AnalysisContent and provides additional properties
         # to access full information about audio/video, including timing, transcript phrases, and many others
-        video_content: AudioVisualContent = media
+        video_content = cast(AudioVisualContent, media)
         print(f"\n--- Segment {segment_index} ---")
         print("Markdown:")
         print(video_content.markdown)
 
-        summary = video_content.fields.get("Summary")
+        summary = video_content.fields.get("Summary") if video_content.fields else None
         if summary and hasattr(summary, "value"):
             print(f"Summary: {summary.value}")
 
@@ -160,11 +159,11 @@ def main() -> None:
     # Cast AnalysisContent to AudioVisualContent to access audio/visual-specific properties
     # AudioVisualContent derives from AnalysisContent and provides additional properties
     # to access full information about audio/video, including timing, transcript phrases, and many others
-    audio_content: AudioVisualContent = result.contents[0]
+    audio_content = cast(AudioVisualContent, result.contents[0])
     print("Markdown:")
     print(audio_content.markdown)
 
-    summary = audio_content.fields.get("Summary")
+    summary = audio_content.fields.get("Summary") if audio_content.fields else None
     if summary and hasattr(summary, "value"):
         print(f"Summary: {summary.value}")
 
@@ -194,7 +193,7 @@ def main() -> None:
     print("Markdown:")
     print(content.markdown)
 
-    summary = content.fields.get("Summary")
+    summary = content.fields.get("Summary") if content.fields else None
     if summary and hasattr(summary, "value"):
         print(f"Summary: {summary.value}")
     # [END analyze_image_from_url]

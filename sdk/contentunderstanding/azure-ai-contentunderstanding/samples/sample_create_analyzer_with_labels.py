@@ -1,6 +1,4 @@
 # pylint: disable=line-too-long,useless-suppression
-# mypy: disable-error-code="assignment,union-attr,attr-defined"
-# pyright: reportAssignmentType=false, reportOptionalMemberAccess=false, reportAttributeAccessIssue=false
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -263,7 +261,8 @@ def main() -> None:
         knowledge_sources=[],
     )
     for source in knowledge_sources:
-        custom_analyzer.knowledge_sources.append(source)
+        if custom_analyzer.knowledge_sources is not None:
+            custom_analyzer.knowledge_sources.append(source)
 
     poller = client.begin_create_analyzer(
         analyzer_id=analyzer_id,

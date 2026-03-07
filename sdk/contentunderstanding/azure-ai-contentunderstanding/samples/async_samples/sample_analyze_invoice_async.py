@@ -1,6 +1,5 @@
 # pylint: disable=line-too-long,useless-suppression
-# mypy: disable-error-code="assignment,union-attr,attr-defined"
-# pyright: reportAssignmentType=false, reportOptionalMemberAccess=false, reportAttributeAccessIssue=false
+# mypy: disable-error-code="attr-defined"
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -58,6 +57,7 @@ USAGE:
 
 import asyncio
 import os
+from typing import cast
 
 from dotenv import load_dotenv
 from azure.ai.contentunderstanding.aio import ContentUnderstandingClient
@@ -103,7 +103,7 @@ async def main() -> None:
             return
 
         # Get the document content (invoices are documents)
-        document_content: DocumentContent = result.contents[0]
+        document_content = cast(DocumentContent, result.contents[0])
 
         # Print document unit information
         # The unit indicates the measurement system used for coordinates in the source field

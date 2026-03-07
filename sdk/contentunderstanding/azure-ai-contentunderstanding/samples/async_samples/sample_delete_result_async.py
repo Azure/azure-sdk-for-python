@@ -1,6 +1,4 @@
 # pylint: disable=line-too-long,useless-suppression
-# mypy: disable-error-code="assignment,union-attr,attr-defined"
-# pyright: reportAssignmentType=false, reportOptionalMemberAccess=false, reportAttributeAccessIssue=false
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -39,6 +37,7 @@ USAGE:
 
 import asyncio
 import os
+from typing import cast
 
 from dotenv import load_dotenv
 from azure.ai.contentunderstanding.aio import ContentUnderstandingClient
@@ -80,7 +79,7 @@ async def main() -> None:
 
         # Display some sample results
         if result.contents and len(result.contents) > 0:
-            document_content: DocumentContent = result.contents[0]
+            document_content = cast(DocumentContent, result.contents[0])
             if document_content.fields:
                 print(f"Total fields extracted: {len(document_content.fields)}")
 

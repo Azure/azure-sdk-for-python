@@ -1,6 +1,4 @@
 # pylint: disable=line-too-long,useless-suppression
-# mypy: disable-error-code="assignment,union-attr,attr-defined"
-# pyright: reportAssignmentType=false, reportOptionalMemberAccess=false, reportAttributeAccessIssue=false
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -50,6 +48,7 @@ USAGE:
 import asyncio
 import os
 import time
+from typing import cast
 
 from dotenv import load_dotenv
 from azure.ai.contentunderstanding.aio import ContentUnderstandingClient
@@ -144,7 +143,7 @@ async def main() -> None:
 
         # Display classification results
         if analyze_result.contents and len(analyze_result.contents) > 0:
-            document_content: DocumentContent = analyze_result.contents[0]
+            document_content = cast(DocumentContent, analyze_result.contents[0])
             print(
                 f"Pages: {document_content.start_page_number}-{document_content.end_page_number}"
             )
