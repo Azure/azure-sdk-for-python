@@ -498,7 +498,7 @@ class TestStructuredMessageDecoder:
 
         assert content == data
 
-    @pytest.mark.parametrize("size, segment_size, chunk_size, flags", [
+    @pytest.mark.parametrize("size, segment_size, block_size, flags", [
         (0, 1, 1, StructuredMessageProperties.NONE),
         (0, 1, 1, StructuredMessageProperties.CRC64),
         (1, 1, 1, StructuredMessageProperties.NONE),
@@ -518,12 +518,12 @@ class TestStructuredMessageDecoder:
         (100 * 1024, 4 * 1024, 7 * 1024, StructuredMessageProperties.NONE),
         (100 * 1024, 4 * 1024, 7 * 1024, StructuredMessageProperties.CRC64),
     ])
-    def test_iterate(self, size, segment_size, chunk_size, flags):
+    def test_iterate(self, size, segment_size, block_size, flags):
         data = os.urandom(size)
         message_stream, length = _build_structured_message(data, segment_size, flags)
 
         decoder = StructuredMessageDecoder(
-            _iter_bytes(message_stream.getvalue()), length, chunk_size=chunk_size)
+            _iter_bytes(message_stream.getvalue()), length, block_size=block_size)
         content = b''.join(decoder)
 
         assert content == data
