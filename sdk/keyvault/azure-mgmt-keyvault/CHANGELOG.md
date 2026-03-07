@@ -1,5 +1,20 @@
 # Release History
 
+## 14.0.0 (2026-03-07)
+
+### Features Added
+
+  - Enum `CertificatePermissions` added member `IMPORTEnum`
+  - Enum `JsonWebKeyOperation` added member `IMPORTEnum`
+  - Enum `KeyPermissions` added member `IMPORTEnum`
+
+### Breaking Changes
+
+  - Deleted or renamed enum value `CertificatePermissions.IMPORT`
+  - Deleted or renamed enum value `JsonWebKeyOperation.IMPORT`
+  - Deleted or renamed enum value `KeyPermissions.IMPORT`
+  - Deleted or renamed model `ManagedHsmResource`
+
 ## 13.0.0 (2025-12-11)
 
 ### Features Added
