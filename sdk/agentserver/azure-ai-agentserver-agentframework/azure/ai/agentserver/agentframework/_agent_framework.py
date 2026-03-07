@@ -248,13 +248,16 @@ class AgentFrameworkAgent(FoundryCBAgent):
             try:
                 update_count = 0
                 try:
-                    updates = stream.with_cleanup_hook(
-                        lambda: self._save_agent_session(context, agent_session)
-                    )
-                    async for event in streaming_converter.convert(updates):
+                    async for event in streaming_converter.convert(stream):
                         update_count += 1
                         yield event
 
+                    # Trigger the result hooks (e.g. _run_after_providers) which
+                    # populate the session with messages. Without this call the
+                    # session remains empty because result hooks only execute
+                    # inside get_final_response().
+                    await stream.get_final_response()
+                    await self._save_agent_session(context, agent_session)
                     logger.info("Streaming completed with %d updates", update_count)
                 except OAuthConsentRequiredError as e:
                     logger.info("OAuth consent required during streaming updates")

@@ -66,7 +66,7 @@ class AgentFrameworkWorkflowAdapter(AgentFrameworkAgent):
             if self._checkpoint_repository and (conversation_id := context.conversation_id):
                 checkpoint_storage = await self._checkpoint_repository.get_or_create(conversation_id)
                 if checkpoint_storage:
-                    selected_checkpoint = await self._get_latest_checkpoint(checkpoint_storage)
+                    selected_checkpoint = await checkpoint_storage.get_latest(workflow_name=agent.workflow.name)
             if selected_checkpoint:
                 checkpoint_status = self._checkpoint_status(selected_checkpoint)
                 if checkpoint_status == "completed":
@@ -142,22 +142,6 @@ class AgentFrameworkWorkflowAdapter(AgentFrameworkAgent):
         if isinstance(metadata, dict):
             value = metadata.get("status")
             return str(value) if value is not None else None
-        return None
-
-    async def _get_latest_checkpoint(self,
-                checkpoint_storage: CheckpointStorage) -> Optional[Any]:
-        """Load the latest checkpoint from the given storage.
-
-        :param checkpoint_storage: The checkpoint storage to load from.
-        :type checkpoint_storage: CheckpointStorage
-
-        :return: The latest checkpoint if available, None otherwise.
-        :rtype: Optional[Any]
-        """
-        checkpoints = await checkpoint_storage.list_checkpoints()
-        if checkpoints:
-            latest_checkpoint = max(checkpoints, key=lambda cp: cp.timestamp)
-            return latest_checkpoint
         return None
 
     async def _load_checkpoint(self,
