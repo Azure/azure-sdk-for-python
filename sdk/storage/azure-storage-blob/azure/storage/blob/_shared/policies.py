@@ -32,7 +32,7 @@ from azure.core.pipeline.policies import (
 )
 
 from .authentication import AzureSigningError, StorageHttpChallenge
-from .constants import DEFAULT_OAUTH_SCOPE
+from .constants import DEFAULT_OAUTH_SCOPE, DATA_BLOCK_SIZE
 from .models import LocationMode, StorageErrorCode
 from .streams import StructuredMessageDecoder, StructuredMessageEncodeStream, StructuredMessageProperties
 from .validation import calculate_crc64_bytes, ChecksumAlgorithm, is_md5_validation
@@ -453,7 +453,7 @@ class StorageContentValidation(SansIOHTTPPolicy):
                 original_stream_download = response.http_response.stream_download
                 def wrapped_stream_download(*args, **kwargs):
                     iterator = original_stream_download(*args, **kwargs)
-                    decoder = StructuredMessageDecoder(iterator, content_length)
+                    decoder = StructuredMessageDecoder(iterator, content_length, chunk_size=DATA_BLOCK_SIZE)
                     decoder.request = iterator.request  # type: ignore
                     decoder.response = iterator.response  # type: ignore
                     return decoder
