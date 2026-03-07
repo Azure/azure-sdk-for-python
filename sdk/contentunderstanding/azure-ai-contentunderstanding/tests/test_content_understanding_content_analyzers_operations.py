@@ -869,3 +869,54 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
         print(f"✓ Delete result completed successfully")
         print("Note: Deletion success verified by no exception thrown")
         print(f"✓ Delete result test completed successfully")
+
+    @ContentUnderstandingPreparer()
+    @recorded_by_proxy
+    def test_content_analyzers_rehydrate_operation(self, contentunderstanding_endpoint: str) -> None:
+        """
+        Test Summary:
+        - Start analysis with begin_analyze (prebuilt-read)
+        - Get continuation token from the poller
+        - Resume the operation using continuation_token parameter
+        - Wait for completion and verify markdown content is returned
+        - Regression test related to GitHub issue #56840 (GetRehydrationToken)
+        """
+        client: ContentUnderstandingClient = self.create_client(endpoint=contentunderstanding_endpoint)
+
+        document_url = "https://raw.githubusercontent.com/Azure-Samples/azure-ai-content-understanding-assets/main/document/invoice.pdf"
+
+        # Start analysis
+        print("Starting analysis operation...")
+        poller = client.begin_analyze(
+            analyzer_id="prebuilt-read",
+            inputs=[AnalysisInput(url=document_url)],
+        )
+        print(f"Operation started. Status: {poller.status()}")
+
+        # Get continuation token
+        token = poller.continuation_token()
+        assert token is not None, "Continuation token should not be None"
+        assert len(token) > 0, "Continuation token should not be empty"
+        print(f"✓ Continuation token obtained ({len(token)} chars)")
+
+        # Resume from continuation token
+        print("Resuming operation from continuation token...")
+        resumed_poller = client.begin_analyze(
+            analyzer_id="prebuilt-read",
+            inputs=[AnalysisInput(url=document_url)],
+            continuation_token=token,
+        )
+        result = resumed_poller.result()
+        print("✓ Operation completed after resumption")
+
+        # Verify result
+        assert result is not None, "Analysis result should not be None"
+        assert result.contents is not None, "Result should contain contents"
+        assert len(result.contents) > 0, "Result should have at least one content"
+
+        # Verify markdown content
+        content = result.contents[0]
+        assert content.markdown is not None, "Content should have markdown"
+        assert len(content.markdown) > 0, "Markdown should not be empty"
+        print(f"✓ Markdown content extracted ({len(content.markdown)} chars)")
+        print(f"  First 100 chars: {content.markdown[:100]}")

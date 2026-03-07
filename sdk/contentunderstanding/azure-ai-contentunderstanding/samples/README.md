@@ -219,6 +219,17 @@ Creates a custom analyzer with labeled training data from Azure Blob Storage. La
 - Using labeled data for improved field extraction accuracy
 - Content Understanding Studio alternative for labeling workflow
 
+### Advanced: Rehydrate Operation
+
+#### `sample_advanced_rehydrate_operation.py` / `sample_advanced_rehydrate_operation_async.py`
+Demonstrates how to persist a long-running operation's state using continuation tokens and resume polling from a different process. This sample spawns two separate subprocesses to show a realistic cross-process handoff.
+
+**Key concepts:**
+- Getting a continuation token from a poller via `continuation_token()`
+- Persisting the token to a file (simulating database/queue storage)
+- Resuming the operation in a separate process via `begin_analyze(continuation_token=...)`
+- Accessing the extracted markdown content after rehydration
+
 ## Common Patterns
 
 ### Authentication
