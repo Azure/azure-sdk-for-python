@@ -553,7 +553,7 @@ class RedTeamResult:
         """Extracts the scorecard from a RedTeamResult object."""
         return self.scan_result.get("scorecard", None) if self.scan_result else None
 
-    def to_eval_qr_json_lines(self) -> str:
+    def to_eval_qr_json_lines(self) -> List[str]:
         """Converts conversations in messages format to query-response format suitable for evaluation.
 
         The output format follows the JSONL pattern with each line containing:
@@ -576,7 +576,7 @@ class RedTeamResult:
         :rtype: List[str]
         """
         if not self.attack_details:
-            return ""
+            return []
 
         result_lines = []
 
@@ -586,7 +586,7 @@ class RedTeamResult:
             attack_complexity = conversation.get("attack_complexity", "")
             risk_category = conversation.get("risk_category", "")
             attack_success = conversation.get("attack_success")
-            risk_assessment = conversation.get("risk_assessment", {})
+            risk_assessment: Any = conversation.get("risk_assessment", {})
 
             for i in range(0, len(messages) - 1, 2):
                 if i + 1 < len(messages):
@@ -635,7 +635,7 @@ class RedTeamResult:
             attack_complexity = conversation.get("attack_complexity", "")
             risk_category = conversation.get("risk_category", "")
             attack_success = conversation.get("attack_success")
-            risk_assessment = conversation.get("risk_assessment", {})
+            risk_assessment: Any = conversation.get("risk_assessment", {})
 
             result_lines.append(f"Attack Technique: {attack_technique}")
             result_lines.append(f"Attack Complexity: {attack_complexity}")
