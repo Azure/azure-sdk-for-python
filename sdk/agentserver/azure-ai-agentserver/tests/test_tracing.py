@@ -4,6 +4,7 @@
 """Tests for optional OpenTelemetry tracing."""
 import asyncio
 import json
+from unittest.mock import MagicMock, patch
 
 import httpx
 import pytest
@@ -369,3 +370,134 @@ async def test_streaming_propagates_traceparent(span_exporter):
     assert len(invoke_spans) == 1
     expected_trace_id = int("0af7651916cd43dd8448eb211c80319c", 16)
     assert invoke_spans[0].context.trace_id == expected_trace_id
+
+
+# ---------------------------------------------------------------------------
+# Tests: Application Insights connection string resolution
+# ---------------------------------------------------------------------------
+
+
+class TestAppInsightsConnectionStringResolution:
+    """Tests for resolve_appinsights_connection_string and constructor wiring."""
+
+    def test_explicit_param_takes_priority(self, monkeypatch):
+        """Constructor param beats env var."""
+        from azure.ai.agentserver.server._config import resolve_appinsights_connection_string
+
+        monkeypatch.setenv("APPLICATIONINSIGHTS_CONNECTION_STRING", "env-standard")
+        result = resolve_appinsights_connection_string("explicit-value")
+        assert result == "explicit-value"
+
+    def test_standard_env_var_fallback(self, monkeypatch):
+        """Falls back to APPLICATIONINSIGHTS_CONNECTION_STRING."""
+        from azure.ai.agentserver.server._config import resolve_appinsights_connection_string
+
+        monkeypatch.setenv("APPLICATIONINSIGHTS_CONNECTION_STRING", "env-standard")
+        result = resolve_appinsights_connection_string(None)
+        assert result == "env-standard"
+
+    def test_no_connection_string_returns_none(self, monkeypatch):
+        """Returns None when no source provides a connection string."""
+        from azure.ai.agentserver.server._config import resolve_appinsights_connection_string
+
+        monkeypatch.delenv("APPLICATIONINSIGHTS_CONNECTION_STRING", raising=False)
+        result = resolve_appinsights_connection_string(None)
+        assert result is None
+
+
+# ---------------------------------------------------------------------------
+# Tests: _setup_azure_monitor
+# ---------------------------------------------------------------------------
+
+
+class TestSetupAzureMonitor:
+    """Tests for TracingHelper._setup_azure_monitor (mocked exporter imports)."""
+
+    def test_setup_configures_tracer_provider(self):
+        """_setup_azure_monitor sets a global TracerProvider with exporter."""
+        from azure.ai.agentserver._tracing import TracingHelper
+
+        mock_exporter = MagicMock()
+        mock_exporter_cls = MagicMock(return_value=mock_exporter)
+
+        with patch.dict(
+            "sys.modules",
+            {
+                "azure.monitor.opentelemetry.exporter": MagicMock(
+                    AzureMonitorTraceExporter=mock_exporter_cls,
+                    AzureMonitorLogExporter=MagicMock(return_value=MagicMock()),
+                ),
+            },
+        ), patch("opentelemetry.trace.set_tracer_provider") as mock_set_provider:
+            TracingHelper._setup_azure_monitor("InstrumentationKey=test")
+
+            mock_exporter_cls.assert_called_once_with(
+                connection_string="InstrumentationKey=test"
+            )
+            mock_set_provider.assert_called_once()
+
+    def test_setup_logs_warning_when_packages_missing(self, caplog):
+        """Warns gracefully when azure-monitor exporter is not installed."""
+        import builtins
+        from azure.ai.agentserver._tracing import TracingHelper
+
+        real_import = builtins.__import__
+
+        def _block_monitor(name, *args, **kwargs):
+            if "azure.monitor" in name:
+                raise ImportError("no monitor")
+            return real_import(name, *args, **kwargs)
+
+        with patch("builtins.__import__", side_effect=_block_monitor):
+            import logging
+
+            with caplog.at_level(logging.WARNING, logger="azure.ai.agentserver"):
+                TracingHelper._setup_azure_monitor("InstrumentationKey=test")
+
+        assert "required packages are not installed" in caplog.text
+
+    def test_constructor_passes_connection_string(self, monkeypatch):
+        """AgentServer passes resolved connection string to TracingHelper."""
+        monkeypatch.delenv("APPLICATIONINSIGHTS_CONNECTION_STRING", raising=False)
+
+        with patch(
+            "azure.ai.agentserver._tracing.TracingHelper._setup_azure_monitor"
+        ) as mock_setup:
+            _EchoTracedAgent(
+                enable_tracing=True,
+                application_insights_connection_string="InstrumentationKey=from-param",
+            )
+            mock_setup.assert_called_once_with("InstrumentationKey=from-param")
+
+    def test_constructor_no_connection_string_skips_setup(self, monkeypatch):
+        """When no connection string is available, _setup_azure_monitor is not called."""
+        monkeypatch.delenv("APPLICATIONINSIGHTS_CONNECTION_STRING", raising=False)
+
+        with patch(
+            "azure.ai.agentserver._tracing.TracingHelper._setup_azure_monitor"
+        ) as mock_setup:
+            _EchoTracedAgent(enable_tracing=True)
+            mock_setup.assert_not_called()
+
+    def test_constructor_env_var_connection_string(self, monkeypatch):
+        """Connection string from env var is passed to _setup_azure_monitor."""
+        monkeypatch.setenv(
+            "APPLICATIONINSIGHTS_CONNECTION_STRING",
+            "InstrumentationKey=from-env",
+        )
+
+        with patch(
+            "azure.ai.agentserver._tracing.TracingHelper._setup_azure_monitor"
+        ) as mock_setup:
+            _EchoTracedAgent(enable_tracing=True)
+            mock_setup.assert_called_once_with("InstrumentationKey=from-env")
+
+    def test_tracing_disabled_skips_connection_string_resolution(self, monkeypatch):
+        """When tracing is disabled, connection string is not resolved."""
+        monkeypatch.setenv(
+            "APPLICATIONINSIGHTS_CONNECTION_STRING",
+            "InstrumentationKey=should-not-use",
+        )
+
+        agent = _EchoTracedAgent(enable_tracing=False)
+        assert agent._tracing is None  # noqa: SLF001

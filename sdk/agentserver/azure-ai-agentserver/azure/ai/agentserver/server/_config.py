@@ -93,28 +93,11 @@ def resolve_graceful_shutdown_timeout(timeout: Optional[int]) -> int:
     :raises ValueError: If the env var is not a valid integer.
     """
     if timeout is not None:
-        return max(0, _require_int("timeout_graceful_shutdown", timeout))
+        return max(0, _require_int("graceful_shutdown_timeout", timeout))
     env_timeout = _parse_int_env(Constants.AGENT_GRACEFUL_SHUTDOWN_TIMEOUT)
     if env_timeout is not None:
         return max(0, env_timeout)
     return Constants.DEFAULT_GRACEFUL_SHUTDOWN_TIMEOUT
-
-
-def resolve_max_request_body_size(size: Optional[int]) -> int:
-    """Resolve the max request body size from argument, env var, or default.
-
-    :param size: Explicitly requested size in bytes or None.
-    :type size: Optional[int]
-    :return: The resolved max body size in bytes.
-    :rtype: int
-    :raises ValueError: If the env var is not a valid integer.
-    """
-    if size is not None:
-        return max(0, _require_int("max_request_body_size", size))
-    env_size = _parse_int_env(Constants.AGENT_MAX_REQUEST_BODY_SIZE)
-    if env_size is not None:
-        return max(0, env_size)
-    return Constants.DEFAULT_MAX_REQUEST_BODY_SIZE
 
 
 def resolve_request_timeout(timeout: Optional[int]) -> int:
@@ -134,23 +117,6 @@ def resolve_request_timeout(timeout: Optional[int]) -> int:
     return Constants.DEFAULT_REQUEST_TIMEOUT
 
 
-def resolve_max_concurrent_requests(limit: Optional[int]) -> int:
-    """Resolve the max concurrent requests from argument, env var, or default.
-
-    :param limit: Explicitly requested concurrency limit or None.
-    :type limit: Optional[int]
-    :return: The resolved concurrency limit (0 = disabled).
-    :rtype: int
-    :raises ValueError: If the env var is not a valid integer.
-    """
-    if limit is not None:
-        return max(0, _require_int("max_concurrent_requests", limit))
-    env_limit = _parse_int_env(Constants.AGENT_MAX_CONCURRENT_REQUESTS)
-    if env_limit is not None:
-        return max(0, env_limit)
-    return Constants.DEFAULT_MAX_CONCURRENT_REQUESTS
-
-
 def resolve_bool_feature(value: Optional[bool], env_var: str) -> bool:
     """Resolve an opt-in boolean feature from argument, env var, or default (False).
 
@@ -167,6 +133,30 @@ def resolve_bool_feature(value: Optional[bool], env_var: str) -> bool:
 
 
 _VALID_LOG_LEVELS = ("DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL")
+
+
+def resolve_appinsights_connection_string(
+    connection_string: Optional[str],
+) -> Optional[str]:
+    """Resolve the Application Insights connection string.
+
+    Resolution order:
+
+    1. Explicit *connection_string* argument (if not *None*).
+    2. ``APPLICATIONINSIGHTS_CONNECTION_STRING`` env var (standard Azure
+       Monitor convention).
+    3. *None* — no connection string available.
+
+    :param connection_string: Explicitly provided connection string or None.
+    :type connection_string: Optional[str]
+    :return: The resolved connection string, or None.
+    :rtype: Optional[str]
+    """
+    if connection_string is not None:
+        return connection_string
+    return os.environ.get(
+        Constants.APPLICATIONINSIGHTS_CONNECTION_STRING
+    )
 
 
 def resolve_log_level(level: Optional[str]) -> str:

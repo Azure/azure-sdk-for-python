@@ -10,32 +10,15 @@ from collections.abc import AsyncGenerator  # pylint: disable=import-error
 from typing import Any, Optional
 
 from starlette.applications import Starlette
-from starlette.middleware.cors import CORSMiddleware
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response, StreamingResponse
 from starlette.routing import Route
 
-from .._access_log import AccessLogHelper
 from .._constants import Constants
 from .._errors import error_response
-from .._metrics import MetricsHelper
 from .._tracing import TracingHelper, extract_w3c_carrier
 from ..validation._openapi_validator import OpenApiValidator
-from ._config import (
-    resolve_bool_feature,
-    resolve_graceful_shutdown_timeout,
-    resolve_log_level,
-    resolve_request_timeout,
-    resolve_max_concurrent_requests,
-    resolve_max_request_body_size,
-    resolve_port,
-)
-from ._middleware import (
-    AccessLogMiddleware,
-    MaxBodySizeMiddleware,
-    MaxConcurrentRequestsMiddleware,
-    MetricsMiddleware,
-)
+from . import _config
 
 logger = logging.getLogger("azure.ai.agentserver")
 
@@ -66,41 +49,28 @@ class AgentServer(ABC):
         the ``AGENT_ENABLE_TRACING`` env var is consulted (``"true"`` to enable).
         Requires ``opentelemetry-api`` — install with
         ``pip install azure-ai-agentserver[tracing]``.
+        When an Application Insights connection string is also available,
+        traces and logs are automatically exported to Azure Monitor.
     :type enable_tracing: Optional[bool]
-    :param timeout_graceful_shutdown: Seconds to wait for in-flight requests to
+    :param application_insights_connection_string: Application Insights
+        connection string for exporting traces and logs to Azure Monitor.
+        When *None* (default) the ``APPLICATIONINSIGHTS_CONNECTION_STRING``
+        env var is consulted.  Only takes effect when *enable_tracing* is
+        ``True``.  Requires ``opentelemetry-sdk`` and
+        ``azure-monitor-opentelemetry-exporter`` (included in the
+        ``[tracing]`` extras group).
+    :type application_insights_connection_string: Optional[str]
+    :param graceful_shutdown_timeout: Seconds to wait for in-flight requests to
         complete after receiving SIGTERM / shutdown signal.  When *None* (default)
         the ``AGENT_GRACEFUL_SHUTDOWN_TIMEOUT`` env var is consulted; if that is
         also unset the default is 30 seconds.  Set to ``0`` to disable the
         drain period.
-    :type timeout_graceful_shutdown: Optional[int]
-    :param max_request_body_size: Maximum allowed request body size in bytes.
-        When *None* (default) the ``AGENT_MAX_REQUEST_BODY_SIZE`` env var is
-        consulted; if that is also unset the default is 100 MB (104857600).
-        Set to ``0`` to disable the limit.  Requests exceeding this limit
-        receive a ``413 Payload Too Large`` response.
-    :type max_request_body_size: Optional[int]
+    :type graceful_shutdown_timeout: Optional[int]
     :param request_timeout: Maximum seconds an ``invoke()`` call may run before
         being cancelled.  When *None* (default) the ``AGENT_REQUEST_TIMEOUT``
         env var is consulted; if that is also unset the default is 300 seconds
         (5 minutes).  Set to ``0`` to disable the timeout.
     :type request_timeout: Optional[int]
-    :param max_concurrent_requests: Maximum number of HTTP requests that may be
-        processed simultaneously.  When *None* (default) the
-        ``AGENT_MAX_CONCURRENT_REQUESTS`` env var is consulted; if that is also
-        unset the default is ``0`` (disabled — no concurrency limit).  When
-        the limit is reached, additional requests receive a
-        ``503 Service Unavailable`` response.
-    :type max_concurrent_requests: Optional[int]
-    :param enable_metrics: Enable Prometheus metrics endpoint at ``/metrics``.
-        When *None* (default) the ``AGENT_ENABLE_METRICS`` env var is consulted
-        (``"true"`` to enable).  Requires ``prometheus_client`` — install with
-        ``pip install azure-ai-agentserver[metrics]``.
-    :type enable_metrics: Optional[bool]
-    :param enable_access_log: Enable structured per-request access logging to
-        the ``azure.ai.agentserver.access`` logger.  When *None* (default)
-        the ``AGENT_ENABLE_ACCESS_LOG`` env var is consulted (``"true"`` to
-        enable).  Each entry is emitted as a JSON object.
-    :type enable_access_log: Optional[bool]
     :param log_level: Library log level (e.g. ``"DEBUG"``, ``"INFO"``).  When
         *None* (default) the ``AGENT_LOG_LEVEL`` env var is consulted; if that
         is also unset the default is ``"WARNING"``.
@@ -117,24 +87,21 @@ class AgentServer(ABC):
         openapi_spec: Optional[dict[str, Any]] = None,
         enable_request_validation: Optional[bool] = None,
         enable_tracing: Optional[bool] = None,
-        timeout_graceful_shutdown: Optional[int] = None,
-        max_request_body_size: Optional[int] = None,
+        application_insights_connection_string: Optional[str] = None,
+        graceful_shutdown_timeout: Optional[int] = None,
         request_timeout: Optional[int] = None,
-        max_concurrent_requests: Optional[int] = None,
-        enable_metrics: Optional[bool] = None,
-        enable_access_log: Optional[bool] = None,
         log_level: Optional[str] = None,
         debug_errors: Optional[bool] = None,
     ) -> None:
         # Logging & debug -------------------------------------------------
-        resolved_level = resolve_log_level(log_level)
+        resolved_level = _config.resolve_log_level(log_level)
         logger.setLevel(resolved_level)
-        self._debug_errors = resolve_bool_feature(
+        self._debug_errors = _config.resolve_bool_feature(
             debug_errors, Constants.AGENT_DEBUG_ERRORS
         )
 
         self._openapi_spec = openapi_spec
-        _validation_on = resolve_bool_feature(
+        _validation_on = _config.resolve_bool_feature(
             enable_request_validation, Constants.AGENT_ENABLE_REQUEST_VALIDATION
         )
         self._validator: Optional[OpenApiValidator] = (
@@ -142,22 +109,17 @@ class AgentServer(ABC):
             if openapi_spec and _validation_on
             else None
         )
-        _tracing_on = resolve_bool_feature(enable_tracing, Constants.AGENT_ENABLE_TRACING)
-        self._tracing: Optional[TracingHelper] = TracingHelper() if _tracing_on else None
-        _metrics_on = resolve_bool_feature(enable_metrics, Constants.AGENT_ENABLE_METRICS)
-        self._metrics: Optional[MetricsHelper] = MetricsHelper() if _metrics_on else None
-        _access_log_on = resolve_bool_feature(enable_access_log, Constants.AGENT_ENABLE_ACCESS_LOG)
-        self._access_log: Optional[AccessLogHelper] = AccessLogHelper() if _access_log_on else None
-        self._timeout_graceful_shutdown = resolve_graceful_shutdown_timeout(
-            timeout_graceful_shutdown
+        _tracing_on = _config.resolve_bool_feature(enable_tracing, Constants.AGENT_ENABLE_TRACING)
+        _conn_str = _config.resolve_appinsights_connection_string(
+            application_insights_connection_string
+        ) if _tracing_on else None
+        self._tracing: Optional[TracingHelper] = (
+            TracingHelper(connection_string=_conn_str) if _tracing_on else None
         )
-        self._max_request_body_size = resolve_max_request_body_size(
-            max_request_body_size
+        self._graceful_shutdown_timeout = _config.resolve_graceful_shutdown_timeout(
+            graceful_shutdown_timeout
         )
-        self._request_timeout = resolve_request_timeout(request_timeout)
-        self._max_concurrent_requests = resolve_max_concurrent_requests(
-            max_concurrent_requests
-        )
+        self._request_timeout = _config.resolve_request_timeout(request_timeout)
         self.app: Starlette
         self._build_app()
 
@@ -216,7 +178,7 @@ class AgentServer(ABC):
         Override to checkpoint state, flush buffers, close connections, or
         release external resources before the process exits.
 
-        The callback is bounded by ``timeout_graceful_shutdown`` seconds.
+        The callback is bounded by ``graceful_shutdown_timeout`` seconds.
         If it does not complete in time, a warning is logged and shutdown
         proceeds.
 
@@ -249,7 +211,7 @@ class AgentServer(ABC):
 
         config = HypercornConfig()
         config.bind = [f"{host}:{port}"]
-        config.graceful_timeout = float(self._timeout_graceful_shutdown)
+        config.graceful_timeout = float(self._graceful_shutdown_timeout)
         return config
 
     def run(self, host: str = "127.0.0.1", port: Optional[int] = None) -> None:
@@ -265,7 +227,7 @@ class AgentServer(ABC):
         """
         from hypercorn.asyncio import serve as _hypercorn_serve
 
-        resolved_port = resolve_port(port)
+        resolved_port = _config.resolve_port(port)
         logger.info("AgentServer starting on %s:%s", host, resolved_port)
         config = self._build_hypercorn_config(host, resolved_port)
         asyncio.run(_hypercorn_serve(self.app, config))  # type: ignore[arg-type]  # Starlette is ASGI-compatible
@@ -283,7 +245,7 @@ class AgentServer(ABC):
         """
         from hypercorn.asyncio import serve as _hypercorn_serve
 
-        resolved_port = resolve_port(port)
+        resolved_port = _config.resolve_port(port)
         logger.info("AgentServer starting on %s:%s (async)", host, resolved_port)
         config = self._build_hypercorn_config(host, resolved_port)
         await _hypercorn_serve(self.app, config)  # type: ignore[arg-type]  # Starlette is ASGI-compatible
@@ -303,17 +265,17 @@ class AgentServer(ABC):
             # --- SHUTDOWN: runs once when the server is stopping ---
             logger.info(
                 "AgentServer shutting down (graceful timeout=%ss)",
-                self._timeout_graceful_shutdown,
+                self._graceful_shutdown_timeout,
             )
             try:
                 await asyncio.wait_for(
                     self.on_shutdown(),
-                    timeout=self._timeout_graceful_shutdown or None,
+                    timeout=self._graceful_shutdown_timeout or None,
                 )
             except asyncio.TimeoutError:
                 logger.warning(
                     "on_shutdown did not complete within %ss timeout",
-                    self._timeout_graceful_shutdown,
+                    self._graceful_shutdown_timeout,
                 )
             except Exception:  # pylint: disable=broad-exception-caught
                 logger.exception("Error in on_shutdown")
@@ -347,38 +309,7 @@ class AgentServer(ABC):
             Route("/readiness", self._readiness_endpoint, methods=["GET"], name="readiness"),
         ]
 
-        if self._metrics is not None:
-            routes.append(
-                Route("/metrics", self._metrics_endpoint, methods=["GET"], name="metrics")
-            )
-
         self.app = Starlette(routes=routes, lifespan=_lifespan)
-        if self._max_request_body_size > 0:
-            self.app.add_middleware(
-                MaxBodySizeMiddleware,
-                max_body_size=self._max_request_body_size,
-            )
-        if self._max_concurrent_requests > 0:
-            self.app.add_middleware(
-                MaxConcurrentRequestsMiddleware,
-                max_concurrent=self._max_concurrent_requests,
-            )
-        # Observability middleware (innermost — only measures requests that
-        # pass body-size and concurrency gates).
-        if self._access_log is not None:
-            self.app.add_middleware(AccessLogMiddleware, access_log=self._access_log)
-        if self._metrics is not None:
-            self.app.add_middleware(MetricsMiddleware, metrics=self._metrics)
-        # CORS must be added last so it wraps outermost — this ensures
-        # error responses from inner middleware (413, 503) also carry
-        # Access-Control-Allow-Origin headers for browser clients.
-        self.app.add_middleware(
-            CORSMiddleware,
-            allow_origins=["*"],
-            allow_credentials=False,
-            allow_methods=["*"],
-            allow_headers=["*"],
-        )
 
     # ------------------------------------------------------------------
     # Private: endpoint handlers
@@ -568,16 +499,4 @@ class AgentServer(ABC):
         """
         return JSONResponse({"status": "ready"})
 
-    async def _metrics_endpoint(self, request: Request) -> Response:  # pylint: disable=unused-argument
-        """GET /metrics — Prometheus text exposition format.
 
-        :param request: The incoming Starlette request.
-        :type request: Request
-        :return: Prometheus metrics in text format.
-        :rtype: Response
-        """
-        data = self._metrics.render()
-        return Response(
-            content=data,
-            media_type="text/plain; version=0.0.4; charset=utf-8",
-        )

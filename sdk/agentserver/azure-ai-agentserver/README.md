@@ -60,8 +60,6 @@ your agent is compatible with the hosting platform — no manual route setup req
 
 - **Platform-compatible routes** — automatically registers the exact endpoints the Azure
   Agent Service expects, so your agent deploys without configuration changes.
-- **Standalone** — no AI-framework dependencies. Bring your own LLM client, orchestration
-  library, or plain Python.
 - **Starlette + Hypercorn** — lightweight ASGI server with native HTTP/1.1 and HTTP/2
   support.
 - **Raw protocol access** — subclass `AgentServer` and receive raw Starlette `Request`
@@ -73,20 +71,11 @@ your agent is compatible with the hosting platform — no manual route setup req
   `GET /invocations/docs/openapi.json` for documentation / tooling.
 - **Optional request validation** — opt in to validate incoming request bodies
   against the OpenAPI spec before reaching your code.
-- **Production middleware** — request body size limits (413), concurrency throttling (503),
-  configurable invoke timeouts (504), and graceful shutdown — all via constructor args or
-  environment variables.
+- **Request limits** — configurable invoke timeouts (504) and graceful shutdown — all via
+  constructor args or environment variables.
 - **Optional OpenTelemetry tracing** — opt-in span instrumentation that covers the full
   request lifecycle, including streaming responses.
-- **Optional Prometheus metrics** — opt-in `/metrics` endpoint exposing request counts,
-  latency histograms, in-flight gauges, and request/response body size distributions in
-  Prometheus text exposition format.
-- **Optional structured access logging** — opt-in per-request access log emitted to a
-  dedicated `azure.ai.agentserver.access` logger with structured JSON entries containing
-  method, path, status, protocol, duration, sizes, invocation ID, client IP, and user agent.
 - **Health endpoints** — `/liveness` and `/readiness` out of the box.
-- **Framework integration via samples** — samples show how to integrate LangGraph, Agent
-  Framework, Semantic Kernel, and other libraries in your own code.
 
 ### Architecture
 
@@ -108,15 +97,10 @@ your agent is compatible with the hosting platform — no manual route setup req
               │ OpenAPI spec serving         │
               │ Optional request validation  │
               │ Invocation ID tracking        │
-              │ Body size / concurrency guard │
               │ Invoke timeout / graceful     │
               │   shutdown                    │
               │ Optional OTel tracing         │
-              │ Optional Prometheus metrics   │
-              │ Optional structured access    │
-              │   logging                     │
               │ Health & readiness endpoints  │
-              │ CORS                          │
               └───────────────────────────────┘
                              │
                    Your integration code:
@@ -149,7 +133,6 @@ The server auto-injects the `x-agent-invocation-id` response header if not alrea
 | `/invocations/{id}` | GET | Retrieve a previous invocation result |
 | `/invocations/{id}/cancel` | POST | Cancel a running invocation |
 | `/invocations/docs/openapi.json` | GET | Return the registered OpenAPI spec |
-| `/metrics` | GET | Prometheus metrics (only when `enable_metrics=True`) |
 | `/liveness` | GET | Health check |
 | `/readiness` | GET | Readiness check |
 
@@ -161,23 +144,17 @@ variable > default**. Set a value to `0` to disable the corresponding feature.
 | Constructor param | Environment variable | Default | Description |
 |---|---|---|---|
 | `port` (on `run()`) | `AGENT_SERVER_PORT` | `8088` | Port to bind |
-| `timeout_graceful_shutdown` | `AGENT_GRACEFUL_SHUTDOWN_TIMEOUT` | `30` (seconds) | Drain period after SIGTERM before forced exit |
-| `max_request_body_size` | `AGENT_MAX_REQUEST_BODY_SIZE` | `104857600` (100 MB) | Max request body in bytes; exceeding returns 413 |
+| `graceful_shutdown_timeout` | `AGENT_GRACEFUL_SHUTDOWN_TIMEOUT` | `30` (seconds) | Drain period after SIGTERM before forced exit |
 | `request_timeout` | `AGENT_REQUEST_TIMEOUT` | `300` (seconds) | Max time for `invoke()` before 504 |
-| `max_concurrent_requests` | `AGENT_MAX_CONCURRENT_REQUESTS` | `0` (disabled) | Max simultaneous requests; exceeding returns 503 |
 | `enable_tracing` | `AGENT_ENABLE_TRACING` | `false` | Enable OpenTelemetry tracing |
-| `enable_metrics` | `AGENT_ENABLE_METRICS` | `false` | Enable Prometheus `/metrics` endpoint |
-| `enable_access_log` | `AGENT_ENABLE_ACCESS_LOG` | `false` | Enable structured per-request access logging |
 | `enable_request_validation` | `AGENT_ENABLE_REQUEST_VALIDATION` | `false` | Validate request bodies against `openapi_spec` |
 | `log_level` | `AGENT_LOG_LEVEL` | `WARNING` | Library log level (`DEBUG`, `INFO`, `WARNING`, `ERROR`, `CRITICAL`) |
 | `debug_errors` | `AGENT_DEBUG_ERRORS` | `false` | Include exception details in error responses |
 
 ```python
 agent = MyAgent(
-    max_request_body_size=10 * 1024 * 1024,  # 10 MB
     request_timeout=60,                       # 1 minute
-    max_concurrent_requests=20,               # at most 20 in-flight
-    timeout_graceful_shutdown=15,             # 15 s drain
+    graceful_shutdown_timeout=15,             # 15 s drain
 )
 agent.run()
 ```
@@ -251,7 +228,7 @@ or:
 export AGENT_ENABLE_TRACING=true
 ```
 
-Requires `opentelemetry-api`:
+Install the tracing extras (includes OpenTelemetry and the Azure Monitor exporter):
 
 ```bash
 pip install azure-ai-agentserver[tracing]
@@ -263,60 +240,29 @@ accurately capturing the full transfer duration. Errors during streaming are rec
 the span. Incoming `traceparent` / `tracestate` headers are propagated via W3C
 TraceContext.
 
-### Metrics
+#### Application Insights integration
 
-Prometheus metrics are **disabled by default**. Enable via constructor or environment
-variable:
+When tracing is enabled **and** an Application Insights connection string is available,
+traces and logs are automatically exported to Azure Monitor. The connection string is
+resolved in the following order:
 
-```python
-agent = MyAgent(enable_metrics=True)
-```
-
-or:
-
-```bash
-export AGENT_ENABLE_METRICS=true
-```
-
-Requires `prometheus_client`:
-
-```bash
-pip install azure-ai-agentserver[metrics]
-```
-
-When enabled, a `/metrics` endpoint is added that returns Prometheus text exposition
-format. The following metrics are collected:
-
-| Metric | Type | Description |
-|--------|------|-------------|
-| `agent_request_total` | Counter | Total requests (labels: `method`, `path`, `status`) |
-| `agent_request_duration_seconds` | Histogram | Request latency |
-| `agent_request_in_flight` | Gauge | Currently processing requests |
-| `agent_request_body_bytes` | Histogram | Request body sizes |
-| `agent_response_body_bytes` | Histogram | Response body sizes |
-
-Health paths (`/liveness`, `/readiness`) and the `/metrics` endpoint itself are excluded
-from metric collection.
-
-### Access logging
-
-Structured access logging is **disabled by default**. Enable via constructor or
-environment variable:
+1. The `application_insights_connection_string` constructor parameter.
+2. The `APPLICATIONINSIGHTS_CONNECTION_STRING` environment variable.
 
 ```python
-agent = MyAgent(enable_access_log=True)
+# Explicit connection string
+agent = MyAgent(
+    enable_tracing=True,
+    application_insights_connection_string="InstrumentationKey=...",
+)
+
+# Or via environment variable (connection string auto-discovered)
+# export APPLICATIONINSIGHTS_CONNECTION_STRING="InstrumentationKey=..."
+agent = MyAgent(enable_tracing=True)
 ```
 
-or:
-
-```bash
-export AGENT_ENABLE_ACCESS_LOG=true
-```
-
-One structured log record is emitted per request to the `azure.ai.agentserver.access`
-logger (separate from the library's main logger). Each entry is a JSON object containing:
-`method`, `path`, `status`, `protocol`, `duration_ms`, `request_size`, `response_size`,
-`invocation_id`, `client_ip`, and `user_agent`.
+If no connection string is found, tracing still works — spans are created but not exported
+to Azure Monitor (you can bring your own `TracerProvider`).
 
 ### More samples
 

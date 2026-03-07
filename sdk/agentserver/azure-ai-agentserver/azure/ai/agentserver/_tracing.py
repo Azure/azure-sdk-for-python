@@ -14,6 +14,12 @@ When enabled, the module requires ``opentelemetry-api`` to be installed::
     pip install azure-ai-agentserver[tracing]
 
 If the package is not installed, tracing silently becomes a no-op.
+
+When an Application Insights connection string is available (via constructor
+or ``APPLICATIONINSIGHTS_CONNECTION_STRING`` env var), traces **and** logs are
+automatically exported to Azure Monitor.  This requires the additional
+``opentelemetry-sdk`` and ``azure-monitor-opentelemetry-exporter`` packages
+(both included in the ``[tracing]`` extras group).
 """
 from __future__ import annotations
 
@@ -47,18 +53,101 @@ class TracingHelper:
 
     Only instantiate when tracing is enabled.  If ``opentelemetry-api`` is
     not installed, a warning is logged and all methods become no-ops.
+
+    When *connection_string* is provided, a :class:`TracerProvider` with an
+    Azure Monitor exporter is configured globally and log records from the
+    ``azure.ai.agentserver`` logger are forwarded to Application Insights.
+    This requires ``opentelemetry-sdk`` and
+    ``azure-monitor-opentelemetry-exporter``.
     """
 
-    def __init__(self) -> None:
+    def __init__(self, connection_string: Optional[str] = None) -> None:
         self._enabled = _HAS_OTEL
         self._tracer: Any = None
 
-        if self._enabled:
-            self._tracer = trace.get_tracer("azure.ai.agentserver")
-        else:
+        if not self._enabled:
             logger.warning(
                 "Tracing was enabled but opentelemetry-api is not installed. "
                 "Install it with: pip install azure-ai-agentserver[tracing]"
+            )
+            return
+
+        if connection_string:
+            self._setup_azure_monitor(connection_string)
+
+        self._tracer = trace.get_tracer("azure.ai.agentserver")
+
+    # ------------------------------------------------------------------
+    # Azure Monitor auto-configuration
+    # ------------------------------------------------------------------
+
+    @staticmethod
+    def _setup_azure_monitor(connection_string: str) -> None:
+        """Configure global TracerProvider and LoggerProvider for App Insights.
+
+        Sets up ``AzureMonitorTraceExporter`` so spans are exported to
+        Application Insights, and ``AzureMonitorLogExporter`` so log records
+        from the ``azure.ai.agentserver`` namespace are forwarded.
+
+        If the required packages are not installed, a warning is logged and
+        export is silently skipped — span creation still works via the
+        default no-op or user-configured provider.
+
+        :param connection_string: Application Insights connection string.
+        :type connection_string: str
+        """
+        try:
+            from opentelemetry.sdk.resources import Resource
+            from opentelemetry.sdk.trace import TracerProvider as SdkTracerProvider
+            from opentelemetry.sdk.trace.export import BatchSpanProcessor
+
+            from azure.monitor.opentelemetry.exporter import (  # type: ignore[import-untyped]
+                AzureMonitorTraceExporter,
+            )
+        except ImportError:
+            logger.warning(
+                "Application Insights connection string was provided but "
+                "required packages are not installed.  Install them with: "
+                "pip install azure-ai-agentserver[tracing]"
+            )
+            return
+
+        resource = Resource.create({"service.name": "azure.ai.agentserver"})
+
+        # --- Trace export ---
+        provider = SdkTracerProvider(resource=resource)
+        exporter = AzureMonitorTraceExporter(
+            connection_string=connection_string,
+        )
+        provider.add_span_processor(BatchSpanProcessor(exporter))
+        trace.set_tracer_provider(provider)
+        logger.info("Application Insights trace exporter configured.")
+
+        # --- Log export ---
+        try:
+            from opentelemetry._logs import set_logger_provider
+            from opentelemetry.sdk._logs import LoggerProvider, LoggingHandler
+            from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
+
+            from azure.monitor.opentelemetry.exporter import (  # type: ignore[import-untyped]
+                AzureMonitorLogExporter,
+            )
+
+            log_provider = LoggerProvider(resource=resource)
+            set_logger_provider(log_provider)
+            log_exporter = AzureMonitorLogExporter(
+                connection_string=connection_string,
+            )
+            log_provider.add_log_record_processor(
+                BatchLogRecordProcessor(log_exporter)
+            )
+            handler = LoggingHandler(logger_provider=log_provider)
+            logging.getLogger("azure.ai.agentserver").addHandler(handler)
+            logger.info("Application Insights log exporter configured.")
+        except ImportError:
+            logger.warning(
+                "Log export to Application Insights requires "
+                "opentelemetry-sdk.  Logs will not be forwarded."
             )
 
     @contextmanager
