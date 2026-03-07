@@ -471,3 +471,34 @@ class TestStorageContentValidation(StorageRecordedTestCase):
         # Assert
         assert content == data
         assert partial == data[5 * 1024 * 1024: 30 * 1024 * 1024]
+
+    @BlobPreparer()
+    @pytest.mark.parametrize('a', [True, 'md5', 'crc64'])  # a: validate_content
+    @GenericTestProxyParametrize1()
+    @recorded_by_proxy
+    def test_download_blob_chars(self, a, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+
+        self._setup(storage_account_name)
+        self.container._config.max_single_get_size = 512
+        self.container._config.max_chunk_get_size = 512
+
+        data = '你好世界' * 256  # 3 KiB
+        blob = self.container.get_blob_client(self._get_blob_reference())
+        blob.upload_blob(data, encoding='utf-8', overwrite=True)
+
+        stream = blob.download_blob(encoding='utf-8', validate_content=a)
+        assert stream.read() == data
+
+        stream = blob.download_blob(encoding='utf-8', validate_content=a)
+        assert stream.read(chars=100000) == data
+
+        result = ''
+        stream = blob.download_blob(encoding='utf-8', validate_content=a)
+        for _ in range(4):
+            chunk = stream.read(chars=100)
+            result += chunk
+            assert len(chunk) == 100
+
+        result += stream.readall()
+        assert result == data
