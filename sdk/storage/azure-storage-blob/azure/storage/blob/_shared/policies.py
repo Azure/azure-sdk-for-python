@@ -34,8 +34,8 @@ from azure.core.pipeline.policies import (
 from .authentication import AzureSigningError, StorageHttpChallenge
 from .constants import DEFAULT_OAUTH_SCOPE
 from .models import LocationMode, StorageErrorCode
-from .streams import StructuredMessageEncodeStream, StructuredMessageProperties
-from .validation import calculate_crc64_bytes, ChecksumAlgorithm
+from .streams import StructuredMessageDecoder, StructuredMessageEncodeStream, StructuredMessageProperties
+from .validation import calculate_crc64_bytes, ChecksumAlgorithm, is_md5_validation
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
@@ -383,11 +383,17 @@ class StorageContentValidation(SansIOHTTPPolicy):
         if not validate_content:
             return
 
-        if request.http_request.method != "GET":
+        # Download
+        if request.http_request.method == "GET":
+            if validate_content == ChecksumAlgorithm.CRC64:
+                request.http_request.headers[SM_HEADER] = SM_HEADER_V1_CRC64
+
+        # Upload
+        else:
             # Since HTTP does not differentiate between no content and empty content,
             # we have to perform a None check.
             data = request.http_request.data or b""
-            if validate_content is True or validate_content == ChecksumAlgorithm.MD5:
+            if is_md5_validation(validate_content):
                 computed_md5 = encode_base64(StorageContentValidation.get_content_md5(data))
                 request.http_request.headers[MD5_HEADER] = computed_md5
                 request.context["validate_content_md5"] = computed_md5
@@ -413,7 +419,7 @@ class StorageContentValidation(SansIOHTTPPolicy):
         if not validate_content:
             return
 
-        if (validate_content is True or validate_content == ChecksumAlgorithm.MD5) and response.http_response.headers.get("content-md5"):
+        if is_md5_validation(validate_content) and response.http_response.headers.get("content-md5"):
             computed_md5 = request.context.get("validate_content_md5") or encode_base64(
                 StorageContentValidation.get_content_md5(response.http_response.body())
             )
@@ -425,6 +431,34 @@ class StorageContentValidation(SansIOHTTPPolicy):
                     ),
                     response=response.http_response,
                 )
+
+        elif validate_content == ChecksumAlgorithm.CRC64:
+            # For upload and download verify structured message header present in response if provided in request.
+            sm_request = request.http_request.headers.get(SM_HEADER)
+            sm_response = response.http_response.headers.get(SM_HEADER)
+            if sm_request != sm_response:
+                raise AzureError(
+                    (
+                        f"Expected structured message header in response does not match request. "
+                        f"Request: {sm_request}, Response: {sm_response}",
+                    ),
+                    response=response.http_response,
+                )
+
+            if response.http_request.method == "GET":
+                # Raises exception if missing
+                content_length = int(response.http_response.headers[CONTENT_LENGTH_HEADER])
+
+                # Patch response to return response iterator wrapped in structured message decoder
+                original_stream_download = response.http_response.stream_download
+                def wrapped_stream_download(*args, **kwargs):
+                    iterator = original_stream_download(*args, **kwargs)
+                    decoder = StructuredMessageDecoder(iterator, content_length)
+                    decoder.request = iterator.request  # type: ignore
+                    decoder.response = iterator.response  # type: ignore
+                    return decoder
+
+                response.http_response.stream_download = wrapped_stream_download
 
 
 class StorageRetryPolicy(HTTPPolicy):

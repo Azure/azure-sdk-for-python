@@ -8,7 +8,7 @@ import math
 import sys
 from enum import auto, Enum, IntFlag
 from io import BytesIO, IOBase, UnsupportedOperation, SEEK_CUR, SEEK_END, SEEK_SET
-from typing import IO, Optional
+from typing import IO, Iterator, Optional
 
 from .validation import calculate_crc64
 
@@ -381,7 +381,7 @@ class StructuredMessageEncodeStream(IOBase):  # pylint: disable=too-many-instanc
             self._segment_crc64s.setdefault(self._current_segment_number, 0)
 
 
-class StructuredMessageDecodeStream(IOBase):  # pylint: disable=too-many-instance-attributes
+class StructuredMessageDecoder(IOBase):  # pylint: disable=too-many-instance-attributes
 
     message_version: int
     """The version of the structured message."""
@@ -392,34 +392,24 @@ class StructuredMessageDecodeStream(IOBase):  # pylint: disable=too-many-instanc
     num_segments: int
     """The number of message segments."""
 
-    _inner_stream: IO[bytes]
+    _inner_iterator: Iterator[bytes]
+    _buffer: bytes
     _message_offset: int
     _message_crc64: int
     _segment_number: int
     _segment_crc64: int
     _segment_content_length: int
     _segment_content_offset: int
+    _chunk_size: int
 
-    def __init__(self, inner_stream: IO[bytes], content_length: int) -> None:
+    def __init__(self, inner_iterator: Iterator[bytes], content_length: int, *, chunk_size: int = 4096) -> None:
         self.message_length = content_length
         # The stream should be at least long enough to hold minimum header length
         if self.message_length < StructuredMessageConstants.V1_HEADER_LENGTH:
             raise ValueError("Content not long enough to contain a valid message header.")
 
-        self._inner_stream = inner_stream
-        
-        # Validate that inner stream is positioned at the start of the structured message
-        try:
-            initial_position = self._inner_stream.tell()
-            if initial_position != 0:
-                raise ValueError(
-                    f"Inner stream must be positioned at the start of the structured message. "
-                    f"Current position is {initial_position}, expected 0."
-                )
-        except (AttributeError, UnsupportedOperation, OSError):
-            # Stream doesn't support tell(), assume it's at the correct position
-            pass
-        
+        self._inner_iterator = inner_iterator
+        self._buffer = b''
         self._message_offset = 0
         self._message_crc64 = 0
 
@@ -427,7 +417,12 @@ class StructuredMessageDecodeStream(IOBase):  # pylint: disable=too-many-instanc
         self._segment_crc64 = 0
         self._segment_content_length = 0
         self._segment_content_offset = 0
+        self._chunk_size = chunk_size
         super().__init__()
+
+    @property
+    def content_length(self) -> int:
+        return self.message_length
 
     @property
     def _segment_header_length(self) -> int:
@@ -445,15 +440,20 @@ class StructuredMessageDecodeStream(IOBase):  # pylint: disable=too-many-instanc
     def _end_of_segment_content(self) -> bool:
         return self._segment_content_offset == self._segment_content_length
 
-    def close(self) -> None:
-        self._inner_stream.close()
-        super().close()
-
     def readable(self) -> bool:
         return True
 
     def seekable(self) -> bool:
         return False
+
+    def __iter__(self):
+        return self
+
+    def __next__(self) -> bytes:
+        data = self.read(self._chunk_size)
+        if not data:
+            raise StopIteration
+        return data
 
     def read(self, size: int = -1) -> bytes:
         if self.closed:
@@ -512,9 +512,18 @@ class StructuredMessageDecodeStream(IOBase):  # pylint: disable=too-many-instanc
         return content.getvalue()
 
     def _read_from_inner(self, size: int) -> bytes:
-        data = self._inner_stream.read(size)
-        if len(data) != size:
+        while len(self._buffer) < size:
+            try:
+                chunk = next(self._inner_iterator)
+            except StopIteration:
+                break
+            self._buffer += chunk
+
+        if len(self._buffer) < size:
             raise ValueError("Invalid structured message data detected. Stream content incomplete.")
+
+        data = self._buffer[:size]
+        self._buffer = self._buffer[size:]
         return data
 
     def _read_message_header(self) -> None:
