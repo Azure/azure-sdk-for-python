@@ -89,33 +89,29 @@ GREETINGS = {
 }
 
 
-class GreetingAgent(AgentServer):
-    """Agent that greets a user in the requested language.
+server = AgentServer(openapi_spec=OPENAPI_SPEC, enable_request_validation=True)
+
+
+@server.invoke_handler
+async def handle_invoke(request: Request) -> Response:
+    """Return a localised greeting.
 
     The OpenAPI spec enforces that "name" is required, "language" must be
     one of ``en``, ``es``, or ``fr``, and no extra fields are allowed.
     Requests that violate the schema are rejected with 400 before reaching
-    ``invoke``.
+    the invoke handler.
+
+    :param request: The raw Starlette request.
+    :type request: starlette.requests.Request
+    :return: JSON greeting response.
+    :rtype: starlette.responses.JSONResponse
     """
-
-    def __init__(self) -> None:
-        super().__init__(openapi_spec=OPENAPI_SPEC, enable_request_validation=True)
-
-    async def invoke(self, request: Request) -> Response:
-        """Return a localised greeting.
-
-        :param request: The raw Starlette request.
-        :type request: starlette.requests.Request
-        :return: JSON greeting response.
-        :rtype: starlette.responses.JSONResponse
-        """
-        data = await request.json()
-        language = data.get("language", "en")
-        prefix = GREETINGS.get(language, "Hello")
-        greeting = f"{prefix}, {data['name']}!"
-        return JSONResponse({"greeting": greeting})
+    data = await request.json()
+    language = data.get("language", "en")
+    prefix = GREETINGS.get(language, "Hello")
+    greeting = f"{prefix}, {data['name']}!"
+    return JSONResponse({"greeting": greeting})
 
 
 if __name__ == "__main__":
-    agent = GreetingAgent()
-    agent.run()
+    server.run()

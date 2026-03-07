@@ -16,57 +16,79 @@ from azure.ai.agentserver import AgentServer
 
 
 # ---------------------------------------------------------------------------
-# Specialised agent implementations for edge cases
+# Agent factory functions for edge cases
 # ---------------------------------------------------------------------------
 
 
-class CustomHeaderAgent(AgentServer):
-    """Agent that sets its own x-agent-invocation-id header."""
+def _make_custom_header_agent(**kwargs) -> AgentServer:
+    """Create an agent that sets its own x-agent-invocation-id header."""
+    server = AgentServer(**kwargs)
 
-    async def invoke(self, request: Request) -> Response:
+    @server.invoke_handler
+    async def handle(request: Request) -> Response:
         return JSONResponse(
             {"ok": True},
             headers={"x-agent-invocation-id": "custom-id-from-agent"},
         )
 
+    return server
 
-class EmptyStreamingAgent(AgentServer):
-    """Returns an empty streaming response (0 chunks)."""
 
-    async def invoke(self, request: Request) -> StreamingResponse:
+def _make_empty_streaming_agent(**kwargs) -> AgentServer:
+    """Create an agent that returns an empty streaming response (0 chunks)."""
+    server = AgentServer(**kwargs)
+
+    @server.invoke_handler
+    async def handle(request: Request) -> StreamingResponse:
         async def generate():
             return
             yield  # noqa: RUF028 — makes this an async generator
 
         return StreamingResponse(generate(), media_type="text/event-stream")
 
+    return server
 
-class SlowFailingGetAgent(AgentServer):
-    """Agent whose get_invocation raises so we can test debug errors on GET."""
 
-    async def invoke(self, request: Request) -> Response:
+def _make_slow_failing_get_agent(**kwargs) -> AgentServer:
+    """Create an agent whose get_invocation raises so we can test debug errors on GET."""
+    server = AgentServer(**kwargs)
+
+    @server.invoke_handler
+    async def invoke(request: Request) -> Response:
         return JSONResponse({"ok": True})
 
-    async def get_invocation(self, request: Request) -> Response:
+    @server.get_invocation_handler
+    async def get_invocation(request: Request) -> Response:
         raise ValueError("get-debug-detail")
 
+    return server
 
-class SlowFailingCancelAgent(AgentServer):
-    """Agent whose cancel_invocation raises so we can test debug errors on cancel."""
 
-    async def invoke(self, request: Request) -> Response:
+def _make_slow_failing_cancel_agent(**kwargs) -> AgentServer:
+    """Create an agent whose cancel_invocation raises so we can test debug errors on cancel."""
+    server = AgentServer(**kwargs)
+
+    @server.invoke_handler
+    async def invoke(request: Request) -> Response:
         return JSONResponse({"ok": True})
 
-    async def cancel_invocation(self, request: Request) -> Response:
+    @server.cancel_invocation_handler
+    async def cancel_invocation(request: Request) -> Response:
         raise ValueError("cancel-debug-detail")
 
+    return server
 
-class LargePayloadAgent(AgentServer):
-    """Echoes the request body length as JSON."""
 
-    async def invoke(self, request: Request) -> Response:
+def _make_large_payload_agent(**kwargs) -> AgentServer:
+    """Create an agent that echoes the request body length as JSON."""
+    server = AgentServer(**kwargs)
+
+    @server.invoke_handler
+    async def handle(request: Request) -> Response:
         body = await request.body()
         return JSONResponse({"length": len(body)})
+
+    return server
 
 
 # ---------------------------------------------------------------------------
@@ -76,24 +98,24 @@ class LargePayloadAgent(AgentServer):
 
 @pytest_asyncio.fixture
 async def custom_header_client():
-    agent = CustomHeaderAgent()
-    transport = httpx.ASGITransport(app=agent.app)
+    server = _make_custom_header_agent()
+    transport = httpx.ASGITransport(app=server.app)
     async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as client:
         yield client
 
 
 @pytest_asyncio.fixture
 async def empty_streaming_client():
-    agent = EmptyStreamingAgent()
-    transport = httpx.ASGITransport(app=agent.app)
+    server = _make_empty_streaming_agent()
+    transport = httpx.ASGITransport(app=server.app)
     async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as client:
         yield client
 
 
 @pytest_asyncio.fixture
 async def large_payload_client():
-    agent = LargePayloadAgent()
-    transport = httpx.ASGITransport(app=agent.app)
+    server = _make_large_payload_agent()
+    transport = httpx.ASGITransport(app=server.app)
     async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as client:
         yield client
 
@@ -345,7 +367,7 @@ class TestDebugErrorsOnGetCancel:
     @pytest.mark.asyncio
     async def test_get_hides_details_by_default(self):
         """GET error hides exception detail without AGENT_DEBUG_ERRORS."""
-        agent = SlowFailingGetAgent()
+        agent = _make_slow_failing_get_agent()
         transport = httpx.ASGITransport(app=agent.app)
         async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as client:
             resp = await client.get("/invocations/some-id")
@@ -356,7 +378,7 @@ class TestDebugErrorsOnGetCancel:
     async def test_get_exposes_details_with_debug(self, monkeypatch):
         """GET error exposes exception detail with AGENT_DEBUG_ERRORS set."""
         monkeypatch.setenv("AGENT_DEBUG_ERRORS", "true")
-        agent = SlowFailingGetAgent()
+        agent = _make_slow_failing_get_agent()
         transport = httpx.ASGITransport(app=agent.app)
         async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as client:
             resp = await client.get("/invocations/some-id")
@@ -366,7 +388,7 @@ class TestDebugErrorsOnGetCancel:
     @pytest.mark.asyncio
     async def test_cancel_hides_details_by_default(self):
         """CANCEL error hides exception detail without AGENT_DEBUG_ERRORS."""
-        agent = SlowFailingCancelAgent()
+        agent = _make_slow_failing_cancel_agent()
         transport = httpx.ASGITransport(app=agent.app)
         async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as client:
             resp = await client.post("/invocations/some-id/cancel")
@@ -377,7 +399,7 @@ class TestDebugErrorsOnGetCancel:
     async def test_cancel_exposes_details_with_debug(self, monkeypatch):
         """CANCEL error exposes exception detail with AGENT_DEBUG_ERRORS set."""
         monkeypatch.setenv("AGENT_DEBUG_ERRORS", "true")
-        agent = SlowFailingCancelAgent()
+        agent = _make_slow_failing_cancel_agent()
         transport = httpx.ASGITransport(app=agent.app)
         async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as client:
             resp = await client.post("/invocations/some-id/cancel")
@@ -387,7 +409,7 @@ class TestDebugErrorsOnGetCancel:
     @pytest.mark.asyncio
     async def test_get_exposes_details_with_constructor_param(self):
         """debug_errors=True in constructor exposes GET exception detail."""
-        agent = SlowFailingGetAgent(debug_errors=True)
+        agent = _make_slow_failing_get_agent(debug_errors=True)
         transport = httpx.ASGITransport(app=agent.app)
         async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as client:
             resp = await client.get("/invocations/some-id")
@@ -397,7 +419,7 @@ class TestDebugErrorsOnGetCancel:
     @pytest.mark.asyncio
     async def test_cancel_exposes_details_with_constructor_param(self):
         """debug_errors=True in constructor exposes CANCEL exception detail."""
-        agent = SlowFailingCancelAgent(debug_errors=True)
+        agent = _make_slow_failing_cancel_agent(debug_errors=True)
         transport = httpx.ASGITransport(app=agent.app)
         async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as client:
             resp = await client.post("/invocations/some-id/cancel")
@@ -408,7 +430,7 @@ class TestDebugErrorsOnGetCancel:
     async def test_constructor_overrides_env_var(self, monkeypatch):
         """debug_errors=False in constructor overrides AGENT_DEBUG_ERRORS=true."""
         monkeypatch.setenv("AGENT_DEBUG_ERRORS", "true")
-        agent = SlowFailingGetAgent(debug_errors=False)
+        agent = _make_slow_failing_get_agent(debug_errors=False)
         transport = httpx.ASGITransport(app=agent.app)
         async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as client:
             resp = await client.get("/invocations/some-id")
@@ -427,7 +449,7 @@ class TestLogLevel:
     def test_log_level_via_constructor(self):
         """log_level='DEBUG' sets library logger to DEBUG."""
         import logging
-        agent = CustomHeaderAgent(log_level="DEBUG")
+        agent = _make_custom_header_agent(log_level="DEBUG")
         lib_logger = logging.getLogger("azure.ai.agentserver")
         assert lib_logger.level == logging.DEBUG
 
@@ -435,7 +457,7 @@ class TestLogLevel:
         """AGENT_LOG_LEVEL=info sets library logger to INFO."""
         import logging
         monkeypatch.setenv("AGENT_LOG_LEVEL", "info")
-        agent = CustomHeaderAgent()
+        agent = _make_custom_header_agent()
         lib_logger = logging.getLogger("azure.ai.agentserver")
         assert lib_logger.level == logging.INFO
 
@@ -443,14 +465,14 @@ class TestLogLevel:
         """Constructor log_level overrides AGENT_LOG_LEVEL env var."""
         import logging
         monkeypatch.setenv("AGENT_LOG_LEVEL", "DEBUG")
-        agent = CustomHeaderAgent(log_level="ERROR")
+        agent = _make_custom_header_agent(log_level="ERROR")
         lib_logger = logging.getLogger("azure.ai.agentserver")
         assert lib_logger.level == logging.ERROR
 
     def test_invalid_log_level_raises(self):
         """Invalid log_level raises ValueError."""
         with pytest.raises(ValueError, match="Invalid log level"):
-            CustomHeaderAgent(log_level="BOGUS")
+            _make_custom_header_agent(log_level="BOGUS")
 
 
 class TestConcurrency:

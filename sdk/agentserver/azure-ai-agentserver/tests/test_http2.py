@@ -49,23 +49,31 @@ from azure.ai.agentserver import AgentServer
 # ---------------------------------------------------------------------------
 
 
-class _EchoAgent(AgentServer):
+def _make_echo_agent(**kwargs):
     """Agent that echoes the request body in the response."""
+    server = AgentServer(**kwargs)
 
-    async def invoke(self, request: Request) -> Response:
+    @server.invoke_handler
+    async def handle(request: Request) -> Response:
         body = await request.body()
         return JSONResponse({"echo": body.decode()})
 
+    return server
 
-class _StreamAgent(AgentServer):
+
+def _make_stream_agent(**kwargs):
     """Agent that returns a streaming response."""
+    server = AgentServer(**kwargs)
 
-    async def invoke(self, request: Request) -> Response:
+    @server.invoke_handler
+    async def handle(request: Request) -> Response:
         async def generate() -> AsyncGenerator[bytes, None]:
             for chunk in [b"chunk1", b"chunk2", b"chunk3"]:
                 yield chunk
 
         return StreamingResponse(generate(), media_type="application/octet-stream")
+
+    return server
 
 
 # ---------------------------------------------------------------------------
@@ -152,7 +160,7 @@ async def echo_h2_server(tls_cert_pair):
     cert_path, key_path = tls_cert_pair
     port = _get_free_port()
 
-    agent = _EchoAgent()
+    agent = _make_echo_agent()
     config = HypercornConfig()
     config.bind = [f"127.0.0.1:{port}"]
     config.certfile = cert_path
@@ -176,7 +184,7 @@ async def stream_h2_server(tls_cert_pair):
     cert_path, key_path = tls_cert_pair
     port = _get_free_port()
 
-    agent = _StreamAgent()
+    agent = _make_stream_agent()
     config = HypercornConfig()
     config.bind = [f"127.0.0.1:{port}"]
     config.certfile = cert_path
@@ -319,7 +327,7 @@ async def echo_h2c_server():
     """Start _EchoAgent on a random port *without* TLS, yield the port."""
     port = _get_free_port()
 
-    agent = _EchoAgent()
+    agent = _make_echo_agent()
     config = HypercornConfig()
     config.bind = [f"127.0.0.1:{port}"]
     config.graceful_timeout = 1.0
@@ -340,7 +348,7 @@ async def stream_h2c_server():
     """Start _StreamAgent on a random port *without* TLS, yield the port."""
     port = _get_free_port()
 
-    agent = _StreamAgent()
+    agent = _make_stream_agent()
     config = HypercornConfig()
     config.bind = [f"127.0.0.1:{port}"]
     config.graceful_timeout = 1.0

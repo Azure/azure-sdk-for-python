@@ -41,19 +41,27 @@ class _InMemoryExporter(SpanExporter):
         self._spans.clear()
 
 
-class _EchoTracedAgent(AgentServer):
-    """Simple agent with tracing enabled."""
+def _make_echo_traced_agent(**kwargs) -> AgentServer:
+    """Create a simple agent for tracing tests."""
+    server = AgentServer(**kwargs)
 
-    async def invoke(self, request: Request) -> Response:
+    @server.invoke_handler
+    async def handle(request: Request) -> Response:
         body = await request.body()
         return Response(content=body, media_type="application/octet-stream")
 
+    return server
 
-class _FailingTracedAgent(AgentServer):
-    """Agent whose invoke raises — so the span records the error."""
 
-    async def invoke(self, request: Request) -> Response:
+def _make_failing_traced_agent(**kwargs) -> AgentServer:
+    """Create an agent whose invoke raises — so the span records the error."""
+    server = AgentServer(**kwargs)
+
+    @server.invoke_handler
+    async def handle(request: Request) -> Response:
         raise RuntimeError("trace-this-error")
+
+    return server
 
 
 @pytest.fixture()
@@ -79,14 +87,14 @@ trace.set_tracer_provider(_MODULE_PROVIDER)
 @pytest.mark.asyncio
 async def test_tracing_disabled_by_default():
     """Agent created without enable_tracing has tracing off."""
-    agent = _EchoTracedAgent()
+    agent = _make_echo_traced_agent()
     assert agent._tracing is None  # noqa: SLF001
 
 
 @pytest.mark.asyncio
 async def test_tracing_disabled_no_spans(span_exporter):
     """When tracing is disabled, no spans are produced."""
-    agent = _EchoTracedAgent()  # default: tracing off
+    agent = _make_echo_traced_agent()  # default: tracing off
     transport = httpx.ASGITransport(app=agent.app)
     async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as client:
         await client.post("/invocations", content=b'{"hi": "there"}')
@@ -103,7 +111,7 @@ async def test_tracing_disabled_no_spans(span_exporter):
 @pytest.mark.asyncio
 async def test_tracing_enabled_creates_invoke_span(span_exporter):
     """POST /invocations with tracing enabled creates a span."""
-    agent = _EchoTracedAgent(enable_tracing=True)
+    agent = _make_echo_traced_agent(enable_tracing=True)
     transport = httpx.ASGITransport(app=agent.app)
     async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as client:
         resp = await client.post("/invocations", content=b'{"data": 1}')
@@ -121,7 +129,7 @@ async def test_tracing_enabled_creates_invoke_span(span_exporter):
 @pytest.mark.asyncio
 async def test_tracing_invoke_error_records_exception(span_exporter):
     """When invoke() raises, the span records the error status and exception."""
-    agent = _FailingTracedAgent(enable_tracing=True)
+    agent = _make_failing_traced_agent(enable_tracing=True)
     transport = httpx.ASGITransport(app=agent.app)
     async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as client:
         resp = await client.post("/invocations", content=b'{}')
@@ -141,7 +149,7 @@ async def test_tracing_invoke_error_records_exception(span_exporter):
 @pytest.mark.asyncio
 async def test_tracing_get_invocation_creates_span(span_exporter):
     """GET /invocations/{id} with tracing creates a span."""
-    agent = _EchoTracedAgent(enable_tracing=True)
+    agent = _make_echo_traced_agent(enable_tracing=True)
     transport = httpx.ASGITransport(app=agent.app)
     async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as client:
         resp = await client.get("/invocations/test-id-123")
@@ -157,7 +165,7 @@ async def test_tracing_get_invocation_creates_span(span_exporter):
 @pytest.mark.asyncio
 async def test_tracing_cancel_invocation_creates_span(span_exporter):
     """POST /invocations/{id}/cancel with tracing creates a span."""
-    agent = _EchoTracedAgent(enable_tracing=True)
+    agent = _make_echo_traced_agent(enable_tracing=True)
     transport = httpx.ASGITransport(app=agent.app)
     async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as client:
         resp = await client.post("/invocations/test-cancel-456/cancel")
@@ -178,7 +186,7 @@ async def test_tracing_cancel_invocation_creates_span(span_exporter):
 async def test_tracing_enabled_via_env_var(monkeypatch, span_exporter):
     """AGENT_ENABLE_TRACING=true activates tracing."""
     monkeypatch.setenv("AGENT_ENABLE_TRACING", "true")
-    agent = _EchoTracedAgent()
+    agent = _make_echo_traced_agent()
     assert agent._tracing is not None  # noqa: SLF001
 
     transport = httpx.ASGITransport(app=agent.app)
@@ -193,14 +201,14 @@ async def test_tracing_enabled_via_env_var(monkeypatch, span_exporter):
 async def test_tracing_constructor_overrides_env_var(monkeypatch, span_exporter):
     """Constructor enable_tracing=False overrides AGENT_ENABLE_TRACING=true."""
     monkeypatch.setenv("AGENT_ENABLE_TRACING", "true")
-    agent = _EchoTracedAgent(enable_tracing=False)
+    agent = _make_echo_traced_agent(enable_tracing=False)
     assert agent._tracing is None  # noqa: SLF001
 
 
 @pytest.mark.asyncio
 async def test_tracing_propagates_traceparent(span_exporter):
     """Incoming traceparent header is extracted as parent context."""
-    agent = _EchoTracedAgent(enable_tracing=True)
+    agent = _make_echo_traced_agent(enable_tracing=True)
     transport = httpx.ASGITransport(app=agent.app)
     # Valid W3C traceparent — version-trace-id-parent-id-flags
     traceparent = "00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01"
@@ -226,21 +234,27 @@ async def test_tracing_propagates_traceparent(span_exporter):
 # ---------------------------------------------------------------------------
 
 
-class _StreamingAgent(AgentServer):
-    """Agent that returns a StreamingResponse."""
+def _make_streaming_traced_agent(**kwargs) -> AgentServer:
+    """Create an agent that returns a StreamingResponse."""
+    server = AgentServer(**kwargs)
 
-    async def invoke(self, request: Request) -> Response:
+    @server.invoke_handler
+    async def handle(request: Request) -> Response:
         async def _generate():
             for i in range(5):
                 yield f"chunk-{i}\n".encode()
 
         return StreamingResponse(_generate(), media_type="application/octet-stream")
 
+    return server
 
-class _SlowStreamingAgent(AgentServer):
-    """Agent that streams with deliberate delays per chunk."""
 
-    async def invoke(self, request: Request) -> Response:
+def _make_slow_streaming_agent(**kwargs) -> AgentServer:
+    """Create an agent that streams with deliberate delays per chunk."""
+    server = AgentServer(**kwargs)
+
+    @server.invoke_handler
+    async def handle(request: Request) -> Response:
         async def _generate():
             for i in range(3):
                 await asyncio.sleep(0.05)
@@ -248,22 +262,28 @@ class _SlowStreamingAgent(AgentServer):
 
         return StreamingResponse(_generate(), media_type="text/plain")
 
+    return server
 
-class _FailingStreamAgent(AgentServer):
-    """Agent whose streaming body raises mid-stream."""
 
-    async def invoke(self, request: Request) -> Response:
+def _make_failing_stream_agent(**kwargs) -> AgentServer:
+    """Create an agent whose streaming body raises mid-stream."""
+    server = AgentServer(**kwargs)
+
+    @server.invoke_handler
+    async def handle(request: Request) -> Response:
         async def _generate():
             yield b"ok-chunk\n"
             raise RuntimeError("stream-exploded")
 
         return StreamingResponse(_generate(), media_type="text/plain")
 
+    return server
+
 
 @pytest.mark.asyncio
 async def test_streaming_response_creates_span(span_exporter):
     """Streaming response still produces a span."""
-    agent = _StreamingAgent(enable_tracing=True)
+    agent = _make_streaming_traced_agent(enable_tracing=True)
     transport = httpx.ASGITransport(app=agent.app)
     async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as client:
         resp = await client.post("/invocations", content=b'{}')
@@ -279,7 +299,7 @@ async def test_streaming_response_creates_span(span_exporter):
 async def test_streaming_span_covers_full_body(span_exporter):
     """Span for streaming response covers the full streaming duration,
     not just the invoke() call that creates the StreamingResponse."""
-    agent = _SlowStreamingAgent(enable_tracing=True)
+    agent = _make_slow_streaming_agent(enable_tracing=True)
     transport = httpx.ASGITransport(app=agent.app)
     async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as client:
         resp = await client.post("/invocations", content=b'{}')
@@ -303,7 +323,7 @@ async def test_streaming_span_covers_full_body(span_exporter):
 @pytest.mark.asyncio
 async def test_streaming_body_fully_received(span_exporter):
     """All chunks from a streaming response are delivered to the client."""
-    agent = _StreamingAgent(enable_tracing=True)
+    agent = _make_streaming_traced_agent(enable_tracing=True)
     transport = httpx.ASGITransport(app=agent.app)
     async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as client:
         resp = await client.post("/invocations", content=b'{}')
@@ -316,7 +336,7 @@ async def test_streaming_body_fully_received(span_exporter):
 @pytest.mark.asyncio
 async def test_streaming_error_recorded_in_span(span_exporter):
     """Errors during streaming are recorded on the span."""
-    agent = _FailingStreamAgent(enable_tracing=True)
+    agent = _make_failing_stream_agent(enable_tracing=True)
     transport = httpx.ASGITransport(app=agent.app)
     async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as client:
         # The server will encounter a mid-stream error; httpx may raise or
@@ -339,7 +359,7 @@ async def test_streaming_error_recorded_in_span(span_exporter):
 @pytest.mark.asyncio
 async def test_streaming_tracing_disabled_no_span(span_exporter):
     """When tracing is disabled, streaming responses produce no spans."""
-    agent = _StreamingAgent()  # tracing off (default)
+    agent = _make_streaming_traced_agent()  # tracing off (default)
     transport = httpx.ASGITransport(app=agent.app)
     async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as client:
         resp = await client.post("/invocations", content=b'{}')
@@ -354,7 +374,7 @@ async def test_streaming_tracing_disabled_no_span(span_exporter):
 @pytest.mark.asyncio
 async def test_streaming_propagates_traceparent(span_exporter):
     """Incoming traceparent header is propagated for streaming responses."""
-    agent = _StreamingAgent(enable_tracing=True)
+    agent = _make_streaming_traced_agent(enable_tracing=True)
     transport = httpx.ASGITransport(app=agent.app)
     traceparent = "00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01"
     async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as client:
@@ -463,7 +483,7 @@ class TestSetupAzureMonitor:
         with patch(
             "azure.ai.agentserver._tracing.TracingHelper._setup_azure_monitor"
         ) as mock_setup:
-            _EchoTracedAgent(
+            _make_echo_traced_agent(
                 enable_tracing=True,
                 application_insights_connection_string="InstrumentationKey=from-param",
             )
@@ -476,7 +496,7 @@ class TestSetupAzureMonitor:
         with patch(
             "azure.ai.agentserver._tracing.TracingHelper._setup_azure_monitor"
         ) as mock_setup:
-            _EchoTracedAgent(enable_tracing=True)
+            _make_echo_traced_agent(enable_tracing=True)
             mock_setup.assert_not_called()
 
     def test_constructor_env_var_connection_string(self, monkeypatch):
@@ -489,7 +509,7 @@ class TestSetupAzureMonitor:
         with patch(
             "azure.ai.agentserver._tracing.TracingHelper._setup_azure_monitor"
         ) as mock_setup:
-            _EchoTracedAgent(enable_tracing=True)
+            _make_echo_traced_agent(enable_tracing=True)
             mock_setup.assert_called_once_with("InstrumentationKey=from-env")
 
     def test_tracing_disabled_skips_connection_string_resolution(self, monkeypatch):
@@ -499,5 +519,5 @@ class TestSetupAzureMonitor:
             "InstrumentationKey=should-not-use",
         )
 
-        agent = _EchoTracedAgent(enable_tracing=False)
+        agent = _make_echo_traced_agent(enable_tracing=False)
         assert agent._tracing is None  # noqa: SLF001

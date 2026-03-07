@@ -51,51 +51,50 @@ def build_graph() -> StateGraph:
     return graph.compile()
 
 
-class LangGraphInvokeAgent(AgentServer):
-    """Customer-managed adapter: LangGraph <-> /invoke protocol."""
+graph = build_graph()
+server = AgentServer(enable_tracing=True, application_insights_connection_string="InstrumentationKey=efbaa4ed-85a7-4f78-bbc2-d95992bb105c;IngestionEndpoint=https://northcentralus-0.in.applicationinsights.azure.com/;LiveEndpoint=https://northcentralus.livediagnostics.monitor.azure.com/;ApplicationId=0dfc87c6-8f2e-40bc-905c-16177a696d73")
 
-    def __init__(self):
-        super().__init__()
-        self.graph = build_graph()
 
-    async def invoke(self, request: Request) -> Response:
-        """Process the invocation via LangGraph.
+async def _stream_response(user_message: str) -> AsyncGenerator[bytes, None]:
+    """Async generator that yields response chunks.
 
-        :param request: The raw Starlette request.
-        :type request: starlette.requests.Request
-        :return: JSON response or streaming response.
-        :rtype: starlette.responses.Response
-        """
-        data = await request.json()
-        user_message = data["message"]
-        stream = data.get("stream", False)
+    :param user_message: The user message to process.
+    :type user_message: str
+    :return: An async generator yielding JSON-encoded byte chunks.
+    :rtype: AsyncGenerator[bytes, None]
+    """
+    async for event in graph.astream_events(
+        {"messages": [{"role": "user", "content": user_message}]},
+        version="v2",
+    ):
+        if event["event"] == "on_chat_model_stream":
+            chunk = event["data"]["chunk"].content
+            if chunk:
+                yield json.dumps({"delta": chunk}).encode() + b"\n"
 
-        if stream:
-            return StreamingResponse(self._stream_response(user_message))
 
-        result = await self.graph.ainvoke(
-            {"messages": [{"role": "user", "content": user_message}]}
-        )
-        last_message = result["messages"][-1]
-        return JSONResponse({"reply": last_message.content})
+@server.invoke_handler
+async def handle_invoke(request: Request) -> Response:
+    """Process the invocation via LangGraph.
 
-    async def _stream_response(self, user_message: str) -> AsyncGenerator[bytes, None]:
-        """Async generator that yields response chunks.
+    :param request: The raw Starlette request.
+    :type request: starlette.requests.Request
+    :return: JSON response or streaming response.
+    :rtype: starlette.responses.Response
+    """
+    data = await request.json()
+    user_message = data["message"]
+    stream = data.get("stream", False)
 
-        :param user_message: The user message to process.
-        :type user_message: str
-        :return: An async generator yielding JSON-encoded byte chunks.
-        :rtype: AsyncGenerator[bytes, None]
-        """
-        async for event in self.graph.astream_events(
-            {"messages": [{"role": "user", "content": user_message}]},
-            version="v2",
-        ):
-            if event["event"] == "on_chat_model_stream":
-                chunk = event["data"]["chunk"].content
-                if chunk:
-                    yield json.dumps({"delta": chunk}).encode() + b"\n"
+    if stream:
+        return StreamingResponse(_stream_response(user_message))
+
+    result = await graph.ainvoke(
+        {"messages": [{"role": "user", "content": user_message}]}
+    )
+    last_message = result["messages"][-1]
+    return JSONResponse({"reply": last_message.content})
 
 
 if __name__ == "__main__":
-    LangGraphInvokeAgent().run()
+    server.run()

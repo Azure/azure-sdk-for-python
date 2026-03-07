@@ -29,47 +29,46 @@ from starlette.responses import JSONResponse, Response
 from azure.ai.agentserver import AgentServer
 
 
-class HumanInTheLoopAgent(AgentServer):
-    """Agent that asks one clarifying question before completing a request."""
+# Holds questions waiting for a human reply, keyed by invocation_id
+_waiting: dict[str, dict[str, Any]] = {}
 
-    def __init__(self) -> None:
-        super().__init__()
-        # Holds questions waiting for a human reply, keyed by invocation_id
-        self._waiting: dict[str, dict[str, Any]] = {}
+server = AgentServer()
 
-    async def invoke(self, request: Request) -> Response:
-        """Handle messages and replies.
 
-        :param request: The raw Starlette request.
-        :type request: starlette.requests.Request
-        :return: JSON response indicating status.
-        :rtype: starlette.responses.JSONResponse
-        """
-        data = await request.json()
-        invocation_id = request.state.invocation_id
+@server.invoke_handler
+async def handle_invoke(request: Request) -> Response:
+    """Handle messages and replies.
 
-        # --- Reply to a previous question ---
-        reply_to = data.get("reply_to")
-        if reply_to:
-            if reply_to not in self._waiting:
-                return JSONResponse({"error": f"No pending question for {reply_to}"})
+    :param request: The raw Starlette request.
+    :type request: starlette.requests.Request
+    :return: JSON response indicating status.
+    :rtype: starlette.responses.JSONResponse
+    """
+    data = await request.json()
+    invocation_id = request.state.invocation_id
 
-            return JSONResponse({
-                "invocation_id": reply_to,
-                "status": "completed",
-                "response": f"Flight to {data.get('message', '?')} booked.",
-            })
+    # --- Reply to a previous question ---
+    reply_to = data.get("reply_to")
+    if reply_to:
+        if reply_to not in _waiting:
+            return JSONResponse({"error": f"No pending question for {reply_to}"})
 
-        # --- New request: ask a clarifying question ---
-        self._waiting[invocation_id] = {
-            "message": data.get("message", ""),
-        }
         return JSONResponse({
-            "invocation_id": invocation_id,
-            "status": "needs_input",
-            "question": "Where would you like to fly to?",
+            "invocation_id": reply_to,
+            "status": "completed",
+            "response": f"Flight to {data.get('message', '?')} booked.",
         })
+
+    # --- New request: ask a clarifying question ---
+    _waiting[invocation_id] = {
+        "message": data.get("message", ""),
+    }
+    return JSONResponse({
+        "invocation_id": invocation_id,
+        "status": "needs_input",
+        "question": "Where would you like to fly to?",
+    })
 
 
 if __name__ == "__main__":
-    HumanInTheLoopAgent().run()
+    server.run()

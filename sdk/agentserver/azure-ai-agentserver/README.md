@@ -1,8 +1,8 @@
 # Azure AI Agent Server client library for Python
 
 A standalone, **protocol-agnostic agent server** package for Azure AI. Provides a
-Starlette-based `AgentServer` base class with pluggable protocol heads, OpenAPI spec
-serving, optional request validation, production middleware, optional tracing, and health
+Starlette-based `AgentServer` class with pluggable protocol heads, OpenAPI spec
+serving, optional request validation, optional tracing, and health
 endpoints — with **zero framework coupling**.
 
 ## Getting started
@@ -23,16 +23,18 @@ from starlette.responses import JSONResponse, Response
 
 from azure.ai.agentserver import AgentServer
 
+server = AgentServer()
 
-class GreetingAgent(AgentServer):
-    async def invoke(self, request: Request) -> Response:
-        data = await request.json()
-        greeting = f"Hello, {data['name']}!"
-        return JSONResponse({"greeting": greeting})
+
+@server.invoke_handler
+async def handle(request: Request) -> Response:
+    data = await request.json()
+    greeting = f"Hello, {data['name']}!"
+    return JSONResponse({"greeting": greeting})
 
 
 if __name__ == "__main__":
-    GreetingAgent().run()
+    server.run()
 ```
 
 ```bash
@@ -48,9 +50,10 @@ curl -X POST http://localhost:8088/invocations \
 
 ## Key concepts
 
-`AgentServer` is a base class for building agent endpoints that plug into the
-Azure Agent Service. It supports multiple protocol heads (`/invoke` today,
-`/responses` and others in the future) through a pluggable handler architecture.
+`AgentServer` is a class for building agent endpoints that plug into the
+Azure Agent Service. Register handlers with decorators on an `AgentServer`
+instance. Multiple protocol heads (`/invoke` today, `/responses` and others
+in the future) are supported through a pluggable handler architecture.
 
 The Azure Agent Service expects specific route paths (`/invocations`, `/liveness`,
 `/readiness`, etc.) for deployment. `AgentServer` wires these automatically so
@@ -62,16 +65,16 @@ your agent is compatible with the hosting platform — no manual route setup req
   Agent Service expects, so your agent deploys without configuration changes.
 - **Starlette + Hypercorn** — lightweight ASGI server with native HTTP/1.1 and HTTP/2
   support.
-- **Raw protocol access** — subclass `AgentServer` and receive raw Starlette `Request`
-  objects, return raw Starlette `Response` objects. Full control over content types,
-  streaming, headers, SSE, and status codes.
+- **Raw protocol access** — receive raw Starlette `Request` objects, return raw
+  Starlette `Response` objects. Full control over content types, streaming, headers,
+  SSE, and status codes.
 - **Automatic invocation ID tracking** — every request gets a unique ID injected into
   `request.state` and the `x-agent-invocation-id` response header.
 - **OpenAPI spec serving** — pass a spec and it is served at
   `GET /invocations/docs/openapi.json` for documentation / tooling.
 - **Optional request validation** — opt in to validate incoming request bodies
   against the OpenAPI spec before reaching your code.
-- **Request limits** — configurable invoke timeouts (504) and graceful shutdown — all via
+- **Request timeout and graceful shutdown** — configurable invoke timeouts (504) and graceful shutdown — all via
   constructor args or environment variables.
 - **Optional OpenTelemetry tracing** — opt-in span instrumentation that covers the full
   request lifecycle, including streaming responses.
@@ -94,8 +97,8 @@ your agent is compatible with the hosting platform — no manual route setup req
               │  • /invoke                    │
               │  • /responses (planned)       │
               │                               │
-              │ OpenAPI spec serving         │
-              │ Optional request validation  │
+              │ OpenAPI spec serving          │
+              │ Optional request validation   │
               │ Invocation ID tracking        │
               │ Invoke timeout / graceful     │
               │   shutdown                    │
@@ -112,20 +115,22 @@ your agent is compatible with the hosting platform — no manual route setup req
 
 **Single package, multiple protocol heads, no framework coupling.**
 
-### Subclassing `AgentServer`
+### Handler registration
 
-| Method | Required | Description |
-|--------|----------|-------------|
-| `invoke(request: Request) -> Response` | **Yes** | Process an invocation. Return any Starlette `Response`. |
-| `get_invocation(request: Request) -> Response` | No | Retrieve a stored invocation result. Default returns 404. |
-| `cancel_invocation(request: Request) -> Response` | No | Cancel a running invocation. Default returns 404. |
-| `on_shutdown() -> None` | No | Called during graceful shutdown after in-flight requests drain. Use to flush buffers, close connections, or release resources. Default is a no-op. |
+Instantiate `AgentServer` and register handlers with decorators:
+
+| Decorator | Required | Description |
+|-----------|----------|-------------|
+| `@server.invoke_handler` | **Yes** | Register the invoke handler function. |
+| `@server.get_invocation_handler` | No | Register a get-invocation handler. Default returns 404. |
+| `@server.cancel_invocation_handler` | No | Register a cancel-invocation handler. Default returns 404. |
+| `@server.shutdown_handler` | No | Register a shutdown handler. Default is a no-op. |
 
 The invocation ID is available via `request.state.invocation_id` (auto-generated for
 `invoke`, extracted from the URL path for `get_invocation` / `cancel_invocation`).
 The server auto-injects the `x-agent-invocation-id` response header if not already set.
 
-### Routes (Phase 1)
+### Routes
 
 | Route | Method | Description |
 |-------|--------|-------------|
@@ -148,15 +153,15 @@ variable > default**. Set a value to `0` to disable the corresponding feature.
 | `request_timeout` | `AGENT_REQUEST_TIMEOUT` | `300` (seconds) | Max time for `invoke()` before 504 |
 | `enable_tracing` | `AGENT_ENABLE_TRACING` | `false` | Enable OpenTelemetry tracing |
 | `enable_request_validation` | `AGENT_ENABLE_REQUEST_VALIDATION` | `false` | Validate request bodies against `openapi_spec` |
-| `log_level` | `AGENT_LOG_LEVEL` | `WARNING` | Library log level (`DEBUG`, `INFO`, `WARNING`, `ERROR`, `CRITICAL`) |
+| `log_level` | `AGENT_LOG_LEVEL` | `INFO` | Library log level (`DEBUG`, `INFO`, `WARNING`, `ERROR`, `CRITICAL`) |
 | `debug_errors` | `AGENT_DEBUG_ERRORS` | `false` | Include exception details in error responses |
 
 ```python
-agent = MyAgent(
+server = AgentServer(
     request_timeout=60,                       # 1 minute
     graceful_shutdown_timeout=15,             # 15 s drain
 )
-agent.run()
+server.run()
 ```
 
 Or configure entirely via environment variables — no code changes needed for deployment
@@ -204,11 +209,11 @@ spec = {
 }
 
 # Spec served for documentation; validation off (default)
-agent = GreetingAgent(openapi_spec=spec)
+server = AgentServer(openapi_spec=spec)
 
 # Spec served AND requests validated at runtime
-agent = GreetingAgent(openapi_spec=spec, enable_request_validation=True)
-agent.run()
+server = AgentServer(openapi_spec=spec, enable_request_validation=True)
+server.run()
 ```
 
 - `GET /invocations/docs/openapi.json` serves the registered spec (or 404 if none).
@@ -219,7 +224,7 @@ agent.run()
 Tracing is **disabled by default**. Enable it via constructor or environment variable:
 
 ```python
-agent = MyAgent(enable_tracing=True)
+server = AgentServer(enable_tracing=True)
 ```
 
 or:
@@ -251,14 +256,14 @@ resolved in the following order:
 
 ```python
 # Explicit connection string
-agent = MyAgent(
+server = AgentServer(
     enable_tracing=True,
     application_insights_connection_string="InstrumentationKey=...",
 )
 
 # Or via environment variable (connection string auto-discovered)
 # export APPLICATIONINSIGHTS_CONNECTION_STRING="InstrumentationKey=..."
-agent = MyAgent(enable_tracing=True)
+server = AgentServer(enable_tracing=True)
 ```
 
 If no connection string is found, tracing still works — spans are created but not exported

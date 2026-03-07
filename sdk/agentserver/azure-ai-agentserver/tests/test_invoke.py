@@ -8,7 +8,7 @@ import uuid
 import httpx
 import pytest
 
-from conftest import FailingAgent
+from conftest import _make_failing_agent
 
 
 @pytest.mark.asyncio
@@ -111,7 +111,7 @@ async def test_invoke_error_hides_details_by_default(failing_client):
 @pytest.mark.asyncio
 async def test_invoke_error_exposes_details_with_debug():
     """With debug_errors=True, the actual exception message is returned."""
-    agent = FailingAgent(debug_errors=True)
+    agent = _make_failing_agent(debug_errors=True)
     transport = httpx.ASGITransport(app=agent.app)
     async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as client:
         resp = await client.post("/invocations", content=b'{}')

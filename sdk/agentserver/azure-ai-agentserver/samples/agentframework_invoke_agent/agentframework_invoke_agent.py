@@ -54,31 +54,28 @@ def build_agent() -> Agent:
 
 # -- Customer-managed adapter: Agent Framework <-> /invoke --
 
-class AgentFrameworkInvokeAgent(AgentServer):
-    """Customer-managed adapter: Agent Framework <-> /invoke protocol."""
+agent = build_agent()
+server = AgentServer()
 
-    def __init__(self, agent: Agent):
-        super().__init__()
-        self.agent = agent
 
-    async def invoke(self, request: Request) -> Response:
-        """Process an invocation via Agent Framework.
+@server.invoke_handler
+async def handle_invoke(request: Request) -> Response:
+    """Process an invocation via Agent Framework.
 
-        :param request: The raw Starlette request.
-        :type request: starlette.requests.Request
-        :return: JSON response with the agent result.
-        :rtype: starlette.responses.JSONResponse
-        """
-        data = await request.json()
-        user_input = data.get("input", "")
+    :param request: The raw Starlette request.
+    :type request: starlette.requests.Request
+    :return: JSON response with the agent result.
+    :rtype: starlette.responses.JSONResponse
+    """
+    data = await request.json()
+    user_input = data.get("input", "")
 
-        # Run the agent
-        response = await self.agent.run(user_input)
-        result = response.content if hasattr(response, "content") else str(response)
+    # Run the agent
+    response = await agent.run(user_input)
+    result = response.content if hasattr(response, "content") else str(response)
 
-        return JSONResponse({"result": result})
+    return JSONResponse({"result": result})
 
 
 if __name__ == "__main__":
-    agent = build_agent()
-    AgentFrameworkInvokeAgent(agent).run()
+    server.run()

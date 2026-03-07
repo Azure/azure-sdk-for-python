@@ -5,8 +5,7 @@ import asyncio  # pylint: disable=do-not-import-asyncio
 import contextlib
 import logging
 import uuid
-from abc import ABC, abstractmethod
-from collections.abc import AsyncGenerator  # pylint: disable=import-error
+from collections.abc import AsyncGenerator, Callable  # pylint: disable=import-error
 from typing import Any, Optional
 
 from starlette.applications import Starlette
@@ -23,12 +22,19 @@ from . import _config
 logger = logging.getLogger("azure.ai.agentserver")
 
 
-class AgentServer(ABC):
-    """Generic agent server base with pluggable protocol heads.
+class AgentServer:
+    """Agent server with pluggable protocol heads.
 
-    Subclass and implement :meth:`invoke` to handle ``/invocations`` requests.
-    Optionally override :meth:`get_invocation` and :meth:`cancel_invocation`
-    for additional protocol support.
+    Instantiate and register handlers with decorators::
+
+        server = AgentServer()
+
+        @server.invoke_handler
+        async def handle(request):
+            return JSONResponse({"ok": True})
+
+    Optionally register handlers with :meth:`get_invocation_handler` and
+    :meth:`cancel_invocation_handler` for additional protocol support.
 
     Developer receives raw Starlette ``Request`` objects and returns raw
     Starlette ``Response`` objects, giving full control over content types,
@@ -73,7 +79,7 @@ class AgentServer(ABC):
     :type request_timeout: Optional[int]
     :param log_level: Library log level (e.g. ``"DEBUG"``, ``"INFO"``).  When
         *None* (default) the ``AGENT_LOG_LEVEL`` env var is consulted; if that
-        is also unset the default is ``"WARNING"``.
+        is also unset the default is ``"INFO"``.
     :type log_level: Optional[str]
     :param debug_errors: When *True*, error responses include the original
         exception message instead of a generic ``"Internal server error"``.
@@ -93,9 +99,19 @@ class AgentServer(ABC):
         log_level: Optional[str] = None,
         debug_errors: Optional[bool] = None,
     ) -> None:
+        # Decorator handler slots ------------------------------------------
+        self._invoke_fn: Optional[Callable] = None
+        self._get_invocation_fn: Optional[Callable] = None
+        self._cancel_invocation_fn: Optional[Callable] = None
+        self._shutdown_fn: Optional[Callable] = None
+
         # Logging & debug -------------------------------------------------
         resolved_level = _config.resolve_log_level(log_level)
         logger.setLevel(resolved_level)
+        if not logger.handlers:
+            _console = logging.StreamHandler()
+            _console.setFormatter(logging.Formatter("%(asctime)s %(levelname)s %(name)s: %(message)s"))
+            logger.addHandler(_console)
         self._debug_errors = _config.resolve_bool_feature(
             debug_errors, Constants.AGENT_DEBUG_ERRORS
         )
@@ -124,66 +140,87 @@ class AgentServer(ABC):
         self._build_app()
 
     # ------------------------------------------------------------------
-    # Abstract / overridable protocol methods
+    # Handler decorators
     # ------------------------------------------------------------------
 
-    @abstractmethod
-    async def invoke(self, request: Request) -> Response:
-        """Process an invocation.
+    def invoke_handler(self, fn: Callable) -> Callable:
+        """Register a function as the invoke handler.
 
-        The invocation ID is available via ``request.state.invocation_id``.
-        Return any Starlette ``Response`` — ``JSONResponse``, ``Response``,
-        ``StreamingResponse``, etc. The server auto-injects the
-        ``x-agent-invocation-id`` response header if not already set.
+        Usage::
 
-        :param request: The raw Starlette request.
-        :type request: starlette.requests.Request
-        :return: Any Starlette response.
-        :rtype: starlette.responses.Response
+            @server.invoke_handler
+            async def handle(request: Request) -> Response:
+                ...
+
+        :param fn: Async function accepting a Starlette Request and returning a Response.
+        :type fn: Callable
+        :return: The original function (unmodified).
+        :rtype: Callable
         """
+        self._invoke_fn = fn
+        return fn
 
-    async def get_invocation(self, request: Request) -> Response:  # pylint: disable=unused-argument
-        """Retrieve a previous invocation result.
+    def get_invocation_handler(self, fn: Callable) -> Callable:
+        """Register a function as the get-invocation handler.
 
-        The invocation ID is available via ``request.state.invocation_id``
-        (extracted from the URL path parameter).
-
-        Default implementation returns 404. Override to support retrieval.
-
-        :param request: The raw Starlette request.
-        :type request: starlette.requests.Request
-        :return: Any Starlette response.
-        :rtype: starlette.responses.Response
+        :param fn: Async function accepting a Starlette Request and returning a Response.
+        :type fn: Callable
+        :return: The original function (unmodified).
+        :rtype: Callable
         """
+        self._get_invocation_fn = fn
+        return fn
+
+    def cancel_invocation_handler(self, fn: Callable) -> Callable:
+        """Register a function as the cancel-invocation handler.
+
+        :param fn: Async function accepting a Starlette Request and returning a Response.
+        :type fn: Callable
+        :return: The original function (unmodified).
+        :rtype: Callable
+        """
+        self._cancel_invocation_fn = fn
+        return fn
+
+    def shutdown_handler(self, fn: Callable) -> Callable:
+        """Register a function as the shutdown handler.
+
+        :param fn: Async function called during graceful shutdown.
+        :type fn: Callable
+        :return: The original function (unmodified).
+        :rtype: Callable
+        """
+        self._shutdown_fn = fn
+        return fn
+
+    # ------------------------------------------------------------------
+    # Dispatch methods (internal)
+    # ------------------------------------------------------------------
+
+    async def _dispatch_invoke(self, request: Request) -> Response:
+        """Dispatch to the registered invoke handler."""
+        if self._invoke_fn is not None:
+            return await self._invoke_fn(request)
+        raise RuntimeError(
+            "No invoke handler registered. Use the @server.invoke_handler decorator."
+        )
+
+    async def _dispatch_get_invocation(self, request: Request) -> Response:
+        """Dispatch to the registered get-invocation handler, or return 404."""
+        if self._get_invocation_fn is not None:
+            return await self._get_invocation_fn(request)
         return error_response("not_supported", "get_invocation not supported", status_code=404)
 
-    async def cancel_invocation(self, request: Request) -> Response:  # pylint: disable=unused-argument
-        """Cancel an invocation.
-
-        The invocation ID is available via ``request.state.invocation_id``
-        (extracted from the URL path parameter).
-
-        Default implementation returns 404. Override to support cancellation.
-
-        :param request: The raw Starlette request.
-        :type request: starlette.requests.Request
-        :return: Any Starlette response.
-        :rtype: starlette.responses.Response
-        """
+    async def _dispatch_cancel_invocation(self, request: Request) -> Response:
+        """Dispatch to the registered cancel-invocation handler, or return 404."""
+        if self._cancel_invocation_fn is not None:
+            return await self._cancel_invocation_fn(request)
         return error_response("not_supported", "cancel_invocation not supported", status_code=404)
 
-    async def on_shutdown(self) -> None:
-        """Called during server shutdown after in-flight requests have drained.
-
-        Override to checkpoint state, flush buffers, close connections, or
-        release external resources before the process exits.
-
-        The callback is bounded by ``graceful_shutdown_timeout`` seconds.
-        If it does not complete in time, a warning is logged and shutdown
-        proceeds.
-
-        Default implementation is a no-op.
-        """
+    async def _dispatch_shutdown(self) -> None:
+        """Dispatch to the registered shutdown handler, or no-op."""
+        if self._shutdown_fn is not None:
+            await self._shutdown_fn()
 
     def get_openapi_spec(self) -> Optional[dict[str, Any]]:
         """Return the OpenAPI spec dict for this agent, or None.
@@ -269,7 +306,7 @@ class AgentServer(ABC):
             )
             try:
                 await asyncio.wait_for(
-                    self.on_shutdown(),
+                    self._dispatch_shutdown(),
                     timeout=self._graceful_shutdown_timeout or None,
                 )
             except asyncio.TimeoutError:
@@ -369,7 +406,7 @@ class AgentServer(ABC):
             else None
         )
         try:
-            invoke_awaitable = self.invoke(request)
+            invoke_awaitable = self._dispatch_invoke(request)
             timeout = self._request_timeout or None  # 0 → None (no limit)
             response = await asyncio.wait_for(invoke_awaitable, timeout=timeout)
         except asyncio.TimeoutError:
@@ -433,7 +470,7 @@ class AgentServer(ABC):
         )
         with span_cm as _otel_span:
             try:
-                return await self.get_invocation(request)
+                return await self._dispatch_get_invocation(request)
             except Exception as exc:  # pylint: disable=broad-exception-caught
                 if self._tracing is not None:
                     self._tracing.record_error(_otel_span, exc)
@@ -467,7 +504,7 @@ class AgentServer(ABC):
         )
         with span_cm as _otel_span:
             try:
-                return await self.cancel_invocation(request)
+                return await self._dispatch_cancel_invocation(request)
             except Exception as exc:  # pylint: disable=broad-exception-caught
                 if self._tracing is not None:
                     self._tracing.record_error(_otel_span, exc)

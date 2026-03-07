@@ -160,7 +160,7 @@ def resolve_appinsights_connection_string(
 
 
 def resolve_log_level(level: Optional[str]) -> str:
-    """Resolve the library log level from argument, env var, or default (``WARNING``).
+    """Resolve the library log level from argument, env var, or default (``INFO``).
 
     :param level: Explicitly requested level (e.g. ``"DEBUG"``) or None.
     :type level: Optional[str]
@@ -171,7 +171,7 @@ def resolve_log_level(level: Optional[str]) -> str:
     if level is not None:
         normalized = level.upper()
     else:
-        normalized = os.environ.get(Constants.AGENT_LOG_LEVEL, "WARNING").upper()
+        normalized = os.environ.get(Constants.AGENT_LOG_LEVEL, "INFO").upper()
     if normalized not in _VALID_LOG_LEVELS:
         raise ValueError(
             f"Invalid log level: {normalized!r} "

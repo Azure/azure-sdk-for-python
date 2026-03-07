@@ -17,23 +17,31 @@ from azure.ai.agentserver._constants import Constants
 
 
 # ---------------------------------------------------------------------------
-# Test agents
+# Agent factory functions
 # ---------------------------------------------------------------------------
 
 
-class _SlowAgent(AgentServer):
-    """Sleeps for a long time — used to test invoke timeout."""
+def _make_slow_agent(**kwargs) -> AgentServer:
+    """Create an agent that sleeps forever — used to test invoke timeout."""
+    server = AgentServer(**kwargs)
 
-    async def invoke(self, request: Request) -> Response:
+    @server.invoke_handler
+    async def handle(request: Request) -> Response:
         await asyncio.sleep(999)
         return Response(content=b"done")
 
+    return server
 
-class _FastAgent(AgentServer):
-    """Returns immediately — used to verify no false timeout."""
 
-    async def invoke(self, request: Request) -> Response:
+def _make_fast_agent(**kwargs) -> AgentServer:
+    """Create an agent that returns immediately — used to verify no false timeout."""
+    server = AgentServer(**kwargs)
+
+    @server.invoke_handler
+    async def handle(request: Request) -> Response:
         return JSONResponse({"ok": True})
+
+    return server
 
 
 # ===========================================================================
@@ -55,26 +63,26 @@ class TestRequestTimeoutResolution:
     """Test the resolution hierarchy: explicit > env > default."""
 
     def test_explicit_value(self):
-        agent = _FastAgent(request_timeout=60)
+        agent = _make_fast_agent(request_timeout=60)
         assert agent._request_timeout == 60
 
     def test_explicit_zero_disables(self):
-        agent = _FastAgent(request_timeout=0)
+        agent = _make_fast_agent(request_timeout=0)
         assert agent._request_timeout == 0
 
     def test_env_var_used_when_no_explicit(self):
         with patch.dict(os.environ, {Constants.AGENT_REQUEST_TIMEOUT: "120"}):
-            agent = _FastAgent()
+            agent = _make_fast_agent()
             assert agent._request_timeout == 120
 
     def test_invalid_env_var_raises(self):
         with patch.dict(os.environ, {Constants.AGENT_REQUEST_TIMEOUT: "abc"}):
             with pytest.raises(ValueError, match="AGENT_REQUEST_TIMEOUT"):
-                _FastAgent()
+                _make_fast_agent()
 
     def test_default_when_nothing_set(self):
         with patch.dict(os.environ, {}, clear=True):
-            agent = _FastAgent()
+            agent = _make_fast_agent()
             assert agent._request_timeout == Constants.DEFAULT_REQUEST_TIMEOUT
 
 
@@ -83,7 +91,7 @@ class TestInvokeTimeoutEnforcement:
 
     @pytest.mark.asyncio
     async def test_slow_invoke_returns_504(self):
-        agent = _SlowAgent(request_timeout=1)
+        agent = _make_slow_agent(request_timeout=1)
         transport = httpx.ASGITransport(app=agent.app)
         async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as client:
             resp = await client.post("/invocations", content=b"{}")
@@ -95,7 +103,7 @@ class TestInvokeTimeoutEnforcement:
 
     @pytest.mark.asyncio
     async def test_slow_invoke_includes_invocation_id_header(self):
-        agent = _SlowAgent(request_timeout=1)
+        agent = _make_slow_agent(request_timeout=1)
         transport = httpx.ASGITransport(app=agent.app)
         async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as client:
             resp = await client.post("/invocations", content=b"{}")
@@ -104,7 +112,7 @@ class TestInvokeTimeoutEnforcement:
 
     @pytest.mark.asyncio
     async def test_fast_invoke_not_affected(self):
-        agent = _FastAgent(request_timeout=5)
+        agent = _make_fast_agent(request_timeout=5)
         transport = httpx.ASGITransport(app=agent.app)
         async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as client:
             resp = await client.post("/invocations", content=b"{}")
@@ -114,7 +122,7 @@ class TestInvokeTimeoutEnforcement:
     @pytest.mark.asyncio
     async def test_timeout_disabled_allows_no_limit(self):
         """request_timeout=0 means no timeout (passes None to wait_for)."""
-        agent = _FastAgent(request_timeout=0)
+        agent = _make_fast_agent(request_timeout=0)
         transport = httpx.ASGITransport(app=agent.app)
         async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as client:
             resp = await client.post("/invocations", content=b"{}")
@@ -122,7 +130,7 @@ class TestInvokeTimeoutEnforcement:
 
     @pytest.mark.asyncio
     async def test_timeout_error_is_logged(self):
-        agent = _SlowAgent(request_timeout=1)
+        agent = _make_slow_agent(request_timeout=1)
         transport = httpx.ASGITransport(app=agent.app)
         with patch("azure.ai.agentserver.server._base.logger") as mock_logger:
             async with httpx.AsyncClient(

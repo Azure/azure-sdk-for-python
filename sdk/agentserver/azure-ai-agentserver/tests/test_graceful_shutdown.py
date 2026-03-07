@@ -15,15 +15,19 @@ from azure.ai.agentserver._constants import Constants
 
 
 # ---------------------------------------------------------------------------
-# Minimal concrete subclass for testing
+# Agent factory functions
 # ---------------------------------------------------------------------------
 
 
-class _StubAgent(AgentServer):
-    """No-op agent used to inspect internal state."""
+def _make_stub_agent(**kwargs) -> AgentServer:
+    """Create a no-op agent used to inspect internal state."""
+    server = AgentServer(**kwargs)
 
-    async def invoke(self, request: Request) -> Response:
+    @server.invoke_handler
+    async def handle(request: Request) -> Response:
         return Response(content=b"ok")
+
+    return server
 
 
 # ---------------------------------------------------------------------------
@@ -35,30 +39,30 @@ class TestResolveGracefulShutdownTimeout:
     """Unit tests for the timeout resolution hierarchy: explicit > env > default."""
 
     def test_explicit_value_takes_precedence(self):
-        agent = _StubAgent(graceful_shutdown_timeout=10)
+        agent = _make_stub_agent(graceful_shutdown_timeout=10)
         assert agent._graceful_shutdown_timeout == 10
 
     def test_explicit_zero_disables_drain(self):
-        agent = _StubAgent(graceful_shutdown_timeout=0)
+        agent = _make_stub_agent(graceful_shutdown_timeout=0)
         assert agent._graceful_shutdown_timeout == 0
 
     def test_env_var_used_when_no_explicit(self):
         with patch.dict(os.environ, {Constants.AGENT_GRACEFUL_SHUTDOWN_TIMEOUT: "45"}):
-            agent = _StubAgent()
+            agent = _make_stub_agent()
             assert agent._graceful_shutdown_timeout == 45
 
     def test_invalid_env_var_raises(self):
         with patch.dict(os.environ, {Constants.AGENT_GRACEFUL_SHUTDOWN_TIMEOUT: "not-a-number"}):
             with pytest.raises(ValueError, match="AGENT_GRACEFUL_SHUTDOWN_TIMEOUT"):
-                _StubAgent()
+                _make_stub_agent()
 
     def test_non_int_explicit_value_raises(self):
         with pytest.raises(ValueError, match="expected an integer"):
-            _StubAgent(graceful_shutdown_timeout="ten")  # type: ignore[arg-type]
+            _make_stub_agent(graceful_shutdown_timeout="ten")  # type: ignore[arg-type]
 
     def test_default_when_nothing_set(self):
         with patch.dict(os.environ, {}, clear=True):
-            agent = _StubAgent()
+            agent = _make_stub_agent()
             assert agent._graceful_shutdown_timeout == Constants.DEFAULT_GRACEFUL_SHUTDOWN_TIMEOUT
 
     def test_default_is_30_seconds(self):
@@ -88,7 +92,7 @@ class TestRunPassesTimeout:
     @patch("hypercorn.asyncio.serve", new_callable=AsyncMock)
     @patch("azure.ai.agentserver.server._base.asyncio")
     def test_run_passes_timeout(self, mock_asyncio, _mock_serve):
-        agent = _StubAgent(graceful_shutdown_timeout=15)
+        agent = _make_stub_agent(graceful_shutdown_timeout=15)
         agent.run()
         mock_asyncio.run.assert_called_once()
         # Verify the config built internally has the right graceful_timeout
@@ -98,7 +102,7 @@ class TestRunPassesTimeout:
     @patch("hypercorn.asyncio.serve", new_callable=AsyncMock)
     @patch("azure.ai.agentserver.server._base.asyncio")
     def test_run_passes_default_timeout(self, mock_asyncio, _mock_serve):
-        agent = _StubAgent()
+        agent = _make_stub_agent()
         agent.run()
         config = agent._build_hypercorn_config("127.0.0.1", 8088)
         assert config.graceful_timeout == 30.0
@@ -115,7 +119,7 @@ class TestRunAsyncPassesTimeout:
     @pytest.mark.asyncio
     @patch("hypercorn.asyncio.serve", new_callable=AsyncMock)
     async def test_run_async_passes_timeout(self, mock_serve):
-        agent = _StubAgent(graceful_shutdown_timeout=20)
+        agent = _make_stub_agent(graceful_shutdown_timeout=20)
         await agent.run_async()
         mock_serve.assert_awaited_once()
         # Check the config passed to serve
@@ -126,7 +130,7 @@ class TestRunAsyncPassesTimeout:
     @pytest.mark.asyncio
     @patch("hypercorn.asyncio.serve", new_callable=AsyncMock)
     async def test_run_async_passes_default_timeout(self, mock_serve):
-        agent = _StubAgent()
+        agent = _make_stub_agent()
         await agent.run_async()
         call_args = mock_serve.call_args
         config = call_args[0][1] if len(call_args[0]) > 1 else call_args.kwargs.get("config")
@@ -143,7 +147,7 @@ class TestLifespanShutdown:
 
     @pytest.mark.asyncio
     async def test_shutdown_log_emitted(self):
-        agent = _StubAgent(graceful_shutdown_timeout=42)
+        agent = _make_stub_agent(graceful_shutdown_timeout=42)
         # Exercise the full lifespan by sending a request through the ASGI app
         import httpx
 
@@ -161,7 +165,7 @@ class TestLifespanShutdown:
         """Directly exercise the lifespan context manager and verify shutdown log."""
         import logging
 
-        agent = _StubAgent(graceful_shutdown_timeout=99)
+        agent = _make_stub_agent(graceful_shutdown_timeout=99)
 
         with patch("azure.ai.agentserver.server._base.logger") as mock_logger:
             # Grab the lifespan from the Starlette app
@@ -184,46 +188,53 @@ class TestLifespanShutdown:
 # ---------------------------------------------------------------------------
 
 
-class _ShutdownRecordingAgent(AgentServer):
-    """Agent that records on_shutdown calls."""
+def _make_shutdown_recording_agent(**kwargs) -> AgentServer:
+    """Create an agent that records on_shutdown calls."""
+    server = AgentServer(**kwargs)
+    server.shutdown_log: list[str] = []
 
-    def __init__(self, **kwargs):
-        self.shutdown_log: list[str] = []
-        super().__init__(**kwargs)
-
-    async def invoke(self, request: Request) -> Response:
+    @server.invoke_handler
+    async def handle(request: Request) -> Response:
         return Response(content=b"ok")
 
-    async def on_shutdown(self) -> None:
-        self.shutdown_log.append("shutdown")
+    @server.shutdown_handler
+    async def shutdown():
+        server.shutdown_log.append("shutdown")
+
+    return server
 
 
-class _AsyncCheckpointAgent(AgentServer):
-    """Agent whose on_shutdown performs async work."""
+def _make_async_checkpoint_agent(**kwargs) -> AgentServer:
+    """Create an agent whose shutdown handler performs async work."""
+    server = AgentServer(**kwargs)
+    server.flushed: list[str] = []
 
-    def __init__(self, **kwargs):
-        self.flushed: list[str] = []
-        super().__init__(**kwargs)
-
-    async def invoke(self, request: Request) -> Response:
+    @server.invoke_handler
+    async def handle(request: Request) -> Response:
         return Response(content=b"ok")
 
-    async def on_shutdown(self) -> None:
-        # Simulate async I/O (checkpoint to disk / blob storage)
+    @server.shutdown_handler
+    async def shutdown():
         import asyncio
-
         await asyncio.sleep(0)
-        self.flushed.append("async-checkpoint")
+        server.flushed.append("async-checkpoint")
+
+    return server
 
 
-class _FailingShutdownAgent(AgentServer):
-    """Agent whose on_shutdown raises an exception."""
+def _make_failing_shutdown_agent(**kwargs) -> AgentServer:
+    """Create an agent whose shutdown handler raises an exception."""
+    server = AgentServer(**kwargs)
 
-    async def invoke(self, request: Request) -> Response:
+    @server.invoke_handler
+    async def handle(request: Request) -> Response:
         return Response(content=b"ok")
 
-    async def on_shutdown(self) -> None:
+    @server.shutdown_handler
+    async def shutdown():
         raise RuntimeError("disk full")
+
+    return server
 
 
 class TestOnShutdownMethod:
@@ -231,7 +242,7 @@ class TestOnShutdownMethod:
 
     @pytest.mark.asyncio
     async def test_on_shutdown_called(self):
-        agent = _ShutdownRecordingAgent()
+        agent = _make_shutdown_recording_agent()
         lifespan = agent.app.router.lifespan_context
         async with lifespan(agent.app):
             pass
@@ -239,7 +250,7 @@ class TestOnShutdownMethod:
 
     @pytest.mark.asyncio
     async def test_async_work_in_on_shutdown(self):
-        agent = _AsyncCheckpointAgent()
+        agent = _make_async_checkpoint_agent()
         lifespan = agent.app.router.lifespan_context
         async with lifespan(agent.app):
             pass
@@ -248,7 +259,7 @@ class TestOnShutdownMethod:
     @pytest.mark.asyncio
     async def test_default_on_shutdown_is_noop(self):
         """Base class on_shutdown does nothing and doesn't raise."""
-        agent = _StubAgent()
+        agent = _make_stub_agent()
         lifespan = agent.app.router.lifespan_context
         async with lifespan(agent.app):
             pass  # should complete without error
@@ -256,7 +267,7 @@ class TestOnShutdownMethod:
     @pytest.mark.asyncio
     async def test_on_shutdown_exception_is_logged_not_raised(self):
         """A failing on_shutdown must not crash the shutdown sequence."""
-        agent = _FailingShutdownAgent()
+        agent = _make_failing_shutdown_agent()
         with patch("azure.ai.agentserver.server._base.logger") as mock_logger:
             lifespan = agent.app.router.lifespan_context
             async with lifespan(agent.app):
@@ -274,14 +285,16 @@ class TestOnShutdownMethod:
         """on_shutdown fires after the shutdown log message."""
         order: list[str] = []
 
-        class _OrderingAgent(AgentServer):
-            async def invoke(self, request: Request) -> Response:
-                return Response(content=b"ok")
+        server = AgentServer()
 
-            async def on_shutdown(self) -> None:
-                order.append("callback")
+        @server.invoke_handler
+        async def invoke(request: Request) -> Response:
+            return Response(content=b"ok")
 
-        agent = _OrderingAgent()
+        @server.shutdown_handler
+        async def shutdown():
+            order.append("callback")
+
         with patch("azure.ai.agentserver.server._base.logger") as mock_logger:
 
             def tracking_info(*args, **kwargs):
@@ -290,34 +303,33 @@ class TestOnShutdownMethod:
 
             mock_logger.info.side_effect = tracking_info
 
-            lifespan = agent.app.router.lifespan_context
-            async with lifespan(agent.app):
+            lifespan = server.app.router.lifespan_context
+            async with lifespan(server.app):
                 pass
 
         assert order == ["log", "callback"]
 
     @pytest.mark.asyncio
-    async def test_on_shutdown_has_access_to_self(self):
-        """on_shutdown can access instance state — the key benefit over a callback."""
+    async def test_on_shutdown_has_access_to_state(self):
+        """Shutdown handler can access state via closure."""
+        connections: list[str] = ["db", "cache"]
+        closed: list[str] = []
 
-        class _StatefulAgent(AgentServer):
-            def __init__(self):
-                self.connections: list[str] = ["db", "cache"]
-                self.closed: list[str] = []
-                super().__init__()
+        server = AgentServer()
 
-            async def invoke(self, request: Request) -> Response:
-                return Response(content=b"ok")
+        @server.invoke_handler
+        async def invoke(request: Request) -> Response:
+            return Response(content=b"ok")
 
-            async def on_shutdown(self) -> None:
-                for conn in self.connections:
-                    self.closed.append(conn)
+        @server.shutdown_handler
+        async def shutdown():
+            for conn in connections:
+                closed.append(conn)
 
-        agent = _StatefulAgent()
-        lifespan = agent.app.router.lifespan_context
-        async with lifespan(agent.app):
+        lifespan = server.app.router.lifespan_context
+        async with lifespan(server.app):
             pass
-        assert agent.closed == ["db", "cache"]
+        assert closed == ["db", "cache"]
 
 
 # ---------------------------------------------------------------------------
@@ -333,17 +345,19 @@ class TestOnShutdownTimeout:
         """If on_shutdown exceeds the timeout, it is cancelled and a warning is logged."""
         import asyncio
 
-        class _SlowAgent(AgentServer):
-            async def invoke(self, request: Request) -> Response:
-                return Response(content=b"ok")
+        server = AgentServer(graceful_shutdown_timeout=1)
 
-            async def on_shutdown(self) -> None:
-                await asyncio.sleep(999)  # way longer than the 1s timeout
+        @server.invoke_handler
+        async def invoke(request: Request) -> Response:
+            return Response(content=b"ok")
 
-        agent = _SlowAgent(graceful_shutdown_timeout=1)
+        @server.shutdown_handler
+        async def shutdown():
+            await asyncio.sleep(999)  # way longer than the 1s timeout
+
         with patch("azure.ai.agentserver.server._base.logger") as mock_logger:
-            lifespan = agent.app.router.lifespan_context
-            async with lifespan(agent.app):
+            lifespan = server.app.router.lifespan_context
+            async with lifespan(server.app):
                 pass  # should NOT hang
 
             warning_calls = [
@@ -359,22 +373,22 @@ class TestOnShutdownTimeout:
         """on_shutdown that finishes within the timeout succeeds without warnings."""
         import asyncio
 
-        class _FastAgent(AgentServer):
-            def __init__(self):
-                self.done = False
-                super().__init__(graceful_shutdown_timeout=5)
+        done = False
+        server = AgentServer(graceful_shutdown_timeout=5)
 
-            async def invoke(self, request: Request) -> Response:
-                return Response(content=b"ok")
+        @server.invoke_handler
+        async def invoke(request: Request) -> Response:
+            return Response(content=b"ok")
 
-            async def on_shutdown(self) -> None:
-                await asyncio.sleep(0)
-                self.done = True
+        @server.shutdown_handler
+        async def shutdown():
+            nonlocal done
+            await asyncio.sleep(0)
+            done = True
 
-        agent = _FastAgent()
         with patch("azure.ai.agentserver.server._base.logger") as mock_logger:
-            lifespan = agent.app.router.lifespan_context
-            async with lifespan(agent.app):
+            lifespan = server.app.router.lifespan_context
+            async with lifespan(server.app):
                 pass
 
             warning_calls = [
@@ -383,34 +397,34 @@ class TestOnShutdownTimeout:
                 if "did not complete" in str(c).lower()
             ]
             assert len(warning_calls) == 0
-        assert agent.done is True
+        assert done is True
 
     @pytest.mark.asyncio
     async def test_zero_timeout_disables_wait(self):
         """graceful_shutdown_timeout=0 passes None to wait_for (no timeout)."""
         import asyncio
 
-        class _QuickAgent(AgentServer):
-            def __init__(self):
-                self.ran = False
-                super().__init__(graceful_shutdown_timeout=0)
+        ran = False
+        server = AgentServer(graceful_shutdown_timeout=0)
 
-            async def invoke(self, request: Request) -> Response:
-                return Response(content=b"ok")
+        @server.invoke_handler
+        async def invoke(request: Request) -> Response:
+            return Response(content=b"ok")
 
-            async def on_shutdown(self) -> None:
-                self.ran = True
+        @server.shutdown_handler
+        async def shutdown():
+            nonlocal ran
+            ran = True
 
-        agent = _QuickAgent()
-        lifespan = agent.app.router.lifespan_context
-        async with lifespan(agent.app):
+        lifespan = server.app.router.lifespan_context
+        async with lifespan(server.app):
             pass
-        assert agent.ran is True
+        assert ran is True
 
     @pytest.mark.asyncio
     async def test_timeout_does_not_suppress_exceptions(self):
         """Exceptions from on_shutdown are still logged even if within timeout."""
-        agent = _FailingShutdownAgent(graceful_shutdown_timeout=5)
+        agent = _make_failing_shutdown_agent(graceful_shutdown_timeout=5)
         with patch("azure.ai.agentserver.server._base.logger") as mock_logger:
             lifespan = agent.app.router.lifespan_context
             async with lifespan(agent.app):

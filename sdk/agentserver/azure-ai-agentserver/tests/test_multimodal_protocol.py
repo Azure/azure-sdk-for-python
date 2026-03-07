@@ -62,99 +62,139 @@ _PROTO_PAYLOAD = b"\x08\x96\x01"
 # ---------------------------------------------------------------------------
 
 
-class ContentTypeEchoAgent(AgentServer):
+def _make_ctype_echo_agent(**kwargs):
     """Returns the request Content-Type and body length as JSON."""
+    server = AgentServer(**kwargs)
 
-    async def invoke(self, request: Request) -> Response:
+    @server.invoke_handler
+    async def handle(request: Request) -> Response:
         ctype = request.headers.get("content-type", "")
         body = await request.body()
         return JSONResponse({"content_type": ctype, "length": len(body)})
 
+    return server
 
-class ImageAgent(AgentServer):
+
+def _make_image_agent(**kwargs):
     """Returns a pre-canned PNG image."""
+    server = AgentServer(**kwargs)
 
-    async def invoke(self, request: Request) -> Response:
+    @server.invoke_handler
+    async def handle(request: Request) -> Response:
         return Response(content=_MINIMAL_PNG, media_type="image/png")
 
+    return server
 
-class AudioAgent(AgentServer):
+
+def _make_audio_agent(**kwargs):
     """Returns a pre-canned WAV clip."""
+    server = AgentServer(**kwargs)
 
-    async def invoke(self, request: Request) -> Response:
+    @server.invoke_handler
+    async def handle(request: Request) -> Response:
         return Response(content=_MINIMAL_WAV, media_type="audio/wav")
 
+    return server
 
-class HtmlAgent(AgentServer):
+
+def _make_html_agent(**kwargs):
     """Returns an HTML response."""
+    server = AgentServer(**kwargs)
 
-    async def invoke(self, request: Request) -> Response:
+    @server.invoke_handler
+    async def handle(request: Request) -> Response:
         return HTMLResponse("<html><body><h1>Hello Agent</h1></body></html>")
 
+    return server
 
-class PlainTextAgent(AgentServer):
+
+def _make_plaintext_agent(**kwargs):
     """Returns plain text."""
+    server = AgentServer(**kwargs)
 
-    async def invoke(self, request: Request) -> Response:
+    @server.invoke_handler
+    async def handle(request: Request) -> Response:
         return PlainTextResponse("Hello, plain text world!")
 
+    return server
 
-class XmlAgent(AgentServer):
+
+def _make_xml_agent(**kwargs):
     """Returns XML content."""
+    server = AgentServer(**kwargs)
 
-    async def invoke(self, request: Request) -> Response:
+    @server.invoke_handler
+    async def handle(request: Request) -> Response:
         xml = '<?xml version="1.0"?><result><msg>ok</msg></result>'
         return Response(content=xml.encode(), media_type="application/xml")
 
+    return server
 
-class SseAgent(AgentServer):
+
+def _make_sse_agent(**kwargs):
     """Returns a Server-Sent Events stream."""
+    server = AgentServer(**kwargs)
 
-    async def invoke(self, request: Request) -> StreamingResponse:
+    @server.invoke_handler
+    async def handle(request: Request) -> StreamingResponse:
         async def event_stream():
             for i in range(3):
                 yield f"event: message\ndata: {json.dumps({'n': i})}\n\n".encode()
 
         return StreamingResponse(event_stream(), media_type="text/event-stream")
 
+    return server
 
-class CustomStatusAgent(AgentServer):
+
+def _make_custom_status_agent(**kwargs):
     """Returns whichever HTTP status code the client requests in body.status_code."""
+    server = AgentServer(**kwargs)
 
-    async def invoke(self, request: Request) -> Response:
+    @server.invoke_handler
+    async def handle(request: Request) -> Response:
         data = await request.json()
         code = int(data.get("status_code", 200))
         return JSONResponse({"status_code": code}, status_code=code)
 
+    return server
 
-class MultipartRawAgent(AgentServer):
-    """Echoes the raw multipart body's content-type and length.
 
-    Does NOT call ``request.form()`` (which requires ``python-multipart``)
-    so the test is portable across all CI environments.
-    """
+def _make_multipart_raw_agent(**kwargs):
+    """Echoes the raw multipart body's content-type and length."""
+    server = AgentServer(**kwargs)
 
-    async def invoke(self, request: Request) -> Response:
+    @server.invoke_handler
+    async def handle(request: Request) -> Response:
         ctype = request.headers.get("content-type", "")
         body = await request.body()
         return JSONResponse({"content_type": ctype, "length": len(body), "body_prefix": body[:80].decode("latin-1")})
 
+    return server
 
-class QueryStringAgent(AgentServer):
+
+def _make_query_string_agent(**kwargs):
     """Echoes query parameters as JSON."""
+    server = AgentServer(**kwargs)
 
-    async def invoke(self, request: Request) -> Response:
+    @server.invoke_handler
+    async def handle(request: Request) -> Response:
         return JSONResponse({"query": dict(request.query_params)})
 
+    return server
 
-class Base64ImageAgent(AgentServer):
+
+def _make_b64image_agent(**kwargs):
     """Accepts JSON with base64-encoded image data and decodes it."""
+    server = AgentServer(**kwargs)
 
-    async def invoke(self, request: Request) -> Response:
+    @server.invoke_handler
+    async def handle(request: Request) -> Response:
         data = await request.json()
         image_b64 = data.get("image", "")
         decoded = base64.b64decode(image_b64)
         return JSONResponse({"decoded_size": len(decoded), "starts_with_png": decoded[:4] == b"\x89PNG"})
+
+    return server
 
 
 # ---------------------------------------------------------------------------
@@ -164,88 +204,88 @@ class Base64ImageAgent(AgentServer):
 
 @pytest_asyncio.fixture
 async def ctype_echo_client():
-    agent = ContentTypeEchoAgent()
-    transport = httpx.ASGITransport(app=agent.app)
+    server = _make_ctype_echo_agent()
+    transport = httpx.ASGITransport(app=server.app)
     async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as c:
         yield c
 
 
 @pytest_asyncio.fixture
 async def image_client():
-    agent = ImageAgent()
-    transport = httpx.ASGITransport(app=agent.app)
+    server = _make_image_agent()
+    transport = httpx.ASGITransport(app=server.app)
     async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as c:
         yield c
 
 
 @pytest_asyncio.fixture
 async def audio_client():
-    agent = AudioAgent()
-    transport = httpx.ASGITransport(app=agent.app)
+    server = _make_audio_agent()
+    transport = httpx.ASGITransport(app=server.app)
     async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as c:
         yield c
 
 
 @pytest_asyncio.fixture
 async def html_client():
-    agent = HtmlAgent()
-    transport = httpx.ASGITransport(app=agent.app)
+    server = _make_html_agent()
+    transport = httpx.ASGITransport(app=server.app)
     async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as c:
         yield c
 
 
 @pytest_asyncio.fixture
 async def plaintext_client():
-    agent = PlainTextAgent()
-    transport = httpx.ASGITransport(app=agent.app)
+    server = _make_plaintext_agent()
+    transport = httpx.ASGITransport(app=server.app)
     async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as c:
         yield c
 
 
 @pytest_asyncio.fixture
 async def xml_client():
-    agent = XmlAgent()
-    transport = httpx.ASGITransport(app=agent.app)
+    server = _make_xml_agent()
+    transport = httpx.ASGITransport(app=server.app)
     async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as c:
         yield c
 
 
 @pytest_asyncio.fixture
 async def sse_client():
-    agent = SseAgent()
-    transport = httpx.ASGITransport(app=agent.app)
+    server = _make_sse_agent()
+    transport = httpx.ASGITransport(app=server.app)
     async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as c:
         yield c
 
 
 @pytest_asyncio.fixture
 async def custom_status_client():
-    agent = CustomStatusAgent()
-    transport = httpx.ASGITransport(app=agent.app)
+    server = _make_custom_status_agent()
+    transport = httpx.ASGITransport(app=server.app)
     async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as c:
         yield c
 
 
 @pytest_asyncio.fixture
 async def multipart_raw_client():
-    agent = MultipartRawAgent()
-    transport = httpx.ASGITransport(app=agent.app)
+    server = _make_multipart_raw_agent()
+    transport = httpx.ASGITransport(app=server.app)
     async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as c:
         yield c
 
 
 @pytest_asyncio.fixture
 async def query_client():
-    agent = QueryStringAgent()
-    transport = httpx.ASGITransport(app=agent.app)
+    server = _make_query_string_agent()
+    transport = httpx.ASGITransport(app=server.app)
     async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as c:
         yield c
 
 
 @pytest_asyncio.fixture
 async def b64image_client():
-    agent = Base64ImageAgent()
-    transport = httpx.ASGITransport(app=agent.app)
+    server = _make_b64image_agent()
+    transport = httpx.ASGITransport(app=server.app)
     async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as c:
         yield c
 
@@ -635,7 +675,7 @@ class TestWebSocketUpgradeRejected:
     @pytest.mark.asyncio
     async def test_websocket_upgrade_on_invocations(self):
         """WebSocket handshake on /invocations fails cleanly."""
-        agent = ContentTypeEchoAgent()
+        agent = _make_ctype_echo_agent()
         transport = httpx.ASGITransport(app=agent.app)
         async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as client:
             # Simulate a WebSocket upgrade via HTTP headers
@@ -654,7 +694,7 @@ class TestWebSocketUpgradeRejected:
     @pytest.mark.asyncio
     async def test_websocket_upgrade_on_unknown_path(self):
         """WebSocket handshake on an undefined path fails cleanly."""
-        agent = ContentTypeEchoAgent()
+        agent = _make_ctype_echo_agent()
         transport = httpx.ASGITransport(app=agent.app)
         async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as client:
             resp = await client.get(

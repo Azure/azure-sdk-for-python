@@ -66,15 +66,17 @@ async def test_get_invocation_error_returns_500():
 
     from azure.ai.agentserver import AgentServer
 
-    class BuggyGetAgent(AgentServer):
-        async def invoke(self, request: Request) -> Response:
-            return JSONResponse({})
+    server = AgentServer()
 
-        async def get_invocation(self, request: Request) -> Response:
-            raise RuntimeError("storage unavailable")
+    @server.invoke_handler
+    async def invoke(request: Request) -> Response:
+        return JSONResponse({})
 
-    agent = BuggyGetAgent()
-    transport = httpx.ASGITransport(app=agent.app)
+    @server.get_invocation_handler
+    async def get_inv(request: Request) -> Response:
+        raise RuntimeError("storage unavailable")
+
+    transport = httpx.ASGITransport(app=server.app)
     async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as client:
         resp = await client.get("/invocations/some-id")
         assert resp.status_code == 500
@@ -91,15 +93,17 @@ async def test_cancel_invocation_error_returns_500():
 
     from azure.ai.agentserver import AgentServer
 
-    class BuggyCancelAgent(AgentServer):
-        async def invoke(self, request: Request) -> Response:
-            return JSONResponse({})
+    server = AgentServer()
 
-        async def cancel_invocation(self, request: Request) -> Response:
-            raise RuntimeError("cancel failed")
+    @server.invoke_handler
+    async def invoke(request: Request) -> Response:
+        return JSONResponse({})
 
-    agent = BuggyCancelAgent()
-    transport = httpx.ASGITransport(app=agent.app)
+    @server.cancel_invocation_handler
+    async def cancel(request: Request) -> Response:
+        raise RuntimeError("cancel failed")
+
+    transport = httpx.ASGITransport(app=server.app)
     async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as client:
         resp = await client.post("/invocations/some-id/cancel")
         assert resp.status_code == 500

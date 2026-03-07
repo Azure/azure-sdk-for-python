@@ -17,21 +17,22 @@ from starlette.responses import JSONResponse, Response
 from azure.ai.agentserver import AgentServer
 
 
-class GreetingAgent(AgentServer):
-    """Minimal agent that echoes a greeting."""
+server = AgentServer()
 
-    async def invoke(self, request: Request) -> Response:
-        """Process the invocation by echoing a greeting.
 
-        :param request: The raw Starlette request.
-        :type request: starlette.requests.Request
-        :return: JSON greeting response.
-        :rtype: starlette.responses.JSONResponse
-        """
-        data = await request.json()
-        greeting = f"Hello, {data['name']}!"
-        return JSONResponse({"greeting": greeting})
+@server.invoke_handler
+async def handle_invoke(request: Request) -> Response:
+    """Process the invocation by echoing a greeting.
+
+    :param request: The raw Starlette request.
+    :type request: starlette.requests.Request
+    :return: JSON greeting response.
+    :rtype: starlette.responses.JSONResponse
+    """
+    data = await request.json()
+    greeting = f"Hello, {data['name']}!"
+    return JSONResponse({"greeting": greeting})
 
 
 if __name__ == "__main__":
-    GreetingAgent().run()
+    server.run()

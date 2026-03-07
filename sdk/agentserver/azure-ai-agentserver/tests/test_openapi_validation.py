@@ -21,16 +21,14 @@ from azure.ai.agentserver.validation._openapi_validator import OpenApiValidator
 
 def _make_echo_agent(spec: dict) -> AgentServer:
     """Create an agent that echoes the parsed JSON body with validation."""
+    server = AgentServer(openapi_spec=spec, enable_request_validation=True)
 
-    class _EchoValidated(AgentServer):
-        def __init__(self):
-            super().__init__(openapi_spec=spec, enable_request_validation=True)
+    @server.invoke_handler
+    async def handle(request: Request) -> Response:
+        data = await request.json()
+        return JSONResponse(data)
 
-        async def invoke(self, request: Request) -> Response:
-            data = await request.json()
-            return JSONResponse(data)
-
-    return _EchoValidated()
+    return server
 
 
 async def _client_for(agent: AgentServer):
@@ -234,33 +232,31 @@ async def test_spec_endpoint_returns_spec(validated_client):
 @pytest.mark.asyncio
 async def test_non_json_body_skips_validation(no_spec_client):
     """Non-JSON content type bypasses JSON schema validation."""
-    class PlainTextEchoAgent(AgentServer):
-        def __init__(self):
-            super().__init__(openapi_spec={
-                "openapi": "3.0.0",
-                "info": {"title": "Test", "version": "1.0"},
-                "paths": {
-                    "/invocations": {
-                        "post": {
-                            "requestBody": {
-                                "content": {
-                                    "application/json": {
-                                        "schema": {"type": "object", "required": ["name"]}
-                                    }
-                                }
-                            },
-                            "responses": {"200": {"description": "OK"}}
+    server = AgentServer(openapi_spec={
+        "openapi": "3.0.0",
+        "info": {"title": "Test", "version": "1.0"},
+        "paths": {
+            "/invocations": {
+                "post": {
+                    "requestBody": {
+                        "content": {
+                            "application/json": {
+                                "schema": {"type": "object", "required": ["name"]}
+                            }
                         }
-                    }
+                    },
+                    "responses": {"200": {"description": "OK"}}
                 }
-            }, enable_request_validation=True)
+            }
+        }
+    }, enable_request_validation=True)
 
-        async def invoke(self, request: Request) -> Response:
-            body = await request.body()
-            return Response(content=body, media_type="text/plain")
+    @server.invoke_handler
+    async def handle(request: Request) -> Response:
+        body = await request.body()
+        return Response(content=body, media_type="text/plain")
 
-    agent = PlainTextEchoAgent()
-    transport = httpx.ASGITransport(app=agent.app)
+    transport = httpx.ASGITransport(app=server.app)
     async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as client:
         resp = await client.post(
             "/invocations",
