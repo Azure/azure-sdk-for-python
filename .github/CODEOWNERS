@@ -239,7 +239,7 @@
 
 # ServiceLabel: %Discovery
 # PRLabel: %Discovery
-/sdk/discovery/    @lawaloy @achocron @sylar217
+/sdk/discovery/    @oylawal @achocron
 
 # PRLabel: %Document Intelligence
 /sdk/documentintelligence/    @bojunehsu @yungshinlintw
