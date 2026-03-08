@@ -322,6 +322,33 @@ class TestGenerateDataSourceConfig:
         # Numerics (converted to str by _convert_value) should be typed as string
         assert properties["score"]["type"] == "string"
 
+    def test_flat_schema_skips_none_nan_for_type_inference(self):
+        """Test that schema inference skips None/NaN rows to find the real type."""
+        import numpy as np
+
+        df = pd.DataFrame(
+            {
+                "tags": [None, ["tag1", "tag2"], ["tag3"]],
+                "metadata": [np.nan, {"key": "val"}, {}],
+                "query": [None, None, "hello"],
+            }
+        )
+        column_mapping = {
+            "tags": "${data.tags}",
+            "metadata": "${data.metadata}",
+            "query": "${data.query}",
+        }
+
+        config = _generate_data_source_config(df, column_mapping)
+        properties = config["item_schema"]["properties"]
+
+        # Should look past None in row 0 and find list in row 1
+        assert properties["tags"]["type"] == "array"
+        # Should look past NaN in row 0 and find dict in row 1
+        assert properties["metadata"]["type"] == "object"
+        # All None → falls back to string
+        assert properties["query"]["type"] == "string"
+
 
 @pytest.mark.unittest
 class TestGetDataSource:

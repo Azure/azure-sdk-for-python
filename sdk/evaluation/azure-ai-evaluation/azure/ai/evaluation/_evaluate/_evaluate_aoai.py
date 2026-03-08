@@ -715,14 +715,16 @@ def _generate_data_source_config(input_data_df: pd.DataFrame, column_mapping: Di
         props = data_source_config["item_schema"]["properties"]
         req = data_source_config["item_schema"]["required"]
         for key in column_mapping.keys():
-            if key in input_data_df and len(input_data_df[key]) > 0:
-                sample = input_data_df[key].iloc[0]
-                if isinstance(sample, list):
-                    props[key] = {"type": "array"}
-                elif isinstance(sample, dict):
-                    props[key] = {"type": "object"}
-                else:
-                    props[key] = {"type": "string"}
+            sample = None
+            if key in input_data_df:
+                for candidate in input_data_df[key]:
+                    if candidate is not None and not (isinstance(candidate, float) and pd.isna(candidate)):
+                        sample = candidate
+                        break
+            if isinstance(sample, list):
+                props[key] = {"type": "array"}
+            elif isinstance(sample, dict):
+                props[key] = {"type": "object"}
             else:
                 props[key] = {"type": "string"}
             req.append(key)
