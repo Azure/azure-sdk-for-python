@@ -8,6 +8,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+
 import re
 from typing import Any, TypeVar
 from azure.core.polling import AsyncLROPoller, AsyncPollingMethod
@@ -31,7 +32,9 @@ def _parse_operation_id(operation_location_header: str) -> str:
 
     match = re.search(regex, operation_location_header)
     if not match:
-        raise ValueError(f"Could not extract operation ID from: {operation_location_header}")
+        raise ValueError(
+            f"Could not extract operation ID from: {operation_location_header}"
+        )
 
     return match.group(1)
 
@@ -60,7 +63,9 @@ class AnalyzeAsyncLROPoller(AsyncLROPoller[PollingReturnType_co]):
             raise ValueError(f"Could not extract operation ID: {str(e)}") from e
 
     @classmethod
-    def from_poller(cls, poller: AsyncLROPoller[PollingReturnType_co]) -> "AnalyzeAsyncLROPoller[PollingReturnType_co]":  # pyright: ignore[reportInvalidTypeArguments]
+    def from_poller(
+        cls, poller: AsyncLROPoller[PollingReturnType_co]
+    ) -> "AnalyzeAsyncLROPoller[PollingReturnType_co]":  # pyright: ignore[reportInvalidTypeArguments]  # fmt: skip
         """Wrap an existing AsyncLROPoller without re-initializing the polling method.
 
         This avoids duplicate HTTP requests that would occur if we created a new
@@ -72,7 +77,7 @@ class AnalyzeAsyncLROPoller(AsyncLROPoller[PollingReturnType_co]):
         :rtype: AnalyzeAsyncLROPoller
         """
         # Create instance without calling __init__ to avoid re-initialization
-        instance: AnalyzeAsyncLROPoller[PollingReturnType_co] = object.__new__(cls)  # pyright: ignore[reportInvalidTypeArguments]
+        instance: "AnalyzeAsyncLROPoller[PollingReturnType_co]" = object.__new__(cls)  # pyright: ignore[reportInvalidTypeArguments]  # fmt: skip
         # Copy all attributes from the original poller
         instance.__dict__.update(poller.__dict__)
         return instance

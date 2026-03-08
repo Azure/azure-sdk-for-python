@@ -3,11 +3,12 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import functools
 import unittest
 from unittest.mock import Mock, patch
-from devtools_testutils import recorded_by_proxy
-from preparers import app_config_decorator_aad
+from devtools_testutils import EnvironmentVariableLoader, recorded_by_proxy
 from testcase import AppConfigTestCase
+from test_constants import APPCONFIGURATION_ENDPOINT_STRING, APPCONFIGURATION_KEYVAULT_SECRET_URL
 from azure.appconfiguration import SecretReferenceConfigurationSetting
 from azure.keyvault.secrets import SecretClient
 from azure.appconfiguration.provider._key_vault._secret_provider import SecretProvider
@@ -15,6 +16,19 @@ from azure.appconfiguration.provider._key_vault._secret_provider import SecretPr
 TEST_SECRET_ID = "https://myvault.vault.azure.net/secrets/my_secret"
 
 TEST_SECRET_ID_VERSION = TEST_SECRET_ID + "/12345"
+
+AppConfigProviderPreparer = functools.partial(
+    EnvironmentVariableLoader,
+    "appconfiguration",
+    appconfiguration_endpoint_string=APPCONFIGURATION_ENDPOINT_STRING,
+    appconfiguration_keyvault_secret_url=APPCONFIGURATION_KEYVAULT_SECRET_URL,
+)
+
+SecretPreparer = functools.partial(
+    EnvironmentVariableLoader,
+    "appconfiguration",
+    appconfiguration_keyvault_secret_url=APPCONFIGURATION_KEYVAULT_SECRET_URL,
+)
 
 
 class TestSecretProvider(AppConfigTestCase, unittest.TestCase):
@@ -389,9 +403,9 @@ class TestSecretProvider(AppConfigTestCase, unittest.TestCase):
                     # Verify the result
                     self.assertEqual(result, "secret-value")
 
+    @SecretPreparer()
     @recorded_by_proxy
-    @app_config_decorator_aad
-    def test_integration_with_keyvault(self, appconfiguration_endpoint_string, appconfiguration_keyvault_secret_url):
+    def test_integration_with_keyvault(self, appconfiguration_keyvault_secret_url):
         """Test integration with Key Vault."""
         if not appconfiguration_keyvault_secret_url:
             self.skipTest("No Key Vault secret URL provided")

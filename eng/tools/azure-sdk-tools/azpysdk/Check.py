@@ -1,6 +1,7 @@
 import abc
 import os
 import argparse
+import re
 import traceback
 import sys
 import shutil
@@ -92,7 +93,7 @@ class Check(abc.ABC):
 
                 if prebuilt_whl:
                     install_location = os.path.join(wheel_dir, prebuilt_whl)
-                    install_into_venv(venv_location, [f"{install_location}[build]"], REPO_ROOT)
+                    install_into_venv(venv_location, [install_location], REPO_ROOT)
                 else:
                     logger.error(
                         "Falling back to manual build and install of azure-sdk-tools into isolated env,"
@@ -194,6 +195,16 @@ class Check(abc.ABC):
                 logger.error(f"Exception: {e}")
                 return []
         else:
+            # Narrow discovery to a specific service directory when --service is provided.
+            # "auto" is discarded (treated the same as no value), matching dispatch_checks.py behavior.
+            service = getattr(args, "service", None)
+            if service and service != "auto":
+                service_dir = os.path.join(REPO_ROOT, "sdk", service)
+                if os.path.isdir(service_dir):
+                    targeted_dir = service_dir
+                else:
+                    logger.warning(f"Service directory '{service_dir}' does not exist, falling back to cwd.")
+
             targeted_packages = discover_targeted_packages(args.target, targeted_dir)
             for pkg in targeted_packages:
                 try:
@@ -313,3 +324,24 @@ class Check(abc.ABC):
     def _build_pytest_args(self, package_dir: str, args: argparse.Namespace) -> List[str]:
         """Build pytest args for a package directory."""
         return self._build_pytest_args_base(package_dir, args)
+
+    def get_check_version(self, executable: str, module_name: str) -> Optional[str]:
+        """Get the version of a tool installed in the virtual environment.
+
+        Runs ``<executable> -m <module_name> --version`` and extracts the first
+        semver-style version string from the output.
+
+        :param executable: Path to the Python executable in the target venv.
+        :param module_name: The module to query (e.g. "pylint", "mypy").
+        :returns: The version string, or None if it could not be determined.
+        """
+        try:
+            result = subprocess.run(
+                [executable, "-m", module_name, "--version"],
+                capture_output=True,
+            )
+            version_output = result.stdout.rstrip().decode("utf-8")
+            matches = re.findall(r"(\d+\.\d+\.\d+)", version_output)
+            return matches[0] if matches else None
+        except Exception:
+            return None

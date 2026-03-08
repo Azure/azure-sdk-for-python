@@ -60,8 +60,8 @@ import os
 from dotenv import load_dotenv
 from azure.ai.contentunderstanding.aio import ContentUnderstandingClient
 from azure.ai.contentunderstanding.models import (
-    AnalyzeInput,
-    AnalyzeResult,
+    AnalysisInput,
+    AnalysisResult,
     DocumentContent,
     ContentField,
     ArrayField,
@@ -88,9 +88,9 @@ async def main() -> None:
 
         poller = await client.begin_analyze(
             analyzer_id="prebuilt-invoice",
-            inputs=[AnalyzeInput(url=invoice_url)],
+            inputs=[AnalysisInput(url=invoice_url)],
         )
-        result: AnalyzeResult = await poller.result()
+        result: AnalysisResult = await poller.result()
         # [END analyze_invoice]
 
         # [START extract_invoice_fields]
@@ -121,7 +121,11 @@ async def main() -> None:
         customer_name_field = document_content.fields.get("CustomerName")
         print(f"Customer Name: {customer_name_field.value or '(None)' if customer_name_field else '(None)'}")
         if customer_name_field:
-            print(f"  Confidence: {customer_name_field.confidence:.2f}" if customer_name_field.confidence else "  Confidence: N/A")
+            print(
+                f"  Confidence: {customer_name_field.confidence:.2f}"
+                if customer_name_field.confidence
+                else "  Confidence: N/A"
+            )
             print(f"  Source: {customer_name_field.source or 'N/A'}")
             if customer_name_field.spans and len(customer_name_field.spans) > 0:
                 span = customer_name_field.spans[0]
@@ -131,7 +135,11 @@ async def main() -> None:
         invoice_date_field = document_content.fields.get("InvoiceDate")
         print(f"Invoice Date: {invoice_date_field.value or '(None)' if invoice_date_field else '(None)'}")
         if invoice_date_field:
-            print(f"  Confidence: {invoice_date_field.confidence:.2f}" if invoice_date_field.confidence else "  Confidence: N/A")
+            print(
+                f"  Confidence: {invoice_date_field.confidence:.2f}"
+                if invoice_date_field.confidence
+                else "  Confidence: N/A"
+            )
             print(f"  Source: {invoice_date_field.source or 'N/A'}")
             if invoice_date_field.spans and len(invoice_date_field.spans) > 0:
                 span = invoice_date_field.spans[0]
@@ -144,12 +152,16 @@ async def main() -> None:
             currency_field = total_amount_field.value.get("CurrencyCode")
             amount = amount_field.value if amount_field else None
             # Use currency value if present, otherwise default to ""
-            currency = (currency_field.value if currency_field and currency_field.value else "")
+            currency = currency_field.value if currency_field and currency_field.value else ""
             if isinstance(amount, (int, float)):
                 print(f"\nTotal: {currency}{amount:.2f}")
             else:
                 print(f"\nTotal: {currency}{amount or '(None)'}")
-            print(f"  Amount Confidence: {amount_field.confidence:.2f}" if amount_field and amount_field.confidence else "  Amount Confidence: N/A")
+            print(
+                f"  Amount Confidence: {amount_field.confidence:.2f}"
+                if amount_field and amount_field.confidence
+                else "  Amount Confidence: N/A"
+            )
             print(f"  Source for Amount: {amount_field.source or 'N/A'}" if amount_field else "  Source: N/A")
 
         # Extract array fields (collections like line items)
@@ -164,7 +176,11 @@ async def main() -> None:
                     quantity = quantity_field.value if quantity_field and quantity_field.value else "N/A"
                     print(f"  Item {i}: {description}")
                     print(f"    Quantity: {quantity}")
-                    print(f"    Quantity Confidence: {quantity_field.confidence:.2f}" if quantity_field and quantity_field.confidence else "    Quantity Confidence: N/A")
+                    print(
+                        f"    Quantity Confidence: {quantity_field.confidence:.2f}"
+                        if quantity_field and quantity_field.confidence
+                        else "    Quantity Confidence: N/A"
+                    )
         # [END extract_invoice_fields]
 
         if not isinstance(credential, AzureKeyCredential):

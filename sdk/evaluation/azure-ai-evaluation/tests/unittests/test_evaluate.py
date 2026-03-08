@@ -1,5 +1,6 @@
 from typing import List, Dict, Union
 import json
+import logging
 import math
 import os
 import pathlib
@@ -39,11 +40,13 @@ from azure.ai.evaluation._evaluate._evaluate import (
     _convert_results_to_aoai_evaluation_results,
     _process_rows,
     _aggregate_label_defect_metrics,
+    _update_metric_value,
 )
 from azure.ai.evaluation._evaluate._utils import _convert_name_map_into_property_entries
 from azure.ai.evaluation._evaluate._utils import _apply_column_mapping, _trace_destination_from_project_scope
 from azure.ai.evaluation._evaluators._eci._eci import ECIEvaluator
 from azure.ai.evaluation._exceptions import EvaluationException
+from azure.ai.evaluation._legacy._adapters._check import MISSING_LEGACY_SDK
 
 
 def _get_file(name):
@@ -602,6 +605,7 @@ class TestEvaluate:
 
         assert "Please ensure the evaluate API is properly guarded with the '__main__' block" in exc_info.value.args[0]
 
+    @pytest.mark.skipif(MISSING_LEGACY_SDK, reason="This test has a promptflow dependency")
     def test_get_trace_destination(self, mock_validate_trace_destination, mock_project_scope):
         pf_client = PFClient()
         trace_destination_without_override = pf_client._config.get_trace_destination()
@@ -938,6 +942,7 @@ class TestEvaluate:
         eval1._set_conversation_aggregator(custom_aggregator)
         assert eval1._get_conversation_aggregator_type() == _AggregationType.CUSTOM
 
+    @pytest.mark.skipif(MISSING_LEGACY_SDK, reason="This test has a promptflow dependency")
     @pytest.mark.parametrize("use_async", ["true", "false"])  # Strings intended
     @pytest.mark.usefixtures("restore_env_vars")
     def test_aggregation_serialization(self, evaluate_test_data_conversion_jsonl_file, use_async):
@@ -1744,3 +1749,76 @@ class TestTagsInLoggingFunctions:
         call_args = mock_client.start_evaluation_run.call_args
         eval_upload = call_args[1]["evaluation"]
         assert eval_upload.tags == tags
+
+
+class TestUpdateMetricValueTokenCoercion:
+    """Tests for token count coercion in _update_metric_value.
+
+    The PR fix ensures that *_total_tokens, *_prompt_tokens, and
+    *_completion_tokens values are coerced to int via int(float(value)),
+    and None/NaN values are mapped to None.
+    """
+
+    _TOKEN_SUFFIXES = ["_total_tokens", "_prompt_tokens", "_completion_tokens"]
+
+    @staticmethod
+    def _call(metric_key, metric_value):
+        metric_dict = {}
+        _update_metric_value(
+            criteria_type="azure_ai_evaluator",
+            metric_dict=metric_dict,
+            metric_key=metric_key,
+            metric="test_metric",
+            metric_value=metric_value,
+            logger=logging.getLogger("test"),
+        )
+        return metric_dict
+
+    # --- int pass-through ---
+    @pytest.mark.parametrize("suffix", _TOKEN_SUFFIXES)
+    def test_int_value_passthrough(self, suffix):
+        result = self._call(f"evaluator{suffix}", 42)
+        token_key = suffix.lstrip("_")
+        assert result["sample"]["usage"][token_key] == 42
+
+    # --- string-to-int ---
+    @pytest.mark.parametrize("suffix", _TOKEN_SUFFIXES)
+    def test_string_int_coerced(self, suffix):
+        result = self._call(f"evaluator{suffix}", "123")
+        token_key = suffix.lstrip("_")
+        assert result["sample"]["usage"][token_key] == 123
+
+    # --- float string to int ---
+    @pytest.mark.parametrize("suffix", _TOKEN_SUFFIXES)
+    def test_float_string_coerced(self, suffix):
+        result = self._call(f"evaluator{suffix}", "123.0")
+        token_key = suffix.lstrip("_")
+        assert result["sample"]["usage"][token_key] == 123
+
+    # --- float to int ---
+    @pytest.mark.parametrize("suffix", _TOKEN_SUFFIXES)
+    def test_float_value_coerced(self, suffix):
+        result = self._call(f"evaluator{suffix}", 99.0)
+        token_key = suffix.lstrip("_")
+        assert result["sample"]["usage"][token_key] == 99
+
+    # --- None maps to None ---
+    @pytest.mark.parametrize("suffix", _TOKEN_SUFFIXES)
+    def test_none_maps_to_none(self, suffix):
+        result = self._call(f"evaluator{suffix}", None)
+        token_key = suffix.lstrip("_")
+        assert result["sample"]["usage"][token_key] is None
+
+    # --- NaN maps to None ---
+    @pytest.mark.parametrize("suffix", _TOKEN_SUFFIXES)
+    def test_nan_maps_to_none(self, suffix):
+        result = self._call(f"evaluator{suffix}", float("nan"))
+        token_key = suffix.lstrip("_")
+        assert result["sample"]["usage"][token_key] is None
+
+    # --- NaN string maps to None ---
+    @pytest.mark.parametrize("suffix", _TOKEN_SUFFIXES)
+    def test_nan_string_maps_to_none(self, suffix):
+        result = self._call(f"evaluator{suffix}", "nan")
+        token_key = suffix.lstrip("_")
+        assert result["sample"]["usage"][token_key] is None

@@ -39,8 +39,6 @@ extends:
       safeName: azureaiprojects
     - name: azure-ai-agents
       safeName: azureaiagents
-    - name: azure-ai-voicelive
-      safeName: azureaivoicelive
     # These packages are deprecated:
     # - name: azure-ai-inference
     #   safeName: azureaiinference
