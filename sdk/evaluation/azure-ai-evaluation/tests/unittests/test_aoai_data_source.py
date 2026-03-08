@@ -171,6 +171,26 @@ class TestBuildSchemaTreeFromPaths:
         assert nested["type"] == "object"
         assert "field" in nested["properties"]
 
+    def test_leaf_type_map_overrides_force_leaf_type(self):
+        """Test that leaf_type_map overrides force_leaf_type for specific paths."""
+        paths = ["query", "tags", "metadata"]
+        leaf_type_map = {"tags": "array", "metadata": "object"}
+        schema = _build_schema_tree_from_paths(paths, force_leaf_type="string", leaf_type_map=leaf_type_map)
+
+        assert schema["properties"]["query"]["type"] == "string"
+        assert schema["properties"]["tags"]["type"] == "array"
+        assert schema["properties"]["metadata"]["type"] == "object"
+
+    def test_leaf_type_map_nested_paths(self):
+        """Test leaf_type_map with nested paths."""
+        paths = ["context.tags", "context.query"]
+        leaf_type_map = {"context.tags": "array"}
+        schema = _build_schema_tree_from_paths(paths, force_leaf_type="string", leaf_type_map=leaf_type_map)
+
+        context = schema["properties"]["context"]
+        assert context["properties"]["tags"]["type"] == "array"
+        assert context["properties"]["query"]["type"] == "string"
+
 
 @pytest.mark.unittest
 class TestGenerateDataSourceConfig:
@@ -348,6 +368,50 @@ class TestGenerateDataSourceConfig:
         assert properties["metadata"]["type"] == "object"
         # All None → falls back to string
         assert properties["query"]["type"] == "string"
+
+    def test_flat_schema_skips_pd_na_for_type_inference(self):
+        """Test that schema inference skips pd.NA sentinel values."""
+        df = pd.DataFrame(
+            {
+                "tags": [pd.NA, ["tag1", "tag2"], ["tag3"]],
+                "query": ["hello", "world", "test"],
+            }
+        )
+        column_mapping = {
+            "tags": "${data.tags}",
+            "query": "${data.query}",
+        }
+
+        config = _generate_data_source_config(df, column_mapping)
+        properties = config["item_schema"]["properties"]
+
+        assert properties["tags"]["type"] == "array"
+        assert properties["query"]["type"] == "string"
+
+    def test_nested_schema_infers_list_and_dict_leaf_types(self):
+        """Test that nested schema infers array/object types for leaf nodes."""
+        df = pd.DataFrame(
+            [
+                {
+                    "item.query": "hello",
+                    "item.tags": ["tag1", "tag2"],
+                    "item.metadata": {"key": "val"},
+                }
+            ]
+        )
+        column_mapping = {
+            "query": "${data.item.query}",
+            "tags": "${data.item.tags}",
+            "metadata": "${data.item.metadata}",
+        }
+
+        config = _generate_data_source_config(df, column_mapping)
+        schema = config["item_schema"]
+
+        # After wrapper stripping, leaves should have inferred types
+        assert schema["properties"]["query"]["type"] == "string"
+        assert schema["properties"]["tags"]["type"] == "array"
+        assert schema["properties"]["metadata"]["type"] == "object"
 
 
 @pytest.mark.unittest

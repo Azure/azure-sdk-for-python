@@ -1979,3 +1979,20 @@ class TestProcessCriteriaMetricsThresholdInjection:
         )
         assert len(results) > 0
         assert results[0].get("threshold") is None
+
+    def test_nan_threshold_gets_injected(self):
+        """NaN threshold should be replaced by pass_threshold from config."""
+        metrics = {"score": 4.5, "score_reason": "Good", "score_threshold": float("nan")}
+        testing_criteria_metadata = {
+            "coherence": {
+                "metrics": ["score"],
+                "type": "quality",
+                "is_inverse": False,
+                "pass_threshold": 3.0,
+            }
+        }
+        results, _ = _process_criteria_metrics(
+            "coherence", metrics, testing_criteria_metadata, logging.getLogger(), None, None
+        )
+        assert len(results) > 0
+        assert results[0]["threshold"] == 3.0

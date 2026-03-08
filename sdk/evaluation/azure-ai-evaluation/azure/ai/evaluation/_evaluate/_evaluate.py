@@ -2513,7 +2513,7 @@ def _process_criteria_metrics(
     config_threshold = testing_criteria_metadata.get(criteria_name, {}).get("pass_threshold")
     if config_threshold is not None:
         for metric_values in result_per_metric.values():
-            if metric_values.get("threshold") is None:
+            if _is_none_or_nan(metric_values.get("threshold")):
                 metric_values["threshold"] = config_threshold
 
     # Convert to result objects
