@@ -67,12 +67,7 @@ class AgentFrameworkAgent(FoundryCBAgent):
         :type project_endpoint: Optional[str]
         """
         super().__init__(credentials=credentials, **kwargs)  # pylint: disable=unexpected-keyword-arg
-        project_endpoint = get_project_endpoint(logger=logger) or project_endpoint
-        if not session_repository and project_endpoint and self.credentials:
-            logger.warning("No session repository provided. FoundryConversationSessionRepository will be used.")
-            session_repository = self._create_foundry_conversation_session_repository(
-                project_endpoint, self.credentials
-            )
+        self.project_endpoint = get_project_endpoint(logger=logger) or project_endpoint
         self._session_repository = session_repository
         self._hitl_helper = HumanInTheLoopHelper()
 
@@ -346,3 +341,15 @@ class AgentFrameworkAgent(FoundryCBAgent):
             if isinstance(provider, BaseHistoryProvider):
                 return provider
         return None
+
+    def _try_setup_default_conversation_repository(self) -> None:
+        """Set up the default FoundryConversationSessionRepository if no session repository was provided.
+
+        :return: None
+        :rtype: None
+        """
+        if not self._session_repository and self._project_endpoint and self.credentials:
+            logger.warning("No session repository provided. FoundryConversationSessionRepository will be used.")
+            self._session_repository = self._create_foundry_conversation_session_repository(
+                self._project_endpoint, self.credentials
+            )
