@@ -41,6 +41,9 @@ from azure.ai.evaluation._evaluate._evaluate import (
     _process_rows,
     _aggregate_label_defect_metrics,
     _update_metric_value,
+    _build_internal_log_attributes,
+    _extract_testing_criteria_metadata,
+    _process_criteria_metrics,
 )
 from azure.ai.evaluation._evaluate._utils import _convert_name_map_into_property_entries
 from azure.ai.evaluation._evaluate._utils import _apply_column_mapping, _trace_destination_from_project_scope
@@ -1822,3 +1825,174 @@ class TestUpdateMetricValueTokenCoercion:
         result = self._call(f"evaluator{suffix}", "nan")
         token_key = suffix.lstrip("_")
         assert result["sample"]["usage"][token_key] is None
+
+
+@pytest.mark.unittest
+class TestBuildInternalLogAttributesThreshold:
+    """Tests for _build_internal_log_attributes threshold handling."""
+
+    def test_threshold_zero_is_included(self):
+        """Threshold of 0 should be logged, not silently dropped."""
+        event_data = {"threshold": 0, "name": "my_grader"}
+        attrs = _build_internal_log_attributes(event_data, "score", None, {})
+        assert "gen_ai.evaluation.threshold" in attrs
+        assert attrs["gen_ai.evaluation.threshold"] == "0"
+
+    def test_threshold_zero_float_is_included(self):
+        """Threshold of 0.0 should be logged."""
+        event_data = {"threshold": 0.0, "name": "my_grader"}
+        attrs = _build_internal_log_attributes(event_data, "score", None, {})
+        assert attrs["gen_ai.evaluation.threshold"] == "0.0"
+
+    def test_threshold_none_is_excluded(self):
+        """No threshold key when threshold is None."""
+        event_data = {"threshold": None, "name": "my_grader"}
+        attrs = _build_internal_log_attributes(event_data, "score", None, {})
+        assert "gen_ai.evaluation.threshold" not in attrs
+
+    def test_threshold_missing_is_excluded(self):
+        """No threshold key when threshold is absent from event_data."""
+        event_data = {"name": "my_grader"}
+        attrs = _build_internal_log_attributes(event_data, "score", None, {})
+        assert "gen_ai.evaluation.threshold" not in attrs
+
+    def test_threshold_positive_value(self):
+        """Normal positive threshold is included."""
+        event_data = {"threshold": 3.5, "name": "my_grader"}
+        attrs = _build_internal_log_attributes(event_data, "score", None, {})
+        assert attrs["gen_ai.evaluation.threshold"] == "3.5"
+
+
+@pytest.mark.unittest
+class TestExtractTestingCriteriaMetadataPassThreshold:
+    """Tests for pass_threshold propagation in _extract_testing_criteria_metadata."""
+
+    def test_pass_threshold_propagated_from_config(self):
+        """pass_threshold from evaluator_config should appear in metadata."""
+        evaluators = {"my_grader": lambda **kwargs: {"score": 1}}
+        evaluator_config = {
+            "my_grader": {
+                "_pass_threshold": 0.8,
+                "_evaluator_definition": {"metrics": {"score": {"type": "numeric"}}},
+            }
+        }
+        metadata = _extract_testing_criteria_metadata(
+            evaluators, None, evaluator_config, logging.getLogger(), None, None
+        )
+        assert metadata["my_grader"]["pass_threshold"] == 0.8
+
+    def test_pass_threshold_zero_propagated(self):
+        """pass_threshold of 0 should be propagated, not dropped."""
+        evaluators = {"my_grader": lambda **kwargs: {"score": 1}}
+        evaluator_config = {
+            "my_grader": {
+                "_pass_threshold": 0,
+                "_evaluator_definition": {"metrics": {"score": {"type": "numeric"}}},
+            }
+        }
+        metadata = _extract_testing_criteria_metadata(
+            evaluators, None, evaluator_config, logging.getLogger(), None, None
+        )
+        assert metadata["my_grader"]["pass_threshold"] == 0
+
+    def test_pass_threshold_absent_not_added(self):
+        """When no _pass_threshold in config, metadata should not have pass_threshold."""
+        evaluators = {"my_grader": lambda **kwargs: {"score": 1}}
+        evaluator_config = {
+            "my_grader": {
+                "_evaluator_definition": {"metrics": {"score": {"type": "numeric"}}},
+            }
+        }
+        metadata = _extract_testing_criteria_metadata(
+            evaluators, None, evaluator_config, logging.getLogger(), None, None
+        )
+        assert "pass_threshold" not in metadata["my_grader"]
+
+
+@pytest.mark.unittest
+class TestProcessCriteriaMetricsThresholdInjection:
+    """Tests for threshold injection in _process_criteria_metrics."""
+
+    def test_threshold_injected_when_missing(self):
+        """Metrics without a threshold should get it from pass_threshold in metadata."""
+        metrics = {"score": 4.5, "score_reason": "Good"}
+        testing_criteria_metadata = {
+            "coherence": {
+                "metrics": ["score"],
+                "type": "quality",
+                "is_inverse": False,
+                "pass_threshold": 3.0,
+            }
+        }
+        results, _ = _process_criteria_metrics(
+            "coherence", metrics, testing_criteria_metadata, logging.getLogger(), None, None
+        )
+        assert len(results) > 0
+        assert results[0]["threshold"] == 3.0
+
+    def test_threshold_not_overwritten_when_present(self):
+        """Metrics that already have a threshold should not be overwritten."""
+        metrics = {"score": 4.5, "score_reason": "Good", "score_threshold": 5.0}
+        testing_criteria_metadata = {
+            "coherence": {
+                "metrics": ["score"],
+                "type": "quality",
+                "is_inverse": False,
+                "pass_threshold": 3.0,
+            }
+        }
+        results, _ = _process_criteria_metrics(
+            "coherence", metrics, testing_criteria_metadata, logging.getLogger(), None, None
+        )
+        assert len(results) > 0
+        assert results[0]["threshold"] == 5.0
+
+    def test_threshold_zero_injected(self):
+        """pass_threshold of 0 should be injected, not skipped."""
+        metrics = {"score": 4.5, "score_reason": "Good"}
+        testing_criteria_metadata = {
+            "coherence": {
+                "metrics": ["score"],
+                "type": "quality",
+                "is_inverse": False,
+                "pass_threshold": 0,
+            }
+        }
+        results, _ = _process_criteria_metrics(
+            "coherence", metrics, testing_criteria_metadata, logging.getLogger(), None, None
+        )
+        assert len(results) > 0
+        assert results[0]["threshold"] == 0
+
+    def test_no_injection_without_pass_threshold(self):
+        """Without pass_threshold in metadata, threshold should remain None."""
+        metrics = {"score": 4.5, "score_reason": "Good"}
+        testing_criteria_metadata = {
+            "coherence": {
+                "metrics": ["score"],
+                "type": "quality",
+                "is_inverse": False,
+            }
+        }
+        results, _ = _process_criteria_metrics(
+            "coherence", metrics, testing_criteria_metadata, logging.getLogger(), None, None
+        )
+        assert len(results) > 0
+        assert results[0].get("threshold") is None
+
+    def test_nan_threshold_gets_injected(self):
+        """NaN threshold should be replaced by pass_threshold from config."""
+        metrics = {"score": 4.5, "score_reason": "Good", "score_threshold": float("nan")}
+        testing_criteria_metadata = {
+            "coherence": {
+                "metrics": ["score"],
+                "type": "quality",
+                "is_inverse": False,
+                "pass_threshold": 3.0,
+            }
+        }
+        results, _ = _process_criteria_metrics(
+            "coherence", metrics, testing_criteria_metadata, logging.getLogger(), None, None
+        )
+        assert len(results) > 0
+        assert results[0]["threshold"] == 3.0

@@ -1103,7 +1103,7 @@ def _build_internal_log_attributes(
     # Create a copy of the base log attributes
     internal_log_attributes: Dict[str, str] = log_attributes.copy()
     # Add threshold if present
-    if event_data.get("threshold"):
+    if event_data.get("threshold") is not None:
         internal_log_attributes["gen_ai.evaluation.threshold"] = str(event_data["threshold"])
 
     # Add testing criteria details if present
@@ -2030,6 +2030,11 @@ def _extract_testing_criteria_metadata(
             "metrics": metrics,
             "is_inverse": is_inverse,
         }
+        # Propagate pass_threshold from evaluator config so result events can include it
+        if evaluator_config and criteria_name in evaluator_config:
+            pass_threshold = evaluator_config[criteria_name].get("_pass_threshold")
+            if pass_threshold is not None:
+                testing_criteria_metadata[criteria_name]["pass_threshold"] = pass_threshold
 
     return testing_criteria_metadata
 
@@ -2502,6 +2507,14 @@ def _process_criteria_metrics(
 
     # Extract metric values
     result_per_metric = _extract_metric_values(criteria_name, criteria_type, metrics, expected_metrics, logger)
+
+    # Inject threshold from evaluator config when not present in raw results
+    # (e.g., PythonGrader/code evaluators don't emit a threshold column)
+    config_threshold = testing_criteria_metadata.get(criteria_name, {}).get("pass_threshold")
+    if config_threshold is not None:
+        for metric_values in result_per_metric.values():
+            if _is_none_or_nan(metric_values.get("threshold")):
+                metric_values["threshold"] = config_threshold
 
     # Convert to result objects
     results = []
