@@ -437,7 +437,7 @@ class TestGetDataSource:
         # Ensure we did not accidentally nest another 'item' key inside the wrapper
         assert "item" not in item_payload
         assert item_payload["sample"]["output_text"] == "someoutput"
-        assert item_payload["sample"]["output_items"] == "['item1', 'item2']"
+        assert item_payload["sample"]["output_items"] == ["item1", "item2"]
 
     def test_data_source_with_item_sample_column_and_nested_values(self, nested_item_sample_keyword_data):
         """Ensure rows that already have an 'item' column keep nested dicts intact."""
@@ -464,7 +464,7 @@ class TestGetDataSource:
         # Ensure we did not accidentally nest another 'item' key inside the wrapper
         assert "item" not in item_payload
         assert item_payload["sample"]["output_text"] == "someoutput"
-        assert item_payload["sample"]["output_items"] == "['item1', 'item2']"
+        assert item_payload["sample"]["output_items"] == ["item1", "item2"]
 
     def test_data_source_with_sample_output_metadata(self, flat_sample_output_data):
         """Ensure flat rows that include dotted sample metadata remain accessible."""
@@ -485,7 +485,7 @@ class TestGetDataSource:
         assert row["test"]["test_string"] == "baking cakes is fun!"
         # sample.output_text should follow the row through normalization without being stringified
         assert row["sample.output_text"] == "someoutput"
-        assert row["sample.output_items"] == "['item1', 'item2']"
+        assert row["sample.output_items"] == ["item1", "item2"]
 
     def test_data_source_with_numeric_values(self, flat_test_data):
         """Test data source generation converts numeric values to strings."""
@@ -503,6 +503,35 @@ class TestGetDataSource:
         assert content[0][WRAPPER_KEY]["confidence"] == "0.95"
         assert isinstance(content[0][WRAPPER_KEY]["score"], str)
         assert isinstance(content[0][WRAPPER_KEY]["confidence"], str)
+
+    def test_data_source_with_list_and_dict_values(self, flat_test_data):
+        """Test data source generation preserves list and dict values as-is."""
+        flat_test_data["tags"] = [["tag1", "tag2"], ["tag3"], []]
+        flat_test_data["metadata"] = [{"key": "val"}, {"key2": "val2"}, {}]
+
+        column_mapping = {
+            "query": "${data.query}",
+            "tags": "${data.tags}",
+            "metadata": "${data.metadata}",
+        }
+
+        data_source = _get_data_source(flat_test_data, column_mapping)
+
+        content = data_source["source"]["content"]
+
+        # Lists should be preserved as lists, not stringified
+        assert content[0][WRAPPER_KEY]["tags"] == ["tag1", "tag2"]
+        assert isinstance(content[0][WRAPPER_KEY]["tags"], list)
+        # Empty lists should also be preserved
+        assert content[2][WRAPPER_KEY]["tags"] == []
+        assert isinstance(content[2][WRAPPER_KEY]["tags"], list)
+
+        # Dicts should be preserved as dicts
+        assert content[0][WRAPPER_KEY]["metadata"] == {"key": "val"}
+        assert isinstance(content[0][WRAPPER_KEY]["metadata"], dict)
+        # Empty dicts should also be preserved
+        assert content[2][WRAPPER_KEY]["metadata"] == {}
+        assert isinstance(content[2][WRAPPER_KEY]["metadata"], dict)
 
     def test_empty_dataframe(self):
         """Test data source generation with empty dataframe."""
