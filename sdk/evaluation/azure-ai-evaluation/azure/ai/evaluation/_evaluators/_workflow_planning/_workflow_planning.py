@@ -11,14 +11,9 @@ from typing_extensions import overload, override
 from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
 from azure.ai.evaluation._common._experimental import experimental
-from azure.ai.evaluation._evaluators._workflow_planning._utils import format_workflow_trace_for_eval
+from azure.ai.evaluation._workflows._utils import format_workflow_trace_for_eval
 
 logger = logging.getLogger(__name__)
-
-# Workflow types that use dynamic planning (all four dimensions apply)
-# Retained for logging/telemetry purposes, not used in prompt gating.
-_DYNAMIC_PATTERNS = frozenset({"magentic", "group_chat", "handoff"})
-
 
 @experimental
 class _WorkflowPlanningEvaluator(PromptyEvaluatorBase[Union[str, float]]):
