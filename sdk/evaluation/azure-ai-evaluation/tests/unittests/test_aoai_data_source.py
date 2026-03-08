@@ -297,6 +297,31 @@ class TestGenerateDataSourceConfig:
         # After wrapper stripping, should see context
         assert "context" in schema["properties"]
 
+    def test_flat_schema_infers_list_and_dict_types(self, flat_test_data):
+        """Test that flat schema correctly infers array/object types from data."""
+        flat_test_data["tags"] = [["tag1", "tag2"], ["tag3"], []]
+        flat_test_data["metadata"] = [{"key": "val"}, {"key2": "val2"}, {}]
+        flat_test_data["score"] = [95, 87, 92]
+
+        column_mapping = {
+            "query": "${data.query}",
+            "tags": "${data.tags}",
+            "metadata": "${data.metadata}",
+            "score": "${data.score}",
+        }
+
+        config = _generate_data_source_config(flat_test_data, column_mapping)
+
+        properties = config["item_schema"]["properties"]
+        # Strings should be typed as string
+        assert properties["query"]["type"] == "string"
+        # Lists should be typed as array
+        assert properties["tags"]["type"] == "array"
+        # Dicts should be typed as object
+        assert properties["metadata"]["type"] == "object"
+        # Numerics (converted to str by _convert_value) should be typed as string
+        assert properties["score"]["type"] == "string"
+
 
 @pytest.mark.unittest
 class TestGetDataSource:
@@ -629,3 +654,33 @@ class TestDataSourceConfigIntegration:
         assert "query" in item
         assert "context" in item
         assert "company" in item["context"]
+
+    def test_flat_schema_and_data_alignment_with_list_and_dict(self, flat_test_data):
+        """Test that schema types and data values agree for list/dict columns."""
+        flat_test_data["tags"] = [["tag1", "tag2"], ["tag3"], []]
+        flat_test_data["metadata"] = [{"key": "val"}, {"key2": "val2"}, {}]
+
+        column_mapping = {
+            "query": "${data.query}",
+            "tags": "${data.tags}",
+            "metadata": "${data.metadata}",
+        }
+
+        config = _generate_data_source_config(flat_test_data, column_mapping)
+        data_source = _get_data_source(flat_test_data, column_mapping)
+
+        schema_props = config["item_schema"]["properties"]
+        data_item = data_source["source"]["content"][0][WRAPPER_KEY]
+
+        # Schema declares array → data contains a list
+        assert schema_props["tags"]["type"] == "array"
+        assert isinstance(data_item["tags"], list)
+
+        # Schema declares object → data contains a dict
+        assert schema_props["metadata"]["type"] == "object"
+        assert isinstance(data_item["metadata"], dict)
+
+        # Empty collections should also align
+        empty_item = data_source["source"]["content"][2][WRAPPER_KEY]
+        assert isinstance(empty_item["tags"], list)
+        assert isinstance(empty_item["metadata"], dict)
