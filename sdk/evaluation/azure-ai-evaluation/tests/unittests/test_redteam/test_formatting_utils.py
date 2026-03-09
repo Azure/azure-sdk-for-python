@@ -136,9 +136,7 @@ class TestScorecardFormatting:
 
     def test_format_scorecard_empty(self):
         """Test scorecard formatting with empty data."""
-        scan_result = {
-            "scorecard": {"risk_category_summary": [], "joint_risk_attack_summary": []}
-        }
+        scan_result = {"scorecard": {"risk_category_summary": [], "joint_risk_attack_summary": []}}
 
         result = format_scorecard(scan_result)
 
@@ -280,9 +278,7 @@ class TestUnicodeJSONLRoundTrip:
         mock_memory = MagicMock()
         mock_memory.get_prompt_request_pieces.return_value = pieces
 
-        with patch(
-            "azure.ai.evaluation.red_team._utils.formatting_utils.CentralMemory"
-        ) as mock_cm:
+        with patch("azure.ai.evaluation.red_team._utils.formatting_utils.CentralMemory") as mock_cm:
             mock_cm.get_memory_instance.return_value = mock_memory
             write_pyrit_outputs_to_file(
                 output_path=output_path,
@@ -306,9 +302,7 @@ class TestUnicodeJSONLRoundTrip:
         mock_memory = MagicMock()
         mock_memory.get_prompt_request_pieces.return_value = pieces
 
-        with patch(
-            "azure.ai.evaluation.red_team._utils.formatting_utils.CentralMemory"
-        ) as mock_cm:
+        with patch("azure.ai.evaluation.red_team._utils.formatting_utils.CentralMemory") as mock_cm:
             mock_cm.get_memory_instance.return_value = mock_memory
             write_pyrit_outputs_to_file(
                 output_path=output_path,
@@ -333,9 +327,7 @@ class TestUnicodeJSONLRoundTrip:
         mock_memory = MagicMock()
         mock_memory.get_prompt_request_pieces.return_value = pieces
 
-        with patch(
-            "azure.ai.evaluation.red_team._utils.formatting_utils.CentralMemory"
-        ) as mock_cm:
+        with patch("azure.ai.evaluation.red_team._utils.formatting_utils.CentralMemory") as mock_cm:
             mock_cm.get_memory_instance.return_value = mock_memory
             write_pyrit_outputs_to_file(
                 output_path=output_path,
