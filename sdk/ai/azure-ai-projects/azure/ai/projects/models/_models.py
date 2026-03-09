@@ -2230,23 +2230,35 @@ class CodeBasedEvaluatorDefinition(EvaluatorDefinition, discriminator="code"):
     :vartype metrics: dict[str, ~azure.ai.projects.models.EvaluatorMetric]
     :ivar type: Required. Code-based definition.
     :vartype type: str or ~azure.ai.projects.models.CODE
-    :ivar code_text: Inline code text for the evaluator. Required.
+    :ivar code_text: Inline code text for the evaluator.
     :vartype code_text: str
+    :ivar entry_point: The entry point Python file name for the uploaded evaluator code (e.g.
+     'answer_length_evaluator.py').
+    :vartype entry_point: str
+    :ivar image_tag: The container image tag to use for evaluator code execution.
+    :vartype image_tag: str
     """
 
     type: Literal[EvaluatorDefinitionType.CODE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Required. Code-based definition."""
-    code_text: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Inline code text for the evaluator. Required."""
+    code_text: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Inline code text for the evaluator."""
+    entry_point: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The entry point Python file name for the uploaded evaluator code (e.g.
+     'answer_length_evaluator.py')."""
+    image_tag: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The container image tag to use for evaluator code execution."""
 
     @overload
     def __init__(
         self,
         *,
-        code_text: str,
         init_parameters: Optional[dict[str, Any]] = None,
         data_schema: Optional[dict[str, Any]] = None,
         metrics: Optional[dict[str, "_models.EvaluatorMetric"]] = None,
+        code_text: Optional[str] = None,
+        entry_point: Optional[str] = None,
+        image_tag: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -4230,6 +4242,36 @@ class EvaluationTaxonomy(_Model):
         tags: Optional[dict[str, str]] = None,
         taxonomy_categories: Optional[list["_models.TaxonomyCategory"]] = None,
         properties: Optional[dict[str, str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class EvaluatorCredentialRequest(_Model):
+    """Request body for getting evaluator credentials.
+
+    :ivar blob_uri: The blob URI for the evaluator storage. Example:
+     ``https://account.blob.core.windows.net:443/container``. Required.
+    :vartype blob_uri: str
+    """
+
+    blob_uri: str = rest_field(name="blobUri", visibility=["read", "create", "update", "delete", "query"])
+    """The blob URI for the evaluator storage. Example:
+     ``https://account.blob.core.windows.net:443/container``. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        blob_uri: str,
     ) -> None: ...
 
     @overload
