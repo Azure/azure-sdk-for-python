@@ -112,8 +112,8 @@ _Unset: Any = object()
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 List = list
-REM _SERIALIZER = Serializer()
-REM _SERIALIZER.client_side_validation = False
+_SERIALIZER = Serializer()
+_SERIALIZER.client_side_validation = False
 
 class BetaOperations:
     """
