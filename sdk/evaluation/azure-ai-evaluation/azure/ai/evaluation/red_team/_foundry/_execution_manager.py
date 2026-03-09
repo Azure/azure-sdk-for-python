@@ -169,9 +169,7 @@ class FoundryExecutionManager:
                     try:
                         partial_results = orchestrator.get_attack_results()
                     except Exception:
-                        self.logger.debug(
-                            "Failed to recover partial results for %s", risk_value, exc_info=True
-                        )
+                        self.logger.debug("Failed to recover partial results for %s", risk_value, exc_info=True)
 
                     if partial_results:
                         self.logger.warning(
