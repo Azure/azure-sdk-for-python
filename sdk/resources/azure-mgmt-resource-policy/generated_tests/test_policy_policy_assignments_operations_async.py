@@ -21,11 +21,11 @@ class TestPolicyPolicyAssignmentsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_policy_assignments_delete(self, resource_group):
-        response = await self.client.policy_assignments.delete(
+    async def test_policy_assignments_get(self, resource_group):
+        response = await self.client.policy_assignments.get(
             scope="str",
             policy_assignment_name="str",
-            api_version="2023-04-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -38,6 +38,7 @@ class TestPolicyPolicyAssignmentsOperationsAsync(AzureMgmtRecordedTestCase):
             scope="str",
             policy_assignment_name="str",
             parameters={
+                "assignmentType": "str",
                 "definitionVersion": "str",
                 "description": "str",
                 "displayName": "str",
@@ -50,6 +51,7 @@ class TestPolicyPolicyAssignmentsOperationsAsync(AzureMgmtRecordedTestCase):
                     "type": "str",
                     "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
                 },
+                "instanceId": "str",
                 "latestDefinitionVersion": "str",
                 "location": "str",
                 "metadata": {},
@@ -73,19 +75,7 @@ class TestPolicyPolicyAssignmentsOperationsAsync(AzureMgmtRecordedTestCase):
                 },
                 "type": "str",
             },
-            api_version="2023-04-01",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_policy_assignments_get(self, resource_group):
-        response = await self.client.policy_assignments.get(
-            scope="str",
-            policy_assignment_name="str",
-            api_version="2023-04-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -110,7 +100,7 @@ class TestPolicyPolicyAssignmentsOperationsAsync(AzureMgmtRecordedTestCase):
                 ],
                 "resourceSelectors": [{"name": "str", "selectors": [{"in": ["str"], "kind": "str", "notIn": ["str"]}]}],
             },
-            api_version="2023-04-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -118,10 +108,32 @@ class TestPolicyPolicyAssignmentsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_policy_assignments_list_for_resource_group(self, resource_group):
-        response = self.client.policy_assignments.list_for_resource_group(
-            resource_group_name=resource_group.name,
-            api_version="2023-04-01",
+    async def test_policy_assignments_delete(self, resource_group):
+        response = await self.client.policy_assignments.delete(
+            scope="str",
+            policy_assignment_name="str",
+            api_version="2025-03-01",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_policy_assignments_list_for_management_group(self, resource_group):
+        response = self.client.policy_assignments.list_for_management_group(
+            management_group_id="str",
+            api_version="2025-03-01",
+        )
+        result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_policy_assignments_list(self, resource_group):
+        response = self.client.policy_assignments.list(
+            api_version="2025-03-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -136,7 +148,7 @@ class TestPolicyPolicyAssignmentsOperationsAsync(AzureMgmtRecordedTestCase):
             parent_resource_path="str",
             resource_type="str",
             resource_name="str",
-            api_version="2023-04-01",
+            api_version="2025-03-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -144,20 +156,10 @@ class TestPolicyPolicyAssignmentsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_policy_assignments_list_for_management_group(self, resource_group):
-        response = self.client.policy_assignments.list_for_management_group(
-            management_group_id="str",
-            api_version="2023-04-01",
-        )
-        result = [r async for r in response]
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_policy_assignments_list(self, resource_group):
-        response = self.client.policy_assignments.list(
-            api_version="2023-04-01",
+    async def test_policy_assignments_list_for_resource_group(self, resource_group):
+        response = self.client.policy_assignments.list_for_resource_group(
+            resource_group_name=resource_group.name,
+            api_version="2025-03-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -168,7 +170,7 @@ class TestPolicyPolicyAssignmentsOperationsAsync(AzureMgmtRecordedTestCase):
     async def test_policy_assignments_delete_by_id(self, resource_group):
         response = await self.client.policy_assignments.delete_by_id(
             policy_assignment_id="str",
-            api_version="2023-04-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -180,6 +182,7 @@ class TestPolicyPolicyAssignmentsOperationsAsync(AzureMgmtRecordedTestCase):
         response = await self.client.policy_assignments.create_by_id(
             policy_assignment_id="str",
             parameters={
+                "assignmentType": "str",
                 "definitionVersion": "str",
                 "description": "str",
                 "displayName": "str",
@@ -192,6 +195,7 @@ class TestPolicyPolicyAssignmentsOperationsAsync(AzureMgmtRecordedTestCase):
                     "type": "str",
                     "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
                 },
+                "instanceId": "str",
                 "latestDefinitionVersion": "str",
                 "location": "str",
                 "metadata": {},
@@ -215,7 +219,7 @@ class TestPolicyPolicyAssignmentsOperationsAsync(AzureMgmtRecordedTestCase):
                 },
                 "type": "str",
             },
-            api_version="2023-04-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -226,7 +230,7 @@ class TestPolicyPolicyAssignmentsOperationsAsync(AzureMgmtRecordedTestCase):
     async def test_policy_assignments_get_by_id(self, resource_group):
         response = await self.client.policy_assignments.get_by_id(
             policy_assignment_id="str",
-            api_version="2023-04-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -250,7 +254,7 @@ class TestPolicyPolicyAssignmentsOperationsAsync(AzureMgmtRecordedTestCase):
                 ],
                 "resourceSelectors": [{"name": "str", "selectors": [{"in": ["str"], "kind": "str", "notIn": ["str"]}]}],
             },
-            api_version="2023-04-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
