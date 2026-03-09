@@ -15,7 +15,7 @@ from azure.mgmt.disconnectedoperations import DisconnectedOperationsMgmtClient
     pip install azure-identity
     pip install azure-mgmt-disconnectedoperations
 # USAGE
-    python images_list_download_uri_maximum_set_gen.py
+    python disconnected_operations_update_maximum_set_gen.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,14 +30,21 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.images.list_download_uri(
-        resource_group_name="rgdisconnectedOperations",
-        name="g_-5-160",
-        image_name="1Q6lGV4V65j-1",
+    response = client.disconnected_operations.update(
+        resource_group_name="rgdisconnectedoperations",
+        name="demo-resource",
+        properties={
+            "properties": {
+                "connectionIntent": "Connected",
+                "deviceVersion": "2.0.0",
+                "registrationStatus": "Registered",
+            },
+            "tags": {"key2": "value2"},
+        },
     )
     print(response)
 
 
-# x-ms-original-file: 2026-03-15/Images_ListDownloadUri_MaximumSet_Gen.json
+# x-ms-original-file: 2026-03-15/DisconnectedOperations_Update_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()
