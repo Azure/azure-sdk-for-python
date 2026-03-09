@@ -14,7 +14,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b4" python-dotenv aiohttp
+    pip install "azure-ai-projects>=2.0.0" python-dotenv aiohttp
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
@@ -29,7 +29,7 @@ import asyncio
 from dotenv import load_dotenv
 from azure.identity.aio import DefaultAzureCredential
 from azure.ai.projects.aio import AIProjectClient
-from azure.ai.projects.models import PromptAgentDefinition, CodeInterpreterTool, CodeInterpreterContainerAuto
+from azure.ai.projects.models import PromptAgentDefinition, CodeInterpreterTool, AutoCodeInterpreterToolParam
 
 load_dotenv()
 
@@ -61,7 +61,7 @@ async def main() -> None:
                 definition=PromptAgentDefinition(
                     model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
                     instructions="You are a helpful assistant.",
-                    tools=[CodeInterpreterTool(container=CodeInterpreterContainerAuto(file_ids=[file.id]))],
+                    tools=[CodeInterpreterTool(container=AutoCodeInterpreterToolParam(file_ids=[file.id]))],
                 ),
                 description="Code interpreter agent for data analysis and visualization.",
             )
