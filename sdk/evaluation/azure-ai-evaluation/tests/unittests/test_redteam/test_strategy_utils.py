@@ -534,6 +534,44 @@ class TestChatTargetFunctions:
             call_kwargs["endpoint"] == "https://my-resource.openai.azure.com"
         ), f"Traditional AOAI endpoint should not be modified, got: {call_kwargs['endpoint']}"
 
+    @patch("azure.ai.evaluation.red_team._utils.strategy_utils.OpenAIChatTarget")
+    def test_get_chat_target_foundry_endpoint_case_insensitive(self, mock_openai_chat_target):
+        """Test that Foundry hostname detection is case-insensitive (RFC 4343)."""
+        mock_instance = MagicMock()
+        mock_openai_chat_target.return_value = mock_instance
+
+        config = {
+            "azure_deployment": "gpt-4o",
+            "azure_endpoint": "https://my-resource.SERVICES.AI.AZURE.COM",
+            "api_key": "test-key",
+        }
+
+        result = get_chat_target(config)
+
+        call_kwargs = mock_openai_chat_target.call_args[1]
+        assert (
+            call_kwargs["endpoint"] == "https://my-resource.SERVICES.AI.AZURE.COM/openai/v1"
+        ), f"Case-insensitive hostname should be detected, got: {call_kwargs['endpoint']}"
+
+    @patch("azure.ai.evaluation.red_team._utils.strategy_utils.OpenAIChatTarget")
+    def test_get_chat_target_non_foundry_url_with_matching_substring_not_modified(self, mock_openai_chat_target):
+        """Test that non-Foundry URLs containing .services.ai.azure.com in the path are NOT modified."""
+        mock_instance = MagicMock()
+        mock_openai_chat_target.return_value = mock_instance
+
+        config = {
+            "azure_deployment": "gpt-4o",
+            "azure_endpoint": "https://my-resource.openai.azure.com",
+            "api_key": "test-key",
+        }
+
+        result = get_chat_target(config)
+
+        call_kwargs = mock_openai_chat_target.call_args[1]
+        assert (
+            call_kwargs["endpoint"] == "https://my-resource.openai.azure.com"
+        ), f"Non-Foundry endpoint should not be modified, got: {call_kwargs['endpoint']}"
+
 
 @pytest.mark.unittest
 class TestHttpxTimeoutConfiguration:

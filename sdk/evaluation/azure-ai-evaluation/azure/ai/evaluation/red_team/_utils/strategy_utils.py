@@ -4,6 +4,7 @@ Utility functions for handling attack strategies and converters in Red Team Agen
 
 import random
 from typing import Dict, List, Union, Optional, Any, Callable, cast
+from urllib.parse import urlparse
 import logging
 
 import httpx
@@ -221,10 +222,12 @@ def get_chat_target(
             # Foundry endpoints (*.services.ai.azure.com) need /openai/v1 appended
             # because PyRIT's OpenAIChatTarget passes the URL directly to AsyncOpenAI(base_url=)
             endpoint = target["azure_endpoint"].rstrip("/")
-            if ".services.ai.azure.com" in endpoint:
+            parsed = urlparse(endpoint)
+            hostname = (parsed.hostname or "").lower()
+            if hostname.endswith(".services.ai.azure.com"):
                 if endpoint.endswith("/openai"):
                     endpoint = endpoint + "/v1"
-                elif "/openai/v1" not in endpoint:
+                elif not endpoint.endswith("/openai/v1"):
                     endpoint = endpoint + "/openai/v1"
 
             api_key = target.get("api_key", None)
