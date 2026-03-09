@@ -9,7 +9,7 @@ from typing import Any, AsyncGenerator, Dict, Optional, Union
 from agent_framework import SupportsAgentRun
 
 from azure.ai.agentserver.core import AgentRunContext
-from azure.ai.agentserver.core.logger import get_logger
+from azure.ai.agentserver.core.logger import get_logger, get_project_endpoint
 from azure.ai.agentserver.core.models import (
     Response as OpenAIResponse,
     ResponseStreamEvent,
@@ -36,6 +36,8 @@ class AgentFrameworkAIAgentAdapter(AgentFrameworkAgent):
                  **kwargs) -> None:
         super().__init__(credentials, session_repository, project_endpoint=project_endpoint, **kwargs)
         self._agent = agent
+        self._try_setup_default_conversation_repository()
+
 
     async def agent_run(  # pylint: disable=too-many-statements
         self, context: AgentRunContext
@@ -48,8 +50,10 @@ class AgentFrameworkAIAgentAdapter(AgentFrameworkAgent):
             request_input = context.request.get("input")
 
             agent_session = await self._load_agent_session(context, self._agent)
-
-            input_converter = AgentFrameworkInputConverter(hitl_helper=self._hitl_helper)
+            input_converter = AgentFrameworkInputConverter(
+                hitl_helper=self._hitl_helper,
+                history_provider=self._get_history_provider(self._agent),
+            )
             message = await input_converter.transform_input(
                 request_input,
                 agent_session=agent_session,

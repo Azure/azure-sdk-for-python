@@ -19,6 +19,8 @@ class FoundryConversationHistoryProvider(BaseHistoryProvider):
     """History provider that reads Foundry conversation history and stores in session state."""
 
     DEFAULT_SOURCE_ID = "foundry_conversation"
+    CONVERSATION_ID_KEY = "_foundry_conversation_id"
+    SERVICE_SESSION_ID_KEY = "_service_session_id"
 
     def __init__(
         self,
@@ -39,7 +41,11 @@ class FoundryConversationHistoryProvider(BaseHistoryProvider):
         if state is None:
             return []
 
-        conversation_id = self._resolve_conversation_id(session_id, state)
+        if state.get(self.SERVICE_SESSION_ID_KEY, None):
+            # If the service_session_id exists, we assume AgentSession is service managed.
+            # Do not return messages to avoid duplication
+            return []
+        conversation_id = self._resolve_conversation_id(state)
         if not conversation_id:
             return list(state.get("messages", []))
 
@@ -61,18 +67,18 @@ class FoundryConversationHistoryProvider(BaseHistoryProvider):
         if state is None:
             return
 
-        conversation_id = self._resolve_conversation_id(session_id, state)
+        conversation_id = self._resolve_conversation_id(state)
         if conversation_id:
-            state["conversation_id"] = conversation_id
+            state[self.CONVERSATION_ID_KEY] = conversation_id
         existing_messages = state.get("messages", [])
         state["messages"] = [*existing_messages, *messages]
 
     @staticmethod
-    def _resolve_conversation_id(session_id: Optional[str], state: Dict[str, Any]) -> Optional[str]:
-        conversation_id = state.get("conversation_id")
+    def _resolve_conversation_id(state: Dict[str, Any]) -> Optional[str]:
+        conversation_id = state.get(FoundryConversationHistoryProvider.CONVERSATION_ID_KEY)
         if isinstance(conversation_id, str) and conversation_id:
             return conversation_id
-        return session_id
+        return None
 
     async def _get_conversation_history(self, conversation_id: str) -> List[Message]:
         if not self._project_client:

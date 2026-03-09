@@ -80,7 +80,7 @@ async def test_foundry_history_provider_reads_remote_and_cached_messages(monkeyp
     get_history = AsyncMock(return_value=[history_message])
     monkeypatch.setattr(provider, "_get_conversation_history", get_history)
 
-    state = {"conversation_id": "conv-1"}
+    state = {"_foundry_conversation_id": "conv-1"}
     first_messages = await provider.get_messages("conv-1", state=state)
     await provider.save_messages("conv-1", [new_message], state=state)
     second_messages = await provider.get_messages("conv-1", state=state)
@@ -109,12 +109,8 @@ async def test_foundry_session_repository_sets_conversation_state(monkeypatch) -
 
     assert session_one is not None
     assert session_two is not None
-    assert session_one.session_id == "conv-1"
-    assert session_one.service_session_id == "conv-1"
-    assert session_two.session_id == "conv-2"
-    assert session_two.service_session_id == "conv-2"
-    assert session_one.state[source_id]["conversation_id"] == "conv-1"
-    assert session_two.state[source_id]["conversation_id"] == "conv-2"
+    assert session_one.state[source_id]["_foundry_conversation_id"] == "conv-1"
+    assert session_two.state[source_id]["_foundry_conversation_id"] == "conv-2"
 
 
 @pytest.mark.unit

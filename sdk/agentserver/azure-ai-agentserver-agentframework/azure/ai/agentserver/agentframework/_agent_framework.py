@@ -8,7 +8,7 @@ import asyncio
 import os
 from typing import TYPE_CHECKING, Any, AsyncGenerator, Optional, Union
 
-from agent_framework import AgentSession, ResponseStream, SupportsAgentRun
+from agent_framework import AgentSession, BaseHistoryProvider, ResponseStream, SupportsAgentRun
 from opentelemetry import trace
 
 from azure.ai.agentserver.core import AgentRunContext, FoundryCBAgent
@@ -67,12 +67,7 @@ class AgentFrameworkAgent(FoundryCBAgent):
         :type project_endpoint: Optional[str]
         """
         super().__init__(credentials=credentials, **kwargs)  # pylint: disable=unexpected-keyword-arg
-        project_endpoint = get_project_endpoint(logger=logger) or project_endpoint
-        if not session_repository and project_endpoint and self.credentials:
-            logger.warning("No session repository provided. FoundryConversationSessionRepository will be used.")
-            session_repository = self._create_foundry_conversation_session_repository(
-                project_endpoint, self.credentials
-            )
+        self.project_endpoint = get_project_endpoint(logger=logger) or project_endpoint
         self._session_repository = session_repository
         self._hitl_helper = HumanInTheLoopHelper()
 
@@ -248,13 +243,16 @@ class AgentFrameworkAgent(FoundryCBAgent):
             try:
                 update_count = 0
                 try:
-                    updates = stream.with_cleanup_hook(
-                        lambda: self._save_agent_session(context, agent_session)
-                    )
-                    async for event in streaming_converter.convert(updates):
+                    async for event in streaming_converter.convert(stream):
                         update_count += 1
                         yield event
 
+                    # Trigger the result hooks (e.g. _run_after_providers) which
+                    # populate the session with messages. Without this call the
+                    # session remains empty because result hooks only execute
+                    # inside get_final_response().
+                    await stream.get_final_response()
+                    await self._save_agent_session(context, agent_session)
                     logger.info("Streaming completed with %d updates", update_count)
                 except OAuthConsentRequiredError as e:
                     logger.info("OAuth consent required during streaming updates")
@@ -329,3 +327,29 @@ class AgentFrameworkAgent(FoundryCBAgent):
             return
 
         context_providers.append(self._session_repository.history_provider)
+
+    def _get_history_provider(self, agent: SupportsAgentRun) -> Optional[BaseHistoryProvider]:
+        """
+        Return the first BaseHistoryProvider attached to the agent, if any.
+
+        :param agent: The agent instance to check for history providers.
+        :type agent: SupportsAgentRun
+        :return: The first BaseHistoryProvider found, or None if none are attached.
+        :rtype: Optional[BaseHistoryProvider]
+        """
+        for provider in getattr(agent, "context_providers", None) or []:
+            if isinstance(provider, BaseHistoryProvider):
+                return provider
+        return None
+
+    def _try_setup_default_conversation_repository(self) -> None:
+        """Set up the default FoundryConversationSessionRepository if no session repository was provided.
+
+        :return: None
+        :rtype: None
+        """
+        if not self._session_repository and self._project_endpoint and self.credentials:
+            logger.warning("No session repository provided. FoundryConversationSessionRepository will be used.")
+            self._session_repository = self._create_foundry_conversation_session_repository(
+                self._project_endpoint, self.credentials
+            )

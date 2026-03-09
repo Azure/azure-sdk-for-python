@@ -46,6 +46,8 @@ class AgentFrameworkWorkflowAdapter(AgentFrameworkAgent):
         super().__init__(credentials, session_repository, project_endpoint=project_endpoint, **kwargs)
         self._workflow_factory = workflow_factory
         self._checkpoint_repository = checkpoint_repository
+        if not self._checkpoint_repository:
+            self._try_setup_default_conversation_repository()
 
     async def agent_run(  # pylint: disable=too-many-statements
         self, context: AgentRunContext
@@ -66,20 +68,15 @@ class AgentFrameworkWorkflowAdapter(AgentFrameworkAgent):
             if self._checkpoint_repository and (conversation_id := context.conversation_id):
                 checkpoint_storage = await self._checkpoint_repository.get_or_create(conversation_id)
                 if checkpoint_storage:
-                    selected_checkpoint = await self._get_latest_checkpoint(checkpoint_storage)
+                    selected_checkpoint = await self._select_checkpoint(checkpoint_storage, agent.workflow.name)
             if selected_checkpoint:
-                checkpoint_status = self._checkpoint_status(selected_checkpoint)
-                if checkpoint_status == "completed":
-                    logger.warning(
-                        "Selected checkpoint %s is completed. Will not resume from it.",
-                        selected_checkpoint.checkpoint_id,
-                    )
-                    selected_checkpoint = None  # Do not resume from completed checkpoints
-                else:
-                    await self._load_checkpoint(agent, selected_checkpoint, checkpoint_storage)
-                    logger.info("Loaded checkpoint with ID: %s", selected_checkpoint.checkpoint_id)
+                await self._load_checkpoint(agent, selected_checkpoint, checkpoint_storage)
+                logger.info("Loaded checkpoint with ID: %s", selected_checkpoint.checkpoint_id)
 
-            input_converter = AgentFrameworkInputConverter(hitl_helper=self._hitl_helper)
+            input_converter = AgentFrameworkInputConverter(
+                hitl_helper=self._hitl_helper,
+                history_provider=self._get_history_provider(agent),
+            )
             message = await input_converter.transform_input(
                 request_input,
                 agent_session=agent_session,
@@ -130,7 +127,6 @@ class AgentFrameworkWorkflowAdapter(AgentFrameworkAgent):
     def _build_agent(self) -> WorkflowAgent:
         return self._workflow_factory().as_agent()
 
-
     def _checkpoint_status(self, checkpoint: WorkflowCheckpoint) -> Optional[str]:
         status = getattr(checkpoint, "status", None)
         if status:
@@ -139,22 +135,6 @@ class AgentFrameworkWorkflowAdapter(AgentFrameworkAgent):
         if isinstance(metadata, dict):
             value = metadata.get("status")
             return str(value) if value is not None else None
-        return None
-
-    async def _get_latest_checkpoint(self,
-                checkpoint_storage: CheckpointStorage) -> Optional[Any]:
-        """Load the latest checkpoint from the given storage.
-
-        :param checkpoint_storage: The checkpoint storage to load from.
-        :type checkpoint_storage: CheckpointStorage
-
-        :return: The latest checkpoint if available, None otherwise.
-        :rtype: Optional[Any]
-        """
-        checkpoints = await checkpoint_storage.list_checkpoints()
-        if checkpoints:
-            latest_checkpoint = max(checkpoints, key=lambda cp: cp.timestamp)
-            return latest_checkpoint
         return None
 
     async def _load_checkpoint(self,
@@ -175,3 +155,50 @@ class AgentFrameworkWorkflowAdapter(AgentFrameworkAgent):
         """
         await agent.run(checkpoint_id=checkpoint.checkpoint_id,
                         checkpoint_storage=checkpoint_storage)
+
+    async def _select_checkpoint(
+        self,
+        checkpoint_storage: CheckpointStorage,
+        workflow_name: str,
+    ) -> Optional[WorkflowCheckpoint]:
+        """Select the most recent checkpoint for a workflow, or None if none exist.
+
+        Selection rules:
+        1. Pick the checkpoint(s) with the latest timestamp.
+        2. If multiple checkpoints share that timestamp, follow the
+           ``previous_checkpoint_id`` chain and return the tail — i.e. the
+           checkpoint whose id is not referenced as ``previous_checkpoint_id``
+           by any other checkpoint in the same-timestamp group.
+
+        :param checkpoint_storage: The storage backend to query.
+        :type checkpoint_storage: CheckpointStorage
+        :param workflow_name: Name of the workflow whose checkpoints to consider.
+        :type workflow_name: str
+        :return: The selected checkpoint, or None if no checkpoints exist.
+        :rtype: Optional[WorkflowCheckpoint]
+        """
+        checkpoints = await checkpoint_storage.list_checkpoints(workflow_name=workflow_name)
+        if not checkpoints:
+            return None
+
+        max_ts = max(cp.timestamp for cp in checkpoints)
+        latest = [cp for cp in checkpoints if cp.timestamp == max_ts]
+
+        if len(latest) == 1:
+            return latest[0]
+
+        # Multiple checkpoints share the latest timestamp — pick the tail of
+        # the previous_checkpoint_id chain (the one no other checkpoint points to).
+        latest_ids = {cp.checkpoint_id for cp in latest}
+        referenced_ids = {
+            cp.previous_checkpoint_id
+            for cp in latest
+            if cp.previous_checkpoint_id is not None and cp.previous_checkpoint_id in latest_ids
+        }
+        tails = [cp for cp in latest if cp.checkpoint_id not in referenced_ids]
+
+        if len(tails) == 1:
+            return tails[0]
+
+        # Deterministic fallback: pick the checkpoint with the largest id.
+        return max(tails, key=lambda cp: cp.checkpoint_id)

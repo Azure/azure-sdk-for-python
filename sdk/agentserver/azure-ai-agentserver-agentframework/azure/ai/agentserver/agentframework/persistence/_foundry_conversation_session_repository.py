@@ -47,15 +47,14 @@ class FoundryConversationSessionRepository(AgentSessionRepository):
         if conversation_id in self._inventory:
             session = self._inventory[conversation_id]
             provider_state = session.state.setdefault(history_provider.source_id, {})
-            provider_state["conversation_id"] = conversation_id
+            provider_state[self._history_provider.CONVERSATION_ID_KEY] = conversation_id
+            if session.service_session_id:
+                provider_state[self._history_provider.SERVICE_SESSION_ID_KEY] = session.service_session_id
             return session
 
-        session = AgentSession(
-            session_id=conversation_id,
-            service_session_id=conversation_id,
-        )
+        session = AgentSession()
         provider_state = session.state.setdefault(history_provider.source_id, {})
-        provider_state["conversation_id"] = conversation_id
+        provider_state[self._history_provider.CONVERSATION_ID_KEY] = conversation_id
         self._inventory[conversation_id] = session
         return session
 
@@ -71,9 +70,9 @@ class FoundryConversationSessionRepository(AgentSessionRepository):
             raise ValueError("conversation_id is required to save an AgentSession.")
 
         provider_state = session.state.setdefault(FoundryConversationHistoryProvider.DEFAULT_SOURCE_ID, {})
-        provider_state["conversation_id"] = conversation_id
-        if not session.service_session_id:
-            session.service_session_id = conversation_id
+        provider_state[FoundryConversationHistoryProvider.CONVERSATION_ID_KEY] = conversation_id
+        if session.service_session_id:
+            provider_state[FoundryConversationHistoryProvider.SERVICE_SESSION_ID_KEY] = session.service_session_id
         self._inventory[conversation_id] = session
 
     @property

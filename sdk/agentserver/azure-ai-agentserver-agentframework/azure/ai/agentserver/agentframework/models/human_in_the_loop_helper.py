@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import json
+from dataclasses import dataclass
 from typing import Any, Dict, List, Optional, Union
 
 from agent_framework import Content, Message, WorkflowCheckpoint, WorkflowEvent
@@ -12,23 +13,43 @@ from azure.ai.agentserver.core.server.common.constants import HUMAN_IN_THE_LOOP_
 logger = get_logger()
 
 
+@dataclass
+class PendingHitlRequest:
+    """Normalized representation of a pending human-in-the-loop request.
+
+    Both the checkpoint path (real rc3 WorkflowEvents) and the session-messages
+    path (synthetic reconstruction) normalize into this type so that downstream
+    code never needs to inspect WorkflowEvent internals.
+
+    :param request_id: Unique identifier for the pending request.
+    :type request_id: str
+    :param response_type: Expected Python type for deserializing the human response, or None.
+    :type response_type: Any
+    """
+
+    request_id: str
+    response_type: Any = None
+
+
 class HumanInTheLoopHelper:
     def get_pending_hitl_request(
         self,
         session_messages: Optional[List[Message]] = None,
         checkpoint: Optional[WorkflowCheckpoint] = None,
-    ) -> Dict[str, Union[WorkflowEvent, Any]]:
-        res: Dict[str, Union[WorkflowEvent, Any]] = {}
+    ) -> Dict[str, PendingHitlRequest]:
+        res: Dict[str, PendingHitlRequest] = {}
 
         if checkpoint:
             pending_events = getattr(checkpoint, "pending_request_info_events", None) or getattr(
                 checkpoint, "pending_events", None
             )
+            logger.info("Checking checkpoint for pending HITL requests, found %d pending events", len(pending_events) if pending_events else 0)
             if pending_events:
                 for call_id, request in pending_events.items():
-                    request_obj = self._coerce_workflow_event(request)
-                    if request_obj is not None:
-                        res[call_id] = request_obj
+                    logger.info("Processing pending event with call_id %s from checkpoint %s", call_id, type(request))
+                    pending = self._to_pending_hitl_request(call_id, request)
+                    if pending is not None:
+                        res[call_id] = pending
                 return res
 
         if not session_messages:
@@ -42,15 +63,7 @@ class HumanInTheLoopHelper:
                         continue
                     call_id = function_call.call_id
                     if call_id:
-                        res[call_id] = WorkflowEvent(
-                            "request_info",
-                            data={
-                                "source_executor_id": "agent",
-                                "request_id": call_id,
-                                "response_type": None,
-                                "request_data": function_call,
-                            },
-                        )
+                        res[call_id] = PendingHitlRequest(request_id=call_id, response_type=None)
                 elif content.type == "function_result":
                     call_id = content.call_id
                     if call_id and call_id in res:
@@ -90,7 +103,7 @@ class HumanInTheLoopHelper:
     def validate_and_convert_hitl_response(
         self,
         input: Union[str, List[Dict], None],
-        pending_requests: Dict[str, WorkflowEvent],
+        pending_requests: Dict[str, PendingHitlRequest],
     ) -> Optional[List[Message]]:
         if input is None or isinstance(input, str):
             logger.warning("Expected list input for HitL response validation, got str.")
@@ -103,12 +116,15 @@ class HumanInTheLoopHelper:
                 return None
             call_id = item.get("call_id", None)
             if call_id and call_id in pending_requests:
+                logger.info("convert_hitl_response: converting response for call_id %s", call_id)
                 res.append(self.convert_response(pending_requests[call_id], item))
+        for item in res:
+            logger.info("HitL response item: %s", item.to_dict() if hasattr(item, "to_dict") else str(item))
         return res
 
-    def convert_response(self, hitl_request: WorkflowEvent, input: Dict) -> Message:
-        response_type = self._event_response_type(hitl_request)
-        request_id = self._event_request_id(hitl_request)
+    def convert_response(self, hitl_request: PendingHitlRequest, input: Dict) -> Message:
+        response_type = hitl_request.response_type
+        request_id = hitl_request.request_id
         response_result = input.get("output", "")
         logger.info("response_type %s", response_type)
         if response_type and hasattr(response_type, "convert_from_payload"):
@@ -192,30 +208,22 @@ class HumanInTheLoopHelper:
                 )
         return filtered_messages
 
-    def _coerce_workflow_event(self, request: Any) -> Optional[WorkflowEvent]:
+    def _to_pending_hitl_request(self, call_id: str, request: Any) -> Optional[PendingHitlRequest]:
+        """Normalize a checkpoint pending-event entry into a PendingHitlRequest.
+
+        :param call_id: The call/request identifier from the checkpoint dict key.
+        :type call_id: str
+        :param request: A WorkflowEvent (rc3) or a dict (legacy/serialized).
+        :type request: Any
+        :return: A normalized PendingHitlRequest, or None if the entry is unrecognised.
+        :rtype: Optional[PendingHitlRequest]
+        """
         if isinstance(request, WorkflowEvent):
-            return request
+            request_id = getattr(request, "request_id", None) or call_id
+            response_type = getattr(request, "response_type", None)
+            return PendingHitlRequest(request_id=request_id, response_type=response_type)
         if isinstance(request, dict):
-            event_type = request.get("type")
-            event_data = request.get("data")
-            if event_type:
-                return WorkflowEvent(event_type, data=event_data)
+            request_id = request.get("request_id", call_id)
+            response_type = request.get("response_type", None)
+            return PendingHitlRequest(request_id=request_id, response_type=response_type)
         return None
-
-    def _event_data(self, event: WorkflowEvent) -> Any:
-        data = getattr(event, "data", None)
-        if data is None and isinstance(event, dict):
-            data = event.get("data")
-        return data
-
-    def _event_request_id(self, event: WorkflowEvent) -> str:
-        data = self._event_data(event)
-        if isinstance(data, dict):
-            return data.get("request_id", "")
-        return getattr(data, "request_id", "") if data is not None else ""
-
-    def _event_response_type(self, event: WorkflowEvent) -> Any:
-        data = self._event_data(event)
-        if isinstance(data, dict):
-            return data.get("response_type", None)
-        return getattr(data, "response_type", None) if data is not None else None

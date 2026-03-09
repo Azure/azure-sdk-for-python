@@ -39,7 +39,6 @@ spec.loader.exec_module(foundry_tools_module)
 
 FoundryToolClient = foundry_tools_module.FoundryToolClient
 FoundryToolsContextProvider = foundry_tools_module.FoundryToolsContextProvider
-FoundryToolsChatMiddleware = foundry_tools_module.FoundryToolsChatMiddleware
 _attach_signature_from_pydantic_model = foundry_tools_module._attach_signature_from_pydantic_model
 
 
@@ -187,7 +186,3 @@ async def test_context_provider_before_run_appends_tools(monkeypatch: pytest.Mon
 	await provider.before_run(agent=agent, session=session, context=context, state={})
 	assert context.tools == existing + injected
 
-
-@pytest.mark.unit
-def test_middleware_name_is_back_compat_alias() -> None:
-	assert issubclass(FoundryToolsChatMiddleware, FoundryToolsContextProvider)

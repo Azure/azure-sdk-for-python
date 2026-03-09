@@ -6,7 +6,7 @@ from __future__ import annotations
 
 from typing import Any, Dict, List, Optional, Union
 
-from agent_framework import Content, Message
+from agent_framework import BaseHistoryProvider, Content, Message
 
 from azure.ai.agentserver.core.logger import get_logger
 
@@ -16,8 +16,9 @@ logger = get_logger()
 class AgentFrameworkInputConverter:
     """Normalize inputs for agent.run with optional Human-In-The-Loop handling."""
 
-    def __init__(self, *, hitl_helper=None) -> None:
+    def __init__(self, *, hitl_helper=None, history_provider: Optional[BaseHistoryProvider] = None) -> None:
         self._hitl_helper = hitl_helper
+        self._history_provider = history_provider
 
     async def transform_input(  # pylint: disable=too-many-return-statements
         self,
@@ -25,15 +26,15 @@ class AgentFrameworkInputConverter:
         agent_session: Any = None,
         checkpoint: Any = None,
     ) -> Optional[Union[str, Message, List[Union[str, Message]]]]:
-        if self._hitl_helper and isinstance(input_item, list):
+        if self._hitl_helper:
             session_messages: List[Message] = []
-            if agent_session is not None:
-                message_store = getattr(agent_session, "message_store", None)
-                if message_store and hasattr(message_store, "list_messages"):
-                    session_messages = await message_store.list_messages()
-                else:
-                    session_messages = getattr(agent_session, "messages", None) or []
+            if agent_session is not None and self._history_provider:
+                provider_state = agent_session.state.get(self._history_provider.source_id, {})
+                session_messages = await self._history_provider.get_messages(
+                    agent_session.session_id, state=provider_state
+                )
 
+            logger.info("Checking for pending HITL requests. Session messages count: %d", len(session_messages))
             pending_hitl_requests = self._hitl_helper.get_pending_hitl_request(session_messages, checkpoint)
             if pending_hitl_requests:
                 hitl_response = self._hitl_helper.validate_and_convert_hitl_response(
