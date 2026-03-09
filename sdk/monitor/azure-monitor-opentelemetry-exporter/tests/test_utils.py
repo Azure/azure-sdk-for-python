@@ -10,6 +10,7 @@ from unittest.mock import patch
 from opentelemetry.sdk.resources import Resource
 from azure.monitor.opentelemetry.exporter import _utils
 from azure.monitor.opentelemetry.exporter._generated.exporter.models import TelemetryItem
+from azure.monitor.opentelemetry.exporter._constants import _GEN_AI_ATTRIBUTES
 from opentelemetry.sdk.resources import Resource
 from unittest.mock import patch
 
@@ -53,33 +54,12 @@ class TestUtils(unittest.TestCase):
         self.assertEqual(filtered["short"], "ok")
         self.assertNotIn("k" * 151, filtered)
 
-    def test_truncate_custom_properties_preserves_large_values_for_gen_ai_attributes(self):
-        # Ensure values larger than 64KiB are not truncated for Gen AI attributes
-        large_value = "x" * (64 * 1024 + 1000)
-        properties = {"gen_ai.input.messages": large_value}
-        with patch.dict(
-            "azure.monitor.opentelemetry.exporter._utils.environ",
-        ):
-            filtered = _utils._filter_custom_properties(properties)
-            self.assertIn("gen_ai.input.messages", filtered)
-            self.assertEqual(filtered["gen_ai.input.messages"], large_value)
-            self.assertEqual(len(filtered["gen_ai.input.messages"]), 64 * 1024 + 1000)
-
     def test_custom_properties_gen_ai_attributes_not_truncated(self):
         # All values in _GEN_AI_ATTRIBUTES should not be truncated even when > 64KiB
         large_value = "x" * (64 * 1024 + 1000)
-        gen_ai_keys = [
-            "gen_ai.input.messages",
-            "gen_ai.output.messages",
-            "gen_ai.system_instructions",
-            "gen_ai.tool.definitions",
-            "gen_ai.tool.call.arguments",
-            "gen_ai.tool.call.result",
-            "gen_ai.evaluation.explanation",
-        ]
-        properties = {key: large_value for key in gen_ai_keys}
+        properties = {key: large_value for key in _GEN_AI_ATTRIBUTES}
         filtered = _utils._filter_custom_properties(properties)
-        for key in gen_ai_keys:
+        for key in _GEN_AI_ATTRIBUTES:
             with self.subTest(key=key):
                 self.assertIn(key, filtered)
                 self.assertEqual(len(filtered[key]), 64 * 1024 + 1000)
