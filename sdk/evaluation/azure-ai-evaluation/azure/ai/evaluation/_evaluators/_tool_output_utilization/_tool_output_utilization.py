@@ -221,9 +221,7 @@ class _ToolOutputUtilizationEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 include_tool_messages=True,
             )
         if not isinstance(eval_input.get("response"), str):
-            eval_input["response"] = reformat_agent_response(
-                eval_input["response"], logger, include_tool_messages=True
-            )
+            eval_input["response"] = reformat_agent_response(eval_input["response"], logger, include_tool_messages=True)
 
         prompty_output_dict = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
         llm_output = prompty_output_dict.get("llm_output", prompty_output_dict)
