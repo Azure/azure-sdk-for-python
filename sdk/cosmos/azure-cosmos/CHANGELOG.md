@@ -3,8 +3,7 @@
 ### 4.15.1 (Unreleased)
 
 #### Features Added
-* Added `max_degree_of_parallelism` and `max_buffered_item_count` kwargs to async `query_items` to enable See [PR 45488](https://github.com/Azure/azure-sdk-for-python/pull/45488)
-  concurrent cross-partition query execution.
+* Added `max_degree_of_parallelism` and `max_buffered_item_count` kwargs to async `query_items` to enable concurrent cross-partition query execution. See [PR 45488](https://github.com/Azure/azure-sdk-for-python/pull/45488)
   
 #### Breaking Changes
 
