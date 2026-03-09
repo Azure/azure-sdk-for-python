@@ -9,7 +9,9 @@ from unittest.mock import patch
 
 from opentelemetry.sdk.resources import Resource
 from azure.monitor.opentelemetry.exporter import _utils
-from azure.monitor.opentelemetry.exporter._generated.models import TelemetryItem
+from azure.monitor.opentelemetry.exporter._generated.exporter.models import TelemetryItem
+from opentelemetry.sdk.resources import Resource
+from unittest.mock import patch
 
 
 TEST_AI_DEVICE_ID = "TEST_AI_DEVICE_ID"
@@ -23,8 +25,6 @@ TEST_AZURE_MONITOR_CONTEXT = {
         TEST_SDK_VERSION_PREFIX,
     ),
 }
-TEST_TIMESTAMP = "TEST_TIMESTAMP"
-TEST_TIME = "TEST_TIME"
 TEST_WEBSITE_SITE_NAME = "TEST_WEBSITE_SITE_NAME"
 TEST_KUBERNETES_SERVICE_HOST = "TEST_KUBERNETES_SERVICE_HOST"
 TEST_AKS_ARM_NAMESPACE_ID = "TEST_AKS_ARM_NAMESPACE_ID"
@@ -36,8 +36,9 @@ class TestUtils(unittest.TestCase):
         self._valid_instrumentation_key = "1234abcd-5678-4efa-8abc-1234567890ab"
 
     def test_filter_custom_properties_drops_invalid_entries(self):
+        oversized_value = "v" * 9000
         properties = {
-            "valid_key": "valid_value",
+            "valid_key": oversized_value,
             "k" * 151: "should_be_dropped",
             "": "missing_key",
             "short": "ok",
@@ -48,22 +49,44 @@ class TestUtils(unittest.TestCase):
 
         self.assertEqual(len(filtered), 2)
         self.assertIn("valid_key", filtered)
-        self.assertEqual(filtered["valid_key"], "valid_value")
+        self.assertEqual(len(filtered["valid_key"]), 9000)
         self.assertEqual(filtered["short"], "ok")
         self.assertNotIn("k" * 151, filtered)
 
-    def test_filter_custom_properties_preserves_large_values(self):
-        # Ensure values larger than 64KiB are not truncated
+    def test_filter_custom_properties_preserves_large_values_after_disable_limit(self):
+        # Ensure values larger than 64KiB are not truncated when the env variable is set to true
+        enable_values = ["true", "True", "TRUE", "TrUE", "  true  "]
         large_value = "x" * (64 * 1024 + 1000)
-        properties = {
-            "large_key": large_value,
-        }
+        properties = {"large_key": large_value}
 
-        filtered = _utils._filter_custom_properties(properties)
+        for env_value in enable_values:
+            with self.subTest(env_value=env_value):
+                with patch.dict(
+                    "azure.monitor.opentelemetry.exporter._utils.environ",
+                    {"AZURE_MONITOR_DISABLE_CUSTOM_DIMENSIONS_LIMIT": env_value},
+                ):
+                    filtered = _utils._filter_custom_properties(properties)
+                    self.assertIn("large_key", filtered)
+                    self.assertEqual(filtered["large_key"], large_value)
+                    self.assertEqual(len(filtered["large_key"]), 64 * 1024 + 1000)
 
-        self.assertIn("large_key", filtered)
-        self.assertEqual(filtered["large_key"], large_value)
-        self.assertEqual(len(filtered["large_key"]), 64 * 1024 + 1000)
+    def test_filter_custom_properties_preserves_large_values_after_enable_limit(self):
+        # Ensure values larger than 64KiB are not truncated when the env variable is set to false/empty/invalid
+        disable_values = ["", "False", "truthy", "89", "fALSE", " "]
+        large_value = "x" * (64 * 1024 + 1000)
+        max_length = 64 * 1024
+        properties = {"large_key": large_value}
+
+        for env_value in disable_values:
+            with self.subTest(env_value=env_value):
+                with patch.dict(
+                    "azure.monitor.opentelemetry.exporter._utils.environ",
+                    {"AZURE_MONITOR_DISABLE_CUSTOM_DIMENSIONS_LIMIT": env_value},
+                ):
+                    filtered = _utils._filter_custom_properties(properties)
+                    self.assertIn("large_key", filtered)
+                    self.assertEqual(filtered["large_key"], "x" * max_length)
+                    self.assertEqual(len(filtered["large_key"]), max_length)
 
     def test_nanoseconds_to_duration(self):
         ns_to_duration = _utils.ns_to_duration
@@ -292,22 +315,17 @@ class TestUtils(unittest.TestCase):
         self.assertEqual(tags.get("ai.cloud.roleInstance"), "testPodName")
         self.assertEqual(tags.get("ai.internal.nodeName"), tags.get("ai.cloud.roleInstance"))
 
-    @patch(
-        "azure.monitor.opentelemetry.exporter._utils.ns_to_iso_str",
-        return_value=TEST_TIME,
-    )
-    @patch(
-        "azure.monitor.opentelemetry.exporter._utils.azure_monitor_context",
-        TEST_AZURE_MONITOR_CONTEXT,
-    )
-    def test_create_telemetry_item(self, mock_ns_to_iso_str):
-        result = _utils._create_telemetry_item(TEST_TIMESTAMP)
+    @patch("azure.monitor.opentelemetry.exporter._utils.azure_monitor_context", TEST_AZURE_MONITOR_CONTEXT)
+    def test_create_telemetry_item(self):
+        time_ns = time.time_ns()
+        expected_datetime = datetime.datetime.fromtimestamp(time_ns / 1e9, tz=datetime.timezone.utc)
+        result = _utils._create_telemetry_item(time_ns)
         expected_tags = dict(TEST_AZURE_MONITOR_CONTEXT)
         expected = TelemetryItem(
             name="",
             instrumentation_key="",
             tags=expected_tags,
-            time=TEST_TIME,
+            time=expected_datetime,
         )
         self.assertEqual(result, expected)
 

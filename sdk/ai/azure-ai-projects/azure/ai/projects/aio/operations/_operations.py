@@ -35,8 +35,9 @@ from azure.core.utils import case_insensitive_dict
 from ... import models as _models
 from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.serialization import Deserializer, Serializer
-from ...models._enums import FoundryFeaturesOptInKeys
+from ...models._enums import _AgentDefinitionOptInKeys, _FoundryFeaturesOptInKeys
 from ...operations._operations import (
+    _get_agent_definition_opt_in_keys,
     build_agents_create_agent_from_manifest_request,
     build_agents_create_agent_request,
     build_agents_create_version_from_manifest_request,
@@ -57,7 +58,7 @@ from ...operations._operations import (
     build_beta_evaluators_create_version_request,
     build_beta_evaluators_delete_version_request,
     build_beta_evaluators_get_version_request,
-    build_beta_evaluators_list_latest_versions_request,
+    build_beta_evaluators_list_request,
     build_beta_evaluators_list_versions_request,
     build_beta_evaluators_update_version_request,
     build_beta_insights_generate_request,
@@ -109,6 +110,8 @@ _Unset: Any = object()
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 List = list
+_SERIALIZER = Serializer()
+_SERIALIZER.client_side_validation = False
 
 
 class BetaOperations:
@@ -189,6 +192,7 @@ class AgentsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -210,7 +214,7 @@ class AgentsOperations:
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.AgentDetails, response.json())
 
@@ -225,13 +229,6 @@ class AgentsOperations:
         *,
         name: str,
         definition: _models.AgentDefinition,
-        foundry_features: Optional[
-            Union[
-                Literal[FoundryFeaturesOptInKeys.CONTAINER_AGENTS_V1_PREVIEW],
-                Literal[FoundryFeaturesOptInKeys.HOSTED_AGENTS_V1_PREVIEW],
-                Literal[FoundryFeaturesOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW],
-            ]
-        ] = None,
         content_type: str = "application/json",
         metadata: Optional[dict[str, str]] = None,
         description: Optional[str] = None,
@@ -239,33 +236,11 @@ class AgentsOperations:
     ) -> _models.AgentDetails: ...
     @overload
     async def _create_agent(
-        self,
-        body: JSON,
-        *,
-        foundry_features: Optional[
-            Union[
-                Literal[FoundryFeaturesOptInKeys.CONTAINER_AGENTS_V1_PREVIEW],
-                Literal[FoundryFeaturesOptInKeys.HOSTED_AGENTS_V1_PREVIEW],
-                Literal[FoundryFeaturesOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW],
-            ]
-        ] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AgentDetails: ...
     @overload
     async def _create_agent(
-        self,
-        body: IO[bytes],
-        *,
-        foundry_features: Optional[
-            Union[
-                Literal[FoundryFeaturesOptInKeys.CONTAINER_AGENTS_V1_PREVIEW],
-                Literal[FoundryFeaturesOptInKeys.HOSTED_AGENTS_V1_PREVIEW],
-                Literal[FoundryFeaturesOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW],
-            ]
-        ] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AgentDetails: ...
 
     @distributed_trace_async
@@ -275,13 +250,6 @@ class AgentsOperations:
         *,
         name: str = _Unset,
         definition: _models.AgentDefinition = _Unset,
-        foundry_features: Optional[
-            Union[
-                Literal[FoundryFeaturesOptInKeys.CONTAINER_AGENTS_V1_PREVIEW],
-                Literal[FoundryFeaturesOptInKeys.HOSTED_AGENTS_V1_PREVIEW],
-                Literal[FoundryFeaturesOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW],
-            ]
-        ] = None,
         metadata: Optional[dict[str, str]] = None,
         description: Optional[str] = None,
         **kwargs: Any
@@ -300,14 +268,6 @@ class AgentsOperations:
         :keyword definition: The agent definition. This can be a workflow, hosted agent, or a simple
          agent definition. Required.
         :paramtype definition: ~azure.ai.projects.models.AgentDefinition
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. Is one of the following types:
-         Literal[FoundryFeaturesOptInKeys.CONTAINER_AGENTS_V1_PREVIEW],
-         Literal[FoundryFeaturesOptInKeys.HOSTED_AGENTS_V1_PREVIEW],
-         Literal[FoundryFeaturesOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW] Default value is None.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.CONTAINER_AGENTS_V1_PREVIEW or
-         str or ~azure.ai.projects.models.HOSTED_AGENTS_V1_PREVIEW or str or
-         ~azure.ai.projects.models.WORKFLOW_AGENTS_V1_PREVIEW
         :keyword metadata: Set of 16 key-value pairs that can be attached to an object. This can be
          useful for storing additional information about the object in a structured
          format, and querying for objects via API or the dashboard.
@@ -321,6 +281,7 @@ class AgentsOperations:
         :rtype: ~azure.ai.projects.models.AgentDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        _foundry_features: Optional[str] = _get_agent_definition_opt_in_keys if self._config.allow_preview else None  # type: ignore
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -350,7 +311,7 @@ class AgentsOperations:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_agents_create_agent_request(
-            foundry_features=foundry_features,
+            foundry_features=_foundry_features,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -362,6 +323,7 @@ class AgentsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -383,7 +345,7 @@ class AgentsOperations:
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.AgentDetails, response.json())
 
@@ -398,13 +360,6 @@ class AgentsOperations:
         agent_name: str,
         *,
         definition: _models.AgentDefinition,
-        foundry_features: Optional[
-            Union[
-                Literal[FoundryFeaturesOptInKeys.CONTAINER_AGENTS_V1_PREVIEW],
-                Literal[FoundryFeaturesOptInKeys.HOSTED_AGENTS_V1_PREVIEW],
-                Literal[FoundryFeaturesOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW],
-            ]
-        ] = None,
         content_type: str = "application/json",
         metadata: Optional[dict[str, str]] = None,
         description: Optional[str] = None,
@@ -412,35 +367,11 @@ class AgentsOperations:
     ) -> _models.AgentDetails: ...
     @overload
     async def _update_agent(
-        self,
-        agent_name: str,
-        body: JSON,
-        *,
-        foundry_features: Optional[
-            Union[
-                Literal[FoundryFeaturesOptInKeys.CONTAINER_AGENTS_V1_PREVIEW],
-                Literal[FoundryFeaturesOptInKeys.HOSTED_AGENTS_V1_PREVIEW],
-                Literal[FoundryFeaturesOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW],
-            ]
-        ] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, agent_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AgentDetails: ...
     @overload
     async def _update_agent(
-        self,
-        agent_name: str,
-        body: IO[bytes],
-        *,
-        foundry_features: Optional[
-            Union[
-                Literal[FoundryFeaturesOptInKeys.CONTAINER_AGENTS_V1_PREVIEW],
-                Literal[FoundryFeaturesOptInKeys.HOSTED_AGENTS_V1_PREVIEW],
-                Literal[FoundryFeaturesOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW],
-            ]
-        ] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, agent_name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AgentDetails: ...
 
     @distributed_trace_async
@@ -450,13 +381,6 @@ class AgentsOperations:
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
         definition: _models.AgentDefinition = _Unset,
-        foundry_features: Optional[
-            Union[
-                Literal[FoundryFeaturesOptInKeys.CONTAINER_AGENTS_V1_PREVIEW],
-                Literal[FoundryFeaturesOptInKeys.HOSTED_AGENTS_V1_PREVIEW],
-                Literal[FoundryFeaturesOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW],
-            ]
-        ] = None,
         metadata: Optional[dict[str, str]] = None,
         description: Optional[str] = None,
         **kwargs: Any
@@ -471,14 +395,6 @@ class AgentsOperations:
         :keyword definition: The agent definition. This can be a workflow, hosted agent, or a simple
          agent definition. Required.
         :paramtype definition: ~azure.ai.projects.models.AgentDefinition
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. Is one of the following types:
-         Literal[FoundryFeaturesOptInKeys.CONTAINER_AGENTS_V1_PREVIEW],
-         Literal[FoundryFeaturesOptInKeys.HOSTED_AGENTS_V1_PREVIEW],
-         Literal[FoundryFeaturesOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW] Default value is None.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.CONTAINER_AGENTS_V1_PREVIEW or
-         str or ~azure.ai.projects.models.HOSTED_AGENTS_V1_PREVIEW or str or
-         ~azure.ai.projects.models.WORKFLOW_AGENTS_V1_PREVIEW
         :keyword metadata: Set of 16 key-value pairs that can be attached to an object. This can be
          useful for storing additional information about the object in a structured
          format, and querying for objects via API or the dashboard.
@@ -492,6 +408,7 @@ class AgentsOperations:
         :rtype: ~azure.ai.projects.models.AgentDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        _foundry_features: Optional[str] = _get_agent_definition_opt_in_keys if self._config.allow_preview else None  # type: ignore
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -520,7 +437,7 @@ class AgentsOperations:
 
         _request = build_agents_update_agent_request(
             agent_name=agent_name,
-            foundry_features=foundry_features,
+            foundry_features=_foundry_features,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -532,6 +449,7 @@ class AgentsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -553,7 +471,7 @@ class AgentsOperations:
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.AgentDetails, response.json())
 
@@ -672,6 +590,7 @@ class AgentsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -693,7 +612,7 @@ class AgentsOperations:
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.AgentDetails, response.json())
 
@@ -806,6 +725,7 @@ class AgentsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -827,7 +747,7 @@ class AgentsOperations:
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.AgentDetails, response.json())
 
@@ -870,6 +790,7 @@ class AgentsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -891,7 +812,7 @@ class AgentsOperations:
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.DeleteAgentResponse, response.json())
 
@@ -913,7 +834,7 @@ class AgentsOperations:
         """Returns the list of all agents.
 
         :keyword kind: Filter agents by kind. If not provided, all agents are returned. Known values
-         are: "prompt", "hosted", "container_app", and "workflow". Default value is None.
+         are: "prompt", "hosted", and "workflow". Default value is None.
         :paramtype kind: str or ~azure.ai.projects.models.AgentKind
         :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
          100, and the
@@ -966,7 +887,10 @@ class AgentsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.AgentDetails], deserialized.get("data", []))
+            list_of_elem = _deserialize(
+                List[_models.AgentDetails],
+                deserialized.get("data", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("last_id") or None, AsyncList(list_of_elem)
@@ -998,13 +922,6 @@ class AgentsOperations:
         agent_name: str,
         *,
         definition: _models.AgentDefinition,
-        foundry_features: Optional[
-            Union[
-                Literal[FoundryFeaturesOptInKeys.CONTAINER_AGENTS_V1_PREVIEW],
-                Literal[FoundryFeaturesOptInKeys.HOSTED_AGENTS_V1_PREVIEW],
-                Literal[FoundryFeaturesOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW],
-            ]
-        ] = None,
         content_type: str = "application/json",
         metadata: Optional[dict[str, str]] = None,
         description: Optional[str] = None,
@@ -1022,14 +939,6 @@ class AgentsOperations:
         :keyword definition: The agent definition. This can be a workflow, hosted agent, or a simple
          agent definition. Required.
         :paramtype definition: ~azure.ai.projects.models.AgentDefinition
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. Is one of the following types:
-         Literal[FoundryFeaturesOptInKeys.CONTAINER_AGENTS_V1_PREVIEW],
-         Literal[FoundryFeaturesOptInKeys.HOSTED_AGENTS_V1_PREVIEW],
-         Literal[FoundryFeaturesOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW] Default value is None.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.CONTAINER_AGENTS_V1_PREVIEW or
-         str or ~azure.ai.projects.models.HOSTED_AGENTS_V1_PREVIEW or str or
-         ~azure.ai.projects.models.WORKFLOW_AGENTS_V1_PREVIEW
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1049,19 +958,7 @@ class AgentsOperations:
 
     @overload
     async def create_version(
-        self,
-        agent_name: str,
-        body: JSON,
-        *,
-        foundry_features: Optional[
-            Union[
-                Literal[FoundryFeaturesOptInKeys.CONTAINER_AGENTS_V1_PREVIEW],
-                Literal[FoundryFeaturesOptInKeys.HOSTED_AGENTS_V1_PREVIEW],
-                Literal[FoundryFeaturesOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW],
-            ]
-        ] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, agent_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AgentVersionDetails:
         """Create a new agent version.
 
@@ -1074,14 +971,6 @@ class AgentsOperations:
         :type agent_name: str
         :param body: Required.
         :type body: JSON
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. Is one of the following types:
-         Literal[FoundryFeaturesOptInKeys.CONTAINER_AGENTS_V1_PREVIEW],
-         Literal[FoundryFeaturesOptInKeys.HOSTED_AGENTS_V1_PREVIEW],
-         Literal[FoundryFeaturesOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW] Default value is None.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.CONTAINER_AGENTS_V1_PREVIEW or
-         str or ~azure.ai.projects.models.HOSTED_AGENTS_V1_PREVIEW or str or
-         ~azure.ai.projects.models.WORKFLOW_AGENTS_V1_PREVIEW
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1092,19 +981,7 @@ class AgentsOperations:
 
     @overload
     async def create_version(
-        self,
-        agent_name: str,
-        body: IO[bytes],
-        *,
-        foundry_features: Optional[
-            Union[
-                Literal[FoundryFeaturesOptInKeys.CONTAINER_AGENTS_V1_PREVIEW],
-                Literal[FoundryFeaturesOptInKeys.HOSTED_AGENTS_V1_PREVIEW],
-                Literal[FoundryFeaturesOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW],
-            ]
-        ] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, agent_name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AgentVersionDetails:
         """Create a new agent version.
 
@@ -1117,14 +994,6 @@ class AgentsOperations:
         :type agent_name: str
         :param body: Required.
         :type body: IO[bytes]
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. Is one of the following types:
-         Literal[FoundryFeaturesOptInKeys.CONTAINER_AGENTS_V1_PREVIEW],
-         Literal[FoundryFeaturesOptInKeys.HOSTED_AGENTS_V1_PREVIEW],
-         Literal[FoundryFeaturesOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW] Default value is None.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.CONTAINER_AGENTS_V1_PREVIEW or
-         str or ~azure.ai.projects.models.HOSTED_AGENTS_V1_PREVIEW or str or
-         ~azure.ai.projects.models.WORKFLOW_AGENTS_V1_PREVIEW
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1140,13 +1009,6 @@ class AgentsOperations:
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
         definition: _models.AgentDefinition = _Unset,
-        foundry_features: Optional[
-            Union[
-                Literal[FoundryFeaturesOptInKeys.CONTAINER_AGENTS_V1_PREVIEW],
-                Literal[FoundryFeaturesOptInKeys.HOSTED_AGENTS_V1_PREVIEW],
-                Literal[FoundryFeaturesOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW],
-            ]
-        ] = None,
         metadata: Optional[dict[str, str]] = None,
         description: Optional[str] = None,
         **kwargs: Any
@@ -1165,14 +1027,6 @@ class AgentsOperations:
         :keyword definition: The agent definition. This can be a workflow, hosted agent, or a simple
          agent definition. Required.
         :paramtype definition: ~azure.ai.projects.models.AgentDefinition
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. Is one of the following types:
-         Literal[FoundryFeaturesOptInKeys.CONTAINER_AGENTS_V1_PREVIEW],
-         Literal[FoundryFeaturesOptInKeys.HOSTED_AGENTS_V1_PREVIEW],
-         Literal[FoundryFeaturesOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW] Default value is None.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.CONTAINER_AGENTS_V1_PREVIEW or
-         str or ~azure.ai.projects.models.HOSTED_AGENTS_V1_PREVIEW or str or
-         ~azure.ai.projects.models.WORKFLOW_AGENTS_V1_PREVIEW
         :keyword metadata: Set of 16 key-value pairs that can be attached to an object. This can be
          useful for storing additional information about the object in a structured
          format, and querying for objects via API or the dashboard.
@@ -1186,6 +1040,7 @@ class AgentsOperations:
         :rtype: ~azure.ai.projects.models.AgentVersionDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        _foundry_features: Optional[str] = _get_agent_definition_opt_in_keys if self._config.allow_preview else None  # type: ignore
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -1214,7 +1069,7 @@ class AgentsOperations:
 
         _request = build_agents_create_version_request(
             agent_name=agent_name,
-            foundry_features=foundry_features,
+            foundry_features=_foundry_features,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -1226,6 +1081,7 @@ class AgentsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1247,7 +1103,7 @@ class AgentsOperations:
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.AgentVersionDetails, response.json())
 
@@ -1432,6 +1288,7 @@ class AgentsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1453,7 +1310,7 @@ class AgentsOperations:
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.AgentVersionDetails, response.json())
 
@@ -1499,6 +1356,7 @@ class AgentsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1520,7 +1378,7 @@ class AgentsOperations:
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.AgentVersionDetails, response.json())
 
@@ -1569,6 +1427,7 @@ class AgentsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1590,7 +1449,7 @@ class AgentsOperations:
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.DeleteAgentVersionResponse, response.json())
 
@@ -1664,7 +1523,10 @@ class AgentsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.AgentVersionDetails], deserialized.get("data", []))
+            list_of_elem = _deserialize(
+                List[_models.AgentVersionDetails],
+                deserialized.get("data", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("last_id") or None, AsyncList(list_of_elem)
@@ -1742,6 +1604,7 @@ class EvaluationRulesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1759,7 +1622,7 @@ class EvaluationRulesOperations:
             raise HttpResponseError(response=response)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.EvaluationRule, response.json())
 
@@ -1818,13 +1681,7 @@ class EvaluationRulesOperations:
 
     @overload
     async def create_or_update(
-        self,
-        id: str,
-        evaluation_rule: _models.EvaluationRule,
-        *,
-        foundry_features: Optional[Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW]] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, id: str, evaluation_rule: _models.EvaluationRule, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.EvaluationRule:
         """Create or update an evaluation rule.
 
@@ -1832,9 +1689,6 @@ class EvaluationRulesOperations:
         :type id: str
         :param evaluation_rule: Evaluation rule resource. Required.
         :type evaluation_rule: ~azure.ai.projects.models.EvaluationRule
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. EVALUATIONS_V1_PREVIEW. Default value is None.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.EVALUATIONS_V1_PREVIEW
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1845,13 +1699,7 @@ class EvaluationRulesOperations:
 
     @overload
     async def create_or_update(
-        self,
-        id: str,
-        evaluation_rule: JSON,
-        *,
-        foundry_features: Optional[Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW]] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, id: str, evaluation_rule: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.EvaluationRule:
         """Create or update an evaluation rule.
 
@@ -1859,9 +1707,6 @@ class EvaluationRulesOperations:
         :type id: str
         :param evaluation_rule: Evaluation rule resource. Required.
         :type evaluation_rule: JSON
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. EVALUATIONS_V1_PREVIEW. Default value is None.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.EVALUATIONS_V1_PREVIEW
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1872,13 +1717,7 @@ class EvaluationRulesOperations:
 
     @overload
     async def create_or_update(
-        self,
-        id: str,
-        evaluation_rule: IO[bytes],
-        *,
-        foundry_features: Optional[Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW]] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, id: str, evaluation_rule: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.EvaluationRule:
         """Create or update an evaluation rule.
 
@@ -1886,9 +1725,6 @@ class EvaluationRulesOperations:
         :type id: str
         :param evaluation_rule: Evaluation rule resource. Required.
         :type evaluation_rule: IO[bytes]
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. EVALUATIONS_V1_PREVIEW. Default value is None.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.EVALUATIONS_V1_PREVIEW
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1899,12 +1735,7 @@ class EvaluationRulesOperations:
 
     @distributed_trace_async
     async def create_or_update(
-        self,
-        id: str,
-        evaluation_rule: Union[_models.EvaluationRule, JSON, IO[bytes]],
-        *,
-        foundry_features: Optional[Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW]] = None,
-        **kwargs: Any
+        self, id: str, evaluation_rule: Union[_models.EvaluationRule, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.EvaluationRule:
         """Create or update an evaluation rule.
 
@@ -1913,13 +1744,11 @@ class EvaluationRulesOperations:
         :param evaluation_rule: Evaluation rule resource. Is one of the following types:
          EvaluationRule, JSON, IO[bytes] Required.
         :type evaluation_rule: ~azure.ai.projects.models.EvaluationRule or JSON or IO[bytes]
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. EVALUATIONS_V1_PREVIEW. Default value is None.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.EVALUATIONS_V1_PREVIEW
         :return: EvaluationRule. The EvaluationRule is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.EvaluationRule
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        _foundry_features: Optional[Literal[_FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW]] = _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW if self._config.allow_preview else None  # type: ignore
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -1943,7 +1772,7 @@ class EvaluationRulesOperations:
 
         _request = build_evaluation_rules_create_or_update_request(
             id=id,
-            foundry_features=foundry_features,
+            foundry_features=_foundry_features,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -1955,6 +1784,7 @@ class EvaluationRulesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1972,7 +1802,7 @@ class EvaluationRulesOperations:
             raise HttpResponseError(response=response)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.EvaluationRule, response.json())
 
@@ -2058,7 +1888,10 @@ class EvaluationRulesOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.EvaluationRule], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.EvaluationRule],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -2132,6 +1965,7 @@ class ConnectionsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2154,7 +1988,7 @@ class ConnectionsOperations:
         )
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.Connection, response.json())
 
@@ -2197,6 +2031,7 @@ class ConnectionsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2219,7 +2054,7 @@ class ConnectionsOperations:
         )
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.Connection, response.json())
 
@@ -2303,7 +2138,10 @@ class ConnectionsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Connection], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.Connection],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -2406,7 +2244,10 @@ class DatasetsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.DatasetVersion], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.DatasetVersion],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -2488,7 +2329,10 @@ class DatasetsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.DatasetVersion], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.DatasetVersion],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -2548,6 +2392,7 @@ class DatasetsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2565,7 +2410,7 @@ class DatasetsOperations:
             raise HttpResponseError(response=response)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.DatasetVersion, response.json())
 
@@ -2756,6 +2601,7 @@ class DatasetsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2773,7 +2619,7 @@ class DatasetsOperations:
             raise HttpResponseError(response=response)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.DatasetVersion, response.json())
 
@@ -2917,6 +2763,7 @@ class DatasetsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2934,7 +2781,7 @@ class DatasetsOperations:
             raise HttpResponseError(response=response)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.PendingUploadResponse, response.json())
 
@@ -2980,6 +2827,7 @@ class DatasetsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2997,7 +2845,7 @@ class DatasetsOperations:
             raise HttpResponseError(response=response)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.DatasetCredential, response.json())
 
@@ -3058,6 +2906,7 @@ class DeploymentsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3080,7 +2929,7 @@ class DeploymentsOperations:
         )
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.Deployment, response.json())
 
@@ -3167,7 +3016,10 @@ class DeploymentsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Deployment], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.Deployment],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -3270,7 +3122,10 @@ class IndexesOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Index], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.Index],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -3352,7 +3207,10 @@ class IndexesOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Index], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.Index],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -3412,6 +3270,7 @@ class IndexesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3429,7 +3288,7 @@ class IndexesOperations:
             raise HttpResponseError(response=response)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.Index, response.json())
 
@@ -3614,6 +3473,7 @@ class IndexesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3631,7 +3491,7 @@ class IndexesOperations:
             raise HttpResponseError(response=response)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.Index, response.json())
 
@@ -3668,8 +3528,8 @@ class BetaEvaluationTaxonomiesOperations:
         :rtype: ~azure.ai.projects.models.EvaluationTaxonomy
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
-            FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
+        _foundry_features: Literal[_FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
+            _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
         )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -3686,7 +3546,7 @@ class BetaEvaluationTaxonomiesOperations:
 
         _request = build_beta_evaluation_taxonomies_get_request(
             name=name,
-            foundry_features=foundry_features,
+            foundry_features=_foundry_features,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -3696,6 +3556,7 @@ class BetaEvaluationTaxonomiesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3713,7 +3574,7 @@ class BetaEvaluationTaxonomiesOperations:
             raise HttpResponseError(response=response)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.EvaluationTaxonomy, response.json())
 
@@ -3736,8 +3597,8 @@ class BetaEvaluationTaxonomiesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.EvaluationTaxonomy]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
-            FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
+        _foundry_features: Literal[_FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
+            _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
         )
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
@@ -3756,7 +3617,7 @@ class BetaEvaluationTaxonomiesOperations:
             if not next_link:
 
                 _request = build_beta_evaluation_taxonomies_list_request(
-                    foundry_features=foundry_features,
+                    foundry_features=_foundry_features,
                     input_name=input_name,
                     input_type=input_type,
                     api_version=self._config.api_version,
@@ -3781,7 +3642,10 @@ class BetaEvaluationTaxonomiesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    params=_next_request_params,
+                    headers={"Foundry-Features": _SERIALIZER.header("foundry_features", _foundry_features, "str")},
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -3794,7 +3658,10 @@ class BetaEvaluationTaxonomiesOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.EvaluationTaxonomy], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.EvaluationTaxonomy],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -3826,8 +3693,8 @@ class BetaEvaluationTaxonomiesOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
-            FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
+        _foundry_features: Literal[_FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
+            _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
         )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -3844,7 +3711,7 @@ class BetaEvaluationTaxonomiesOperations:
 
         _request = build_beta_evaluation_taxonomies_delete_request(
             name=name,
-            foundry_features=foundry_features,
+            foundry_features=_foundry_features,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -3937,8 +3804,8 @@ class BetaEvaluationTaxonomiesOperations:
         :rtype: ~azure.ai.projects.models.EvaluationTaxonomy
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
-            FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
+        _foundry_features: Literal[_FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
+            _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
         )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -3963,7 +3830,7 @@ class BetaEvaluationTaxonomiesOperations:
 
         _request = build_beta_evaluation_taxonomies_create_request(
             name=name,
-            foundry_features=foundry_features,
+            foundry_features=_foundry_features,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -3975,6 +3842,7 @@ class BetaEvaluationTaxonomiesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3992,7 +3860,7 @@ class BetaEvaluationTaxonomiesOperations:
             raise HttpResponseError(response=response)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.EvaluationTaxonomy, response.json())
 
@@ -4070,8 +3938,8 @@ class BetaEvaluationTaxonomiesOperations:
         :rtype: ~azure.ai.projects.models.EvaluationTaxonomy
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
-            FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
+        _foundry_features: Literal[_FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
+            _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
         )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -4096,7 +3964,7 @@ class BetaEvaluationTaxonomiesOperations:
 
         _request = build_beta_evaluation_taxonomies_update_request(
             name=name,
-            foundry_features=foundry_features,
+            foundry_features=_foundry_features,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -4108,6 +3976,7 @@ class BetaEvaluationTaxonomiesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4125,7 +3994,7 @@ class BetaEvaluationTaxonomiesOperations:
             raise HttpResponseError(response=response)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.EvaluationTaxonomy, response.json())
 
@@ -4176,8 +4045,8 @@ class BetaEvaluatorsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.EvaluatorVersion]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
-            FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
+        _foundry_features: Literal[_FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
+            _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
         )
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
@@ -4197,7 +4066,7 @@ class BetaEvaluatorsOperations:
 
                 _request = build_beta_evaluators_list_versions_request(
                     name=name,
-                    foundry_features=foundry_features,
+                    foundry_features=_foundry_features,
                     type=type,
                     limit=limit,
                     api_version=self._config.api_version,
@@ -4222,7 +4091,10 @@ class BetaEvaluatorsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    params=_next_request_params,
+                    headers={"Foundry-Features": _SERIALIZER.header("foundry_features", _foundry_features, "str")},
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -4235,7 +4107,10 @@ class BetaEvaluatorsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.EvaluatorVersion], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.EvaluatorVersion],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -4258,7 +4133,7 @@ class BetaEvaluatorsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list_latest_versions(
+    def list(
         self,
         *,
         type: Optional[Union[Literal["builtin"], Literal["custom"], Literal["all"], str]] = None,
@@ -4278,8 +4153,8 @@ class BetaEvaluatorsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.EvaluatorVersion]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
-            FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
+        _foundry_features: Literal[_FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
+            _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
         )
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
@@ -4297,8 +4172,8 @@ class BetaEvaluatorsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_beta_evaluators_list_latest_versions_request(
-                    foundry_features=foundry_features,
+                _request = build_beta_evaluators_list_request(
+                    foundry_features=_foundry_features,
                     type=type,
                     limit=limit,
                     api_version=self._config.api_version,
@@ -4323,7 +4198,10 @@ class BetaEvaluatorsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    params=_next_request_params,
+                    headers={"Foundry-Features": _SERIALIZER.header("foundry_features", _foundry_features, "str")},
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -4336,7 +4214,10 @@ class BetaEvaluatorsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.EvaluatorVersion], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.EvaluatorVersion],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -4371,8 +4252,8 @@ class BetaEvaluatorsOperations:
         :rtype: ~azure.ai.projects.models.EvaluatorVersion
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
-            FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
+        _foundry_features: Literal[_FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
+            _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
         )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -4390,7 +4271,7 @@ class BetaEvaluatorsOperations:
         _request = build_beta_evaluators_get_version_request(
             name=name,
             version=version,
-            foundry_features=foundry_features,
+            foundry_features=_foundry_features,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -4400,6 +4281,7 @@ class BetaEvaluatorsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4417,7 +4299,7 @@ class BetaEvaluatorsOperations:
             raise HttpResponseError(response=response)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.EvaluatorVersion, response.json())
 
@@ -4439,8 +4321,8 @@ class BetaEvaluatorsOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
-            FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
+        _foundry_features: Literal[_FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
+            _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
         )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -4458,7 +4340,7 @@ class BetaEvaluatorsOperations:
         _request = build_beta_evaluators_delete_version_request(
             name=name,
             version=version,
-            foundry_features=foundry_features,
+            foundry_features=_foundry_features,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -4556,8 +4438,8 @@ class BetaEvaluatorsOperations:
         :rtype: ~azure.ai.projects.models.EvaluatorVersion
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
-            FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
+        _foundry_features: Literal[_FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
+            _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
         )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -4582,7 +4464,7 @@ class BetaEvaluatorsOperations:
 
         _request = build_beta_evaluators_create_version_request(
             name=name,
-            foundry_features=foundry_features,
+            foundry_features=_foundry_features,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -4594,6 +4476,7 @@ class BetaEvaluatorsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4611,7 +4494,7 @@ class BetaEvaluatorsOperations:
             raise HttpResponseError(response=response)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.EvaluatorVersion, response.json())
 
@@ -4713,8 +4596,8 @@ class BetaEvaluatorsOperations:
         :rtype: ~azure.ai.projects.models.EvaluatorVersion
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
-            FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
+        _foundry_features: Literal[_FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
+            _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
         )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -4740,7 +4623,7 @@ class BetaEvaluatorsOperations:
         _request = build_beta_evaluators_update_version_request(
             name=name,
             version=version,
-            foundry_features=foundry_features,
+            foundry_features=_foundry_features,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -4752,6 +4635,7 @@ class BetaEvaluatorsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4769,7 +4653,7 @@ class BetaEvaluatorsOperations:
             raise HttpResponseError(response=response)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.EvaluatorVersion, response.json())
 
@@ -4858,8 +4742,8 @@ class BetaInsightsOperations:
         :rtype: ~azure.ai.projects.models.Insight
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        foundry_features: Literal[FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW] = (
-            FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW
+        _foundry_features: Literal[_FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW] = (
+            _FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW
         )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -4883,7 +4767,7 @@ class BetaInsightsOperations:
             _content = json.dumps(insight, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_beta_insights_generate_request(
-            foundry_features=foundry_features,
+            foundry_features=_foundry_features,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -4895,6 +4779,7 @@ class BetaInsightsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4912,7 +4797,7 @@ class BetaInsightsOperations:
             raise HttpResponseError(response=response)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.Insight, response.json())
 
@@ -4922,11 +4807,13 @@ class BetaInsightsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def get(self, id: str, *, include_coordinates: Optional[bool] = None, **kwargs: Any) -> _models.Insight:
+    async def get(
+        self, insight_id: str, *, include_coordinates: Optional[bool] = None, **kwargs: Any
+    ) -> _models.Insight:
         """Get a specific insight by Id.
 
-        :param id: The unique identifier for the insights report. Required.
-        :type id: str
+        :param insight_id: The unique identifier for the insights report. Required.
+        :type insight_id: str
         :keyword include_coordinates: Whether to include coordinates for visualization in the response.
          Defaults to false. Default value is None.
         :paramtype include_coordinates: bool
@@ -4934,8 +4821,8 @@ class BetaInsightsOperations:
         :rtype: ~azure.ai.projects.models.Insight
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        foundry_features: Literal[FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW] = (
-            FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW
+        _foundry_features: Literal[_FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW] = (
+            _FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW
         )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -4951,8 +4838,8 @@ class BetaInsightsOperations:
         cls: ClsType[_models.Insight] = kwargs.pop("cls", None)
 
         _request = build_beta_insights_get_request(
-            id=id,
-            foundry_features=foundry_features,
+            insight_id=insight_id,
+            foundry_features=_foundry_features,
             include_coordinates=include_coordinates,
             api_version=self._config.api_version,
             headers=_headers,
@@ -4963,6 +4850,7 @@ class BetaInsightsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4980,7 +4868,7 @@ class BetaInsightsOperations:
             raise HttpResponseError(response=response)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.Insight, response.json())
 
@@ -5018,8 +4906,8 @@ class BetaInsightsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.Insight]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        foundry_features: Literal[FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW] = (
-            FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW
+        _foundry_features: Literal[_FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW] = (
+            _FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW
         )
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
@@ -5038,7 +4926,7 @@ class BetaInsightsOperations:
             if not next_link:
 
                 _request = build_beta_insights_list_request(
-                    foundry_features=foundry_features,
+                    foundry_features=_foundry_features,
                     type=type,
                     eval_id=eval_id,
                     run_id=run_id,
@@ -5066,7 +4954,10 @@ class BetaInsightsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    params=_next_request_params,
+                    headers={"Foundry-Features": _SERIALIZER.header("foundry_features", _foundry_features, "str")},
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -5079,7 +4970,10 @@ class BetaInsightsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Insight], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.Insight],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -5209,8 +5103,8 @@ class BetaMemoryStoresOperations:
         :rtype: ~azure.ai.projects.models.MemoryStoreDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] = (
-            FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
+        _foundry_features: Literal[_FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] = (
+            _FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
         )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -5241,7 +5135,7 @@ class BetaMemoryStoresOperations:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_beta_memory_stores_create_request(
-            foundry_features=foundry_features,
+            foundry_features=_foundry_features,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -5253,6 +5147,7 @@ class BetaMemoryStoresOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -5274,7 +5169,7 @@ class BetaMemoryStoresOperations:
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.MemoryStoreDetails, response.json())
 
@@ -5371,8 +5266,8 @@ class BetaMemoryStoresOperations:
         :rtype: ~azure.ai.projects.models.MemoryStoreDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] = (
-            FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
+        _foundry_features: Literal[_FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] = (
+            _FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
         )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -5400,7 +5295,7 @@ class BetaMemoryStoresOperations:
 
         _request = build_beta_memory_stores_update_request(
             name=name,
-            foundry_features=foundry_features,
+            foundry_features=_foundry_features,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -5412,6 +5307,7 @@ class BetaMemoryStoresOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -5433,7 +5329,7 @@ class BetaMemoryStoresOperations:
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.MemoryStoreDetails, response.json())
 
@@ -5452,8 +5348,8 @@ class BetaMemoryStoresOperations:
         :rtype: ~azure.ai.projects.models.MemoryStoreDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] = (
-            FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
+        _foundry_features: Literal[_FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] = (
+            _FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
         )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -5470,7 +5366,7 @@ class BetaMemoryStoresOperations:
 
         _request = build_beta_memory_stores_get_request(
             name=name,
-            foundry_features=foundry_features,
+            foundry_features=_foundry_features,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -5480,6 +5376,7 @@ class BetaMemoryStoresOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -5501,7 +5398,7 @@ class BetaMemoryStoresOperations:
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.MemoryStoreDetails, response.json())
 
@@ -5539,8 +5436,8 @@ class BetaMemoryStoresOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.MemoryStoreDetails]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] = (
-            FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
+        _foundry_features: Literal[_FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] = (
+            _FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
         )
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
@@ -5558,7 +5455,7 @@ class BetaMemoryStoresOperations:
         def prepare_request(_continuation_token=None):
 
             _request = build_beta_memory_stores_list_request(
-                foundry_features=foundry_features,
+                foundry_features=_foundry_features,
                 limit=limit,
                 order=order,
                 after=_continuation_token,
@@ -5575,7 +5472,10 @@ class BetaMemoryStoresOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.MemoryStoreDetails], deserialized.get("data", []))
+            list_of_elem = _deserialize(
+                List[_models.MemoryStoreDetails],
+                deserialized.get("data", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("last_id") or None, AsyncList(list_of_elem)
@@ -5611,8 +5511,8 @@ class BetaMemoryStoresOperations:
         :rtype: ~azure.ai.projects.models.DeleteMemoryStoreResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] = (
-            FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
+        _foundry_features: Literal[_FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] = (
+            _FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
         )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -5629,7 +5529,7 @@ class BetaMemoryStoresOperations:
 
         _request = build_beta_memory_stores_delete_request(
             name=name,
-            foundry_features=foundry_features,
+            foundry_features=_foundry_features,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -5639,6 +5539,7 @@ class BetaMemoryStoresOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -5660,7 +5561,7 @@ class BetaMemoryStoresOperations:
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.DeleteMemoryStoreResult, response.json())
 
@@ -5670,7 +5571,7 @@ class BetaMemoryStoresOperations:
         return deserialized  # type: ignore
 
     @overload
-    async def search_memories(
+    async def _search_memories(
         self,
         name: str,
         *,
@@ -5680,70 +5581,18 @@ class BetaMemoryStoresOperations:
         previous_search_id: Optional[str] = None,
         options: Optional[_models.MemorySearchOptions] = None,
         **kwargs: Any
-    ) -> _models.MemoryStoreSearchResult:
-        """Search for relevant memories from a memory store based on conversation context.
-
-        :param name: The name of the memory store to search. Required.
-        :type name: str
-        :keyword scope: The namespace that logically groups and isolates memories, such as a user ID.
-         Required.
-        :paramtype scope: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword items: A list of queries you would like to use in the search, each one represented as
-         a dictionary, with ``role``, ``content`` and ``type`` properties (with type equals
-         ``message``). Each query is a message identical to OpenAI's EasyInputMessageParam. For example:
-         {"role": "user", "type": "message", "content": "my user message"}. Default value is None.
-        :paramtype items: list[dict[str, any]]
-        :keyword previous_search_id: The unique ID of the previous search request, enabling incremental
-         memory search from where the last operation left off. Default value is None.
-        :paramtype previous_search_id: str
-        :keyword options: Memory search options. Default value is None.
-        :paramtype options: ~azure.ai.projects.models.MemorySearchOptions
-        :return: MemoryStoreSearchResult. The MemoryStoreSearchResult is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.MemoryStoreSearchResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
+    ) -> _models.MemoryStoreSearchResult: ...
     @overload
-    async def search_memories(
+    async def _search_memories(
         self, name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.MemoryStoreSearchResult:
-        """Search for relevant memories from a memory store based on conversation context.
-
-        :param name: The name of the memory store to search. Required.
-        :type name: str
-        :param body: Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: MemoryStoreSearchResult. The MemoryStoreSearchResult is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.MemoryStoreSearchResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
+    ) -> _models.MemoryStoreSearchResult: ...
     @overload
-    async def search_memories(
+    async def _search_memories(
         self, name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.MemoryStoreSearchResult:
-        """Search for relevant memories from a memory store based on conversation context.
-
-        :param name: The name of the memory store to search. Required.
-        :type name: str
-        :param body: Required.
-        :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: MemoryStoreSearchResult. The MemoryStoreSearchResult is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.MemoryStoreSearchResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
+    ) -> _models.MemoryStoreSearchResult: ...
 
     @distributed_trace_async
-    async def search_memories(
+    async def _search_memories(
         self,
         name: str,
         body: Union[JSON, IO[bytes]] = _Unset,
@@ -5763,10 +5612,7 @@ class BetaMemoryStoresOperations:
         :keyword scope: The namespace that logically groups and isolates memories, such as a user ID.
          Required.
         :paramtype scope: str
-        :keyword items: A list of queries you would like to use in the search, each one represented as
-         a dictionary, with ``role``, ``content`` and ``type`` properties (with type equals
-         ``message``). Each query is a message identical to OpenAI's EasyInputMessageParam. For example:
-         {"role": "user", "type": "message", "content": "my user message"}. Default value is None.
+        :keyword items: Items for which to search for relevant memories. Default value is None.
         :paramtype items: list[dict[str, any]]
         :keyword previous_search_id: The unique ID of the previous search request, enabling incremental
          memory search from where the last operation left off. Default value is None.
@@ -5777,8 +5623,8 @@ class BetaMemoryStoresOperations:
         :rtype: ~azure.ai.projects.models.MemoryStoreSearchResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] = (
-            FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
+        _foundry_features: Literal[_FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] = (
+            _FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
         )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -5813,7 +5659,7 @@ class BetaMemoryStoresOperations:
 
         _request = build_beta_memory_stores_search_memories_request(
             name=name,
-            foundry_features=foundry_features,
+            foundry_features=_foundry_features,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -5825,6 +5671,7 @@ class BetaMemoryStoresOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -5846,7 +5693,7 @@ class BetaMemoryStoresOperations:
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.MemoryStoreSearchResult, response.json())
 
@@ -5860,13 +5707,15 @@ class BetaMemoryStoresOperations:
         name: str,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW],
         scope: str = _Unset,
         items: Optional[List[dict[str, Any]]] = None,
         previous_update_id: Optional[str] = None,
         update_delay: Optional[int] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
+        _foundry_features: Literal[_FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] = (
+            _FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
+        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -5900,7 +5749,7 @@ class BetaMemoryStoresOperations:
 
         _request = build_beta_memory_stores_update_memories_request(
             name=name,
-            foundry_features=foundry_features,
+            foundry_features=_foundry_features,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -5912,6 +5761,7 @@ class BetaMemoryStoresOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -5934,7 +5784,7 @@ class BetaMemoryStoresOperations:
         response_headers = {}
         response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -5983,10 +5833,7 @@ class BetaMemoryStoresOperations:
         :keyword scope: The namespace that logically groups and isolates memories, such as a user ID.
          Required.
         :paramtype scope: str
-        :keyword items: A list of message items you would like to store in memory, each one represented
-         as a dictionary, with ``role``, ``content`` and ``type`` properties (with type equals
-         ``message``). Each message is identical to OpenAI's EasyInputMessageParam. For example:
-         {"role": "user", "type": "message", "content": "my user message"}. Default value is None.
+        :keyword items: Conversation items to be stored in memory. Default value is None.
         :paramtype items: list[dict[str, any]]
         :keyword previous_update_id: The unique ID of the previous update request, enabling incremental
          memory updates from where the last operation left off. Default value is None.
@@ -6003,8 +5850,8 @@ class BetaMemoryStoresOperations:
          ~azure.core.polling.AsyncLROPoller[~azure.ai.projects.models.MemoryStoreUpdateCompletedResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] = (
-            FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
+        _foundry_features: Literal[_FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] = (
+            _FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
         )
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
@@ -6018,7 +5865,7 @@ class BetaMemoryStoresOperations:
             raw_result = await self._update_memories_initial(
                 name=name,
                 body=body,
-                foundry_features=foundry_features,
+                foundry_features=_foundry_features,
                 scope=scope,
                 items=items,
                 previous_update_id=previous_update_id,
@@ -6144,8 +5991,8 @@ class BetaMemoryStoresOperations:
         :rtype: ~azure.ai.projects.models.MemoryStoreDeleteScopeResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] = (
-            FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
+        _foundry_features: Literal[_FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] = (
+            _FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
         )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -6175,7 +6022,7 @@ class BetaMemoryStoresOperations:
 
         _request = build_beta_memory_stores_delete_scope_request(
             name=name,
-            foundry_features=foundry_features,
+            foundry_features=_foundry_features,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -6187,6 +6034,7 @@ class BetaMemoryStoresOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -6208,7 +6056,7 @@ class BetaMemoryStoresOperations:
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.MemoryStoreDeleteScopeResult, response.json())
 
@@ -6245,8 +6093,8 @@ class BetaRedTeamsOperations:
         :rtype: ~azure.ai.projects.models.RedTeam
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        foundry_features: Literal[FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW] = (
-            FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW
+        _foundry_features: Literal[_FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW] = (
+            _FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW
         )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -6263,7 +6111,7 @@ class BetaRedTeamsOperations:
 
         _request = build_beta_red_teams_get_request(
             name=name,
-            foundry_features=foundry_features,
+            foundry_features=_foundry_features,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -6273,6 +6121,7 @@ class BetaRedTeamsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -6290,7 +6139,7 @@ class BetaRedTeamsOperations:
             raise HttpResponseError(response=response)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.RedTeam, response.json())
 
@@ -6307,8 +6156,8 @@ class BetaRedTeamsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.RedTeam]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        foundry_features: Literal[FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW] = (
-            FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW
+        _foundry_features: Literal[_FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW] = (
+            _FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW
         )
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
@@ -6327,7 +6176,7 @@ class BetaRedTeamsOperations:
             if not next_link:
 
                 _request = build_beta_red_teams_list_request(
-                    foundry_features=foundry_features,
+                    foundry_features=_foundry_features,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -6350,7 +6199,10 @@ class BetaRedTeamsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    params=_next_request_params,
+                    headers={"Foundry-Features": _SERIALIZER.header("foundry_features", _foundry_features, "str")},
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -6363,7 +6215,10 @@ class BetaRedTeamsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.RedTeam], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.RedTeam],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -6442,8 +6297,8 @@ class BetaRedTeamsOperations:
         :rtype: ~azure.ai.projects.models.RedTeam
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        foundry_features: Literal[FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW] = (
-            FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW
+        _foundry_features: Literal[_FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW] = (
+            _FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW
         )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -6467,7 +6322,7 @@ class BetaRedTeamsOperations:
             _content = json.dumps(red_team, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_beta_red_teams_create_request(
-            foundry_features=foundry_features,
+            foundry_features=_foundry_features,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -6479,6 +6334,7 @@ class BetaRedTeamsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -6500,7 +6356,7 @@ class BetaRedTeamsOperations:
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.RedTeam, response.json())
 
@@ -6528,17 +6384,17 @@ class BetaSchedulesOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
-    async def delete(self, id: str, **kwargs: Any) -> None:
+    async def delete(self, schedule_id: str, **kwargs: Any) -> None:
         """Delete a schedule.
 
-        :param id: Identifier of the schedule. Required.
-        :type id: str
+        :param schedule_id: Identifier of the schedule. Required.
+        :type schedule_id: str
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        foundry_features: Literal[FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW] = (
-            FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW
+        _foundry_features: Literal[_FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW] = (
+            _FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW
         )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -6554,8 +6410,8 @@ class BetaSchedulesOperations:
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_beta_schedules_delete_request(
-            id=id,
-            foundry_features=foundry_features,
+            schedule_id=schedule_id,
+            foundry_features=_foundry_features,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -6580,17 +6436,17 @@ class BetaSchedulesOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace_async
-    async def get(self, id: str, **kwargs: Any) -> _models.Schedule:
+    async def get(self, schedule_id: str, **kwargs: Any) -> _models.Schedule:
         """Get a schedule by id.
 
-        :param id: Identifier of the schedule. Required.
-        :type id: str
+        :param schedule_id: Identifier of the schedule. Required.
+        :type schedule_id: str
         :return: Schedule. The Schedule is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.Schedule
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        foundry_features: Literal[FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW] = (
-            FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW
+        _foundry_features: Literal[_FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW] = (
+            _FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW
         )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -6606,8 +6462,8 @@ class BetaSchedulesOperations:
         cls: ClsType[_models.Schedule] = kwargs.pop("cls", None)
 
         _request = build_beta_schedules_get_request(
-            id=id,
-            foundry_features=foundry_features,
+            schedule_id=schedule_id,
+            foundry_features=_foundry_features,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -6617,6 +6473,7 @@ class BetaSchedulesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -6634,7 +6491,7 @@ class BetaSchedulesOperations:
             raise HttpResponseError(response=response)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.Schedule, response.json())
 
@@ -6662,8 +6519,8 @@ class BetaSchedulesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.Schedule]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        foundry_features: Literal[FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW] = (
-            FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW
+        _foundry_features: Literal[_FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW] = (
+            _FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW
         )
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
@@ -6682,7 +6539,7 @@ class BetaSchedulesOperations:
             if not next_link:
 
                 _request = build_beta_schedules_list_request(
-                    foundry_features=foundry_features,
+                    foundry_features=_foundry_features,
                     type=type,
                     enabled=enabled,
                     api_version=self._config.api_version,
@@ -6707,7 +6564,10 @@ class BetaSchedulesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    params=_next_request_params,
+                    headers={"Foundry-Features": _SERIALIZER.header("foundry_features", _foundry_features, "str")},
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -6720,7 +6580,10 @@ class BetaSchedulesOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Schedule], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.Schedule],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -6744,12 +6607,12 @@ class BetaSchedulesOperations:
 
     @overload
     async def create_or_update(
-        self, id: str, schedule: _models.Schedule, *, content_type: str = "application/json", **kwargs: Any
+        self, schedule_id: str, schedule: _models.Schedule, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Schedule:
         """Create or update operation template.
 
-        :param id: Identifier of the schedule. Required.
-        :type id: str
+        :param schedule_id: Identifier of the schedule. Required.
+        :type schedule_id: str
         :param schedule: The resource instance. Required.
         :type schedule: ~azure.ai.projects.models.Schedule
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -6762,12 +6625,12 @@ class BetaSchedulesOperations:
 
     @overload
     async def create_or_update(
-        self, id: str, schedule: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, schedule_id: str, schedule: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Schedule:
         """Create or update operation template.
 
-        :param id: Identifier of the schedule. Required.
-        :type id: str
+        :param schedule_id: Identifier of the schedule. Required.
+        :type schedule_id: str
         :param schedule: The resource instance. Required.
         :type schedule: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -6780,12 +6643,12 @@ class BetaSchedulesOperations:
 
     @overload
     async def create_or_update(
-        self, id: str, schedule: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self, schedule_id: str, schedule: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Schedule:
         """Create or update operation template.
 
-        :param id: Identifier of the schedule. Required.
-        :type id: str
+        :param schedule_id: Identifier of the schedule. Required.
+        :type schedule_id: str
         :param schedule: The resource instance. Required.
         :type schedule: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
@@ -6798,12 +6661,12 @@ class BetaSchedulesOperations:
 
     @distributed_trace_async
     async def create_or_update(
-        self, id: str, schedule: Union[_models.Schedule, JSON, IO[bytes]], **kwargs: Any
+        self, schedule_id: str, schedule: Union[_models.Schedule, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.Schedule:
         """Create or update operation template.
 
-        :param id: Identifier of the schedule. Required.
-        :type id: str
+        :param schedule_id: Identifier of the schedule. Required.
+        :type schedule_id: str
         :param schedule: The resource instance. Is one of the following types: Schedule, JSON,
          IO[bytes] Required.
         :type schedule: ~azure.ai.projects.models.Schedule or JSON or IO[bytes]
@@ -6811,8 +6674,8 @@ class BetaSchedulesOperations:
         :rtype: ~azure.ai.projects.models.Schedule
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        foundry_features: Literal[FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW] = (
-            FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW
+        _foundry_features: Literal[_FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW] = (
+            _FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW
         )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -6836,8 +6699,8 @@ class BetaSchedulesOperations:
             _content = json.dumps(schedule, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_beta_schedules_create_or_update_request(
-            id=id,
-            foundry_features=foundry_features,
+            schedule_id=schedule_id,
+            foundry_features=_foundry_features,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -6849,6 +6712,7 @@ class BetaSchedulesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -6866,7 +6730,7 @@ class BetaSchedulesOperations:
             raise HttpResponseError(response=response)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.Schedule, response.json())
 
@@ -6887,8 +6751,8 @@ class BetaSchedulesOperations:
         :rtype: ~azure.ai.projects.models.ScheduleRun
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        foundry_features: Literal[FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW] = (
-            FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW
+        _foundry_features: Literal[_FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW] = (
+            _FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW
         )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -6906,7 +6770,7 @@ class BetaSchedulesOperations:
         _request = build_beta_schedules_get_run_request(
             schedule_id=schedule_id,
             run_id=run_id,
-            foundry_features=foundry_features,
+            foundry_features=_foundry_features,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -6916,6 +6780,7 @@ class BetaSchedulesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -6937,7 +6802,7 @@ class BetaSchedulesOperations:
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.ScheduleRun, response.json())
 
@@ -6949,7 +6814,7 @@ class BetaSchedulesOperations:
     @distributed_trace
     def list_runs(
         self,
-        id: str,
+        schedule_id: str,
         *,
         type: Optional[Union[str, _models.ScheduleTaskType]] = None,
         enabled: Optional[bool] = None,
@@ -6957,8 +6822,8 @@ class BetaSchedulesOperations:
     ) -> AsyncItemPaged["_models.ScheduleRun"]:
         """List all schedule runs.
 
-        :param id: Identifier of the schedule. Required.
-        :type id: str
+        :param schedule_id: Identifier of the schedule. Required.
+        :type schedule_id: str
         :keyword type: Filter by the type of schedule. Known values are: "Evaluation" and "Insight".
          Default value is None.
         :paramtype type: str or ~azure.ai.projects.models.ScheduleTaskType
@@ -6968,8 +6833,8 @@ class BetaSchedulesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.ScheduleRun]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        foundry_features: Literal[FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW] = (
-            FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW
+        _foundry_features: Literal[_FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW] = (
+            _FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW
         )
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
@@ -6988,8 +6853,8 @@ class BetaSchedulesOperations:
             if not next_link:
 
                 _request = build_beta_schedules_list_runs_request(
-                    id=id,
-                    foundry_features=foundry_features,
+                    schedule_id=schedule_id,
+                    foundry_features=_foundry_features,
                     type=type,
                     enabled=enabled,
                     api_version=self._config.api_version,
@@ -7014,7 +6879,10 @@ class BetaSchedulesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    params=_next_request_params,
+                    headers={"Foundry-Features": _SERIALIZER.header("foundry_features", _foundry_features, "str")},
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -7027,7 +6895,10 @@ class BetaSchedulesOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.ScheduleRun], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.ScheduleRun],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)

@@ -79,6 +79,11 @@ def build_parser() -> argparse.ArgumentParser:
     common.add_argument(
         "--isolate", action="store_true", default=False, help="If set, run in an isolated virtual environment."
     )
+    common.add_argument(
+        "--service",
+        default=None,
+        help="Name of service directory (under sdk/) to scope package discovery. 'auto' is treated as unset.",
+    )
 
     subparsers = parser.add_subparsers(title="commands", dest="command")
 

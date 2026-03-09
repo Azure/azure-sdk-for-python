@@ -4,10 +4,9 @@
 # license information.
 # --------------------------------------------------------------------------
 
-import pytest
 from unittest.mock import Mock, AsyncMock, patch
+import pytest
 from azure.appconfiguration import ConfigurationSetting, SnapshotComposition
-from azure.appconfiguration.provider._snapshot_reference_parser import SnapshotReferenceParser
 from azure.appconfiguration.provider._constants import SNAPSHOT_REF_CONTENT_TYPE
 from azure.appconfiguration.provider.aio._async_client_manager import _AsyncConfigurationClientWrapper
 from azure.core.exceptions import HttpResponseError

@@ -9,9 +9,6 @@ from test_base import TestBase, servicePreparer
 from devtools_testutils import recorded_by_proxy
 
 
-@pytest.mark.skip(
-    reason="Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema"
-)
 class TestDeployments(TestBase):
 
     # To run this test, use the following command in the \sdk\ai\azure-ai-projects folder:
@@ -20,9 +17,9 @@ class TestDeployments(TestBase):
     @recorded_by_proxy
     def test_deployments(self, **kwargs):
 
-        model_publisher = self.test_deployments_params["model_publisher"]
-        model_name = self.test_deployments_params["model_name"]
-        model_deployment_name = self.test_deployments_params["model_deployment_name"]
+        model_publisher = "OpenAI"
+        model_name = kwargs.get("azure_ai_model_deployment_name")
+        model_deployment_name = kwargs.get("azure_ai_model_deployment_name")
 
         with self.create_client(**kwargs) as project_client:
 
