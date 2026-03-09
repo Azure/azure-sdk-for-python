@@ -599,8 +599,9 @@ async def create_lists():
 ### Parallel Cross-Partition Queries (Async Only)
 
 When running cross-partition queries with the async client, you can improve query latency by enabling
-parallel execution across partitions. This trades higher instantaneous RU/s consumption for lower
-wall-clock time.
+parallel execution across partitions. This also applies to hierarchical partition key (HPK) prefix
+queries and feed range queries that fan out to multiple physical partitions. This trades higher
+instantaneous RU/s consumption for lower wall-clock time.
 
 Use `max_degree_of_parallelism` to control how many partition requests run concurrently:
 

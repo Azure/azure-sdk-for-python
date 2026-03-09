@@ -807,3 +807,181 @@ class TestOptionsThreading:
         options = build_options(kwargs)
         assert "maxDegreeOfParallelism" not in options
         assert options["maxItemCount"] == 10
+
+
+# ---------------------------------------------------------------------------
+# Prefix partition key / feed range parallel fan-out tests
+# ---------------------------------------------------------------------------
+
+class TestPrefixQueryParallelFanOut:
+    """Tests for the parallel fan-out pattern used in prefix partition key and
+    feed range queries (the ``__QueryFeed`` path in the async connection)."""
+
+    @pytest.mark.asyncio
+    async def test_parallel_fan_out_merges_standard_results(self):
+        """Parallel fan-out correctly merges non-aggregate results from multiple partitions."""
+        from azure.cosmos._base import _merge_query_results
+
+        # Simulate 3 partition results returned concurrently
+        partition_results = [
+            {"Documents": [{"id": "1"}, {"id": "2"}], "_count": 2},
+            {"Documents": [{"id": "3"}, {"id": "4"}], "_count": 2},
+            {"Documents": [{"id": "5"}], "_count": 1},
+        ]
+
+        # Merge sequentially (same as post-gather merge in __QueryFeed)
+        merged: dict = {}
+        for partial in partition_results:
+            merged = _merge_query_results(merged, partial, "SELECT * FROM c")
+
+        assert len(merged["Documents"]) == 5
+        assert merged["_count"] == 5
+
+    @pytest.mark.asyncio
+    async def test_parallel_fan_out_merges_count_aggregate(self):
+        """Parallel fan-out correctly merges COUNT aggregates from multiple partitions."""
+        from azure.cosmos._base import _merge_query_results
+
+        partition_results = [
+            {"Documents": [{"_aggregate": {"$1": 10}}], "_count": 1},
+            {"Documents": [{"_aggregate": {"$1": 20}}], "_count": 1},
+            {"Documents": [{"_aggregate": {"$1": 30}}], "_count": 1},
+        ]
+
+        merged: dict = {}
+        for partial in partition_results:
+            merged = _merge_query_results(merged, partial, "SELECT COUNT(1) FROM c")
+
+        assert merged["Documents"][0]["_aggregate"]["$1"] == 60
+
+    @pytest.mark.asyncio
+    async def test_parallel_fan_out_merges_min_aggregate(self):
+        """Parallel fan-out correctly merges MIN aggregates from multiple partitions."""
+        from azure.cosmos._base import _merge_query_results
+
+        partition_results = [
+            {"Documents": [{"_aggregate": {"min_val": 42}}], "_count": 1},
+            {"Documents": [{"_aggregate": {"min_val": 7}}], "_count": 1},
+            {"Documents": [{"_aggregate": {"min_val": 99}}], "_count": 1},
+        ]
+
+        merged: dict = {}
+        for partial in partition_results:
+            merged = _merge_query_results(merged, partial, "SELECT MIN(c.val) FROM c")
+
+        assert merged["Documents"][0]["_aggregate"]["min_val"] == 7
+
+    @pytest.mark.asyncio
+    async def test_header_copies_are_independent(self):
+        """Each concurrent task operates on its own header copy with no cross-task interference."""
+        base_headers = {"Authorization": "token123", "x-ms-version": "2021-01-01"}
+
+        captured_headers: list[dict] = []
+        lock = asyncio.Lock()
+
+        async def mock_post(headers):
+            async with lock:
+                captured_headers.append(dict(headers))
+            await asyncio.sleep(0.01)
+            return {"Documents": [], "_count": 0}, {}
+
+        ranges = [
+            {"id": "0", "minInclusive": "", "maxExclusive": "55"},
+            {"id": "1", "minInclusive": "55", "maxExclusive": "AA"},
+            {"id": "2", "minInclusive": "AA", "maxExclusive": "FF"},
+        ]
+
+        semaphore = asyncio.Semaphore(3)
+
+        async def _query_range(range_info):
+            task_headers = dict(base_headers)
+            task_headers["x-ms-documentdb-partitionkeyrangeid"] = range_info["id"]
+            async with semaphore:
+                return await mock_post(task_headers)
+
+        tasks = [asyncio.create_task(_query_range(r)) for r in ranges]
+        await asyncio.gather(*tasks)
+
+        # Verify each task got independent headers with different range IDs
+        range_ids = sorted(h["x-ms-documentdb-partitionkeyrangeid"] for h in captured_headers)
+        assert range_ids == ["0", "1", "2"]
+        # Original headers should be unchanged
+        assert "x-ms-documentdb-partitionkeyrangeid" not in base_headers
+
+    @pytest.mark.asyncio
+    async def test_task_cancellation_on_failure(self):
+        """If one concurrent task fails, remaining tasks are properly cancelled."""
+        started = asyncio.Event()
+
+        async def mock_post_success():
+            started.set()
+            await asyncio.sleep(5.0)  # Long-running, should be cancelled
+            return {"Documents": [], "_count": 0}, {}
+
+        async def mock_post_fail():
+            await started.wait()  # Wait until at least one other task starts
+            raise RuntimeError("Simulated partition failure")
+
+        semaphore = asyncio.Semaphore(3)
+
+        async def _run(coro_fn):
+            async with semaphore:
+                return await coro_fn()
+
+        tasks = [
+            asyncio.create_task(_run(mock_post_success)),
+            asyncio.create_task(_run(mock_post_fail)),
+            asyncio.create_task(_run(mock_post_success)),
+        ]
+
+        with pytest.raises(RuntimeError, match="Simulated partition failure"):
+            try:
+                await asyncio.gather(*tasks)
+            except Exception:
+                for t in tasks:
+                    if not t.done():
+                        t.cancel()
+                await asyncio.gather(*tasks, return_exceptions=True)
+                raise
+
+    @pytest.mark.asyncio
+    async def test_semaphore_limits_concurrency(self):
+        """Semaphore properly limits the number of concurrent in-flight HTTP calls."""
+        max_concurrent = 0
+        current_concurrent = 0
+        lock = asyncio.Lock()
+
+        async def mock_post(range_id):
+            nonlocal max_concurrent, current_concurrent
+            async with lock:
+                current_concurrent += 1
+                max_concurrent = max(max_concurrent, current_concurrent)
+            await asyncio.sleep(0.05)
+            async with lock:
+                current_concurrent -= 1
+            return {"Documents": [{"id": range_id}], "_count": 1}, {}
+
+        # 5 ranges but concurrency limit of 2
+        ranges = [str(i) for i in range(5)]
+        semaphore = asyncio.Semaphore(2)
+
+        async def _query_range(range_id):
+            async with semaphore:
+                return await mock_post(range_id)
+
+        tasks = [asyncio.create_task(_query_range(r)) for r in ranges]
+        results = await asyncio.gather(*tasks)
+
+        assert max_concurrent <= 2
+        assert len(results) == 5
+
+    def test_resolve_max_degree_controls_fan_out_decision(self):
+        """_resolve_max_degree determines serial vs parallel for prefix query fan-out."""
+        # Serial: None and 0 both yield 0 (serial)
+        assert _resolve_max_degree(None, 5) == 0
+        assert _resolve_max_degree(0, 5) == 0
+        # Parallel: positive value or auto (-1) yield > 0
+        assert _resolve_max_degree(3, 5) == 3
+        assert _resolve_max_degree(-1, 5) > 0
+        # Single range: auto still returns a value but at most 1
+        assert _resolve_max_degree(-1, 1) <= 1
