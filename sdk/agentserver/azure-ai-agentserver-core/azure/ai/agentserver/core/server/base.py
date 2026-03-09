@@ -87,95 +87,100 @@ class FoundryCBAgent:
             # Set up tracing context and span
             context = request.state.agent_run_context
             ctx = request_context.get()
+
+            try:
+                resp = await self.agent_run(context)
+            except Exception as e:
+                with self.tracer.start_as_current_span(
+                    name=f"HostedAgents-{context.response_id}",
+                    attributes=ctx,
+                    kind=trace.SpanKind.SERVER,
+                ):
+                    logger.error(f"Error processing CreateResponse request: {traceback.format_exc()}")
+                    return JSONResponse({"error": str(e)}, status_code=500)
+
+            if inspect.isgenerator(resp):
+                # Sync generator streaming path
+                with self.tracer.start_as_current_span(
+                    name=f"HostedAgents-{context.response_id}",
+                    attributes=ctx,
+                    kind=trace.SpanKind.SERVER,
+                ):
+                    # Prefetch first event to allow 500 status if generation fails immediately
+                    try:
+                        first_event = next(resp)
+                    except Exception as e:  # noqa: BLE001
+                        err_msg = str(e) if DEBUG_ERRORS else "Internal error"
+                        logger.error("Generator initialization failed: %s\n%s", e, traceback.format_exc())
+                        return JSONResponse({"error": err_msg}, status_code=500)
+
+                    context_carrier = {}
+                    TraceContextTextMapPropagator().inject(context_carrier)
+
+                    def gen():
+                        gen_ctx = TraceContextTextMapPropagator().extract(carrier=context_carrier)
+                        token = otel_context.attach(gen_ctx)
+                        error_sent = False
+                        try:
+                            # yield prefetched first event
+                            yield _event_to_sse_chunk(first_event)
+                            for event in resp:
+                                yield _event_to_sse_chunk(event)
+                        except Exception as e:  # noqa: BLE001
+                            err_msg = str(e) if DEBUG_ERRORS else "Internal error"
+                            logger.error("Error in non-async generator: %s\n%s", e, traceback.format_exc())
+                            payload = {"error": err_msg}
+                            yield f"event: error\ndata: {json.dumps(payload)}\n\n"
+                            yield "data: [DONE]\n\n"
+                            error_sent = True
+                        finally:
+                            logger.info("End of processing CreateResponse request:")
+                            otel_context.detach(token)
+                            if not error_sent:
+                                yield "data: [DONE]\n\n"
+
+                    return StreamingResponse(gen(), media_type="text/event-stream")
+
+            if inspect.isasyncgen(resp):
+                # Async generator streaming path.
+                # The root span is created INSIDE gen_async() so that it
+                # stays open for the full streaming lifetime.  This ensures
+                # OpenTelemetry ``with`` blocks inside the generator
+                # (e.g. invoke_agent, chat, execute_tool) correctly nest
+                # under the root span instead of appearing flat.
+                async def gen_async():
+                    with self.tracer.start_as_current_span(
+                        name=f"HostedAgents-{context.response_id}",
+                        attributes=ctx,
+                        kind=trace.SpanKind.SERVER,
+                    ):
+                        error_sent = False
+                        try:
+                            logger.info("Start processing CreateResponse request:")
+                            async for event in resp:
+                                yield _event_to_sse_chunk(event)
+                        except Exception as e:  # noqa: BLE001
+                            err_msg = str(e) if DEBUG_ERRORS else "Internal error"
+                            logger.error("Error in async generator: %s\n%s", e, traceback.format_exc())
+                            payload = {"error": err_msg}
+                            yield f"event: error\ndata: {json.dumps(payload)}\n\n"
+                            yield "data: [DONE]\n\n"
+                            error_sent = True
+                        finally:
+                            logger.info("End of processing CreateResponse request.")
+                            if not error_sent:
+                                yield "data: [DONE]\n\n"
+
+                return StreamingResponse(gen_async(), media_type="text/event-stream")
+
+            # Non-streaming path
             with self.tracer.start_as_current_span(
                 name=f"HostedAgents-{context.response_id}",
                 attributes=ctx,
                 kind=trace.SpanKind.SERVER,
             ):
-                try:
-                    logger.info("Start processing CreateResponse request:")
-
-                    context_carrier = {}
-                    TraceContextTextMapPropagator().inject(context_carrier)
-
-                    resp = await self.agent_run(context)
-
-                    if inspect.isgenerator(resp):
-                        # Prefetch first event to allow 500 status if generation fails immediately
-                        try:
-                            first_event = next(resp)
-                        except Exception as e:  # noqa: BLE001
-                            err_msg = str(e) if DEBUG_ERRORS else "Internal error"
-                            logger.error("Generator initialization failed: %s\n%s", e, traceback.format_exc())
-                            return JSONResponse({"error": err_msg}, status_code=500)
-
-                        def gen():
-                            ctx = TraceContextTextMapPropagator().extract(carrier=context_carrier)
-                            token = otel_context.attach(ctx)
-                            error_sent = False
-                            try:
-                                # yield prefetched first event
-                                yield _event_to_sse_chunk(first_event)
-                                for event in resp:
-                                    yield _event_to_sse_chunk(event)
-                            except Exception as e:  # noqa: BLE001
-                                err_msg = str(e) if DEBUG_ERRORS else "Internal error"
-                                logger.error("Error in non-async generator: %s\n%s", e, traceback.format_exc())
-                                payload = {"error": err_msg}
-                                yield f"event: error\ndata: {json.dumps(payload)}\n\n"
-                                yield "data: [DONE]\n\n"
-                                error_sent = True
-                            finally:
-                                logger.info("End of processing CreateResponse request:")
-                                otel_context.detach(token)
-                                if not error_sent:
-                                    yield "data: [DONE]\n\n"
-
-                        return StreamingResponse(gen(), media_type="text/event-stream")
-                    if inspect.isasyncgen(resp):
-                        # Prefetch first async event to allow early 500
-                        try:
-                            first_event = await resp.__anext__()
-                        except StopAsyncIteration:
-                            # No items produced; treat as empty successful stream
-                            def empty_gen():
-                                yield "data: [DONE]\n\n"
-
-                            return StreamingResponse(empty_gen(), media_type="text/event-stream")
-                        except Exception as e:  # noqa: BLE001
-                            err_msg = str(e) if DEBUG_ERRORS else "Internal error"
-                            logger.error("Async generator initialization failed: %s\n%s", e, traceback.format_exc())
-                            return JSONResponse({"error": err_msg}, status_code=500)
-
-                        async def gen_async():
-                            ctx = TraceContextTextMapPropagator().extract(carrier=context_carrier)
-                            token = otel_context.attach(ctx)
-                            error_sent = False
-                            try:
-                                # yield prefetched first event
-                                yield _event_to_sse_chunk(first_event)
-                                async for event in resp:
-                                    yield _event_to_sse_chunk(event)
-                            except Exception as e:  # noqa: BLE001
-                                err_msg = str(e) if DEBUG_ERRORS else "Internal error"
-                                logger.error("Error in async generator: %s\n%s", e, traceback.format_exc())
-                                payload = {"error": err_msg}
-                                yield f"event: error\ndata: {json.dumps(payload)}\n\n"
-                                yield "data: [DONE]\n\n"
-                                error_sent = True
-                            finally:
-                                logger.info("End of processing CreateResponse request.")
-                                otel_context.detach(token)
-                                if not error_sent:
-                                    yield "data: [DONE]\n\n"
-
-                        return StreamingResponse(gen_async(), media_type="text/event-stream")
-                    logger.info("End of processing CreateResponse request.")
-                    return JSONResponse(resp.as_dict())
-                except Exception as e:
-                    # TODO: extract status code from exception
-                    logger.error(f"Error processing CreateResponse request: {traceback.format_exc()}")
-                    return JSONResponse({"error": str(e)}, status_code=500)
+                logger.info("End of processing CreateResponse request.")
+                return JSONResponse(resp.as_dict())
 
         async def liveness_endpoint(request):
             result = await self.agent_liveness(request)
