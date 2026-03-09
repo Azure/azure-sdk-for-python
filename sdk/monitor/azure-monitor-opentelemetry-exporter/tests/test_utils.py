@@ -58,12 +58,12 @@ class TestUtils(unittest.TestCase):
         large_value = "x" * (64 * 1024 + 1000)
         properties = {"gen_ai.input.messages": large_value}
         with patch.dict(
-                "azure.monitor.opentelemetry.exporter._utils.environ",
-            ):
-                filtered = _utils._filter_custom_properties(properties)
-                self.assertIn("gen_ai.input.messages", filtered)
-                self.assertEqual(filtered["gen_ai.input.messages"], large_value)
-                self.assertEqual(len(filtered["gen_ai.input.messages"]), 64 * 1024 + 1000)
+            "azure.monitor.opentelemetry.exporter._utils.environ",
+        ):
+            filtered = _utils._filter_custom_properties(properties)
+            self.assertIn("gen_ai.input.messages", filtered)
+            self.assertEqual(filtered["gen_ai.input.messages"], large_value)
+            self.assertEqual(len(filtered["gen_ai.input.messages"]), 64 * 1024 + 1000)
 
     def test_custom_properties_gen_ai_attributes_not_truncated(self):
         # All values in _GEN_AI_ATTRIBUTES should not be truncated even when > 64KiB

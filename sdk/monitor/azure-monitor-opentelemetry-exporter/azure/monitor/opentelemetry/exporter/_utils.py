@@ -366,7 +366,7 @@ def _filter_custom_properties(properties: Attributes, filter=None) -> Dict[str, 
             continue
         if key in _GEN_AI_ATTRIBUTES:
             processed_properties[key] = str(val)
-        else: 
+        else:
             processed_properties[key] = str(val)[:max_length]
     return processed_properties
 
