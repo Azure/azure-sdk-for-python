@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import logging
-import os
 from typing import Any, Callable, Dict, List, Optional
 
 from openai import RateLimitError as OpenAIRateLimitError
@@ -97,6 +96,41 @@ class _CallbackChatTarget(PromptChatTarget):
         """
         return await self._send_prompt_impl(message=message)
 
+    def _resolve_content(self, piece: Any) -> str:
+        """Resolve the text content for a message piece, reading file content for binary_path pieces.
+
+        XPIA (indirect jailbreak) strategy creates file-based context prompts with
+        binary_path data type, but model targets only support text content. This helper
+        reads the file and returns its contents for binary_path pieces, or returns the
+        converted/original value as-is for other data types.
+
+        Args:
+            piece: A message piece with converted_value, original_value, and
+                converted_value_data_type attributes.
+
+        Returns:
+            The resolved text content string.
+        """
+        value = piece.converted_value or piece.original_value or ""
+        if (
+            getattr(piece, "converted_value_data_type", None) == "binary_path"
+            and isinstance(value, str)
+            and value
+        ):
+            try:
+                # Synchronous read is intentional here — XPIA context files are small
+                # text files, so the blocking I/O is negligible.
+                with open(value, "r", encoding="utf-8", errors="replace") as f:
+                    return f.read()
+            except (OSError, IOError) as exc:
+                logger.warning(
+                    "Failed to read binary_path file %s: %s. Falling back to file path string.",
+                    value,
+                    exc,
+                )
+                return value
+        return value
+
     async def _send_prompt_impl(self, *, message: Message) -> List[Message]:
         """
         Core implementation of send_prompt_async.
@@ -108,15 +142,7 @@ class _CallbackChatTarget(PromptChatTarget):
         self._validate_request(prompt_request=message)
         request = message.get_piece(0)
 
-        # Handle binary_path by reading file content and converting to text.
-        # XPIA (indirect jailbreak) strategy creates file-based context prompts with
-        # binary_path data type, but model targets only support text content.
-        request_content = request.converted_value or request.original_value or ""
-        if request.converted_value_data_type == "binary_path" and os.path.isfile(
-            request_content
-        ):
-            with open(request_content, "r", encoding="utf-8", errors="replace") as f:
-                request_content = f.read()
+        request_content = self._resolve_content(request)
 
         # Get conversation history and convert to chat message format
         conversation_history = self._memory.get_conversation(
@@ -132,7 +158,7 @@ class _CallbackChatTarget(PromptChatTarget):
                             if hasattr(piece, "api_role")
                             else str(piece.role)
                         ),
-                        "content": piece.converted_value or piece.original_value or "",
+                        "content": self._resolve_content(piece),
                     }
                 )
 

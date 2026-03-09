@@ -46,7 +46,9 @@ def mock_request():
     request_piece.conversation_id = "test-id"
     request_piece.converted_value = "test prompt"
     request_piece.converted_value_data_type = "text"
-    request_piece.to_chat_message.return_value = MagicMock(role="user", content="test prompt")
+    request_piece.to_chat_message.return_value = MagicMock(
+        role="user", content="test prompt"
+    )
     request_piece.labels.get.return_value = None
 
     request = MagicMock()
@@ -102,10 +104,14 @@ class TestCallbackChatTargetPrompts:
             assert call_args["context"] == {}
 
             # Check memory usage
-            mock_memory.get_conversation.assert_called_once_with(conversation_id="test-id")
+            mock_memory.get_conversation.assert_called_once_with(
+                conversation_id="test-id"
+            )
 
     @pytest.mark.asyncio
-    async def test_send_prompt_async_with_prompt_request_keyword(self, chat_target, mock_request, mock_callback):
+    async def test_send_prompt_async_with_prompt_request_keyword(
+        self, chat_target, mock_request, mock_callback
+    ):
         """Test send_prompt_async accepts prompt_request keyword for SDK compatibility."""
         with patch.object(chat_target, "_memory") as mock_memory, patch(
             "azure.ai.evaluation.red_team._callback_chat_target.construct_response_from_request"
@@ -127,35 +133,50 @@ class TestCallbackChatTargetPrompts:
             assert call_args["context"] == {}
 
     @pytest.mark.asyncio
-    async def test_send_prompt_async_raises_error_if_both_keywords_provided(self, chat_target, mock_request):
+    async def test_send_prompt_async_raises_error_if_both_keywords_provided(
+        self, chat_target, mock_request
+    ):
         """Test send_prompt_async raises error if both message and prompt_request are provided."""
         with pytest.raises(ValueError) as exc_info:
-            await chat_target.send_prompt_async(message=mock_request, prompt_request=mock_request)
+            await chat_target.send_prompt_async(
+                message=mock_request, prompt_request=mock_request
+            )
 
         assert "either 'message' or 'prompt_request'" in str(exc_info.value).lower()
 
     @pytest.mark.asyncio
-    async def test_send_prompt_async_raises_error_if_no_keyword_provided(self, chat_target):
+    async def test_send_prompt_async_raises_error_if_no_keyword_provided(
+        self, chat_target
+    ):
         """Test send_prompt_async raises error if neither message nor prompt_request is provided."""
         with pytest.raises(ValueError) as exc_info:
             await chat_target.send_prompt_async()
 
-        assert "either 'message' or 'prompt_request' must be provided" in str(exc_info.value).lower()
+        assert (
+            "either 'message' or 'prompt_request' must be provided"
+            in str(exc_info.value).lower()
+        )
 
     @pytest.mark.asyncio
-    async def test_send_prompt_async_with_context_from_labels(self, chat_target, mock_callback):
+    async def test_send_prompt_async_with_context_from_labels(
+        self, chat_target, mock_callback
+    ):
         """Test send_prompt_async method with context from request labels."""
         # Create a request with context in labels
         request_piece = MagicMock()
         request_piece.conversation_id = "test-id"
         request_piece.converted_value = "test prompt"
         request_piece.converted_value_data_type = "text"
-        request_piece.to_chat_message.return_value = MagicMock(role="user", content="test prompt")
+        request_piece.to_chat_message.return_value = MagicMock(
+            role="user", content="test prompt"
+        )
         request_piece.labels = {"context": {"contexts": ["test context data"]}}
 
         mock_request = MagicMock()
         mock_request.message_pieces = [request_piece]
-        mock_request.get_piece = MagicMock(side_effect=lambda i: mock_request.message_pieces[i])
+        mock_request.get_piece = MagicMock(
+            side_effect=lambda i: mock_request.message_pieces[i]
+        )
 
         with patch.object(chat_target, "_memory") as mock_memory, patch(
             "azure.ai.evaluation.red_team._callback_chat_target.construct_response_from_request"
@@ -177,7 +198,9 @@ class TestCallbackChatTargetPrompts:
             assert call_args["context"] == {"contexts": ["test context data"]}
 
             # Check memory usage
-            mock_memory.get_conversation.assert_called_once_with(conversation_id="test-id")
+            mock_memory.get_conversation.assert_called_once_with(
+                conversation_id="test-id"
+            )
 
     def test_validate_request_multiple_pieces(self, chat_target):
         """Test _validate_request with multiple request pieces."""
@@ -227,7 +250,9 @@ class TestCallbackChatTargetRetry:
         assert target._retry_enabled is False
 
     @pytest.mark.asyncio
-    async def test_rate_limit_exception_translated_from_openai_error(self, mock_callback):
+    async def test_rate_limit_exception_translated_from_openai_error(
+        self, mock_callback
+    ):
         """Test that OpenAI RateLimitError is translated to RateLimitException."""
         # Create a mock response that looks like an OpenAI rate limit error
         mock_response = MagicMock()
@@ -251,7 +276,9 @@ class TestCallbackChatTargetRetry:
 
         mock_request = MagicMock()
         mock_request.message_pieces = [request_piece]
-        mock_request.get_piece = MagicMock(side_effect=lambda i: mock_request.message_pieces[i])
+        mock_request.get_piece = MagicMock(
+            side_effect=lambda i: mock_request.message_pieces[i]
+        )
 
         with patch.object(target, "_memory") as mock_memory:
             mock_memory.get_conversation.return_value = []
@@ -265,7 +292,9 @@ class TestCallbackChatTargetRetry:
     @pytest.mark.asyncio
     async def test_rate_limit_in_error_message_translated(self, mock_callback):
         """Test that errors with 'rate limit' in message are translated."""
-        mock_callback.side_effect = Exception("Request failed: rate limit exceeded for model")
+        mock_callback.side_effect = Exception(
+            "Request failed: rate limit exceeded for model"
+        )
 
         target = _CallbackChatTarget(callback=mock_callback, retry_enabled=False)
 
@@ -278,7 +307,9 @@ class TestCallbackChatTargetRetry:
 
         mock_request = MagicMock()
         mock_request.message_pieces = [request_piece]
-        mock_request.get_piece = MagicMock(side_effect=lambda i: mock_request.message_pieces[i])
+        mock_request.get_piece = MagicMock(
+            side_effect=lambda i: mock_request.message_pieces[i]
+        )
 
         with patch.object(target, "_memory") as mock_memory:
             mock_memory.get_conversation.return_value = []
@@ -304,7 +335,9 @@ class TestCallbackChatTargetRetry:
 
         mock_request = MagicMock()
         mock_request.message_pieces = [request_piece]
-        mock_request.get_piece = MagicMock(side_effect=lambda i: mock_request.message_pieces[i])
+        mock_request.get_piece = MagicMock(
+            side_effect=lambda i: mock_request.message_pieces[i]
+        )
 
         with patch.object(target, "_memory") as mock_memory:
             mock_memory.get_conversation.return_value = []
@@ -335,7 +368,9 @@ class TestCallbackChatTargetRetry:
 
         mock_request = MagicMock()
         mock_request.message_pieces = [request_piece]
-        mock_request.get_piece = MagicMock(side_effect=lambda i: mock_request.message_pieces[i])
+        mock_request.get_piece = MagicMock(
+            side_effect=lambda i: mock_request.message_pieces[i]
+        )
 
         with patch.object(target, "_memory") as mock_memory:
             mock_memory.get_conversation.return_value = []
@@ -366,7 +401,9 @@ class TestCallbackChatTargetRetry:
 
         mock_request = MagicMock()
         mock_request.message_pieces = [request_piece]
-        mock_request.get_piece = MagicMock(side_effect=lambda i: mock_request.message_pieces[i])
+        mock_request.get_piece = MagicMock(
+            side_effect=lambda i: mock_request.message_pieces[i]
+        )
 
         with patch.object(target, "_memory") as mock_memory:
             mock_memory.get_conversation.return_value = []
@@ -390,7 +427,9 @@ class TestCallbackChatTargetRetry:
 
         mock_request = MagicMock()
         mock_request.message_pieces = [request_piece]
-        mock_request.get_piece = MagicMock(side_effect=lambda i: mock_request.message_pieces[i])
+        mock_request.get_piece = MagicMock(
+            side_effect=lambda i: mock_request.message_pieces[i]
+        )
 
         with patch.object(target, "_memory") as mock_memory:
             mock_memory.get_conversation.return_value = []
@@ -421,7 +460,9 @@ class TestCallbackChatTargetRetry:
 
         mock_request = MagicMock()
         mock_request.message_pieces = [request_piece]
-        mock_request.get_piece = MagicMock(side_effect=lambda i: mock_request.message_pieces[i])
+        mock_request.get_piece = MagicMock(
+            side_effect=lambda i: mock_request.message_pieces[i]
+        )
 
         with patch.object(target, "_memory") as mock_memory, patch(
             "azure.ai.evaluation.red_team._callback_chat_target.construct_response_from_request"
@@ -430,7 +471,9 @@ class TestCallbackChatTargetRetry:
             mock_construct.return_value = mock_request
 
             # Spy on _send_prompt_with_retry
-            with patch.object(target, "_send_prompt_with_retry", wraps=target._send_prompt_with_retry) as mock_retry:
+            with patch.object(
+                target, "_send_prompt_with_retry", wraps=target._send_prompt_with_retry
+            ) as mock_retry:
                 await target.send_prompt_async(message=mock_request)
                 mock_retry.assert_called_once()
 
@@ -455,7 +498,9 @@ class TestCallbackChatTargetRetry:
 
         mock_request = MagicMock()
         mock_request.message_pieces = [request_piece]
-        mock_request.get_piece = MagicMock(side_effect=lambda i: mock_request.message_pieces[i])
+        mock_request.get_piece = MagicMock(
+            side_effect=lambda i: mock_request.message_pieces[i]
+        )
 
         with patch.object(target, "_memory") as mock_memory, patch(
             "azure.ai.evaluation.red_team._callback_chat_target.construct_response_from_request"
@@ -466,7 +511,9 @@ class TestCallbackChatTargetRetry:
             # Spy on both methods
             with patch.object(
                 target, "_send_prompt_with_retry", wraps=target._send_prompt_with_retry
-            ) as mock_retry, patch.object(target, "_send_prompt_impl", wraps=target._send_prompt_impl) as mock_impl:
+            ) as mock_retry, patch.object(
+                target, "_send_prompt_impl", wraps=target._send_prompt_impl
+            ) as mock_impl:
                 await target.send_prompt_async(message=mock_request)
                 mock_retry.assert_not_called()
                 mock_impl.assert_called_once()
@@ -494,7 +541,9 @@ class TestCallbackChatTargetRetry:
         os.environ["RETRY_WAIT_MAX_SECONDS"] = "1"
 
         try:
-            target = _CallbackChatTarget(callback=failing_then_succeeding_callback, retry_enabled=True)
+            target = _CallbackChatTarget(
+                callback=failing_then_succeeding_callback, retry_enabled=True
+            )
 
             # Create mock request
             request_piece = MagicMock()
@@ -505,7 +554,9 @@ class TestCallbackChatTargetRetry:
 
             mock_request = MagicMock()
             mock_request.message_pieces = [request_piece]
-            mock_request.get_piece = MagicMock(side_effect=lambda i: mock_request.message_pieces[i])
+            mock_request.get_piece = MagicMock(
+                side_effect=lambda i: mock_request.message_pieces[i]
+            )
 
             with patch.object(target, "_memory") as mock_memory, patch(
                 "azure.ai.evaluation.red_team._callback_chat_target.construct_response_from_request"
@@ -609,3 +660,139 @@ class TestCallbackResponseValidation:
 
             with pytest.raises(ValueError, match="invalid response"):
                 await target.send_prompt_async(message=mock_request)
+
+
+@pytest.mark.unittest
+class TestCallbackChatTargetBinaryPath:
+    """Tests for binary_path resolution via _resolve_content helper."""
+
+    def test_resolve_content_reads_binary_path_file(self, tmp_path):
+        """binary_path piece with a valid temp file returns file contents."""
+        file = tmp_path / "xpia_context.txt"
+        file.write_text("injected XPIA payload", encoding="utf-8")
+
+        piece = MagicMock()
+        piece.converted_value = str(file)
+        piece.original_value = str(file)
+        piece.converted_value_data_type = "binary_path"
+
+        target = _CallbackChatTarget(callback=AsyncMock())
+        assert target._resolve_content(piece) == "injected XPIA payload"
+
+    def test_resolve_content_falls_back_on_missing_file(self):
+        """Missing binary_path file logs warning and returns the path string."""
+        piece = MagicMock()
+        piece.converted_value = "/nonexistent/path/to/file.txt"
+        piece.original_value = "/nonexistent/path/to/file.txt"
+        piece.converted_value_data_type = "binary_path"
+
+        target = _CallbackChatTarget(callback=AsyncMock())
+        result = target._resolve_content(piece)
+        assert result == "/nonexistent/path/to/file.txt"
+
+    def test_resolve_content_returns_text_as_is(self):
+        """Text data type pieces are returned without file I/O."""
+        piece = MagicMock()
+        piece.converted_value = "plain text prompt"
+        piece.original_value = "plain text prompt"
+        piece.converted_value_data_type = "text"
+
+        target = _CallbackChatTarget(callback=AsyncMock())
+        assert target._resolve_content(piece) == "plain text prompt"
+
+    @pytest.mark.asyncio
+    async def test_binary_path_content_sent_to_callback(self, tmp_path):
+        """Callback receives file *contents* (not the path) for binary_path requests."""
+        file = tmp_path / "context.txt"
+        file.write_text("file content for callback", encoding="utf-8")
+
+        mock_callback = AsyncMock(
+            return_value={
+                "messages": [{"role": "assistant", "content": "ok"}],
+                "stream": False,
+                "session_state": None,
+                "context": {},
+            }
+        )
+
+        target = _CallbackChatTarget(callback=mock_callback, retry_enabled=False)
+
+        mock_piece = MagicMock()
+        mock_piece.id = "piece-1"
+        mock_piece.converted_value = str(file)
+        mock_piece.original_value = str(file)
+        mock_piece.converted_value_data_type = "binary_path"
+        mock_piece.conversation_id = "conv-bp"
+        mock_piece.api_role = "user"
+        mock_piece.role = "user"
+        mock_piece.labels = {}
+
+        mock_request = MagicMock()
+        mock_request.message_pieces = [mock_piece]
+        mock_request.get_piece.return_value = mock_piece
+
+        with patch.object(target, "_memory") as mock_memory, patch(
+            "azure.ai.evaluation.red_team._callback_chat_target.construct_response_from_request"
+        ) as mock_construct:
+            mock_memory.get_conversation.return_value = []
+            mock_construct.return_value = mock_request
+            await target.send_prompt_async(message=mock_request)
+
+        sent_messages = mock_callback.call_args.kwargs["messages"]
+        assert sent_messages[-1]["content"] == "file content for callback"
+
+    @pytest.mark.asyncio
+    async def test_binary_path_in_conversation_history_resolved(self, tmp_path):
+        """Conversation history pieces with binary_path are also resolved to file contents."""
+        file = tmp_path / "history_context.txt"
+        file.write_text("history file content", encoding="utf-8")
+
+        mock_callback = AsyncMock(
+            return_value={
+                "messages": [{"role": "assistant", "content": "ok"}],
+                "stream": False,
+                "session_state": None,
+                "context": {},
+            }
+        )
+
+        target = _CallbackChatTarget(callback=mock_callback, retry_enabled=False)
+
+        # Build a history message with binary_path piece
+        history_piece = MagicMock()
+        history_piece.converted_value = str(file)
+        history_piece.original_value = str(file)
+        history_piece.converted_value_data_type = "binary_path"
+        history_piece.api_role = "user"
+        history_piece.role = "user"
+
+        history_msg = MagicMock()
+        history_msg.message_pieces = [history_piece]
+
+        # Current request (plain text)
+        mock_piece = MagicMock()
+        mock_piece.id = "piece-2"
+        mock_piece.converted_value = "follow-up question"
+        mock_piece.original_value = "follow-up question"
+        mock_piece.converted_value_data_type = "text"
+        mock_piece.conversation_id = "conv-bp-hist"
+        mock_piece.api_role = "user"
+        mock_piece.role = "user"
+        mock_piece.labels = {}
+
+        mock_request = MagicMock()
+        mock_request.message_pieces = [mock_piece]
+        mock_request.get_piece.return_value = mock_piece
+
+        with patch.object(target, "_memory") as mock_memory, patch(
+            "azure.ai.evaluation.red_team._callback_chat_target.construct_response_from_request"
+        ) as mock_construct:
+            mock_memory.get_conversation.return_value = [history_msg]
+            mock_construct.return_value = mock_request
+            await target.send_prompt_async(message=mock_request)
+
+        sent_messages = mock_callback.call_args.kwargs["messages"]
+        # First message is from history — should contain file content, not path
+        assert sent_messages[0]["content"] == "history file content"
+        # Second message is the current plain-text request
+        assert sent_messages[1]["content"] == "follow-up question"
