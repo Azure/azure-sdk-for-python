@@ -1,5 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+import datetime
 import json
 import os
 import platform
@@ -34,11 +35,12 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _DEFAULT_LOG_MESSAGE,
     _APPLICATION_ID_RESOURCE_KEY,
 )
-from azure.monitor.opentelemetry.exporter._generated.models import ContextTagKeys
-from azure.monitor.opentelemetry.exporter._utils import (
-    azure_monitor_context,
-    ns_to_iso_str,
-)
+from azure.monitor.opentelemetry.exporter._generated.exporter.models import ContextTagKeys
+from azure.monitor.opentelemetry.exporter._utils import azure_monitor_context
+
+
+def ns_to_datetime(ns: int) -> datetime.datetime:
+    return datetime.datetime.fromtimestamp(ns / 1e9, tz=datetime.timezone.utc)
 
 
 def throw(exc_type, *args, **kwargs):
@@ -62,6 +64,7 @@ class TestAzureLogExporter(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         os.environ.pop("APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL", None)
+        os.environ.pop("APPLICATIONINSIGHTS_CONNECTION_STRING", None)
         os.environ.pop("APPINSIGHTS_INSTRUMENTATIONKEY", None)
         os.environ["APPINSIGHTS_INSTRUMENTATIONKEY"] = "1234abcd-5678-4efa-8abc-1234567890ab"
         os.environ["APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL"] = "true"
@@ -450,7 +453,7 @@ class TestAzureLogExporter(unittest.TestCase):
         envelope = exporter._log_to_envelope(self._log_data)
         record = self._log_data.log_record
         self.assertEqual(envelope.name, "Microsoft.ApplicationInsights.Message")
-        self.assertEqual(envelope.time, ns_to_iso_str(record.timestamp))
+        self.assertEqual(envelope.time, ns_to_datetime(record.timestamp))
         self.assertEqual(envelope.data.base_type, "MessageData")
         self.assertEqual(envelope.data.base_data.message, record.body)
         self.assertEqual(envelope.data.base_data.severity_level, 2)
@@ -514,7 +517,7 @@ class TestAzureLogExporter(unittest.TestCase):
         envelope = exporter._log_to_envelope(self._exc_data)
         record = self._log_data.log_record
         self.assertEqual(envelope.name, "Microsoft.ApplicationInsights.Exception")
-        self.assertEqual(envelope.time, ns_to_iso_str(record.timestamp))
+        self.assertEqual(envelope.time, ns_to_datetime(record.timestamp))
         self.assertEqual(envelope.data.base_type, "ExceptionData")
         self.assertEqual(envelope.data.base_data.severity_level, 4)
         self.assertEqual(envelope.data.base_data.properties["test"], "attribute")
@@ -532,7 +535,7 @@ class TestAzureLogExporter(unittest.TestCase):
         envelope = exporter._log_to_envelope(self._exc_data_with_exc_body)
         record = self._log_data.log_record
         self.assertEqual(envelope.name, "Microsoft.ApplicationInsights.Exception")
-        self.assertEqual(envelope.time, ns_to_iso_str(record.timestamp))
+        self.assertEqual(envelope.time, ns_to_datetime(record.timestamp))
         self.assertEqual(envelope.data.base_type, "ExceptionData")
         self.assertEqual(envelope.data.base_data.severity_level, 4)
         self.assertEqual(envelope.data.base_data.properties["test"], "attribute")
@@ -550,7 +553,7 @@ class TestAzureLogExporter(unittest.TestCase):
         envelope = exporter._log_to_envelope(self._exc_data_empty)
         record = self._log_data.log_record
         self.assertEqual(envelope.name, "Microsoft.ApplicationInsights.Exception")
-        self.assertEqual(envelope.time, ns_to_iso_str(record.timestamp))
+        self.assertEqual(envelope.time, ns_to_datetime(record.timestamp))
         self.assertEqual(envelope.data.base_type, "ExceptionData")
         self.assertEqual(envelope.data.base_data.severity_level, 4)
         self.assertEqual(envelope.data.base_data.properties["test"], "attribute")
@@ -565,7 +568,7 @@ class TestAzureLogExporter(unittest.TestCase):
         envelope = exporter._log_to_envelope(self._exc_data_blank_exception)
         record = self._log_data.log_record
         self.assertEqual(envelope.name, "Microsoft.ApplicationInsights.Exception")
-        self.assertEqual(envelope.time, ns_to_iso_str(record.timestamp))
+        self.assertEqual(envelope.time, ns_to_datetime(record.timestamp))
         self.assertEqual(envelope.data.base_type, "ExceptionData")
         self.assertEqual(envelope.data.base_data.severity_level, 4)
         self.assertEqual(envelope.data.base_data.properties["test"], "attribute")
@@ -580,7 +583,7 @@ class TestAzureLogExporter(unittest.TestCase):
         envelope = exporter._log_to_envelope(self._log_data_event)
         record = self._log_data_event.log_record
         self.assertEqual(envelope.name, "Microsoft.ApplicationInsights.Event")
-        self.assertEqual(envelope.time, ns_to_iso_str(record.timestamp))
+        self.assertEqual(envelope.time, ns_to_datetime(record.timestamp))
         self.assertEqual(envelope.data.base_type, "EventData")
         self.assertEqual(envelope.data.base_data.name, record.body)
         self.assertEqual(envelope.data.base_data.properties["event_key"], "event_attribute")
@@ -590,7 +593,7 @@ class TestAzureLogExporter(unittest.TestCase):
         envelope = exporter._log_to_envelope(self._log_data_event_complex_body)
         record = self._log_data_event_complex_body.log_record
         self.assertEqual(envelope.name, "Microsoft.ApplicationInsights.Event")
-        self.assertEqual(envelope.time, ns_to_iso_str(record.timestamp))
+        self.assertEqual(envelope.time, ns_to_datetime(record.timestamp))
         self.assertEqual(envelope.data.base_type, "EventData")
         self.assertEqual(envelope.data.base_data.name, json.dumps(record.body))
         self.assertEqual(envelope.data.base_data.properties["event_key"], "event_attribute")
@@ -600,7 +603,7 @@ class TestAzureLogExporter(unittest.TestCase):
         envelope = exporter._log_to_envelope(self._log_data_event_complex_body_not_serializeable)
         record = self._log_data_event_complex_body_not_serializeable.log_record
         self.assertEqual(envelope.name, "Microsoft.ApplicationInsights.Event")
-        self.assertEqual(envelope.time, ns_to_iso_str(record.timestamp))
+        self.assertEqual(envelope.time, ns_to_datetime(record.timestamp))
         self.assertEqual(envelope.data.base_type, "EventData")
         self.assertEqual(envelope.data.base_data.name, str(record.body))
         self.assertEqual(envelope.data.base_data.properties["event_key"], "event_attribute")
@@ -611,7 +614,7 @@ class TestAzureLogExporter(unittest.TestCase):
         record = self._log_data_custom_event.log_record
         self.assertEqual(envelope.name, "Microsoft.ApplicationInsights.Event")
         self.assertEqual(envelope.tags["ai.location.ip"], "192.168.1.1")
-        self.assertEqual(envelope.time, ns_to_iso_str(record.timestamp))
+        self.assertEqual(envelope.time, ns_to_datetime(record.timestamp))
         self.assertEqual(envelope.data.base_type, "EventData")
         self.assertEqual(envelope.data.base_data.name, "event_name")
         self.assertEqual(envelope.data.base_data.properties["event_key"], "event_attribute")
@@ -623,7 +626,7 @@ class TestAzureLogExporter(unittest.TestCase):
         self._log_data.log_record.observed_timestamp = 1646865018558419457
         envelope = exporter._log_to_envelope(self._log_data)
         record = self._log_data.log_record
-        self.assertEqual(envelope.time, ns_to_iso_str(record.observed_timestamp))
+        self.assertEqual(envelope.time, ns_to_datetime(record.observed_timestamp))
         self._log_data.log_record = old_record
 
     def test_log_to_envelope_synthetic_source(self):

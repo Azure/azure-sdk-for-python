@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, TYPE_CHECKING
+from typing import Any, Optional, TYPE_CHECKING
 
 from azure.core.pipeline import policies
 
@@ -30,13 +30,18 @@ class AIProjectClientConfiguration:  # pylint: disable=too-many-instance-attribu
     :type endpoint: str
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
+    :param allow_preview: Whether to enable preview features. Must be specified and set to True to
+     enable preview features. Default value is None.
+    :type allow_preview: bool
     :keyword api_version: The API version to use for this operation. Known values are "v1" and
      None. Default value is "v1". Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
     """
 
-    def __init__(self, endpoint: str, credential: "AsyncTokenCredential", **kwargs: Any) -> None:
+    def __init__(
+        self, endpoint: str, credential: "AsyncTokenCredential", allow_preview: Optional[bool] = None, **kwargs: Any
+    ) -> None:
         api_version: str = kwargs.pop("api_version", "v1")
 
         if endpoint is None:
@@ -46,6 +51,7 @@ class AIProjectClientConfiguration:  # pylint: disable=too-many-instance-attribu
 
         self.endpoint = endpoint
         self.credential = credential
+        self.allow_preview = allow_preview
         self.api_version = api_version
         self.credential_scopes = kwargs.pop("credential_scopes", ["https://ai.azure.com/.default"])
         kwargs.setdefault("sdk_moniker", "ai-projects/{}".format(VERSION))
