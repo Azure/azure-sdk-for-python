@@ -4,7 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 
-"""Sample showing how to use max_degree_of_parallelism and max_buffered_item_count
+"""Sample showing how to use max_degree_of_parallelism
 to speed up cross-partition queries with the async Cosmos DB client.
 
 Prerequisites:
@@ -48,21 +48,6 @@ async def query_items_parallel(container):
     print('Got {} items with degree=4'.format(len(item_list)))
 
 
-async def query_items_parallel_with_buffer(container):
-    """Query items with both parallel execution and a buffered item count."""
-    print('\n1.3 Cross-partition query - parallel with buffering\n')
-
-    # max_buffered_item_count controls how many items can be buffered ahead
-    # while the consumer processes results
-    items = container.query_items(
-        query="SELECT * FROM c ORDER BY c.category",
-        max_degree_of_parallelism=8,
-        max_buffered_item_count=500,
-    )
-    item_list = [item async for item in items]
-    print('Got {} items with degree=8 and buffer=500'.format(len(item_list)))
-
-
 async def run_sample():
     async with CosmosClient(HOST, {'masterKey': MASTER_KEY}) as client:
         try:
@@ -71,7 +56,6 @@ async def run_sample():
 
             await query_items_serial(container)
             await query_items_parallel(container)
-            await query_items_parallel_with_buffer(container)
 
         except Exception as e:
             print('\nrun_sample has caught an error. {0}'.format(e))

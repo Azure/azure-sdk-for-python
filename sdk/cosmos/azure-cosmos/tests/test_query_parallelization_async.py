@@ -31,7 +31,6 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 from azure.cosmos._execution_context.aio._concurrent_helpers import (
     _resolve_max_degree,
-    _resolve_max_buffered,
     concurrent_peek_producers,
     concurrent_drain_producers,
 )
@@ -98,40 +97,6 @@ class TestResolveMaxDegree:
     def test_invalid_negative_raises(self, bad_value):
         with pytest.raises(ValueError, match="max_degree_of_parallelism"):
             _resolve_max_degree(bad_value, 10)
-
-
-# ---------------------------------------------------------------------------
-# _resolve_max_buffered tests
-# ---------------------------------------------------------------------------
-
-class TestResolveMaxBuffered:
-    """Tests for the _resolve_max_buffered helper."""
-
-    def test_none_returns_zero(self):
-        assert _resolve_max_buffered(None, 4) == 0
-
-    def test_zero_returns_zero(self):
-        assert _resolve_max_buffered(0, 4) == 0
-
-    def test_positive_returns_value(self):
-        assert _resolve_max_buffered(500, 4) == 500
-
-    def test_negative_one_auto(self):
-        result = _resolve_max_buffered(-1, 4)
-        assert result == 400  # 4 * 100
-
-    def test_auto_with_zero_concurrency(self):
-        result = _resolve_max_buffered(-1, 0)
-        assert result == 0
-
-    def test_auto_minimum_100(self):
-        result = _resolve_max_buffered(-1, 1)
-        assert result >= 100
-
-    @pytest.mark.parametrize("bad_value", [-2, -10, -999])
-    def test_invalid_negative_raises(self, bad_value):
-        with pytest.raises(ValueError, match="max_buffered_item_count"):
-            _resolve_max_buffered(bad_value, 4)
 
 
 # ---------------------------------------------------------------------------
@@ -823,19 +788,16 @@ class TestOptionsThreading:
     """Test that new kwargs properly flow through the options pipeline."""
 
     def test_base_build_options_includes_new_keys(self):
-        """Verify build_options extracts max_degree_of_parallelism and max_buffered_item_count."""
+        """Verify build_options extracts max_degree_of_parallelism."""
         from azure.cosmos._base import build_options
 
         kwargs = {
             "max_degree_of_parallelism": 4,
-            "max_buffered_item_count": 500,
         }
         options = build_options(kwargs)
         assert options["maxDegreeOfParallelism"] == 4
-        assert options["maxBufferedItemCount"] == 500
         # kwargs should have been consumed
         assert "max_degree_of_parallelism" not in kwargs
-        assert "max_buffered_item_count" not in kwargs
 
     def test_base_build_options_without_new_keys(self):
         """Verify build_options works fine without the new kwargs."""
@@ -844,5 +806,4 @@ class TestOptionsThreading:
         kwargs = {"max_item_count": 10}
         options = build_options(kwargs)
         assert "maxDegreeOfParallelism" not in options
-        assert "maxBufferedItemCount" not in options
         assert options["maxItemCount"] == 10

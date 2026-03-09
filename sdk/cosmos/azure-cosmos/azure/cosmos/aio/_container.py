@@ -546,7 +546,6 @@ class ContainerProxy:
             max_integrated_cache_staleness_in_ms: Optional[int] = None,
             max_item_count: Optional[int] = None,
             max_degree_of_parallelism: Optional[int] = None,
-            max_buffered_item_count: Optional[int] = None,
             parameters: Optional[list[dict[str, object]]] = None,
             partition_key: PartitionKeyType,
             populate_index_metrics: Optional[bool] = None,
@@ -584,9 +583,6 @@ class ContainerProxy:
             during parallel query execution. A positive value limits the number of concurrent operations to the
             set value. If set to 0 (the default), client-side parallelization is disabled and queries run serially.
             If set to -1, the system automatically decides the number of concurrent operations to run.
-        :keyword int max_buffered_item_count: The maximum number of items that can be buffered client side during
-            parallel query execution. A positive value limits the number of buffered items to the set value.
-            If set to 0 (the default), the system does not impose a limit on the number of buffered items.
         :keyword parameters: Optional array of parameters to the query.
             Each parameter is a dict() with 'name' and 'value' keys.
             Ignored if no query is provided.
@@ -644,7 +640,6 @@ class ContainerProxy:
             max_integrated_cache_staleness_in_ms: Optional[int] = None,
             max_item_count: Optional[int] = None,
             max_degree_of_parallelism: Optional[int] = None,
-            max_buffered_item_count: Optional[int] = None,
             parameters: Optional[list[dict[str, object]]] = None,
             populate_index_metrics: Optional[bool] = None,
             populate_query_metrics: Optional[bool] = None,
@@ -682,9 +677,6 @@ class ContainerProxy:
             during parallel query execution. A positive value limits the number of concurrent operations to the
             set value. If set to 0 (the default), the system does not impose a limit and queries run serially.
             If set to -1, the system automatically decides the number of concurrent operations to run.
-        :keyword int max_buffered_item_count: The maximum number of items that can be buffered client side during
-            parallel query execution. A positive value limits the number of buffered items to the set value.
-            If set to 0 (the default), the system does not impose a limit on the number of buffered items.
         :keyword parameters: Optional array of parameters to the query.
             Each parameter is a dict() with 'name' and 'value' keys.
             Ignored if no query is provided.
@@ -737,7 +729,6 @@ class ContainerProxy:
             max_integrated_cache_staleness_in_ms: Optional[int] = None,
             max_item_count: Optional[int] = None,
             max_degree_of_parallelism: Optional[int] = None,
-            max_buffered_item_count: Optional[int] = None,
             parameters: Optional[list[dict[str, object]]] = None,
             populate_index_metrics: Optional[bool] = None,
             populate_query_metrics: Optional[bool] = None,
@@ -774,9 +765,6 @@ class ContainerProxy:
             during parallel query execution. A positive value limits the number of concurrent operations to the
             set value. If set to 0 (the default), the system does not impose a limit and queries run serially.
             If set to -1, the system automatically decides the number of concurrent operations to run.
-        :keyword int max_buffered_item_count: The maximum number of items that can be buffered client side during
-            parallel query execution. A positive value limits the number of buffered items to the set value.
-            If set to 0 (the default), the system does not impose a limit on the number of buffered items.
         :keyword parameters: Optional array of parameters to the query.
             Each parameter is a dict() with 'name' and 'value' keys.
             Ignored if no query is provided.
@@ -914,8 +902,6 @@ class ContainerProxy:
             feed_options["responseContinuationTokenLimitInKb"] = kwargs.pop("continuation_token_limit")
         if utils.valid_key_value_exist(kwargs, "max_degree_of_parallelism"):
             feed_options["maxDegreeOfParallelism"] = kwargs.pop("max_degree_of_parallelism")
-        if utils.valid_key_value_exist(kwargs, "max_buffered_item_count"):
-            feed_options["maxBufferedItemCount"] = kwargs.pop("max_buffered_item_count")
 
         # populate availability_strategy
         if (Constants.Kwargs.AVAILABILITY_STRATEGY in feed_options

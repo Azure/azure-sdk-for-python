@@ -644,9 +644,6 @@ async def parallel_query_example():
 | `> 0` | That many concurrent partition requests |
 | `-1` | System decides (bounded by partition count and CPU count) |
 
-You can also use `max_buffered_item_count` to control how many items are prefetched and buffered
-client-side during parallel execution. This is only meaningful when `max_degree_of_parallelism > 0`.
-
 ### Using Integrated Cache
 An integrated cache is an in-memory cache that helps you ensure manageable costs and low latency as your request volume grows. The integrated cache has two parts: an item cache for point reads and a query cache for queries. The code snippet below shows you how to use this feature with the point read and query cache methods.
 

@@ -77,7 +77,6 @@ _COMMON_OPTIONS = {
     'excluded_locations': Constants.Kwargs.EXCLUDED_LOCATIONS,
     "availability_strategy": Constants.Kwargs.AVAILABILITY_STRATEGY,
     'max_degree_of_parallelism': 'maxDegreeOfParallelism',
-    'max_buffered_item_count': 'maxBufferedItemCount',
 }
 
 # Cosmos resource ID validation regex breakdown:
