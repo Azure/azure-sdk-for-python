@@ -5,6 +5,7 @@ Unit tests for red_team.utils.formatting_utils module.
 import pytest
 import math
 import json
+import logging
 from unittest.mock import patch, MagicMock, mock_open
 from azure.ai.evaluation.red_team._utils.formatting_utils import (
     message_to_dict,
@@ -14,6 +15,7 @@ from azure.ai.evaluation.red_team._utils.formatting_utils import (
     format_scorecard,
     is_none_or_nan,
     list_mean_nan_safe,
+    write_pyrit_outputs_to_file,
 )
 from azure.ai.evaluation.red_team._attack_strategy import AttackStrategy
 from pyrit.models import ChatMessage
@@ -134,7 +136,9 @@ class TestScorecardFormatting:
 
     def test_format_scorecard_empty(self):
         """Test scorecard formatting with empty data."""
-        scan_result = {"scorecard": {"risk_category_summary": [], "joint_risk_attack_summary": []}}
+        scan_result = {
+            "scorecard": {"risk_category_summary": [], "joint_risk_attack_summary": []}
+        }
 
         result = format_scorecard(scan_result)
 
@@ -231,78 +235,115 @@ class TestNumericalHelpers:
         assert result == 0.0  # Default when no valid values
 
 
+def _make_mock_pieces(conversation_id, messages):
+    """Create mock prompt request pieces for a conversation.
+
+    :param conversation_id: The conversation ID to assign to all pieces
+    :param messages: List of (role, content) tuples
+    :return: List of mock PromptRequestPiece objects
+    """
+    pieces = []
+    for role, content in messages:
+        piece = MagicMock()
+        piece.conversation_id = conversation_id
+        piece.original_value = content
+        piece.labels = {
+            "context": "",
+            "tool_calls": [],
+            "risk_sub_type": None,
+            "token_usage": None,
+        }
+        chat_msg = MagicMock(spec=ChatMessage)
+        chat_msg.role = role
+        chat_msg.content = content
+        piece.to_chat_message.return_value = chat_msg
+        pieces.append(piece)
+    return pieces
+
+
 @pytest.mark.unittest
 class TestUnicodeJSONLRoundTrip:
     """Test that JSONL files with non-ASCII content survive write/read round-trips.
 
     Regression tests for the encoding bug where open() without encoding='utf-8'
     caused UnicodeDecodeError on Windows for UnicodeConfusable and CJK content.
+    These tests exercise the production write_pyrit_outputs_to_file code path.
     """
 
     def test_jsonl_roundtrip_cjk_characters(self, tmp_path):
         """Test JSONL round-trip with CJK characters (Japanese, Chinese)."""
         output_path = str(tmp_path / "cjk_test.jsonl")
-        content = [
-            {
-                "conversation": {
-                    "messages": [
-                        {"role": "user", "content": "これはテストです"},
-                        {"role": "assistant", "content": "这是一个测试"},
-                    ]
-                }
-            },
-        ]
-        # Write with utf-8 (as the fixed code does)
-        with open(output_path, "w", encoding="utf-8") as f:
-            for entry in content:
-                f.write(json.dumps(entry, ensure_ascii=False) + "\n")
-        # Read back with utf-8 (as the fixed code does)
+        pieces = _make_mock_pieces(
+            "conv-cjk",
+            [("user", "これはテストです"), ("assistant", "这是一个测试")],
+        )
+        mock_memory = MagicMock()
+        mock_memory.get_prompt_request_pieces.return_value = pieces
+
+        with patch(
+            "azure.ai.evaluation.red_team._utils.formatting_utils.CentralMemory"
+        ) as mock_cm:
+            mock_cm.get_memory_instance.return_value = mock_memory
+            write_pyrit_outputs_to_file(
+                output_path=output_path,
+                logger=logging.getLogger("test"),
+                prompt_to_context={},
+            )
+
         with open(output_path, "r", encoding="utf-8") as f:
-            for line in f:
-                data = json.loads(line)
-                assert data["conversation"]["messages"][0]["content"] == "これはテストです"
-                assert data["conversation"]["messages"][1]["content"] == "这是一个测试"
+            data = json.loads(f.readline())
+            assert data["conversation"]["messages"][0]["content"] == "これはテストです"
+            assert data["conversation"]["messages"][1]["content"] == "这是一个测试"
 
     def test_jsonl_roundtrip_unicode_confusable(self, tmp_path):
         """Test JSONL round-trip with Unicode confusable characters."""
         output_path = str(tmp_path / "confusable_test.jsonl")
-        confusable_text = "Ⓗⓔⓛⓛⓞ ⓦⓞⓡⓛⓓ"  # Unicode confusable "Hello world"
-        content = [
-            {
-                "conversation": {
-                    "messages": [
-                        {"role": "user", "content": confusable_text},
-                        {"role": "assistant", "content": "I understand your request."},
-                    ]
-                }
-            },
-        ]
-        with open(output_path, "w", encoding="utf-8") as f:
-            for entry in content:
-                f.write(json.dumps(entry, ensure_ascii=False) + "\n")
+        confusable_text = "Ⓗⓔⓛⓛⓞ ⓦⓞⓡⓛⓓ"
+        pieces = _make_mock_pieces(
+            "conv-confusable",
+            [("user", confusable_text), ("assistant", "I understand your request.")],
+        )
+        mock_memory = MagicMock()
+        mock_memory.get_prompt_request_pieces.return_value = pieces
+
+        with patch(
+            "azure.ai.evaluation.red_team._utils.formatting_utils.CentralMemory"
+        ) as mock_cm:
+            mock_cm.get_memory_instance.return_value = mock_memory
+            write_pyrit_outputs_to_file(
+                output_path=output_path,
+                logger=logging.getLogger("test"),
+                prompt_to_context={},
+            )
+
         with open(output_path, "r", encoding="utf-8") as f:
-            for line in f:
-                data = json.loads(line)
-                assert data["conversation"]["messages"][0]["content"] == confusable_text
+            data = json.loads(f.readline())
+            assert data["conversation"]["messages"][0]["content"] == confusable_text
 
     def test_jsonl_roundtrip_mixed_scripts(self, tmp_path):
         """Test JSONL round-trip with mixed scripts (Arabic, Cyrillic, emoji)."""
         output_path = str(tmp_path / "mixed_test.jsonl")
-        content = [
-            {
-                "conversation": {
-                    "messages": [
-                        {"role": "user", "content": "مرحبا Привет 🔥 café"},
-                        {"role": "assistant", "content": "Multi-script response: αβγ"},
-                    ]
-                }
-            },
-        ]
-        with open(output_path, "w", encoding="utf-8") as f:
-            for entry in content:
-                f.write(json.dumps(entry, ensure_ascii=False) + "\n")
+        pieces = _make_mock_pieces(
+            "conv-mixed",
+            [
+                ("user", "مرحبا Привет 🔥 café"),
+                ("assistant", "Multi-script response: αβγ"),
+            ],
+        )
+        mock_memory = MagicMock()
+        mock_memory.get_prompt_request_pieces.return_value = pieces
+
+        with patch(
+            "azure.ai.evaluation.red_team._utils.formatting_utils.CentralMemory"
+        ) as mock_cm:
+            mock_cm.get_memory_instance.return_value = mock_memory
+            write_pyrit_outputs_to_file(
+                output_path=output_path,
+                logger=logging.getLogger("test"),
+                prompt_to_context={},
+            )
+
         with open(output_path, "r", encoding="utf-8") as f:
-            for line in f:
-                data = json.loads(line)
-                assert "مرحبا" in data["conversation"]["messages"][0]["content"]
-                assert "αβγ" in data["conversation"]["messages"][1]["content"]
+            data = json.loads(f.readline())
+            assert "مرحبا" in data["conversation"]["messages"][0]["content"]
+            assert "αβγ" in data["conversation"]["messages"][1]["content"]
