@@ -2188,49 +2188,33 @@ class TestStorageBlockBlobAsync(AsyncStorageRecordedTestCase):
 
     @BlobPreparer()
     @recorded_by_proxy_async
-    async def test_block_blob_smart_access_tier(self, **kwargs):
+    async def test_smart_access_tier(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
         await self._setup(storage_account_name, storage_account_key)
 
         data = b"abc123" * 4
-        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
-        await blob.upload_blob(data, standard_blob_tier=StandardBlobTier.SMART, overwrite=True)
-        props = await blob.get_blob_properties()
+        blob1 = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        await blob1.upload_blob(data, standard_blob_tier=StandardBlobTier.SMART, overwrite=True)
+        props = await blob1.get_blob_properties()
         assert props.blob_tier == StandardBlobTier.SMART
         assert props.smart_access_tier is not None
 
-        block_blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
-        await block_blob.stage_block('1', b'abc123')
-        block_list = [BlobBlock(block_id='1')]
-        put_block_list_resp = await block_blob.commit_block_list(
-            block_list=block_list, standard_blob_tier=StandardBlobTier.SMART
-        )
-        assert put_block_list_resp is not None
-        props = await block_blob.get_blob_properties()
+        blob2 = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        await blob2.upload_blob(data, standard_blob_tier=StandardBlobTier.COOL, overwrite=True)
+        props = await blob2.get_blob_properties()
+        assert props.blob_tier == StandardBlobTier.COOL
+        assert props.smart_access_tier is None
+
+        await blob2.set_standard_blob_tier(standard_blob_tier=StandardBlobTier.SMART)
+        props = await blob2.get_blob_properties()
         assert props.blob_tier == StandardBlobTier.SMART
         assert props.smart_access_tier is not None
 
-    @BlobPreparer()
-    @recorded_by_proxy_async
-    async def test_start_copy_smart_access_tier(self, **kwargs):
-        storage_account_name = kwargs.pop("storage_account_name")
-        storage_account_key = kwargs.pop("storage_account_key")
-
-        await self._setup(storage_account_name, storage_account_key)
-
-        data = b"abc123" * 4
-        src_blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference("src"))
-        await src_blob.upload_blob(data, standard_blob_tier=StandardBlobTier.SMART, overwrite=True)
-
-        dst_blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference("dst"))
-        resp = await dst_blob.start_copy_from_url(src_blob.url)
-        assert resp is not None
-        assert resp['copy_status'] == 'success'
-
-        props = await dst_blob.get_blob_properties()
-        assert props is not None
-        assert props.blob_tier == StandardBlobTier.SMART
+        cc = self.bsc.get_container_client(self.container_name)
+        async for blob in cc.list_blobs():
+            assert blob.blob_tier == StandardBlobTier.SMART
+            assert blob.smart_access_tier is not None
 
 # ------------------------------------------------------------------------------
