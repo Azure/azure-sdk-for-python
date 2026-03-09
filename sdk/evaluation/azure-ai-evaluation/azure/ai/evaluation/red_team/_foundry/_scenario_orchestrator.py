@@ -102,7 +102,9 @@ class ScenarioOrchestrator:
 
         # Initialize with dataset and strategies
         # Note: FoundryScenario.initialize_async expects specific parameters
-        self.logger.info(f"Initializing FoundryScenario with strategies: {[s.value for s in strategies]}")
+        self.logger.info(
+            f"Initializing FoundryScenario with strategies: {[s.value for s in strategies]}"
+        )
 
         await self._scenario.initialize_async(
             objective_target=self.objective_target,
@@ -119,12 +121,21 @@ class ScenarioOrchestrator:
                 f"Error during attack execution for {self.risk_category}: {str(e)}. "
                 f"Partial results may still be available."
             )
-            # Try to retrieve partial results from the scenario
+            # Intentionally swallow the exception so execute() returns normally.
+            # The FoundryExecutionManager (see PR #45541) provides an additional
+            # outer recovery layer. If _scenario_result remains None,
+            # downstream get_attack_results() returns an empty list safely.
             try:
-                if self._scenario and hasattr(self._scenario, "_result"):
+                # Relies on PyRIT FoundryScenario internal `_result` attribute
+                # to retrieve partial results accumulated before the failure.
+                # hasattr guards against future PyRIT versions removing this attribute.
+                # If the attribute type changes, get_attack_results() will fail safely downstream.
+                if hasattr(self._scenario, "_result"):
                     self._scenario_result = self._scenario._result
-            except Exception:
-                pass
+            except Exception as e:
+                self.logger.debug(
+                    "Failed to retrieve partial scenario result: %s", e, exc_info=True
+                )
 
         self.logger.info(f"Attack execution complete for {self.risk_category}")
 
@@ -195,7 +206,11 @@ class ScenarioOrchestrator:
             return 0.0
 
         successful = sum(1 for r in results if r.outcome == AttackOutcome.SUCCESS)
-        decided = sum(1 for r in results if r.outcome in (AttackOutcome.SUCCESS, AttackOutcome.FAILURE))
+        decided = sum(
+            1
+            for r in results
+            if r.outcome in (AttackOutcome.SUCCESS, AttackOutcome.FAILURE)
+        )
         return successful / decided if decided > 0 else 0.0
 
     def calculate_asr_by_strategy(self) -> Dict[str, float]:
@@ -232,7 +247,9 @@ class ScenarioOrchestrator:
                 strategy_stats[strategy_name]["successful"] += 1
 
         return {
-            strategy: (stats["successful"] / stats["decided"] if stats["decided"] > 0 else 0.0)
+            strategy: (
+                stats["successful"] / stats["decided"] if stats["decided"] > 0 else 0.0
+            )
             for strategy, stats in strategy_stats.items()
         }
 
