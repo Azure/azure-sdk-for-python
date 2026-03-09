@@ -41,7 +41,7 @@ class FoundryConversationHistoryProvider(BaseHistoryProvider):
         if state is None:
             return []
 
-        if state.get(self.SERVICE_SESSION_ID_KEY. None):
+        if state.get(self.SERVICE_SESSION_ID_KEY, None):
             # If the service_session_id exists, we assume AgentSession is service managed.
             # Do not return messages to avoid duplication
             return []
