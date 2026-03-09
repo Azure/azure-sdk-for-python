@@ -584,11 +584,9 @@ class ContainerProxy:
             during parallel query execution. A positive value limits the number of concurrent operations to the
             set value. If set to 0 (the default), client-side parallelization is disabled and queries run serially.
             If set to -1, the system automatically decides the number of concurrent operations to run.
-            This is only supported for async clients.
         :keyword int max_buffered_item_count: The maximum number of items that can be buffered client side during
             parallel query execution. A positive value limits the number of buffered items to the set value.
             If set to 0 (the default), the system does not impose a limit on the number of buffered items.
-            This is only supported for async clients.
         :keyword parameters: Optional array of parameters to the query.
             Each parameter is a dict() with 'name' and 'value' keys.
             Ignored if no query is provided.
@@ -684,11 +682,9 @@ class ContainerProxy:
             during parallel query execution. A positive value limits the number of concurrent operations to the
             set value. If set to 0 (the default), the system does not impose a limit and queries run serially.
             If set to -1, the system automatically decides the number of concurrent operations to run.
-            This is only supported for async clients.
         :keyword int max_buffered_item_count: The maximum number of items that can be buffered client side during
             parallel query execution. A positive value limits the number of buffered items to the set value.
             If set to 0 (the default), the system does not impose a limit on the number of buffered items.
-            This is only supported for async clients.
         :keyword parameters: Optional array of parameters to the query.
             Each parameter is a dict() with 'name' and 'value' keys.
             Ignored if no query is provided.
@@ -778,11 +774,9 @@ class ContainerProxy:
             during parallel query execution. A positive value limits the number of concurrent operations to the
             set value. If set to 0 (the default), the system does not impose a limit and queries run serially.
             If set to -1, the system automatically decides the number of concurrent operations to run.
-            This is only supported for async clients.
         :keyword int max_buffered_item_count: The maximum number of items that can be buffered client side during
             parallel query execution. A positive value limits the number of buffered items to the set value.
             If set to 0 (the default), the system does not impose a limit on the number of buffered items.
-            This is only supported for async clients.
         :keyword parameters: Optional array of parameters to the query.
             Each parameter is a dict() with 'name' and 'value' keys.
             Ignored if no query is provided.
