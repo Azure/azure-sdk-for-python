@@ -39,7 +39,7 @@ from ._base import (_build_properties_cache, _deserialize_throughput, _replace_t
 from ._change_feed.feed_range_internal import FeedRangeInternalEpk
 from ._constants import _Constants as Constants, TimeoutScope
 from ._cosmos_client_connection import CosmosClientConnection
-from ._cosmos_responses import CosmosDict, CosmosList
+from ._cosmos_responses import CosmosDict, CosmosList, CosmosItemPaged
 from ._routing.routing_range import Range
 from ._session_token_helpers import get_latest_session_token
 from .exceptions import CosmosHttpResponseError
@@ -752,13 +752,14 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             initial_headers: Optional[dict[str, str]] = None,
             max_integrated_cache_staleness_in_ms: Optional[int] = None,
             populate_index_metrics: Optional[bool] = None,
+            populate_query_advice: Optional[bool] = None,
             priority: Optional[Literal["High", "Low"]] = None,
             response_hook: Optional[Callable[[Mapping[str, str], dict[str, Any]], None]] = None,
             session_token: Optional[str] = None,
             throughput_bucket: Optional[int] = None,
             availability_strategy: Optional[Union[bool, dict[str, Any]]] = None,
             **kwargs: Any
-    ) -> ItemPaged[dict[str, Any]]:
+    ) -> CosmosItemPaged:
         """Return all results matching the given `query`.
 
         You can use any value for the container name in the FROM clause, but
@@ -785,6 +786,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword bool populate_index_metrics: Used to obtain the index metrics to understand how the query engine used
             existing indexes and how it could use potential new indexes. Please note that this option will incur
             overhead, so it should be enabled only when debugging slow queries.
+        :keyword bool populate_query_advice: Used to obtain the query advice to understand aspects of the query that can
+            be optimized. Please note that this option will incur additional latency overhead, so it should be enabled
+            when debugging queries.
         :keyword int continuation_token_limit: The size limit in kb of the response continuation token in the query
             response. Valid values are positive integers.
             A value of 0 is the same as not passing a value (default no limit).
@@ -810,7 +814,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             If not provided, uses the client's configured strategy.
         :paramtype availability_strategy: Union[bool, dict[str, Any]]
         :returns: An Iterable of items (dicts).
-        :rtype: ItemPaged[dict[str, Any]]
+        :rtype: CosmosItemPaged
 
         .. admonition:: Example:
 
@@ -845,13 +849,14 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             parameters: Optional[list[dict[str, object]]] = None,
             populate_index_metrics: Optional[bool] = None,
             populate_query_metrics: Optional[bool] = None,
+            populate_query_advice: Optional[bool] = None,
             priority: Optional[Literal["High", "Low"]] = None,
             response_hook: Optional[Callable[[Mapping[str, str], dict[str, Any]], None]] = None,
             session_token: Optional[str] = None,
             throughput_bucket: Optional[int] = None,
             availability_strategy: Optional[Union[bool, dict[str, Any]]] = None,
             **kwargs: Any
-    ) -> ItemPaged[dict[str, Any]]:
+    ) -> CosmosItemPaged:
         """Return all results matching the given `query`.
 
         You can use any value for the container name in the FROM clause, but
@@ -886,6 +891,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             existing indexes and how it could use potential new indexes. Please note that this option will incur
             overhead, so it should be enabled only when debugging slow queries.
         :keyword bool populate_query_metrics: Enable returning query metrics in response headers.
+        :keyword bool populate_query_advice: Used to obtain the query advice to understand aspects of the query that can
+            be optimized. Please note that this option will incur additional latency overhead, so it should be enabled
+            when debugging queries.
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
@@ -900,7 +908,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             If not provided, uses the client's configured strategy.
         :paramtype availability_strategy: Union[bool, dict[str, Any]]
         :returns: An Iterable of items (dicts).
-        :rtype: ItemPaged[dict[str, Any]]
+        :rtype: CosmosItemPaged
 
         .. admonition:: Example:
 
@@ -925,7 +933,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         self,
         *args: Any,
         **kwargs: Any
-    ) -> ItemPaged[dict[str, Any]]:
+    ) -> CosmosItemPaged:
         """Return all results matching the given `query`.
 
         You can use any value for the container name in the FROM clause, but
@@ -964,6 +972,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             existing indexes and how it could use potential new indexes. Please note that this option will incur
             overhead, so it should be enabled only when debugging slow queries.
         :keyword bool populate_query_metrics: Enable returning query metrics in response headers.
+        :keyword bool populate_query_advice: Used to obtain the query advice to understand aspects of the query that can
+            be optimized. Please note that this option will incur additional latency overhead, so it should be enabled
+            when debugging queries.
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
@@ -978,7 +989,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword str session_token: Token for use with Session consistency.
         :keyword int throughput_bucket: The desired throughput bucket for the client.
         :returns: An Iterable of items (dicts).
-        :rtype: ItemPaged[dict[str, Any]]
+        :rtype: CosmosItemPaged
 
         .. admonition:: Example:
 
@@ -1014,6 +1025,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             feed_options["populateQueryMetrics"] = kwargs.pop("populate_query_metrics")
         if utils.valid_key_value_exist(kwargs, "populate_index_metrics"):
             feed_options["populateIndexMetrics"] = kwargs.pop("populate_index_metrics")
+        if utils.valid_key_value_exist(kwargs, "populate_query_advice"):
+            feed_options["populateQueryAdvice"] = kwargs.pop("populate_query_advice")
         if utils.valid_key_value_exist(kwargs, "enable_scan_in_query"):
             feed_options["enableScanInQuery"] = kwargs.pop("enable_scan_in_query")
         if utils.valid_key_value_exist(kwargs, "max_integrated_cache_staleness_in_ms"):
