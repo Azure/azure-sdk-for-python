@@ -23,7 +23,7 @@ from azure.monitor.opentelemetry.exporter.export.trace._utils import _get_DJB2_s
 
 from azure.monitor.opentelemetry.exporter._constants import _SAMPLE_RATE_KEY
 
-_INVALID_FLOAT_MESSAGE = "Value of %s must be a float. Defaulting to %s: %s"
+_INVALID_FLOAT_MESSAGE = "Value of %s must be a float. Defaulting to %s."
 
 _logger = getLogger(__name__)
 
@@ -39,8 +39,12 @@ class ApplicationInsightsSampler(Sampler):
     def __init__(self, sampling_ratio: Optional[float] = None):
         default_sampling_ratio = 1.0
         if sampling_ratio is not None:
-            if sampling_ratio < 0.0 or sampling_ratio > 1.0:
-                _logger.error("Sampling ratio must be in the range [0.0, 1.0]. Defaulting to %s.", default_sampling_ratio)
+            try:
+                if sampling_ratio < 0.0 or sampling_ratio > 1.0:
+                    _logger.error("Sampling ratio must be in the range [0.0, 1.0]. Defaulting to %s.", default_sampling_ratio)
+                    sampling_ratio = default_sampling_ratio
+            except TypeError:
+                _logger.error("Invalid value %s, for sampling ratio. Defaulting to %s.", sampling_ratio, default_sampling_ratio)
                 sampling_ratio = default_sampling_ratio
         else:
             sampling_arg = os.environ.get(OTEL_TRACES_SAMPLER_ARG)
@@ -52,15 +56,13 @@ class ApplicationInsightsSampler(Sampler):
                 else:
                     _logger.info("Using sampling ratio: %s", sampler_value)
                     sampling_ratio = sampler_value
-            except ValueError as e:
+            except ValueError as e:  # pylint: disable=unused-variable
                 _logger.error(  # pylint: disable=C
                     _INVALID_FLOAT_MESSAGE,
                     OTEL_TRACES_SAMPLER_ARG,
                     default_sampling_ratio,
-                    e,
                 )
                 sampling_ratio = default_sampling_ratio
-
         self._ratio = sampling_ratio
         self._sample_rate = sampling_ratio * 100
 

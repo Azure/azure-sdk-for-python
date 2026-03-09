@@ -29,6 +29,12 @@ class TestApplicationInsightsSampler(unittest.TestCase):
         sampler = ApplicationInsightsSampler(-0.01)
         self.assertEqual(sampler._ratio, 1.0)
         self.assertEqual(sampler._sample_rate, 100.0)
+
+    def test_invalid_type_ratio_defaults(self):
+        # Non-numeric explicit ratio logs an error and defaults to 1.0
+        sampler = ApplicationInsightsSampler({})  # type: ignore
+        self.assertEqual(sampler._ratio, 1.0)
+        self.assertEqual(sampler._sample_rate, 100.0)
     
     def test_user_passed_value_through_distro(self):
         sampler = ApplicationInsightsSampler(sampling_ratio=0.5)

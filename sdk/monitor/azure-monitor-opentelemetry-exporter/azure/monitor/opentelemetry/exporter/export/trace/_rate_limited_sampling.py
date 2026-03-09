@@ -30,7 +30,7 @@ from azure.monitor.opentelemetry.exporter.export.trace._utils import (
     parent_context_sampling,
 )
 
-_INVALID_TRACES_PER_SECOND_MESSAGE = "Value of %s must be a positive number for traces per second. Defaulting to %s: %s"
+_INVALID_TRACES_PER_SECOND_MESSAGE = "Value of %s must be a positive number for traces per second. Defaulting to %s."
 
 _logger = getLogger(__name__)
 
@@ -94,11 +94,15 @@ class RateLimitedSampler(Sampler):
     def __init__(self, traces_per_second: Optional[float] = None):
         default_traces_per_second = 5.0
         if traces_per_second is not None:
-            if traces_per_second < 0.0:
-                _logger.error("Invalid value %s, for traces per second. It should be a non-negative number.", traces_per_second)
+            try:
+                if traces_per_second < 0.0:
+                    _logger.error("Invalid value %s, for traces per second. It should be a non-negative number.", traces_per_second)
+                    traces_per_second = default_traces_per_second
+                else:
+                    _logger.info("Using rate limited sampler: %s traces per second", traces_per_second)
+            except TypeError:
+                _logger.error("Invalid value %s, for traces per second. Defaulting to %s", traces_per_second, default_traces_per_second)
                 traces_per_second = default_traces_per_second
-            else:
-                _logger.info("Using rate limited sampler: %s traces per second", traces_per_second)
         else:
             sampling_arg = os.environ.get(OTEL_TRACES_SAMPLER_ARG)
             try:
@@ -109,15 +113,13 @@ class RateLimitedSampler(Sampler):
                 else:
                     _logger.info("Using rate limited sampler: %s traces per second", sampler_value)
                     traces_per_second = sampler_value
-            except ValueError as e:
+            except ValueError as e:  # pylint: disable=unused-variable
                 _logger.error(  # pylint: disable=C0301
                     _INVALID_TRACES_PER_SECOND_MESSAGE,
                     OTEL_TRACES_SAMPLER_ARG,
                     default_traces_per_second,
-                    e,
                 )
                 traces_per_second = default_traces_per_second
-
         self._sampling_percentage_generator = RateLimitedSamplingPercentage(traces_per_second)
         self._description = f"RateLimitedSampler{{{traces_per_second}}}"
 

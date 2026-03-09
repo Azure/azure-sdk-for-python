@@ -76,7 +76,7 @@ from azure.monitor.opentelemetry._types import ConfigurationValue
 from azure.monitor.opentelemetry._version import VERSION
 
 
-_INVALID_FLOAT_MESSAGE = "Value of %s must be a float. Defaulting to %s: %s"
+_INVALID_FLOAT_MESSAGE = "Value of %s must be a float. Defaulting to %s."
 _INVALID_TRACES_PER_SECOND_MESSAGE = "Value of %s must be a positive number for traces per second. Defaulting to %s: %s"
 _SUPPORTED_RESOURCE_DETECTORS = (
     _AZURE_APP_SERVICE_RESOURCE_DETECTOR_NAME,
@@ -203,7 +203,6 @@ def _default_sampler(configurations):
             "No sampler specified. Defaulting to %s: %s", RATE_LIMITED_SAMPLER, "5.0 traces per second",
         )
         configurations[SAMPLER_TYPE] = RATE_LIMITED_SAMPLER
-    print(f"Sampler type set to: {configurations[SAMPLER_TYPE]}")
 
 
 def _default_instrumentation_options(configurations):
@@ -286,44 +285,43 @@ def _default_enable_trace_based_sampling(configurations):
 
 def _get_sampler_from_name(sampler_type):
     default_value = 1.0
-    sampler_arg = environ.get(OTEL_TRACES_SAMPLER_ARG)
-    sampler_value = float(sampler_arg) if sampler_arg is not None else default_value
-    if sampler_type == ALWAYS_ON_SAMPLER:
-        return ALWAYS_ON
-    if sampler_type == ALWAYS_OFF_SAMPLER:
-        return ALWAYS_OFF
-    if sampler_type == TRACE_ID_RATIO_SAMPLER:
-        try:
-            if sampler_value < 0.0 or sampler_value > 1.0:
-                _logger.error("Invalid sampler argument for TRACE_ID_RATIO_SAMPLER. It should be a value between 0 and 1.")
-                sampler_value = default_value
-            else:
-                _logger.info("Using sampling value: %s", sampler_value)
-        except ValueError as e:
-            _logger.error(  # pylint: disable=C
-                _INVALID_FLOAT_MESSAGE,
-                OTEL_TRACES_SAMPLER_ARG,
-                default_value,
-                e,
-            )
-        ratio = float(sampler_value) if sampler_value is not None else default_value
-        return TraceIdRatioBased(ratio)
     if sampler_type == PARENT_BASED_ALWAYS_OFF_SAMPLER:
         return ParentBased(ALWAYS_OFF)
-    if sampler_type == PARENT_BASED_TRACE_ID_RATIO_SAMPLER:
+
+    if sampler_type == PARENT_BASED_ALWAYS_ON_SAMPLER:
+        return ParentBased(ALWAYS_ON)
+
+    if sampler_type == ALWAYS_ON_SAMPLER:
+        return ALWAYS_ON
+
+    if sampler_type == ALWAYS_OFF_SAMPLER:
+        return ALWAYS_OFF
+    
+    sampler_arg = environ.get(OTEL_TRACES_SAMPLER_ARG)
+    sampler_value = default_value
+    if sampler_arg is not None:
         try:
-            if sampler_value < 0.0 or sampler_value > 1.0:
-                _logger.error("Invalid sampler argument for PARENT_BASED_TRACE_ID_RATIO_SAMPLER. It should be a value between 0 and 1.")
-                sampler_value = default_value
-            else:
-                _logger.info("Using sampling value: %s", sampler_value)
+            sampler_value = float(sampler_arg)
         except ValueError as e:
-            _logger.error(  # pylint: disable=C
+            _logger.error(
                 _INVALID_FLOAT_MESSAGE,
                 OTEL_TRACES_SAMPLER_ARG,
                 default_value,
-                e,
             )
-        ratio = float(sampler_value) if sampler_value is not None else default_value
-        return ParentBased(TraceIdRatioBased(ratio))
-    return ParentBased(ALWAYS_ON)
+            sampler_value = default_value
+
+    if sampler_type == TRACE_ID_RATIO_SAMPLER:
+        if sampler_value < 0.0 or sampler_value > 1.0:
+            _logger.error("Invalid sampler argument for TRACE_ID_RATIO_SAMPLER. It should be a value between 0 and 1. Defaulting to %s.", default_value)
+            sampler_value = default_value
+        else:
+            _logger.info("Using sampling value: %s", sampler_value)
+        return TraceIdRatioBased(sampler_value)
+
+    if sampler_type == PARENT_BASED_TRACE_ID_RATIO_SAMPLER:
+        if sampler_value < 0.0 or sampler_value > 1.0:
+            _logger.error("Invalid sampler argument for PARENT_BASED_TRACE_ID_RATIO_SAMPLER. It should be a value between 0 and 1. Defaulting to %s.", default_value)
+            sampler_value = default_value
+        else:
+            _logger.info("Using sampling value: %s", sampler_value)
+        return ParentBased(TraceIdRatioBased(sampler_value))

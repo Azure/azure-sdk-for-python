@@ -172,12 +172,15 @@ class TestRateLimitedSampler(unittest.TestCase):
             sampler = RateLimitedSampler(target_rate)
             self.assertIsInstance(sampler, RateLimitedSampler)
             self.assertEqual(sampler.get_description(), f"RateLimitedSampler{{{target_rate}}}")
-        
 
     # Test that negative explicit traces per second logs error and defaults to 5.0
     def test_negative_rate_raises_error(self):
-        with self.assertRaises(ValueError):
-            RateLimitedSampler(-1.0)
+        sampler = RateLimitedSampler(-1.0)
+        self.assertEqual(sampler.get_description(), "RateLimitedSampler{5.0}")
+
+    # Test that non-numeric explicit traces per second logs error and defaults to 5.0
+    def test_invalid_type_rate_defaults(self):
+        sampler = RateLimitedSampler({})  # type: ignore
         self.assertEqual(sampler.get_description(), "RateLimitedSampler{5.0}")
 
     # Test default traces per second when no argument and no env var set
@@ -193,10 +196,11 @@ class TestRateLimitedSampler(unittest.TestCase):
             self.assertEqual(sampler.get_description(), "RateLimitedSampler{10.0}")
 
     # Test explicit traces per second takes precedence over OTEL_TRACES_SAMPLER_ARG
-    def test_constructor_explicit_ignores_env_var(self):
+    def test_constructor_explicit_value_passed_through_distro(self):
         with patch.dict("os.environ", {"OTEL_TRACES_SAMPLER_ARG": "10.0"}):
-            sampler = RateLimitedSampler(3.0)
-            self.assertEqual(sampler.get_description(), "RateLimitedSampler{3.0}")
+            traces_per_second = 2.0
+            sampler = RateLimitedSampler(traces_per_second)
+            self.assertEqual(sampler.get_description(), f"RateLimitedSampler{{{traces_per_second}}}")
 
     # Test env var with negative value logs error and defaults to 5.0
     def test_constructor_env_var_negative(self):
