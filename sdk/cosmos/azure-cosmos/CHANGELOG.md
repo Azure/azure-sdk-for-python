@@ -12,6 +12,7 @@
 * Fixed bug where a compound session token (containing multiple partition tokens) was sent for single-partition feed range queries. See [PR 44484](https://github.com/Azure/azure-sdk-for-python/pull/44484)
 
 #### Other Changes
+* Enhanced error logging by attaching endpoint information to exceptions during database account retrieval. See [PR 44484](https://github.com/Azure/azure-sdk-for-python/pull/44484)
 
 ### 4.15.0 (2026-02-19)
 
