@@ -793,7 +793,9 @@ def _generate_data_source_config(input_data_df: pd.DataFrame, column_mapping: Di
                 except (TypeError, ValueError):
                     break
 
-    nested_schema = _build_schema_tree_from_paths(effective_paths, force_leaf_type="string", leaf_type_map=leaf_type_map)
+    nested_schema = _build_schema_tree_from_paths(
+        effective_paths, force_leaf_type="string", leaf_type_map=leaf_type_map
+    )
 
     LOGGER.info(f"AOAI: Nested schema generated successfully with type '{nested_schema.get('type')}'")
     return {
