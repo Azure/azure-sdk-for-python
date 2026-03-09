@@ -25,6 +25,8 @@
 ### Bugs Fixed
 - Fix CPU usage calculation logic for live metrics
   ([#45005](https://github.com/Azure/azure-sdk-for-python/pull/45005))
+- Fix attributes override in Rate Limited Sampler
+  ([#XXXXX](https://github.com/Azure/azure-sdk-for-python/pull/XXXXX))
 
 ### Other Changes
 - Fix Ingestion-Side Sampling Disk Persist Behavior
