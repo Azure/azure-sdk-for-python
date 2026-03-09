@@ -13,7 +13,7 @@ from ci_tools.logging import logger
 
 from .Check import Check
 
-BLACK_VERSION = "24.4.0"
+BLACK_VERSION = "26.1.0"
 REPO_ROOT = discover_repo_root()
 
 
