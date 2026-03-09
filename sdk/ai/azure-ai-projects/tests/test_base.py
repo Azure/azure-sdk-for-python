@@ -44,8 +44,6 @@ servicePreparer = functools.partial(
     azure_ai_project_endpoint="https://sanitized-account-name.services.ai.azure.com/api/projects/sanitized-project-name",
     azure_ai_model_deployment_name="sanitized-model-deployment-name",
     image_generation_model_deployment_name="sanitized-gpt-image",
-    container_app_resource_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/00000/providers/Microsoft.App/containerApps/00000",
-    container_ingress_subdomain_suffix="00000",
     bing_project_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sanitized-resource-group/providers/Microsoft.CognitiveServices/accounts/sanitized-account/projects/sanitized-project/connections/sanitized-bing-connection",
     ai_search_project_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sanitized-resource-group/providers/Microsoft.CognitiveServices/accounts/sanitized-account/projects/sanitized-project/connections/sanitized-ai-search-connection",
     bing_custom_search_project_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sanitized-resource-group/providers/Microsoft.CognitiveServices/accounts/sanitized-account/projects/sanitized-project/connections/sanitized-bing-custom-search-connection",
@@ -297,11 +295,10 @@ class TestBase(AzureRecordedTestCase):
         return patched_open_crlf_to_lf(file, mode, buffering, encoding, errors, newline, closefd, opener)
 
     # helper function: create projects client using environment variables
-    def create_client(self, *, operation_group: Optional[str] = None, **kwargs) -> AIProjectClient:
+    def create_client(self, *, allow_preview: bool = False, **kwargs) -> AIProjectClient:
         # fetch environment variables
         endpoint = kwargs.pop("azure_ai_project_endpoint")
         credential = self.get_credential(AIProjectClient, is_async=False)
-        allow_preview = kwargs.pop("allow_preview", operation_group in {"agents", "tracing"})
 
         print(f"Creating AIProjectClient with endpoint: {endpoint}")
 
@@ -315,11 +312,10 @@ class TestBase(AzureRecordedTestCase):
         return client
 
     # helper function: create async projects client using environment variables
-    def create_async_client(self, *, operation_group: Optional[str] = None, **kwargs) -> AsyncAIProjectClient:
+    def create_async_client(self, *, allow_preview: bool = False, **kwargs) -> AsyncAIProjectClient:
         # fetch environment variables
         endpoint = kwargs.pop("azure_ai_project_endpoint")
         credential = self.get_credential(AsyncAIProjectClient, is_async=True)
-        allow_preview = kwargs.pop("allow_preview", operation_group in {"agents", "tracing"})
 
         print(f"Creating AsyncAIProjectClient with endpoint: {endpoint}")
 

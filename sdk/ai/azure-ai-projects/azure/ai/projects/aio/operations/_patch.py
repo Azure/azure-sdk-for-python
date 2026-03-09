@@ -9,6 +9,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 
 from typing import Any, List
+from ._patch_agents_async import AgentsOperations
 from ._patch_datasets_async import DatasetsOperations
 from ._patch_telemetry_async import TelemetryOperations
 from ._patch_connections_async import ConnectionsOperations
@@ -53,6 +54,7 @@ class BetaOperations(GeneratedBetaOperations):
 
 
 __all__: List[str] = [
+    "AgentsOperations",
     "BetaEvaluationTaxonomiesOperations",
     "BetaEvaluatorsOperations",
     "BetaInsightsOperations",
