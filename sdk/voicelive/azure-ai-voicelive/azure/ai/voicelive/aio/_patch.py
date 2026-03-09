@@ -17,7 +17,14 @@ from typing import Any, Mapping, Optional, Union, AsyncIterator, cast
 
 # === Third-party ===
 from typing_extensions import TypedDict
-import aiohttp
+
+try:
+    import aiohttp
+except ImportError as exc:
+    raise ImportError(
+        "aiohttp is required for azure-ai-voicelive. "
+        "Install it with: pip install azure-ai-voicelive[aiohttp]"
+    ) from exc
 from azure.ai.voicelive.models._models import (
     ClientEventConversationItemCreate,
     ClientEventConversationItemDelete,
@@ -769,12 +776,6 @@ class _VoiceLiveConnectionManager(
 
             self.__connection_options.setdefault("max_msg_size", 4 * 1024 * 1024)
             self.__connection_options.setdefault("heartbeat", 30)
-
-            if self.__proxy_policy:
-                self.__proxy_policy.proxies = {
-                    "http": "http://localhost:8888",
-                    "https": "http://localhost:8888",
-                }
 
             auth_headers = await self._get_auth_headers()
             headers = {**auth_headers, **dict(self.__extra_headers)}
