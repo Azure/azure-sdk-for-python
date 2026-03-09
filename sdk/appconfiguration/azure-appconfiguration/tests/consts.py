@@ -12,3 +12,4 @@ LABEL_RESERVED_CHARS = "test_label2_*, \\" + LABEL_UUID  # contains reserved cha
 TEST_CONTENT_TYPE = "test content type"
 TEST_VALUE = "test value"
 APPCONFIGURATION_CONNECTION_STRING = "Endpoint=https://fake_app_config.azconfig-test.io;Id=0-l4-s0:h5htBaY5Z1LwFz50bIQv;Secret=lamefakesecretlamefakesecretlamefakesecrett="  # pylint:disable=line-too-long
+APPCONFIGURATION_ENDPOINT_STRING = "https://fake_app_config.azconfig-test.io"

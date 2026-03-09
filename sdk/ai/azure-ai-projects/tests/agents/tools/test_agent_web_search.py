@@ -11,9 +11,6 @@ from devtools_testutils import recorded_by_proxy, RecordedTransport
 from azure.ai.projects.models import PromptAgentDefinition, WebSearchPreviewTool, ApproximateLocation
 
 
-@pytest.mark.skip(
-    reason="Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema"
-)
 class TestAgentWebSearch(TestBase):
 
     @servicePreparer()
