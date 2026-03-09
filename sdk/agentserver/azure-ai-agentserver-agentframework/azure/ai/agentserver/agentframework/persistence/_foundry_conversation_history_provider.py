@@ -40,7 +40,7 @@ class FoundryConversationHistoryProvider(BaseHistoryProvider):
         if state is None:
             return []
 
-        conversation_id = self._resolve_conversation_id(session_id, state)
+        conversation_id = self._resolve_conversation_id(state)
         if not conversation_id:
             return list(state.get("messages", []))
 
@@ -69,7 +69,7 @@ class FoundryConversationHistoryProvider(BaseHistoryProvider):
         state["messages"] = [*existing_messages, *messages]
 
     @staticmethod
-    def _resolve_conversation_id(session_id: Optional[str], state: Dict[str, Any]) -> Optional[str]:
+    def _resolve_conversation_id(state: Dict[str, Any]) -> Optional[str]:
         conversation_id = state.get(FoundryConversationHistoryProvider.CONVERSATION_ID_KEY)
         if isinstance(conversation_id, str) and conversation_id:
             return conversation_id
