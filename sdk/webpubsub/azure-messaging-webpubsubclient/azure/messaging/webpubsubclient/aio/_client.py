@@ -794,20 +794,6 @@ class WebPubSubClient(
         except Exception as e:  # pylint: disable=broad-except
             _LOGGER.debug("Failed to send cancelInvocation for %s: %s", invocation_id, e)
 
-    async def cancel_invocation(self, invocation_id: str) -> None:
-        """Cancel a pending invocation.
-
-        Sends a cancelInvocation message to the server so that the waiting task is unblocked.
-
-        :param invocation_id: The invocation id to cancel. Required.
-        :type invocation_id: str
-        """
-        self._invocation_map.reject(
-            invocation_id,
-            InvocationError("Invocation cancelled by the user.", invocation_id=invocation_id),
-        )
-        await self._send_cancel_invocation(invocation_id)
-
     async def _retry_with_result(self, func: Callable[[], Awaitable[InvokeEventResult]]) -> InvokeEventResult:
         retry_attempt = 0
         while True:
