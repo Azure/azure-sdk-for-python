@@ -42,7 +42,7 @@ version = {attr = "corehttp._version.VERSION"}
 readme = {file = ["README.md", "CHANGELOG.md"], content-type = "text/markdown"}
 
 [tool.setuptools.packages.find]
-exclude = ["tests*"]
+include = ["corehttp*"]
 
 [tool.setuptools.package-data]
 pytyped = ["py.typed"]

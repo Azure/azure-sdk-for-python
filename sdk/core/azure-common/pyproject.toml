@@ -11,6 +11,7 @@ description = "Microsoft Azure Client Library for Python (Common)"
 keywords = ["azure", "azure sdk"]
 requires-python = ">=3.6"
 license = "MIT"
+dependencies = []
 classifiers = [
     "Development Status :: 7 - Inactive",
     "Programming Language :: Python",
