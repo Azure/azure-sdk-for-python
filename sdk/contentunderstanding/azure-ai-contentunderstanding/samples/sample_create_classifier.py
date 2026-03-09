@@ -54,7 +54,7 @@ from azure.ai.contentunderstanding.models import (
     ContentAnalyzer,
     ContentAnalyzerConfig,
     ContentCategoryDefinition,
-    AnalyzeResult,
+    AnalysisResult,
     DocumentContent,
 )
 from azure.core.credentials import AzureKeyCredential
@@ -136,7 +136,7 @@ def main() -> None:
         analyzer_id=analyzer_id,
         binary_input=file_bytes,
     )
-    analyze_result: AnalyzeResult = analyze_poller.result()
+    analyze_result: AnalysisResult = analyze_poller.result()
 
     # Display classification results
     if analyze_result.contents and len(analyze_result.contents) > 0:

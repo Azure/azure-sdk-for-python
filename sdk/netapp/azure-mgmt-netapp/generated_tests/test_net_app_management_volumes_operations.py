@@ -50,7 +50,6 @@ class TestNetAppManagementVolumesOperations(AzureMgmtRecordedTestCase):
                     "avsDataStore": "str",
                     "backupId": "str",
                     "baremetalTenantId": "str",
-                    "breakthroughMode": "str",
                     "capacityPoolResourceId": "str",
                     "cloneProgress": 0,
                     "coolAccess": bool,
@@ -68,10 +67,6 @@ class TestNetAppManagementVolumesOperations(AzureMgmtRecordedTestCase):
                                 {"region": "str", "replicationType": "str", "resourceId": "str", "zone": "str"}
                             ],
                             "endpointType": "str",
-                            "externalReplicationSetupInfo": "str",
-                            "externalReplicationSetupStatus": "str",
-                            "mirrorState": "str",
-                            "relationshipStatus": "str",
                             "remotePath": {"externalHostName": "str", "serverName": "str", "volumeName": "str"},
                             "remoteVolumeRegion": "str",
                             "remoteVolumeResourceId": "str",
@@ -118,10 +113,7 @@ class TestNetAppManagementVolumesOperations(AzureMgmtRecordedTestCase):
                     "isRestoring": bool,
                     "kerberosEnabled": bool,
                     "keyVaultPrivateEndpointResourceId": "str",
-                    "language": "str",
-                    "largeVolumeType": "str",
                     "ldapEnabled": bool,
-                    "ldapServerType": "str",
                     "maximumNumberOfFiles": 0,
                     "mountTargets": [
                         {"fileSystemId": "str", "ipAddress": "str", "mountTargetId": "str", "smbServerFqdn": "str"}

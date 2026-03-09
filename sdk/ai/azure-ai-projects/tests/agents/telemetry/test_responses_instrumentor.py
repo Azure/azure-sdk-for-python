@@ -53,9 +53,6 @@ TEST_IMAGE_BASE64 = (
 )
 
 
-@pytest.mark.skip(
-    reason="Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema"
-)
 class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     """Tests for ResponsesInstrumentor with real endpoints."""
 
@@ -88,6 +85,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     def test_instrumentation(self, **kwargs):
         # Make sure code is not instrumented due to a previous test exception
         AIProjectInstrumentor().uninstrument()
+        os.environ["AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING"] = "true"
         exception_caught = False
         try:
             assert AIProjectInstrumentor().is_instrumented() == False
@@ -98,11 +96,14 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         except RuntimeError as e:
             exception_caught = True
             print(e)
+        finally:
+            os.environ.pop("AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING", None)
         assert exception_caught == False
 
     def test_instrumenting_twice_does_not_cause_exception(self, **kwargs):
         # Make sure code is not instrumented due to a previous test exception
         AIProjectInstrumentor().uninstrument()
+        os.environ["AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING"] = "true"
         exception_caught = False
         try:
             AIProjectInstrumentor().instrument()
@@ -110,7 +111,9 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         except RuntimeError as e:
             exception_caught = True
             print(e)
-        AIProjectInstrumentor().uninstrument()
+        finally:
+            AIProjectInstrumentor().uninstrument()
+            os.environ.pop("AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING", None)
         assert exception_caught == False
 
     def test_uninstrumenting_uninstrumented_does_not_cause_exception(self, **kwargs):
@@ -127,6 +130,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     def test_uninstrumenting_twice_does_not_cause_exception(self, **kwargs):
         # Make sure code is not instrumented due to a previous test exception
         AIProjectInstrumentor().uninstrument()
+        os.environ["AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING"] = "true"
         exception_caught = False
         try:
             AIProjectInstrumentor().instrument()
@@ -135,6 +139,8 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         except RuntimeError as e:
             exception_caught = True
             print(e)
+        finally:
+            os.environ.pop("AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING", None)
         assert exception_caught == False
 
     @pytest.mark.parametrize(
@@ -840,10 +846,11 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         from opentelemetry.sdk.trace.export import SimpleSpanProcessor
         from memory_trace_exporter import MemoryTraceExporter
 
-        trace._TRACER_PROVIDER = TracerProvider()
+        tracer_provider = TracerProvider()
+        trace._TRACER_PROVIDER = tracer_provider
         exporter = MemoryTraceExporter()
         span_processor = SimpleSpanProcessor(exporter)
-        trace.get_tracer_provider().add_span_processor(span_processor)
+        tracer_provider.add_span_processor(span_processor)
 
         try:
             # Verify no instrumentation

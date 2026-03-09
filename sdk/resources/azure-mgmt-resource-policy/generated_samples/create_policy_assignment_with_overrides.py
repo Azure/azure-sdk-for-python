@@ -36,6 +36,7 @@ def main():
         policy_assignment_name="CostManagement",
         parameters={
             "properties": {
+                "definitionVersion": "1.*.*",
                 "description": "Limit the resource location and resource SKU",
                 "displayName": "Limit the resource location and resource SKU",
                 "metadata": {"assignedBy": "Special Someone"},
@@ -44,7 +45,12 @@ def main():
                         "kind": "policyEffect",
                         "selectors": [{"in": ["Limit_Skus", "Limit_Locations"], "kind": "policyDefinitionReferenceId"}],
                         "value": "Audit",
-                    }
+                    },
+                    {
+                        "kind": "definitionVersion",
+                        "selectors": [{"in": ["eastUSEuap", "centralUSEuap"], "kind": "resourceLocation"}],
+                        "value": "2.*.*",
+                    },
                 ],
                 "policyDefinitionId": "/subscriptions/ae640e6b-ba3e-4256-9d62-2993eecfa6f2/providers/Microsoft.Authorization/policySetDefinitions/CostManagement",
             }
@@ -53,6 +59,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/resources/resource-manager/Microsoft.Authorization/policy/stable/2023-04-01/examples/createPolicyAssignmentWithOverrides.json
+# x-ms-original-file: specification/resources/resource-manager/Microsoft.Authorization/policy/stable/2025-03-01/examples/createPolicyAssignmentWithOverrides.json
 if __name__ == "__main__":
     main()

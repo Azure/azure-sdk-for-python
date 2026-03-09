@@ -1,0 +1,52 @@
+baseBranch: main
+
+changeKinds:
+  breaking:
+    versionType: major
+    title: Breaking Changes
+    description: Changes that break existing features
+
+  feature:
+    versionType: minor
+    title: Features Added
+    description: Adds new features
+
+  deprecation:
+    versionType: minor
+    title: Other Changes
+    description: Change that deprecates an existing feature but is not breaking.
+
+  fix:
+    versionType: patch
+    title: Bugs Fixed
+    description: Fixes to existing features
+
+  dependencies:
+    versionType: patch
+    title: Other Changes
+    description: Bumps dependencies
+
+  internal:
+    versionType: none
+    title: Other Changes
+    description: Internal changes that are not user facing
+
+packages:
+  - path: "sdk/*/*"
+    type: pip
+
+changelog: ["@chronus/github/changelog", { repo: "azure/azure-sdk-for-python" }]
+
+changedFiles:
+  - "sdk/**"
+  - "!**/*.md"
+  - "!**/*.json"
+  - "!**/*.txt"
+  - "!**/*.yml"
+  - "!**/*.yaml"
+  - "!**/test_*.py"
+  - "!**/*_test.py"
+  - "!**/tests/**"
+  - "!**/samples/**"
+  - "!**/stress/**"
+  - "!**/mypy.ini"

@@ -1,12 +1,14 @@
+# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
 """Shared base code for sample tests - sync dependencies only."""
-from typing import Optional, Mapping, Any
 
+from typing import Mapping, Any
 
-agent_tools_instructions = """We just ran Python code and captured a Python array of print statements.
+agent_tools_instructions = """
+We just ran Python code and captured print/log output in an attached log file (TXT).
 Validate whether sample execution/output is correct for a tool-driven assistant workflow.
 
 Prefer matched/substantive data in the final output when available.
@@ -28,10 +30,11 @@ Important distinction:
 Mark `correct = true` when execution succeeds and the output includes matched/substantive data,
 even if it also asks follow-up questions.
 
-Always include `reason` with a concise explanation tied to the observed print output."""
+Always include `reason` with a concise explanation tied to the observed print output.
+""".strip()
 
-
-memories_instructions = """We just ran Python code and captured a Python array of print statements.
+memories_instructions = """
+We just ran Python code and captured print/log output in an attached log file (TXT).
 Validate whether sample execution/output is correct for a memories workflow.
 
 For memories scenarios, successful output typically shows one or more of:
@@ -53,9 +56,11 @@ Important distinction:
 Mark `correct = true` when execution succeeds and the output is consistent with the sample's intended
 memory behavior, even if no memory matches are found.
 
-Always include `reason` with a concise explanation tied to the observed print output."""
+Always include `reason` with a concise explanation tied to the observed print output.
+""".strip()
 
-agents_instructions = """We just ran Python code and captured a Python array of print statements.
+agents_instructions = """
+We just ran Python code and captured print/log output in an attached log file (TXT).
 Validate whether sample execution/output is correct.
 
 For agents scenarios, successful output typically shows one or more of:
@@ -83,13 +88,42 @@ Important distinction:
 Mark `correct = true` when execution succeeds and the output is consistent with the sample's intended
 agent behavior, including reasonable correspondence between input prompt(s) and final output.
 
-Always include `reason` with a concise explanation tied to the observed print output."""
+Always include `reason` with a concise explanation tied to the observed print output.
+""".strip()
+
+resource_management_instructions = """
+We just ran Python code and captured print/log output in an attached log file (TXT).
+Validate whether sample execution/output is correct for resource-management samples (for example
+connections, files, and deployments).
+
+Successful output typically shows one or more of:
+- Create/get/list/update/delete operations completing as expected.
+- Returned resource objects/IDs/names/versions or other meaningful operation results.
+- Consistent progress from setup to cleanup where applicable.
+
+Mark `correct = false` for:
+- Exceptions, stack traces, explicit error/failure messages.
+- Timeout/auth/connection/service errors that prevent normal completion.
+- Malformed/corrupted output indicating broken processing.
+- Operation failures where the sample cannot proceed as designed.
+
+Important distinction:
+- Empty list results by themselves can be valid and should not automatically fail.
+- Cleanup/delete operations that report not found may still be acceptable if the sample otherwise succeeds.
+- But explicit inability/failure for required core operations should be marked `correct = false`.
+
+Mark `correct = true` when execution succeeds and output is consistent with the sample's intended
+resource-management behavior.
+
+Always include `reason` with a concise explanation tied to the observed print output.
+""".strip()
 
 
-def get_sample_environment_variables_map(env_kwargs: Mapping[str, Any]) -> dict[str, str]:
-    # Map sample env-var names (uppercase) to the original kwargs key names so executors can pop them.
+def get_sample_env_vars(env_kwargs: Mapping[str, Any]) -> dict[str, str]:
+    # Map sample env-var names (uppercase) to string values only.
+    # Non-string values are filtered out to maintain type safety.
     mapping: dict[str, str] = {}
-    for key in env_kwargs.keys():
-        if isinstance(key, str):
-            mapping[key.upper()] = key
+    for key, value in env_kwargs.items():
+        if isinstance(key, str) and isinstance(value, str):
+            mapping[key.upper()] = value
     return mapping

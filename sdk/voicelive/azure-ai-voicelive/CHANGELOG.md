@@ -10,6 +10,8 @@
 
 ### Other Changes
 
+- Updated default API version to `2026-01-01-preview`.
+
 ## 1.2.0b4 (2026-02-12)
 
 ### Features Added

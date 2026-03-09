@@ -157,7 +157,7 @@ def cleanup_test_resources(
         for snapshot_name in snapshot_names:
             try:
                 client.archive_snapshot(snapshot_name)
-            except Exception:
+            except Exception:  # pylint: disable=broad-except
                 pass
 
     # Delete configuration settings and feature flags
@@ -165,7 +165,7 @@ def cleanup_test_resources(
         for setting in settings:
             try:
                 client.delete_configuration_setting(key=setting.key, label=setting.label)
-            except Exception:
+            except Exception:  # pylint: disable=broad-except
                 pass
 
 

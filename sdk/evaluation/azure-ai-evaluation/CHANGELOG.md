@@ -1,6 +1,25 @@
 # Release History
 
-## 1.15.1 (Unreleased)
+## 1.15.3 (Unreleased)
+
+### Bugs Fixed
+
+- Fixed Foundry red team double-evaluation that caused ~3x scan latency by removing redundant evaluation_processor.evaluate() call.
+- Fixed lost red team attack details where baseline overwrites wiped evaluation results.
+- Fixed incorrect per_testing_criteria that showed attack strategies alongside risk categories.
+- Fixed metadata leak of internal scorer fields (attack_success, attack_strategy, score) into results.json.
+- Improved error logging with run_id, display_name, and full stack traces for red team scan failures.
+- Fixed httpx read timeout errors during red team scans by configuring explicit HTTP timeout on PyRIT OpenAIChatTarget instances (default: 180s, configurable via `_http_timeout` scan kwarg).
+- Fixed `InvalidInputError` crash when evaluating agent tool output containing unresolvable relative image paths from Document Intelligence indexed PDFs, by gracefully falling back to text representation.
+- Fixed `InvalidInputError` crash on markdown image references with empty alt text (e.g. `![](figures/14.2)`) from Document Intelligence by allowing empty alt text in the image URL parser.
+
+## 1.15.2 (2026-02-23)
+
+### Bugs Fixed
+
+- Fixed batch evaluation to report per-line errors only on the rows that failed.
+
+## 1.15.1 (2026-02-19)
 
 ### Bugs Fixed
 

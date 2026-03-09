@@ -18,7 +18,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b4" python-dotenv aiohttp
+    pip install "azure-ai-projects>=2.0.0" python-dotenv aiohttp
 
     Deploy a chat model (e.g. gpt-4.1) and an embedding model (e.g. text-embedding-3-small).
     Once you have deployed models, set the deployment name in the variables below.
@@ -39,11 +39,11 @@ from azure.core.exceptions import ResourceNotFoundError
 from azure.identity.aio import DefaultAzureCredential
 from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import (
-    EasyInputMessage,
     MemoryStoreDefaultDefinition,
     MemoryStoreDefaultOptions,
     MemorySearchOptions,
 )
+from openai.types.responses import EasyInputMessageParam
 
 load_dotenv()
 
@@ -88,13 +88,10 @@ async def main() -> None:
         scope = "user_123"
 
         # Extract memories from messages and add them to the memory store
-        user_message = EasyInputMessage(
-            role="user", content="I prefer dark roast coffee and usually drink it in the morning"
-        )
         update_poller = await project_client.beta.memory_stores.begin_update_memories(
             name=memory_store.name,
             scope=scope,
-            items=[user_message],  # Pass conversation items that you want to add to memory
+            items="I prefer dark roast coffee and usually drink it in the morning",  # Pass conversation items that you want to add to memory
             update_delay=300,  # Keep default inactivity delay before starting update
         )
         print(
@@ -102,11 +99,10 @@ async def main() -> None:
         )
 
         # Extend the previous update with another update and more messages
-        new_message = EasyInputMessage(role="user", content="I also like cappuccinos in the afternoon")
         new_update_poller = await project_client.beta.memory_stores.begin_update_memories(
             name=memory_store.name,
             scope=scope,
-            items=[new_message],
+            items="I also like cappuccinos in the afternoon",
             previous_update_id=update_poller.update_id,  # Extend from previous update ID
             update_delay=0,  # Trigger update immediately without waiting for inactivity
         )
@@ -129,11 +125,10 @@ async def main() -> None:
             )
 
         # Retrieve memories from the memory store
-        query_message = EasyInputMessage(role="user", content="What are my morning coffee preferences?")
         search_response = await project_client.beta.memory_stores.search_memories(
             name=memory_store.name,
             scope=scope,
-            items=[query_message],
+            items="What are my morning coffee preferences?",
             options=MemorySearchOptions(max_memories=5),
         )
         print(f"Found {len(search_response.memories)} memories")
@@ -141,10 +136,12 @@ async def main() -> None:
             print(f"  - Memory ID: {memory.memory_item.memory_id}, Content: {memory.memory_item.content}")
 
         # Perform another search using the previous search as context
-        agent_message = EasyInputMessage(
-            role="assistant", content="You previously indicated a preference for dark roast coffee in the morning."
+        agent_message = EasyInputMessageParam(
+            role="assistant",
+            content="You previously indicated a preference for dark roast coffee in the morning.",
+            type="message",
         )
-        followup_query = EasyInputMessage(role="user", content="What about afternoon?")
+        followup_query = EasyInputMessageParam(role="user", content="What about afternoon?", type="message")
         followup_search_response = await project_client.beta.memory_stores.search_memories(
             name=memory_store.name,
             scope=scope,

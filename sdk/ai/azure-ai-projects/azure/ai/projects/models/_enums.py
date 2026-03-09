@@ -10,6 +10,15 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
+class _AgentDefinitionOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Feature opt-in keys for agent definition operations supporting hosted or workflow agents."""
+
+    HOSTED_AGENTS_V1_PREVIEW = "HostedAgents=V1Preview"
+    """HOSTED_AGENTS_V1_PREVIEW."""
+    WORKFLOW_AGENTS_V1_PREVIEW = "WorkflowAgents=V1Preview"
+    """WORKFLOW_AGENTS_V1_PREVIEW."""
+
+
 class AgentKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of AgentKind."""
 
@@ -17,8 +26,6 @@ class AgentKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """PROMPT."""
     HOSTED = "hosted"
     """HOSTED."""
-    CONTAINER_APP = "container_app"
-    """CONTAINER_APP."""
     WORKFLOW = "workflow"
     """WORKFLOW."""
 
@@ -45,48 +52,6 @@ class AgentProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """ACTIVITY_PROTOCOL."""
     RESPONSES = "responses"
     """RESPONSES."""
-
-
-class AnnotationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of AnnotationType."""
-
-    FILE_CITATION = "file_citation"
-    """FILE_CITATION."""
-    URL_CITATION = "url_citation"
-    """URL_CITATION."""
-    CONTAINER_FILE_CITATION = "container_file_citation"
-    """CONTAINER_FILE_CITATION."""
-    FILE_PATH = "file_path"
-    """FILE_PATH."""
-
-
-class ApplyPatchCallOutputStatusParam(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Apply patch call output status."""
-
-    COMPLETED = "completed"
-    """COMPLETED."""
-    FAILED = "failed"
-    """FAILED."""
-
-
-class ApplyPatchCallStatusParam(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Apply patch call status."""
-
-    IN_PROGRESS = "in_progress"
-    """IN_PROGRESS."""
-    COMPLETED = "completed"
-    """COMPLETED."""
-
-
-class ApplyPatchOperationParamType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of ApplyPatchOperationParamType."""
-
-    CREATE_FILE = "create_file"
-    """CREATE_FILE."""
-    DELETE_FILE = "delete_file"
-    """DELETE_FILE."""
-    UPDATE_FILE = "update_file"
-    """UPDATE_FILE."""
 
 
 class AttackStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -175,44 +140,6 @@ class AzureAISearchQueryType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Query type ``vector_semantic_hybrid``."""
 
 
-class ClickButtonType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of ClickButtonType."""
-
-    LEFT = "left"
-    """LEFT."""
-    RIGHT = "right"
-    """RIGHT."""
-    WHEEL = "wheel"
-    """WHEEL."""
-    BACK = "back"
-    """BACK."""
-    FORWARD = "forward"
-    """FORWARD."""
-
-
-class ComputerActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of ComputerActionType."""
-
-    CLICK = "click"
-    """CLICK."""
-    DOUBLE_CLICK = "double_click"
-    """DOUBLE_CLICK."""
-    DRAG = "drag"
-    """DRAG."""
-    KEYPRESS = "keypress"
-    """KEYPRESS."""
-    MOVE = "move"
-    """MOVE."""
-    SCREENSHOT = "screenshot"
-    """SCREENSHOT."""
-    SCROLL = "scroll"
-    """SCROLL."""
-    TYPE = "type"
-    """TYPE."""
-    WAIT = "wait"
-    """WAIT."""
-
-
 class ComputerEnvironment(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of ComputerEnvironment."""
 
@@ -264,6 +191,24 @@ class ContainerMemoryLimit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """MEMORY_16GB."""
     MEMORY_64GB = "64g"
     """MEMORY_64GB."""
+
+
+class ContainerNetworkPolicyParamType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of ContainerNetworkPolicyParamType."""
+
+    DISABLED = "disabled"
+    """DISABLED."""
+    ALLOWLIST = "allowlist"
+    """ALLOWLIST."""
+
+
+class ContainerSkillType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of ContainerSkillType."""
+
+    SKILL_REFERENCE = "skill_reference"
+    """SKILL_REFERENCE."""
+    INLINE = "inline"
+    """INLINE."""
 
 
 class CredentialType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -325,17 +270,6 @@ class DeploymentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     MODEL_DEPLOYMENT = "ModelDeployment"
     """Model deployment."""
-
-
-class DetailEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of DetailEnum."""
-
-    LOW = "low"
-    """LOW."""
-    HIGH = "high"
-    """HIGH."""
-    AUTO = "auto"
-    """AUTO."""
 
 
 class EvaluationRuleActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -424,15 +358,9 @@ class EvaluatorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Custom evaluator."""
 
 
-class FoundryFeaturesOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class _FoundryFeaturesOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of FoundryFeaturesOptInKeys."""
 
-    CONTAINER_AGENTS_V1_PREVIEW = "ContainerAgents=V1Preview"
-    """CONTAINER_AGENTS_V1_PREVIEW."""
-    HOSTED_AGENTS_V1_PREVIEW = "HostedAgents=V1Preview"
-    """HOSTED_AGENTS_V1_PREVIEW."""
-    WORKFLOW_AGENTS_V1_PREVIEW = "WorkflowAgents=V1Preview"
-    """WORKFLOW_AGENTS_V1_PREVIEW."""
     EVALUATIONS_V1_PREVIEW = "Evaluations=V1Preview"
     """EVALUATIONS_V1_PREVIEW."""
     SCHEDULES_V1_PREVIEW = "Schedules=V1Preview"
@@ -445,46 +373,15 @@ class FoundryFeaturesOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """MEMORY_STORES_V1_PREVIEW."""
 
 
-class FunctionAndCustomToolCallOutputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of FunctionAndCustomToolCallOutputType."""
+class FunctionShellToolParamEnvironmentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of FunctionShellToolParamEnvironmentType."""
 
-    INPUT_TEXT = "input_text"
-    """INPUT_TEXT."""
-    INPUT_IMAGE = "input_image"
-    """INPUT_IMAGE."""
-    INPUT_FILE = "input_file"
-    """INPUT_FILE."""
-
-
-class FunctionCallItemStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of FunctionCallItemStatus."""
-
-    IN_PROGRESS = "in_progress"
-    """IN_PROGRESS."""
-    COMPLETED = "completed"
-    """COMPLETED."""
-    INCOMPLETE = "incomplete"
-    """INCOMPLETE."""
-
-
-class FunctionShellCallItemStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Shell call status."""
-
-    IN_PROGRESS = "in_progress"
-    """IN_PROGRESS."""
-    COMPLETED = "completed"
-    """COMPLETED."""
-    INCOMPLETE = "incomplete"
-    """INCOMPLETE."""
-
-
-class FunctionShellCallOutputOutcomeParamType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of FunctionShellCallOutputOutcomeParamType."""
-
-    TIMEOUT = "timeout"
-    """TIMEOUT."""
-    EXIT = "exit"
-    """EXIT."""
+    CONTAINER_AUTO = "container_auto"
+    """CONTAINER_AUTO."""
+    LOCAL = "local"
+    """LOCAL."""
+    CONTAINER_REFERENCE = "container_reference"
+    """CONTAINER_REFERENCE."""
 
 
 class GrammarSyntax1(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -496,13 +393,13 @@ class GrammarSyntax1(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """REGEX."""
 
 
-class ImageDetail(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of ImageDetail."""
+class ImageGenAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of ImageGenAction."""
 
-    LOW = "low"
-    """LOW."""
-    HIGH = "high"
-    """HIGH."""
+    GENERATE = "generate"
+    """GENERATE."""
+    EDIT = "edit"
+    """EDIT."""
     AUTO = "auto"
     """AUTO."""
 
@@ -518,82 +415,17 @@ class IndexType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Managed Azure Search."""
 
 
-class InputContentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of InputContentType."""
-
-    INPUT_TEXT = "input_text"
-    """INPUT_TEXT."""
-    INPUT_IMAGE = "input_image"
-    """INPUT_IMAGE."""
-    INPUT_FILE = "input_file"
-    """INPUT_FILE."""
-
-
 class InputFidelity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Control how much effort the model will exert to match the style and features, especially facial
-    features, of input images. This parameter is only supported for ``gpt-image-1``. Unsupported
-    for ``gpt-image-1-mini``. Supports ``high`` and ``low``. Defaults to ``low``.
+    features, of input images. This parameter is only supported for ``gpt-image-1`` and
+    ``gpt-image-1.5`` and later models, unsupported for ``gpt-image-1-mini``. Supports ``high`` and
+    ``low``. Defaults to ``low``.
     """
 
     HIGH = "high"
     """HIGH."""
     LOW = "low"
     """LOW."""
-
-
-class InputItemType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of InputItemType."""
-
-    MESSAGE = "message"
-    """MESSAGE."""
-    OUTPUT_MESSAGE = "output_message"
-    """OUTPUT_MESSAGE."""
-    FILE_SEARCH_CALL = "file_search_call"
-    """FILE_SEARCH_CALL."""
-    COMPUTER_CALL = "computer_call"
-    """COMPUTER_CALL."""
-    COMPUTER_CALL_OUTPUT = "computer_call_output"
-    """COMPUTER_CALL_OUTPUT."""
-    WEB_SEARCH_CALL = "web_search_call"
-    """WEB_SEARCH_CALL."""
-    FUNCTION_CALL = "function_call"
-    """FUNCTION_CALL."""
-    FUNCTION_CALL_OUTPUT = "function_call_output"
-    """FUNCTION_CALL_OUTPUT."""
-    REASONING = "reasoning"
-    """REASONING."""
-    COMPACTION = "compaction"
-    """COMPACTION."""
-    IMAGE_GENERATION_CALL = "image_generation_call"
-    """IMAGE_GENERATION_CALL."""
-    CODE_INTERPRETER_CALL = "code_interpreter_call"
-    """CODE_INTERPRETER_CALL."""
-    LOCAL_SHELL_CALL = "local_shell_call"
-    """LOCAL_SHELL_CALL."""
-    LOCAL_SHELL_CALL_OUTPUT = "local_shell_call_output"
-    """LOCAL_SHELL_CALL_OUTPUT."""
-    SHELL_CALL = "shell_call"
-    """SHELL_CALL."""
-    SHELL_CALL_OUTPUT = "shell_call_output"
-    """SHELL_CALL_OUTPUT."""
-    APPLY_PATCH_CALL = "apply_patch_call"
-    """APPLY_PATCH_CALL."""
-    APPLY_PATCH_CALL_OUTPUT = "apply_patch_call_output"
-    """APPLY_PATCH_CALL_OUTPUT."""
-    MCP_LIST_TOOLS = "mcp_list_tools"
-    """MCP_LIST_TOOLS."""
-    MCP_APPROVAL_REQUEST = "mcp_approval_request"
-    """MCP_APPROVAL_REQUEST."""
-    MCP_APPROVAL_RESPONSE = "mcp_approval_response"
-    """MCP_APPROVAL_RESPONSE."""
-    MCP_CALL = "mcp_call"
-    """MCP_CALL."""
-    CUSTOM_TOOL_CALL_OUTPUT = "custom_tool_call_output"
-    """CUSTOM_TOOL_CALL_OUTPUT."""
-    CUSTOM_TOOL_CALL = "custom_tool_call"
-    """CUSTOM_TOOL_CALL."""
-    ITEM_REFERENCE = "item_reference"
-    """ITEM_REFERENCE."""
 
 
 class InsightType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -605,21 +437,6 @@ class InsightType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Cluster Insight on an Agent."""
     EVALUATION_COMPARISON = "EvaluationComparison"
     """Evaluation Comparison."""
-
-
-class MCPToolCallStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of MCPToolCallStatus."""
-
-    IN_PROGRESS = "in_progress"
-    """IN_PROGRESS."""
-    COMPLETED = "completed"
-    """COMPLETED."""
-    INCOMPLETE = "incomplete"
-    """INCOMPLETE."""
-    CALLING = "calling"
-    """CALLING."""
-    FAILED = "failed"
-    """FAILED."""
 
 
 class MemoryItemKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -706,15 +523,6 @@ class OperationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The operation has been canceled by the user."""
 
 
-class OutputMessageContentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of OutputMessageContentType."""
-
-    OUTPUT_TEXT = "output_text"
-    """OUTPUT_TEXT."""
-    REFUSAL = "refusal"
-    """REFUSAL."""
-
-
 class PageOrder(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of PageOrder."""
 
@@ -738,8 +546,8 @@ class RankerVersionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     AUTO = "auto"
     """AUTO."""
-    DEFAULT2024_11_15 = "default-2024-11-15"
-    """DEFAULT2024_11_15."""
+    DEFAULT_2024_11_15 = "default-2024-11-15"
+    """DEFAULT_2024_11_15."""
 
 
 class RecurrenceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -854,8 +662,8 @@ class ToolChoiceParamType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """WEB_SEARCH_PREVIEW."""
     COMPUTER_USE_PREVIEW = "computer_use_preview"
     """COMPUTER_USE_PREVIEW."""
-    WEB_SEARCH_PREVIEW2025_03_11 = "web_search_preview_2025_03_11"
-    """WEB_SEARCH_PREVIEW2025_03_11."""
+    WEB_SEARCH_PREVIEW_2025_03_11 = "web_search_preview_2025_03_11"
+    """WEB_SEARCH_PREVIEW_2025_03_11."""
     IMAGE_GENERATION = "image_generation"
     """IMAGE_GENERATION."""
     CODE_INTERPRETER = "code_interpreter"
