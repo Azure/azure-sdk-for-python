@@ -360,9 +360,6 @@ print(f"Sum: {result}")
         openai_client.vector_stores.delete(vector_store.id)
         print("Cleanup completed")
 
-    @pytest.mark.skip(
-        reason="Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema"
-    )
     @servicePreparer()
     @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_multi_turn_search_and_save_workflow(self, **kwargs):

@@ -2938,9 +2938,9 @@ class CronTrigger(Trigger, discriminator="Cron"):
     :ivar time_zone: Time zone for the cron schedule.
     :vartype time_zone: str
     :ivar start_time: Start time for the cron schedule in ISO 8601 format.
-    :vartype start_time: str
+    :vartype start_time: ~datetime.datetime
     :ivar end_time: End time for the cron schedule in ISO 8601 format.
-    :vartype end_time: str
+    :vartype end_time: ~datetime.datetime
     """
 
     type: Literal[TriggerType.CRON] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -2949,9 +2949,13 @@ class CronTrigger(Trigger, discriminator="Cron"):
     """Cron expression that defines the schedule frequency. Required."""
     time_zone: Optional[str] = rest_field(name="timeZone", visibility=["read", "create", "update", "delete", "query"])
     """Time zone for the cron schedule."""
-    start_time: Optional[str] = rest_field(name="startTime", visibility=["read", "create", "update", "delete", "query"])
+    start_time: Optional[datetime.datetime] = rest_field(
+        name="startTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
     """Start time for the cron schedule in ISO 8601 format."""
-    end_time: Optional[str] = rest_field(name="endTime", visibility=["read", "create", "update", "delete", "query"])
+    end_time: Optional[datetime.datetime] = rest_field(
+        name="endTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
     """End time for the cron schedule in ISO 8601 format."""
 
     @overload
@@ -2960,8 +2964,8 @@ class CronTrigger(Trigger, discriminator="Cron"):
         *,
         expression: str,
         time_zone: Optional[str] = None,
-        start_time: Optional[str] = None,
-        end_time: Optional[str] = None,
+        start_time: Optional[datetime.datetime] = None,
+        end_time: Optional[datetime.datetime] = None,
     ) -> None: ...
 
     @overload
@@ -4311,9 +4315,9 @@ class EvaluatorVersion(_Model):
     :ivar created_by: Creator of the evaluator. Required.
     :vartype created_by: str
     :ivar created_at: Creation date/time of the evaluator. Required.
-    :vartype created_at: str
+    :vartype created_at: ~datetime.datetime
     :ivar modified_at: Last modified date/time of the evaluator. Required.
-    :vartype modified_at: str
+    :vartype modified_at: ~datetime.datetime
     :ivar id: Asset ID, a unique identifier for the asset.
     :vartype id: str
     :ivar name: The name of the resource. Required.
@@ -4341,9 +4345,9 @@ class EvaluatorVersion(_Model):
     """Definition of the evaluator. Required."""
     created_by: str = rest_field(visibility=["read"])
     """Creator of the evaluator. Required."""
-    created_at: str = rest_field(visibility=["read"])
+    created_at: datetime.datetime = rest_field(visibility=["read"], format="rfc3339")
     """Creation date/time of the evaluator. Required."""
-    modified_at: str = rest_field(visibility=["read"])
+    modified_at: datetime.datetime = rest_field(visibility=["read"], format="rfc3339")
     """Last modified date/time of the evaluator. Required."""
     id: Optional[str] = rest_field(visibility=["read"])
     """Asset ID, a unique identifier for the asset."""
@@ -6601,14 +6605,16 @@ class OneTimeTrigger(Trigger, discriminator="OneTime"):
     :ivar type: Required. One-time trigger.
     :vartype type: str or ~azure.ai.projects.models.ONE_TIME
     :ivar trigger_at: Date and time for the one-time trigger in ISO 8601 format. Required.
-    :vartype trigger_at: str
+    :vartype trigger_at: ~datetime.datetime
     :ivar time_zone: Time zone for the one-time trigger.
     :vartype time_zone: str
     """
 
     type: Literal[TriggerType.ONE_TIME] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Required. One-time trigger."""
-    trigger_at: str = rest_field(name="triggerAt", visibility=["read", "create", "update", "delete", "query"])
+    trigger_at: datetime.datetime = rest_field(
+        name="triggerAt", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
     """Date and time for the one-time trigger in ISO 8601 format. Required."""
     time_zone: Optional[str] = rest_field(name="timeZone", visibility=["read", "create", "update", "delete", "query"])
     """Time zone for the one-time trigger."""
@@ -6617,7 +6623,7 @@ class OneTimeTrigger(Trigger, discriminator="OneTime"):
     def __init__(
         self,
         *,
-        trigger_at: str,
+        trigger_at: datetime.datetime,
         time_zone: Optional[str] = None,
     ) -> None: ...
 
@@ -7393,9 +7399,9 @@ class RecurrenceTrigger(Trigger, discriminator="Recurrence"):
     :ivar type: Type of the trigger. Required. Recurrence based trigger.
     :vartype type: str or ~azure.ai.projects.models.RECURRENCE
     :ivar start_time: Start time for the recurrence schedule in ISO 8601 format.
-    :vartype start_time: str
+    :vartype start_time: ~datetime.datetime
     :ivar end_time: End time for the recurrence schedule in ISO 8601 format.
-    :vartype end_time: str
+    :vartype end_time: ~datetime.datetime
     :ivar time_zone: Time zone for the recurrence schedule.
     :vartype time_zone: str
     :ivar interval: Interval for the recurrence schedule. Required.
@@ -7406,9 +7412,13 @@ class RecurrenceTrigger(Trigger, discriminator="Recurrence"):
 
     type: Literal[TriggerType.RECURRENCE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Type of the trigger. Required. Recurrence based trigger."""
-    start_time: Optional[str] = rest_field(name="startTime", visibility=["read", "create", "update", "delete", "query"])
+    start_time: Optional[datetime.datetime] = rest_field(
+        name="startTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
     """Start time for the recurrence schedule in ISO 8601 format."""
-    end_time: Optional[str] = rest_field(name="endTime", visibility=["read", "create", "update", "delete", "query"])
+    end_time: Optional[datetime.datetime] = rest_field(
+        name="endTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
     """End time for the recurrence schedule in ISO 8601 format."""
     time_zone: Optional[str] = rest_field(name="timeZone", visibility=["read", "create", "update", "delete", "query"])
     """Time zone for the recurrence schedule."""
@@ -7423,8 +7433,8 @@ class RecurrenceTrigger(Trigger, discriminator="Recurrence"):
         *,
         interval: int,
         schedule: "_models.RecurrenceSchedule",
-        start_time: Optional[str] = None,
-        end_time: Optional[str] = None,
+        start_time: Optional[datetime.datetime] = None,
+        end_time: Optional[datetime.datetime] = None,
         time_zone: Optional[str] = None,
     ) -> None: ...
 
@@ -7706,7 +7716,7 @@ class ScheduleRun(_Model):
     :ivar success: Trigger success status of the schedule run. Required.
     :vartype success: bool
     :ivar trigger_time: Trigger time of the schedule run.
-    :vartype trigger_time: str
+    :vartype trigger_time: ~datetime.datetime
     :ivar error: Error information for the schedule run.
     :vartype error: str
     :ivar properties: Properties of the schedule run. Required.
@@ -7719,8 +7729,8 @@ class ScheduleRun(_Model):
     """Identifier of the schedule. Required."""
     success: bool = rest_field(visibility=["read"])
     """Trigger success status of the schedule run. Required."""
-    trigger_time: Optional[str] = rest_field(
-        name="triggerTime", visibility=["read", "create", "update", "delete", "query"]
+    trigger_time: Optional[datetime.datetime] = rest_field(
+        name="triggerTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
     )
     """Trigger time of the schedule run."""
     error: Optional[str] = rest_field(visibility=["read"])
@@ -7733,7 +7743,7 @@ class ScheduleRun(_Model):
         self,
         *,
         schedule_id: str,
-        trigger_time: Optional[str] = None,
+        trigger_time: Optional[datetime.datetime] = None,
     ) -> None: ...
 
     @overload

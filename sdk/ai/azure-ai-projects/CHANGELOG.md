@@ -30,6 +30,9 @@ instead on client constructor (see above).
 * Rename property `id` on class `Schedule` to `schedule_id`.
 * Rename input argument `id` to `insight_id` in `.beta.insights.get()` method.
 * Rename input argument `id` to `schedule_id` in `.beta.schedules` methods.
+* Updated datetime-typed fields (`start_time`, `end_time`, `trigger_at`, `trigger_time`, `created_at`, `modified_at`) 
+across `CronTrigger`, `RecurrenceTrigger`, `OneTimeTrigger`, `ScheduleRun`, and `EvaluatorVersion` classes from `str`
+to `datetime.datetime` with format="rfc3339".
 
 ### Other Changes
 
