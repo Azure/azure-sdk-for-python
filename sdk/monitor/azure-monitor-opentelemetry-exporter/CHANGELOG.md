@@ -9,6 +9,8 @@
 ### Breaking Changes
 
 ### Bugs Fixed
+- Fix attributes override in Rate Limited Sampler
+  ([#45592](https://github.com/Azure/azure-sdk-for-python/pull/45592))
 - Add environment variable to disable/enable custom properties truncation
   ([#45479](https://github.com/Azure/azure-sdk-for-python/pull/45479))
 - Fix io counters import issue in performance counters
@@ -25,8 +27,6 @@
 ### Bugs Fixed
 - Fix CPU usage calculation logic for live metrics
   ([#45005](https://github.com/Azure/azure-sdk-for-python/pull/45005))
-- Fix attributes override in Rate Limited Sampler
-  ([#45592](https://github.com/Azure/azure-sdk-for-python/pull/45592))
 
 ### Other Changes
 - Fix Ingestion-Side Sampling Disk Persist Behavior

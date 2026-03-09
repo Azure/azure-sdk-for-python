@@ -230,7 +230,9 @@ class TestRateLimitedSampler(unittest.TestCase):
         sampler._sampling_percentage_generator.get = Mock(return_value=100.0)
 
         original_attributes = {"service.name": "test-service", "operation.name": "test-operation"}
-        result = sampler.should_sample(parent_context=None, trace_id=123, name="test-span", attributes=original_attributes)
+        result = sampler.should_sample(
+            parent_context=None, trace_id=123, name="test-span", attributes=original_attributes
+        )
 
         self.assertEqual(dict(result.attributes), original_attributes)
         self.assertNotIn(_SAMPLE_RATE_KEY, result.attributes)
@@ -246,7 +248,9 @@ class TestRateLimitedSampler(unittest.TestCase):
         sampler._sampling_percentage_generator.get = Mock(return_value=42.0)
 
         original_attributes = {"service.name": "test-service", "operation.name": "test-operation"}
-        result = sampler.should_sample(parent_context=None, trace_id=123, name="test-span", attributes=original_attributes)
+        result = sampler.should_sample(
+            parent_context=None, trace_id=123, name="test-span", attributes=original_attributes
+        )
 
         self.assertEqual(dict(result.attributes), {**original_attributes, _SAMPLE_RATE_KEY: 42.0})
         self.assertIn(_SAMPLE_RATE_KEY, result.attributes)
