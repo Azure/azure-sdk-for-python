@@ -34,10 +34,8 @@ Repository = "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/core/a
 version = {attr = "azure.core.experimental._version.VERSION"}
 readme = {file = ["README.md", "CHANGELOG.md"], content-type = "text/markdown"}
 
-[tool.setuptools]
-packages = [
-    "azure.core.experimental*",
-]
+[tool.setuptools.packages.find]
+include = ["azure.core.experimental*"]
 
 [tool.setuptools.package-data]
 pytyped = ["py.typed"]
