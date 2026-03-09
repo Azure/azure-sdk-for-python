@@ -19,6 +19,7 @@ class FoundryConversationHistoryProvider(BaseHistoryProvider):
     """History provider that reads Foundry conversation history and stores in session state."""
 
     DEFAULT_SOURCE_ID = "foundry_conversation"
+    CONVERSATION_ID_KEY = "_foundry_conversation_id"
 
     def __init__(
         self,
@@ -63,16 +64,16 @@ class FoundryConversationHistoryProvider(BaseHistoryProvider):
 
         conversation_id = self._resolve_conversation_id(session_id, state)
         if conversation_id:
-            state["conversation_id"] = conversation_id
+            state[self.CONVERSATION_ID_KEY] = conversation_id
         existing_messages = state.get("messages", [])
         state["messages"] = [*existing_messages, *messages]
 
     @staticmethod
     def _resolve_conversation_id(session_id: Optional[str], state: Dict[str, Any]) -> Optional[str]:
-        conversation_id = state.get("conversation_id")
+        conversation_id = state.get(FoundryConversationHistoryProvider.CONVERSATION_ID_KEY)
         if isinstance(conversation_id, str) and conversation_id:
             return conversation_id
-        return session_id
+        return None
 
     async def _get_conversation_history(self, conversation_id: str) -> List[Message]:
         if not self._project_client:
