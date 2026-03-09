@@ -142,15 +142,7 @@ class TestExtractFilterDetailsFromParsed:
     """Unit tests for the helper that extracts categories from parsed dicts."""
 
     def test_choices_structure(self):
-        parsed = {
-            "choices": [
-                {
-                    "content_filter_results": {
-                        "violence": {"filtered": True, "severity": "high"}
-                    }
-                }
-            ]
-        }
+        parsed = {"choices": [{"content_filter_results": {"violence": {"filtered": True, "severity": "high"}}}]}
         details = ResultProcessor._extract_filter_details_from_parsed(parsed)
         assert details == ["violence (severity: high)"]
 
@@ -159,9 +151,7 @@ class TestExtractFilterDetailsFromParsed:
         assert ResultProcessor._extract_filter_details_from_parsed(None) == []
 
     def test_top_level_cfr(self):
-        parsed = {
-            "content_filter_results": {"hate": {"filtered": True, "severity": "low"}}
-        }
+        parsed = {"content_filter_results": {"hate": {"filtered": True, "severity": "low"}}}
         details = ResultProcessor._extract_filter_details_from_parsed(parsed)
         assert details == ["hate (severity: low)"]
 
@@ -170,28 +160,17 @@ class TestHasContentFilterKeys:
     """Unit tests for _has_content_filter_keys."""
 
     def test_top_level_key(self):
-        assert (
-            ResultProcessor._has_content_filter_keys({"content_filter_results": {}})
-            is True
-        )
+        assert ResultProcessor._has_content_filter_keys({"content_filter_results": {}}) is True
 
     def test_finish_reason(self):
-        assert (
-            ResultProcessor._has_content_filter_keys(
-                {"finish_reason": "content_filter"}
-            )
-            is True
-        )
+        assert ResultProcessor._has_content_filter_keys({"finish_reason": "content_filter"}) is True
 
     def test_choice_level_key(self):
         parsed = {"choices": [{"content_filter_results": {}}]}
         assert ResultProcessor._has_content_filter_keys(parsed) is True
 
     def test_no_indicators(self):
-        assert (
-            ResultProcessor._has_content_filter_keys({"choices": [{"text": "hi"}]})
-            is False
-        )
+        assert ResultProcessor._has_content_filter_keys({"choices": [{"text": "hi"}]}) is False
 
     def test_non_dict(self):
         assert ResultProcessor._has_content_filter_keys([1, 2]) is False
