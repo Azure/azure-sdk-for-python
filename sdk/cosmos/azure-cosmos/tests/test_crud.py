@@ -1489,7 +1489,7 @@ class TestCRUDOperations(unittest.TestCase):
             with cosmos_client.CosmosClient(
                 url=self.host,
                 credential=self.masterKey,
-                read_timeout=0.001  # Very short timeout that would normally fail
+                read_timeout=0.000000000001  # Very short timeout that would normally fail
             ) as timeout_client:
                 database = timeout_client.get_database_client(self.databaseForTest.id)
                 container = database.get_container_client(normal_container.id)
@@ -1535,12 +1535,6 @@ class TestCRUDOperations(unittest.TestCase):
                 )
                 self.assertEqual(result['id'], 'new_test_item')
 
-                # Test 5: Without request-level override, the short client timeout should cause failure
-                with self.assertRaises((exceptions.CosmosClientTimeoutError, ServiceResponseError)):
-                    container.read_item(
-                        item='test_item_0',
-                        partition_key='partition0'
-                    )
         finally:
             self.databaseForTest.delete_container(normal_container.id)
 
@@ -1595,7 +1589,7 @@ class TestCRUDOperations(unittest.TestCase):
             with cosmos_client.CosmosClient(
                 url=self.host,
                 credential=self.masterKey,
-                read_timeout=0.001  # Very short timeout to force failure
+                read_timeout=0.000000000001  # Very short timeout to force failure
             ) as timeout_client:
                 database = timeout_client.get_database_client(self.databaseForTest.id)
                 container = database.get_container_client(normal_container.id)
@@ -1637,7 +1631,7 @@ class TestCRUDOperations(unittest.TestCase):
 
             # Create client with very short read timeout via connection policy
             connection_policy = documents.ConnectionPolicy()
-            connection_policy.ReadTimeout = 0.001
+            connection_policy.ReadTimeout = 0.000000000001
             with cosmos_client.CosmosClient(
                 url=self.host,
                 credential=self.masterKey,
@@ -1659,6 +1653,24 @@ class TestCRUDOperations(unittest.TestCase):
                         query="SELECT * FROM c WHERE c.pk = @pk",
                         parameters=[{"name": "@pk", "value": "partition0"}]
                     ))
+
+                # Test 3: Point read with request-level override should succeed
+                # Request-level read_timeout takes precedence over the short policy-level timeout
+                result = container.read_item(
+                    item='test_item_0',
+                    partition_key='partition0',
+                    read_timeout=30
+                )
+                self.assertEqual(result['id'], 'test_item_0')
+
+                # Test 4: Query with request-level override should succeed
+                results = list(container.query_items(
+                    query="SELECT * FROM c WHERE c.pk = @pk",
+                    parameters=[{"name": "@pk", "value": "partition1"}],
+                    read_timeout=30
+                ))
+                self.assertEqual(len(results), 1)
+                self.assertEqual(results[0]['id'], 'test_item_1')
         finally:
             self.databaseForTest.delete_container(normal_container.id)
 

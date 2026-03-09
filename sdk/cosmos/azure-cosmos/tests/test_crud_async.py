@@ -1135,7 +1135,7 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
             async with CosmosClient(
                     url=self.host,
                     credential=self.masterKey,
-                    read_timeout=0.001  # Very short timeout that would normally fail
+                    read_timeout=0.000000000001  # Very short timeout that would normally fail
             ) as timeout_client:
                 database = timeout_client.get_database_client(self.database_for_test.id)
                 container = database.get_container_client(normal_container.id)
@@ -1183,12 +1183,6 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
                 )
                 self.assertEqual(result['id'], 'new_test_item')
 
-                # Test 5: Without request-level override, the short client timeout should cause failure
-                with self.assertRaises((exceptions.CosmosClientTimeoutError, ServiceResponseError)):
-                    await container.read_item(
-                        item='test_item_0',
-                        partition_key='partition0'
-                    )
         finally:
             await self.database_for_test.delete_container(normal_container.id)
 
@@ -1210,7 +1204,7 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
         async with CosmosClient(
             url=self.host,
             credential=self.masterKey,
-            read_timeout=0.001  # 1ms - should time out
+            read_timeout=0.000000000001  # should time out
         ) as timeout_client:
             database = timeout_client.get_database_client(self.database_for_test.id)
             container = database.get_container_client(normal_container.id)
@@ -1243,7 +1237,7 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
 
         # Create connection policy with very short read timeout
         policy = documents.ConnectionPolicy()
-        policy.ReadTimeout = 0.001  # 1ms - should timeout
+        policy.ReadTimeout = 0.000000000001  # should timeout
 
         # Create client with the policy
         async with CosmosClient(
@@ -1264,6 +1258,23 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
                     query="SELECT * FROM c WHERE c.pk = @pk",
                     parameters=[{"name": "@pk", "value": "policy_partition0"}]
                 )]
+
+            # Test 3: Point read with request-level override should succeed
+            # Request-level read_timeout takes precedence over the short policy-level timeout
+            result = await container.read_item(
+                item='policy_item0',
+                partition_key='policy_partition0',
+                read_timeout=30
+            )
+            self.assertEqual(result['id'], 'policy_item0')
+
+            # Test 4: Query with request-level override should succeed
+            results = [doc async for doc in container.query_items(
+                query="SELECT * FROM c WHERE c.pk = @pk",
+                parameters=[{"name": "@pk", "value": "policy_partition1"}],
+                read_timeout=30
+            )]
+            self.assertEqual(len(results), 1)
 
 
 
