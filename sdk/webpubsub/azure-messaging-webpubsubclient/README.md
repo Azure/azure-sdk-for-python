@@ -91,6 +91,48 @@ with client:
     print(f"Invocation result: {result.data}")
 ```
 
+You can pass a `timeout` (in seconds) to limit how long the client waits for the response. An `InvocationError` is raised if the timeout elapses.
+
+```python
+from azure.messaging.webpubsubclient import WebPubSubClient
+from azure.messaging.webpubsubclient.models import WebPubSubDataType, InvocationError
+
+client = WebPubSubClient("<client-access-url>")
+with client:
+    try:
+        result = client.invoke_event(
+            "processOrder", {"orderId": 1}, WebPubSubDataType.JSON, timeout=5.0,
+        )
+        print(f"Invocation result: {result.data}")
+    except InvocationError as e:
+        print(f"Invocation timed out: {e}")
+```
+
+To cancel a pending invocation by its invocation ID, you can use `cancel_invocation` to send a cancel message to the server.
+
+```python
+import asyncio
+from azure.messaging.webpubsubclient.aio import WebPubSubClient
+from azure.messaging.webpubsubclient.models import WebPubSubDataType, InvocationError
+
+client = WebPubSubClient("<client-access-url>")
+async with client:
+    invocation_id = "my-invocation"
+
+    async def invoke():
+        try:
+            result = await client.invoke_event(
+                "processOrder", {"orderId": 1}, WebPubSubDataType.JSON, invocation_id=invocation_id,
+            )
+        except InvocationError as e:
+            print(f"Invocation cancelled: {e}")
+
+    task = asyncio.create_task(invoke())
+
+    await client.cancel_invocation(invocation_id)
+    await task
+```
+
 _Streaming and service-initiated invocations are not yet supported._
 
 ---
