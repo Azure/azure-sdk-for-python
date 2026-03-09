@@ -4,11 +4,6 @@
 
 ### Bugs Fixed
 - Fixed `NotFoundError: 404` when using `model_config` dict target with Foundry-style endpoints (`*.services.ai.azure.com`) by appending `/openai/v1` to the endpoint URL for PyRIT compatibility.
-
-## 1.15.3 (Unreleased)
-
-### Bugs Fixed
-
 - Fixed Foundry red team double-evaluation that caused ~3x scan latency by removing redundant evaluation_processor.evaluate() call.
 - Fixed lost red team attack details where baseline overwrites wiped evaluation results.
 - Fixed incorrect per_testing_criteria that showed attack strategies alongside risk categories.

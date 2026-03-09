@@ -98,7 +98,9 @@ def create_tense_converter(
     return TenseConverter(converter_target=converter_target, tense="past")
 
 
-def strategy_converter_map() -> Dict[Any, Union[PromptConverter, List[PromptConverter], None]]:
+def strategy_converter_map() -> (
+    Dict[Any, Union[PromptConverter, List[PromptConverter], None]]
+):
     """
     Returns a mapping of attack strategies to their corresponding converters.
     """
@@ -147,7 +149,9 @@ def get_converter_for_strategy(
 
     def _resolve_converter(strategy):
         converter_or_factory = factory_map[strategy]
-        if callable(converter_or_factory) and not isinstance(converter_or_factory, PromptConverter):
+        if callable(converter_or_factory) and not isinstance(
+            converter_or_factory, PromptConverter
+        ):
             # It's a factory function, call it with dependencies
             return converter_or_factory(generated_rai_client, is_one_dp_project, logger)
         return converter_or_factory
@@ -192,7 +196,10 @@ def get_chat_target(
             f"Received value: {read_timeout!r} of type {type(read_timeout).__name__}."
         )
     if read_timeout <= 0:
-        raise ValueError("http_timeout must be greater than 0 seconds. " f"Received value: {read_timeout!r}.")
+        raise ValueError(
+            "http_timeout must be greater than 0 seconds. "
+            f"Received value: {read_timeout!r}."
+        )
 
     timeout = httpx.Timeout(
         connect=DEFAULT_CONNECT_TIMEOUT,
@@ -220,9 +227,12 @@ def get_chat_target(
             # Fix Foundry-style endpoints for PyRIT compatibility
             # Foundry endpoints (*.services.ai.azure.com) need /openai/v1 appended
             # because PyRIT's OpenAIChatTarget passes the URL directly to AsyncOpenAI(base_url=)
-            endpoint = target["azure_endpoint"]
-            if ".services.ai.azure.com" in endpoint and "/openai" not in endpoint:
-                endpoint = endpoint.rstrip("/") + "/openai/v1"
+            endpoint = target["azure_endpoint"].rstrip("/")
+            if ".services.ai.azure.com" in endpoint:
+                if endpoint.endswith("/openai"):
+                    endpoint = endpoint + "/v1"
+                elif "/openai/v1" not in endpoint:
+                    endpoint = endpoint + "/openai/v1"
 
             api_key = target.get("api_key", None)
             # Check for credential in target dict or use passed credential parameter
