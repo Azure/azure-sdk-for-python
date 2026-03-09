@@ -20,6 +20,7 @@ class FoundryConversationHistoryProvider(BaseHistoryProvider):
 
     DEFAULT_SOURCE_ID = "foundry_conversation"
     CONVERSATION_ID_KEY = "_foundry_conversation_id"
+    SERVICE_SESSION_ID_KEY = "_service_session_id"
 
     def __init__(
         self,
@@ -40,6 +41,10 @@ class FoundryConversationHistoryProvider(BaseHistoryProvider):
         if state is None:
             return []
 
+        if state.get(self.SERVICE_SESSION_ID_KEY. None):
+            # If the service_session_id exists, we assume AgentSession is service managed.
+            # Do not return messages to avoid duplication
+            return []
         conversation_id = self._resolve_conversation_id(state)
         if not conversation_id:
             return list(state.get("messages", []))
@@ -62,7 +67,7 @@ class FoundryConversationHistoryProvider(BaseHistoryProvider):
         if state is None:
             return
 
-        conversation_id = self._resolve_conversation_id(session_id, state)
+        conversation_id = self._resolve_conversation_id(state)
         if conversation_id:
             state[self.CONVERSATION_ID_KEY] = conversation_id
         existing_messages = state.get("messages", [])
