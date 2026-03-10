@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -285,7 +286,7 @@ class BaseEvent(_Model):
     :ivar name: The event name.
     :vartype name: str
     :ivar data: The event data.
-    :vartype data: any
+    :vartype data: str
     """
 
     timestamp: Optional[datetime.datetime] = rest_field(
@@ -294,7 +295,7 @@ class BaseEvent(_Model):
     """The event timestamp."""
     name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The event name."""
-    data: Optional[Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    data: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The event data."""
 
     @overload
@@ -303,7 +304,7 @@ class BaseEvent(_Model):
         *,
         timestamp: Optional[datetime.datetime] = None,
         name: Optional[str] = None,
-        data: Optional[Any] = None,
+        data: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -767,7 +768,7 @@ class CreateRun(_Model):
     :ivar properties: The properties dictionary for the run. Properties are immutable.
     :vartype properties: dict[str, str]
     :ivar parameters: The parameters dictionary for the run. Parameters are immutable.
-    :vartype parameters: dict[str, any]
+    :vartype parameters: dict[str, str]
     :ivar action_uris: The action URIs for the run.
     :vartype action_uris: dict[str, str]
     :ivar script_name: The script name.
@@ -787,9 +788,9 @@ class CreateRun(_Model):
     :ivar output_datasets: A list of datasets used as output to the run.
     :vartype output_datasets: list[~runhistory.models.OutputDatasetLineage]
     :ivar run_definition: The run definition specification.
-    :vartype run_definition: any
+    :vartype run_definition: str
     :ivar job_specification: The job specification.
-    :vartype job_specification: any
+    :vartype job_specification: str
     :ivar primary_metric_name: The primary metric name.
     :vartype primary_metric_name: str
     :ivar created_from: The creation source.
@@ -865,7 +866,7 @@ class CreateRun(_Model):
     """The run type V2."""
     properties: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The properties dictionary for the run. Properties are immutable."""
-    parameters: Optional[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    parameters: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The parameters dictionary for the run. Parameters are immutable."""
     action_uris: Optional[dict[str, str]] = rest_field(
         name="actionUris", visibility=["read", "create", "update", "delete", "query"]
@@ -897,11 +898,11 @@ class CreateRun(_Model):
         name="outputDatasets", visibility=["read", "create", "update", "delete", "query"]
     )
     """A list of datasets used as output to the run."""
-    run_definition: Optional[Any] = rest_field(
+    run_definition: Optional[str] = rest_field(
         name="runDefinition", visibility=["read", "create", "update", "delete", "query"]
     )
     """The run definition specification."""
-    job_specification: Optional[Any] = rest_field(
+    job_specification: Optional[str] = rest_field(
         name="jobSpecification", visibility=["read", "create", "update", "delete", "query"]
     )
     """The job specification."""
@@ -970,7 +971,7 @@ class CreateRun(_Model):
         run_type: Optional[str] = None,
         run_type_v2: Optional["_models.RunTypeV2"] = None,
         properties: Optional[dict[str, str]] = None,
-        parameters: Optional[dict[str, Any]] = None,
+        parameters: Optional[dict[str, str]] = None,
         action_uris: Optional[dict[str, str]] = None,
         script_name: Optional[str] = None,
         target: Optional[str] = None,
@@ -980,8 +981,8 @@ class CreateRun(_Model):
         services: Optional[dict[str, "_models.EndpointSetting"]] = None,
         input_datasets: Optional[list["_models.DatasetLineage"]] = None,
         output_datasets: Optional[list["_models.OutputDatasetLineage"]] = None,
-        run_definition: Optional[Any] = None,
-        job_specification: Optional[Any] = None,
+        run_definition: Optional[str] = None,
+        job_specification: Optional[str] = None,
         primary_metric_name: Optional[str] = None,
         created_from: Optional["_models.CreatedFrom"] = None,
         cancel_uri: Optional[str] = None,
@@ -1462,12 +1463,12 @@ class ErrorAdditionalInfo(_Model):
     :ivar type: The additional info type.
     :vartype type: str
     :ivar info: The additional info.
-    :vartype info: any
+    :vartype info: str
     """
 
     type: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The additional info type."""
-    info: Optional[Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    info: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The additional info."""
 
     @overload
@@ -1475,7 +1476,7 @@ class ErrorAdditionalInfo(_Model):
         self,
         *,
         type: Optional[str] = None,
-        info: Optional[Any] = None,
+        info: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -1497,7 +1498,7 @@ class Event(_Model):
     :ivar timestamp: Gets the event timestamp.
     :vartype timestamp: ~datetime.datetime
     :ivar attributes: Gets the collection of attributes associated with the event.
-    :vartype attributes: dict[str, any]
+    :vartype attributes: dict[str, str]
     """
 
     name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -1506,7 +1507,7 @@ class Event(_Model):
         visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
     )
     """Gets the event timestamp."""
-    attributes: Optional[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    attributes: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Gets the collection of attributes associated with the event."""
 
     @overload
@@ -1515,7 +1516,7 @@ class Event(_Model):
         *,
         name: Optional[str] = None,
         timestamp: Optional[datetime.datetime] = None,
-        attributes: Optional[dict[str, Any]] = None,
+        attributes: Optional[dict[str, str]] = None,
     ) -> None: ...
 
     @overload
@@ -1716,20 +1717,20 @@ class GetRunDataResult(_Model):
     :ivar run_metadata: The run metadata.
     :vartype run_metadata: ~runhistory.models.Run
     :ivar run_definition: The run definition.
-    :vartype run_definition: any
+    :vartype run_definition: str
     :ivar job_specification: The job specification.
-    :vartype job_specification: any
+    :vartype job_specification: str
     """
 
     run_metadata: Optional["_models.Run"] = rest_field(
         name="runMetadata", visibility=["read", "create", "update", "delete", "query"]
     )
     """The run metadata."""
-    run_definition: Optional[Any] = rest_field(
+    run_definition: Optional[str] = rest_field(
         name="runDefinition", visibility=["read", "create", "update", "delete", "query"]
     )
     """The run definition."""
-    job_specification: Optional[Any] = rest_field(
+    job_specification: Optional[str] = rest_field(
         name="jobSpecification", visibility=["read", "create", "update", "delete", "query"]
     )
     """The job specification."""
@@ -1739,8 +1740,8 @@ class GetRunDataResult(_Model):
         self,
         *,
         run_metadata: Optional["_models.Run"] = None,
-        run_definition: Optional[Any] = None,
-        job_specification: Optional[Any] = None,
+        run_definition: Optional[str] = None,
+        job_specification: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -2008,12 +2009,12 @@ class KeyValuePairStringJToken(_Model):
     :ivar key: The key.
     :vartype key: str
     :ivar value: The value.
-    :vartype value: any
+    :vartype value: str
     """
 
     key: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The key."""
-    value: Optional[Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    value: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The value."""
 
     @overload
@@ -2021,7 +2022,7 @@ class KeyValuePairStringJToken(_Model):
         self,
         *,
         key: Optional[str] = None,
-        value: Optional[Any] = None,
+        value: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -2074,12 +2075,12 @@ class Link(_Model):
     :ivar context: The span context of the link.
     :vartype context: ~runhistory.models.SpanContext
     :ivar attributes: Gets the collection of attributes associated with the link.
-    :vartype attributes: dict[str, any]
+    :vartype attributes: dict[str, str]
     """
 
     context: Optional["_models.SpanContext"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The span context of the link."""
-    attributes: Optional[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    attributes: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Gets the collection of attributes associated with the link."""
 
     @overload
@@ -2087,7 +2088,7 @@ class Link(_Model):
         self,
         *,
         context: Optional["_models.SpanContext"] = None,
-        attributes: Optional[dict[str, Any]] = None,
+        attributes: Optional[dict[str, str]] = None,
     ) -> None: ...
 
     @overload
@@ -2545,7 +2546,7 @@ class MetricV2Value(_Model):
     :vartype step: int
     :ivar data: Dictionary mapping column names (specified as the keys in MetricV2Dto.Columns) to
      their values.
-    :vartype data: dict[str, any]
+    :vartype data: dict[str, str]
     """
 
     metric_id: Optional[str] = rest_field(name="metricId", visibility=["read", "create", "update", "delete", "query"])
@@ -2556,7 +2557,7 @@ class MetricV2Value(_Model):
     """Client specified timestamp for this metric value."""
     step: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The step."""
-    data: Optional[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    data: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Dictionary mapping column names (specified as the keys in MetricV2Dto.Columns) to their values."""
 
     @overload
@@ -2566,7 +2567,7 @@ class MetricV2Value(_Model):
         metric_id: Optional[str] = None,
         created_utc: Optional[datetime.datetime] = None,
         step: Optional[int] = None,
-        data: Optional[dict[str, Any]] = None,
+        data: Optional[dict[str, str]] = None,
     ) -> None: ...
 
     @overload
@@ -3334,7 +3335,7 @@ class Run(_Model):
     :ivar properties: The properties dictionary for the run. Properties are immutable.
     :vartype properties: dict[str, str]
     :ivar parameters: The parameters dictionary for the run. Parameters are immutable.
-    :vartype parameters: dict[str, any]
+    :vartype parameters: dict[str, str]
     :ivar action_uris: The action URIs for the run.
     :vartype action_uris: dict[str, str]
     :ivar script_name: The script name.
@@ -3354,9 +3355,9 @@ class Run(_Model):
     :ivar output_datasets: A list of datasets used as output to the run.
     :vartype output_datasets: list[~runhistory.models.OutputDatasetLineage]
     :ivar run_definition: The run definition specification.
-    :vartype run_definition: any
+    :vartype run_definition: str
     :ivar job_specification: The job specification.
-    :vartype job_specification: any
+    :vartype job_specification: str
     :ivar primary_metric_name: The primary metric name.
     :vartype primary_metric_name: str
     :ivar created_from: The creation source.
@@ -3513,7 +3514,7 @@ class Run(_Model):
     """The run type V2."""
     properties: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The properties dictionary for the run. Properties are immutable."""
-    parameters: Optional[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    parameters: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The parameters dictionary for the run. Parameters are immutable."""
     action_uris: Optional[dict[str, str]] = rest_field(
         name="actionUris", visibility=["read", "create", "update", "delete", "query"]
@@ -3545,11 +3546,11 @@ class Run(_Model):
         name="outputDatasets", visibility=["read", "create", "update", "delete", "query"]
     )
     """A list of datasets used as output to the run."""
-    run_definition: Optional[Any] = rest_field(
+    run_definition: Optional[str] = rest_field(
         name="runDefinition", visibility=["read", "create", "update", "delete", "query"]
     )
     """The run definition specification."""
-    job_specification: Optional[Any] = rest_field(
+    job_specification: Optional[str] = rest_field(
         name="jobSpecification", visibility=["read", "create", "update", "delete", "query"]
     )
     """The job specification."""
@@ -3641,7 +3642,7 @@ class Run(_Model):
         run_type: Optional[str] = None,
         run_type_v2: Optional["_models.RunTypeV2"] = None,
         properties: Optional[dict[str, str]] = None,
-        parameters: Optional[dict[str, Any]] = None,
+        parameters: Optional[dict[str, str]] = None,
         action_uris: Optional[dict[str, str]] = None,
         script_name: Optional[str] = None,
         target: Optional[str] = None,
@@ -3651,8 +3652,8 @@ class Run(_Model):
         services: Optional[dict[str, "_models.EndpointSetting"]] = None,
         input_datasets: Optional[list["_models.DatasetLineage"]] = None,
         output_datasets: Optional[list["_models.OutputDatasetLineage"]] = None,
-        run_definition: Optional[Any] = None,
-        job_specification: Optional[Any] = None,
+        run_definition: Optional[str] = None,
+        job_specification: Optional[str] = None,
         primary_metric_name: Optional[str] = None,
         created_from: Optional["_models.CreatedFrom"] = None,
         cancel_uri: Optional[str] = None,
@@ -3710,7 +3711,7 @@ class RunDetails(_Model):
     :ivar properties: The properties dictionary for the run. Properties are immutable.
     :vartype properties: dict[str, str]
     :ivar parameters: The parameters dictionary for the run. Parameters are immutable.
-    :vartype parameters: dict[str, any]
+    :vartype parameters: dict[str, str]
     :ivar services: The interactive run services for a run. Services are mutable.
     :vartype services: dict[str, ~runhistory.models.EndpointSetting]
     :ivar input_datasets: A list of dataset used as input to the run.
@@ -3718,7 +3719,7 @@ class RunDetails(_Model):
     :ivar output_datasets: A list of dataset used as output to the run.
     :vartype output_datasets: list[~runhistory.models.OutputDatasetLineage]
     :ivar run_definition: The run definition specification.
-    :vartype run_definition: any
+    :vartype run_definition: str
     :ivar log_files: The log files.
     :vartype log_files: dict[str, str]
     :ivar job_cost: The job cost.
@@ -3811,7 +3812,7 @@ class RunDetails(_Model):
     """The tag dictionary for the run. Tags are mutable."""
     properties: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The properties dictionary for the run. Properties are immutable."""
-    parameters: Optional[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    parameters: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The parameters dictionary for the run. Parameters are immutable."""
     services: Optional[dict[str, "_models.EndpointSetting"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
@@ -3825,7 +3826,7 @@ class RunDetails(_Model):
         name="outputDatasets", visibility=["read", "create", "update", "delete", "query"]
     )
     """A list of dataset used as output to the run."""
-    run_definition: Optional[Any] = rest_field(
+    run_definition: Optional[str] = rest_field(
         name="runDefinition", visibility=["read", "create", "update", "delete", "query"]
     )
     """The run definition specification."""
@@ -3925,11 +3926,11 @@ class RunDetails(_Model):
         warnings: Optional[list["_models.RunDetailsWarning"]] = None,
         tags: Optional[dict[str, str]] = None,
         properties: Optional[dict[str, str]] = None,
-        parameters: Optional[dict[str, Any]] = None,
+        parameters: Optional[dict[str, str]] = None,
         services: Optional[dict[str, "_models.EndpointSetting"]] = None,
         input_datasets: Optional[list["_models.DatasetLineage"]] = None,
         output_datasets: Optional[list["_models.OutputDatasetLineage"]] = None,
-        run_definition: Optional[Any] = None,
+        run_definition: Optional[str] = None,
         log_files: Optional[dict[str, str]] = None,
         job_cost: Optional["_models.JobCost"] = None,
         revision: Optional[int] = None,
@@ -4079,7 +4080,7 @@ class RunMetric(_Model):
     :ivar data_location: The data location.
     :vartype data_location: str
     :ivar cells: The metric cells.
-    :vartype cells: list[any]
+    :vartype cells: list[str]
     :ivar schema: The metric schema.
     :vartype schema: ~runhistory.models.MetricSchema
     """
@@ -4112,7 +4113,7 @@ class RunMetric(_Model):
         name="dataLocation", visibility=["read", "create", "update", "delete", "query"]
     )
     """The data location."""
-    cells: Optional[list[Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    cells: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The metric cells."""
     schema: Optional["_models.MetricSchema"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The metric schema."""
@@ -4131,7 +4132,7 @@ class RunMetric(_Model):
         label: Optional[str] = None,
         num_cells: Optional[int] = None,
         data_location: Optional[str] = None,
-        cells: Optional[list[Any]] = None,
+        cells: Optional[list[str]] = None,
         schema: Optional["_models.MetricSchema"] = None,
     ) -> None: ...
 
