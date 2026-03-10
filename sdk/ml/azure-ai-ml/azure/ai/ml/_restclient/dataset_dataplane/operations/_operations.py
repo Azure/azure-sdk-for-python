@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -2646,7 +2647,7 @@ class DataContainerOpsOperations:
         :type workspace_name: str
         :param name: The data container name. Required.
         :type name: str
-        :param body: Required.
+        :param body: Request body. Required.
         :type body: ~dataset_dataplane.models.DataContainerMutable
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -2679,7 +2680,7 @@ class DataContainerOpsOperations:
         :type workspace_name: str
         :param name: The data container name. Required.
         :type name: str
-        :param body: Required.
+        :param body: Request body. Required.
         :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -2712,7 +2713,7 @@ class DataContainerOpsOperations:
         :type workspace_name: str
         :param name: The data container name. Required.
         :type name: str
-        :param body: Required.
+        :param body: Request body. Required.
         :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -2743,7 +2744,8 @@ class DataContainerOpsOperations:
         :type workspace_name: str
         :param name: The data container name. Required.
         :type name: str
-        :param body: Is one of the following types: DataContainerMutable, JSON, IO[bytes] Required.
+        :param body: Request body. Is one of the following types: DataContainerMutable, JSON, IO[bytes]
+         Required.
         :type body: ~dataset_dataplane.models.DataContainerMutable or JSON or IO[bytes]
         :return: DataContainerEntity. The DataContainerEntity is compatible with MutableMapping
         :rtype: ~dataset_dataplane.models.DataContainerEntity
@@ -4170,7 +4172,7 @@ class DataVersionOpsOperations:
         :type name: str
         :param version: The data version. Required.
         :type version: str
-        :param body: Required.
+        :param body: Request body. Required.
         :type body: ~dataset_dataplane.models.DataVersionMutable
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -4206,7 +4208,7 @@ class DataVersionOpsOperations:
         :type name: str
         :param version: The data version. Required.
         :type version: str
-        :param body: Required.
+        :param body: Request body. Required.
         :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -4242,7 +4244,7 @@ class DataVersionOpsOperations:
         :type name: str
         :param version: The data version. Required.
         :type version: str
-        :param body: Required.
+        :param body: Request body. Required.
         :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -4276,7 +4278,8 @@ class DataVersionOpsOperations:
         :type name: str
         :param version: The data version. Required.
         :type version: str
-        :param body: Is one of the following types: DataVersionMutable, JSON, IO[bytes] Required.
+        :param body: Request body. Is one of the following types: DataVersionMutable, JSON, IO[bytes]
+         Required.
         :type body: ~dataset_dataplane.models.DataVersionMutable or JSON or IO[bytes]
         :return: DataVersionEntity. The DataVersionEntity is compatible with MutableMapping
         :rtype: ~dataset_dataplane.models.DataVersionEntity

@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -499,7 +500,7 @@ class DataField(_Model):
      "Date", "Unknown", "Error", "Null", "DataRow", "List", and "Stream".
     :vartype type: str or ~dataset_dataplane.models.FieldType
     :ivar value: The field value.
-    :vartype value: any
+    :vartype value: str
     """
 
     type: Optional[Union[str, "_models.FieldType"]] = rest_field(
@@ -507,7 +508,7 @@ class DataField(_Model):
     )
     """The field type. Known values are: \"String\", \"Boolean\", \"Integer\", \"Decimal\", \"Date\",
      \"Unknown\", \"Error\", \"Null\", \"DataRow\", \"List\", and \"Stream\"."""
-    value: Optional[Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    value: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The field value."""
 
     @overload
@@ -515,7 +516,7 @@ class DataField(_Model):
         self,
         *,
         type: Optional[Union[str, "_models.FieldType"]] = None,
-        value: Optional[Any] = None,
+        value: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -669,7 +670,7 @@ class DatasetDefinition(_Model):
     :ivar file_type: The file type.
     :vartype file_type: str
     :ivar properties: Additional properties.
-    :vartype properties: dict[str, any]
+    :vartype properties: dict[str, str]
     :ivar saved_dataset_id: The saved dataset ID.
     :vartype saved_dataset_id: str
     :ivar telemetry_info: Telemetry information.
@@ -735,7 +736,7 @@ class DatasetDefinition(_Model):
     """The user who last modified this definition."""
     file_type: Optional[str] = rest_field(name="fileType", visibility=["read", "create", "update", "delete", "query"])
     """The file type."""
-    properties: Optional[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    properties: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Additional properties."""
     saved_dataset_id: Optional[str] = rest_field(
         name="savedDatasetId", visibility=["read", "create", "update", "delete", "query"]
@@ -774,7 +775,7 @@ class DatasetDefinition(_Model):
         created_by: Optional["_models.User"] = None,
         modified_by: Optional["_models.User"] = None,
         file_type: Optional[str] = None,
-        properties: Optional[dict[str, Any]] = None,
+        properties: Optional[dict[str, str]] = None,
         saved_dataset_id: Optional[str] = None,
         telemetry_info: Optional[dict[str, str]] = None,
         use_description_tags_from_definition: Optional[bool] = None,
@@ -844,7 +845,7 @@ class DatasetPath(_Model):
     :ivar http_url: The HTTP URL.
     :vartype http_url: str
     :ivar additional_properties: Additional properties.
-    :vartype additional_properties: dict[str, any]
+    :vartype additional_properties: dict[str, str]
     :ivar partition_format: The partition format.
     :vartype partition_format: str
     :ivar partition_format_ignore_error: Whether to ignore partition format errors.
@@ -871,7 +872,7 @@ class DatasetPath(_Model):
     """The SQL data path."""
     http_url: Optional[str] = rest_field(name="httpUrl", visibility=["read", "create", "update", "delete", "query"])
     """The HTTP URL."""
-    additional_properties: Optional[dict[str, Any]] = rest_field(
+    additional_properties: Optional[dict[str, str]] = rest_field(
         name="additionalProperties", visibility=["read", "create", "update", "delete", "query"]
     )
     """Additional properties."""
@@ -894,7 +895,7 @@ class DatasetPath(_Model):
         paths: Optional[list[str]] = None,
         sql_data_path: Optional["_models.SqlDataPath"] = None,
         http_url: Optional[str] = None,
-        additional_properties: Optional[dict[str, Any]] = None,
+        additional_properties: Optional[dict[str, str]] = None,
         partition_format: Optional[str] = None,
         partition_format_ignore_error: Optional[bool] = None,
     ) -> None: ...
@@ -980,11 +981,11 @@ class DatasetV2(_Model):
     :ivar tags: Tags for the dataset.
     :vartype tags: dict[str, str]
     :ivar legacy_properties: Legacy properties.
-    :vartype legacy_properties: dict[str, any]
+    :vartype legacy_properties: dict[str, str]
     :ivar data_expiry_time: The data expiry time.
     :vartype data_expiry_time: ~datetime.datetime
     :ivar legacy: Legacy data.
-    :vartype legacy: dict[str, any]
+    :vartype legacy: dict[str, str]
     """
 
     dataset_id: Optional[str] = rest_field(name="datasetId", visibility=["read", "create", "update", "delete", "query"])
@@ -1025,7 +1026,7 @@ class DatasetV2(_Model):
     """Whether the dataset is anonymous."""
     tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Tags for the dataset."""
-    legacy_properties: Optional[dict[str, Any]] = rest_field(
+    legacy_properties: Optional[dict[str, str]] = rest_field(
         name="legacyProperties", visibility=["read", "create", "update", "delete", "query"]
     )
     """Legacy properties."""
@@ -1033,7 +1034,7 @@ class DatasetV2(_Model):
         name="dataExpiryTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
     )
     """The data expiry time."""
-    legacy: Optional[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    legacy: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Legacy data."""
 
     @overload
@@ -1053,9 +1054,9 @@ class DatasetV2(_Model):
         description: Optional[str] = None,
         is_anonymous: Optional[bool] = None,
         tags: Optional[dict[str, str]] = None,
-        legacy_properties: Optional[dict[str, Any]] = None,
+        legacy_properties: Optional[dict[str, str]] = None,
         data_expiry_time: Optional[datetime.datetime] = None,
-        legacy: Optional[dict[str, Any]] = None,
+        legacy: Optional[dict[str, str]] = None,
     ) -> None: ...
 
     @overload
@@ -1446,7 +1447,7 @@ class HttpRequestMessage(_Model):
     :ivar headers: The request headers.
     :vartype headers: list[~dataset_dataplane.models.KeyValuePairStringIEnumerable]
     :ivar options: The request options.
-    :vartype options: dict[str, any]
+    :vartype options: dict[str, str]
     """
 
     version: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -1466,7 +1467,7 @@ class HttpRequestMessage(_Model):
     """The request URI."""
     headers: Optional[list["_models.KeyValuePairStringIEnumerable"]] = rest_field(visibility=["read"])
     """The request headers."""
-    options: Optional[dict[str, Any]] = rest_field(visibility=["read"])
+    options: Optional[dict[str, str]] = rest_field(visibility=["read"])
     """The request options."""
 
     @overload
@@ -1623,14 +1624,14 @@ class LongRunningOperationResponse(_Model):
     """A long-running operation response.
 
     :ivar completion_result: The completion result.
-    :vartype completion_result: any
+    :vartype completion_result: str
     :ivar location: The location URI.
     :vartype location: str
     :ivar operation_result: The operation result URI.
     :vartype operation_result: str
     """
 
-    completion_result: Optional[Any] = rest_field(
+    completion_result: Optional[str] = rest_field(
         name="completionResult", visibility=["read", "create", "update", "delete", "query"]
     )
     """The completion result."""
@@ -1645,7 +1646,7 @@ class LongRunningOperationResponse(_Model):
     def __init__(
         self,
         *,
-        completion_result: Optional[Any] = None,
+        completion_result: Optional[str] = None,
         location: Optional[str] = None,
         operation_result: Optional[str] = None,
     ) -> None: ...
