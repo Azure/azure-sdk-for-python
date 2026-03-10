@@ -140,6 +140,25 @@ black = false
 
 If a package does not yet have a `pyproject.toml`, creating one with just the section `[tool.azure-sdk-build]` will do no harm to the release of the package in question.
 
+### Required Metadata
+
+Packages with a stable GA release must have a `[tool.azure-sdk-conda]` section in their `pyproject.toml`. 
+- This section defines if the package is released individually to Conda, or grouped with other packages in one release bundle (see [conda-release.md](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/conda-release.md)). 
+- This is enforced by the `verifywhl` CI check.
+
+Here's an example:
+
+```toml
+# Package is released to Conda individually
+[tool.azure-sdk-conda]
+in_bundle = false
+
+# Package is released within the `azure-communication` bundle
+[tool.azure-sdk-conda]
+in_bundle = true
+bundle_name = "azure-communication"
+```
+
 ### Coverage Enforcement
 
 This repository supports enforcement of an absolute coverage % per package. Set:
