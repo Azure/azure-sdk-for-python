@@ -14,6 +14,8 @@ from devtools_testutils import (
     add_header_regex_sanitizer,
     add_oauth_response_sanitizer,
     add_uri_string_sanitizer,
+    add_remove_header_sanitizer,
+    set_custom_default_matcher,
     test_proxy,
 )
 
@@ -33,3 +35,5 @@ def add_sanitizers(test_proxy):
     add_general_regex_sanitizer(regex=r'"EncryptionLibrary": "Python .*?"', value='"EncryptionLibrary": "Python x.x.x"')
 
     add_uri_string_sanitizer(target=".preprod.", value=".")
+    add_remove_header_sanitizer(headers="Accept")
+    set_custom_default_matcher(excluded_headers="Accept")
