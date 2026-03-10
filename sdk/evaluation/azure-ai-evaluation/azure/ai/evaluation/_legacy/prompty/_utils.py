@@ -210,7 +210,7 @@ MARKDOWN_IMAGE_PATTERN = re.compile(r"(?P<match>!\[[^\]]*\]\(.*?(?=\"|\))\))", f
    the named capture group to appear in the list of split parts"""
 
 IMAGE_URL_PARSING_PATTERN = re.compile(
-    r"^!\[(?P<alt_text>[^\]]+)\]\((?P<link>(?P<scheme>[^:]+(?=:))?:?(?P<mime_type>[^;]+(?=;))?;?(?P<data>[^\)]*))\)$"
+    r"^!\[(?P<alt_text>[^\]]*)\]\((?P<link>(?P<scheme>[^:]+(?=:))?:?(?P<mime_type>[^;]+(?=;))?;?(?P<data>[^\)]*))\)$"
 )
 """Pattern used to parse the image URL from the markdown syntax. This caputres the following groups:
     - alt_text: The alt text for the image
@@ -380,6 +380,15 @@ def _inline_image(image: str, working_dir: Path, image_detail: str) -> Dict[str,
 
     match = re.match(IMAGE_URL_PARSING_PATTERN, image)
     if not match:
+        # If the image string looks like markdown image syntax but couldn't be parsed,
+        # treat it as plain text rather than crashing.  This can happen with unusual
+        # markdown produced by Document Intelligence or similar services.
+        if image.startswith("!["):
+            logger.debug(
+                "Image reference '%s' could not be parsed. Treating as plain text.",
+                image,
+            )
+            return {"type": "text", "text": image}
         raise InvalidInputError(f"Invalid image URL '{image}'")
 
     inlined_uri: str

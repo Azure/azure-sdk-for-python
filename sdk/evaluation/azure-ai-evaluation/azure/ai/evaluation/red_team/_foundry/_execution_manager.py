@@ -162,19 +162,45 @@ class FoundryExecutionManager:
                         include_baseline=include_baseline,
                     )
                 except Exception as e:
-                    self.logger.error(f"Error executing attacks for {risk_value}: {e}")
-                    # Use "Foundry" as fallback strategy name to match expected structure
-                    if "Foundry" not in red_team_info:
-                        red_team_info["Foundry"] = {}
-                    red_team_info["Foundry"][risk_value] = {
-                        "data_file": "",
-                        "status": "failed",
-                        "error": str(e),
-                        "asr": 0.0,
-                    }
-                    continue
+                    # Attempt to recover partial results before giving up.
+                    # partial_results is used only as a truthiness check here;
+                    # FoundryResultProcessor re-retrieves results via orchestrator.get_attack_results().
+                    partial_results = []
+                    try:
+                        partial_results = orchestrator.get_attack_results()
+                    except Exception:
+                        self.logger.debug("Failed to recover partial results for %s", risk_value, exc_info=True)
 
-                # Process results
+                    if partial_results:
+                        self.logger.warning(
+                            f"Partial failure executing attacks for {risk_value}: {e}. "
+                            f"Recovered {len(partial_results)} partial results."
+                        )
+                        # Record partial failure in structured output so callers
+                        # relying on red_team_info can observe it.
+                        if "Foundry" not in red_team_info:
+                            red_team_info["Foundry"] = {}
+                        red_team_info["Foundry"][risk_value] = {
+                            "data_file": "",
+                            "status": "partial_failure",
+                            "error": str(e),
+                            "partial_failure": True,
+                            "asr": 0.0,
+                        }
+                    else:
+                        self.logger.error(f"Error executing attacks for {risk_value}: {e}")
+                        # No results recoverable — use empty fallback
+                        if "Foundry" not in red_team_info:
+                            red_team_info["Foundry"] = {}
+                        red_team_info["Foundry"][risk_value] = {
+                            "data_file": "",
+                            "status": "failed",
+                            "error": str(e),
+                            "asr": 0.0,
+                        }
+                        continue
+
+                # Process results (handles both full success and partial recovery)
                 result_processor = FoundryResultProcessor(
                     scenario=orchestrator,
                     dataset_config=dataset_config,
