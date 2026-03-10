@@ -24,7 +24,7 @@ dependencies = [
     "azure-ai-agentserver-core==1.0.0b15",
     "agent-framework-azure-ai>=1.0.0rc2,<=1.0.0rc3",
     "agent-framework-core>=1.0.0rc2,<=1.0.0rc3",
-    "opentelemetry-exporter-otlp-proto-grpc>=1.36.0,<=1.39.0",
+    "opentelemetry-exporter-otlp-proto-grpc>=1.39.0",
 ]
 
 [build-system]
